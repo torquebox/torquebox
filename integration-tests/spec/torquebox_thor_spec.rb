@@ -158,8 +158,10 @@ describe "torquebox thor utility tests" do
     end
 
     def rails( version, cmd )
+      version = version.sub('>', '\>')
+      gem_dir = JRUBY_VERSION < '1.7' ? '1.8' : 'shared'
       rails = File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist',
-                         'jruby', 'lib', 'ruby', 'gems', '1.8', 'bin', 'rails' )
+                         'jruby', 'lib', 'ruby', 'gems', gem_dir, 'bin', 'rails' )
       integ_jruby( "#{rails} _#{version}_ #{cmd}" )
     end
   end
