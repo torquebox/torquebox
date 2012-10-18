@@ -55,6 +55,7 @@
         <module name="org.jboss.as.clustering.jgroups"/>
         <module name="org.jboss.as.deployment-repository"/>
         <module name="org.jboss.as.ee"/>
+        <module name="org.jboss.as.logging"/>
         <module name="org.jboss.as.naming"/>
         <module name="org.jboss.as.jmx"/>
         <module name="org.jboss.as.server"/>

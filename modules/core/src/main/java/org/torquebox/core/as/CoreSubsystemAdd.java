@@ -71,6 +71,7 @@ import org.torquebox.core.injection.processors.CorePredeterminedInjectableInstal
 import org.torquebox.core.injection.processors.InjectionYamlParsingProcessor;
 import org.torquebox.core.injection.processors.PredeterminedInjectableProcessor;
 import org.torquebox.core.pool.processors.PoolingYamlParsingProcessor;
+import org.torquebox.core.processor.LoggingPropertiesWorkaroundProcessor;
 import org.torquebox.core.processors.TorqueBoxRbProcessor;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 import org.torquebox.core.runtime.processors.BaseRubyRuntimeInstaller;
@@ -136,6 +137,7 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 1000, rootSafe( new PredeterminedInjectableProcessor( registry ) ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 1001, rootSafe( new CorePredeterminedInjectableInstaller() ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 1100, rootSafe( new InjectionIndexingProcessor( registry ) ) );
+        processorTarget.addDeploymentProcessor(  CoreExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 1, rootSafe( new LoggingPropertiesWorkaroundProcessor() ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 110, rootSafe( new RubyNamespaceContextSelectorProcessor() ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 5000, rootSafe( new DatabaseProcessor() ) );
 
