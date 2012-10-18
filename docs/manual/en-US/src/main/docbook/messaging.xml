@@ -216,7 +216,11 @@ end</programlisting></para>
         <filename><replaceable>*</replaceable>-knob.yml</filename>
         deployment descriptors are placed directly into the
         <filename>deployments/</filename> directory of TorqueBox
-        AS.</para>
+        AS. Note that a corresponding
+        <filename><replaceable>*</replaceable>-knob.yml.dodeploy</filename>
+        file is also required in this <filename>deployments/</filename> 
+        directory. Simply touch/create a blank file here as part of your 
+        deployment.</para>
 
         <formalpara>
           <title>Queues</title>
