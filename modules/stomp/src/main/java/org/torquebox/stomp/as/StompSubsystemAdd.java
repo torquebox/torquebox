@@ -26,24 +26,17 @@ import static org.projectodd.polyglot.core.processors.RootedDeploymentProcessor.
 
 import java.util.List;
 
-import javax.transaction.TransactionManager;
-
 import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.ServiceVerificationHandler;
-import org.jboss.as.network.SocketBinding;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
-import org.jboss.as.txn.service.TxnServices;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
-import org.jboss.msc.service.ServiceController.Mode;
-import org.projectodd.polyglot.stomp.StompletServerService;
 import org.projectodd.polyglot.stomp.processors.StompApplicationDefaultsProcessor;
-import org.projectodd.stilts.stomplet.server.StompletServer;
 import org.torquebox.stomp.component.processors.StompletComponentResolverInstaller;
 import org.torquebox.stomp.processors.StompYamlParsingProcessor;
 import org.torquebox.stomp.processors.StompletInstaller;
@@ -54,7 +47,6 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     @Override
     protected void populateModel(ModelNode operation, ModelNode subModel) {
-        subModel.get( "socket-binding" ).set( operation.get( "socket-binding" ) );
     }
 
     @Override
