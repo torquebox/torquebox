@@ -166,7 +166,11 @@ module TorqueBox
           # with bundle install --deployment
           ENV['RUBYLIB'] = rubylib_with_bundler($:)
 
-          set_java_opts("#{options[:jvm_options]} #{jruby_opts_properties}")
+          options[:jvm_options] ||= ''
+          options[:jvm_options] << " #{jruby_opts_properties}"
+          options[:jvm_options] << " #{strip_jvm_properties_from_jruby_opts}"
+
+          set_java_opts(options[:jvm_options].strip)
           print_server_config(options[:clustered])
           exec_command(run_command_line(options).join(' '))
         end
@@ -411,8 +415,24 @@ module TorqueBox
         jruby_opts = ENV['JRUBY_OPTS']
         return "" if jruby_opts.nil?
         # Only convert -Xa.b, -Xa.b.c, -Xa.b.c.d style options to properties
-        properties = jruby_opts.scan(/-X(\w+\..+?)\s/)
+        properties = jruby_opts.scan(/-X(\w+\..+?)(\s|$)/)
         properties.map { |matches| "-Djruby.#{matches.first}" }.join(' ')
+      end
+
+      def strip_jvm_properties_from_jruby_opts
+        jruby_opts = ENV['JRUBY_OPTS']
+        return '' if jruby_opts.nil?
+        jvm_properties = []
+        properties = jruby_opts.split(' ')
+        properties.each do |property|
+          if property =~ /^-J.+/
+            jvm_properties << property.sub(/-J/, '')
+            ENV['JRUBY_OPTS'] = ENV['JRUBY_OPTS'].sub(property, '')
+          end
+        end
+        # get rid of any leftover spaces
+        ENV['JRUBY_OPTS'] = ENV['JRUBY_OPTS'].split(' ').join(' ')
+        jvm_properties.join(' ')
       end
 
       def rubylib_with_bundler(load_path)
