@@ -11,7 +11,18 @@ require 'stilts-stomp-client'
 require 'driver_helper'
 
 def mbean(name)
-  JMX::MBean.establish_connection :url => 'service:jmx:remoting-jmx://127.0.0.1:9999'
+  retries = 0
+  begin
+    JMX::MBean.establish_connection :url => 'service:jmx:remoting-jmx://127.0.0.1:9999'
+  rescue java.lang.RuntimeException => ex
+    retries += 1
+    if retries < 5
+      sleep 0.5
+      retry
+    else
+      raise ex
+    end
+  end
   yield JMX::MBean.find_by_name(name)
 ensure
   JMX::MBean.remove_connection
