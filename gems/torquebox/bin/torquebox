@@ -61,6 +61,9 @@ class TorqueBoxCommand < Thor
 
   desc "archive ROOT", "Create a nice self-contained application archive"
   method_option :deploy, :type => :boolean, :desc => "Deploy the archive to TORQUEBOX_HOME."
+  method_option :package, :type => :boolean, :desc => "Include all Bundler gem dependencies in the archive."
+  method_option :package_without, :type => :array, :desc => "Package without these bundler groups.", :default => "development test"
+  method_option :precompile_assets, :type => :boolean, :desc => "Precompile all assets (Rails-specific)."
   long_desc <<-EOS
     Creates an application archive containing all of your application dependencies.
     The archive can be deployed to TorqueBox with the --deploy option or by
@@ -69,10 +72,37 @@ class TorqueBoxCommand < Thor
   EOS
   def archive(root = Dir.pwd)
     root = Dir.pwd if (root == '.')
+    # note that the config file nonsense is to prevent deployment bundler
+    # configuration settings from persisting on some poor developer's machine
+    # after the archive command has been run
+    bundler_config = File.join(root, '.bundle/config')
     TorqueBox::Server.setup_environment
+    if options.precompile_assets
+      system("bundle exec rake assets:precompile")
+    end
+    if options.package
+      if File.exists?(bundler_config) # be as non-destructive to bundler config as possible
+        old_config = File.read(bundler_config)
+      else
+        old_config = nil
+      end
+      cmd = %w{bundle install --deployment}
+      if options.package_without
+        cmd << '--without'
+        cmd << options.package_without
+      end
+      system(*cmd.flatten)
+    end
     archive_name = TorqueBox::DeployUtils.archive_name( root )
     path = TorqueBox::DeployUtils.create_archive(:name => archive_name, :app_dir => root)
     puts "Created archive: #{path}"
+    if options.package and File.exists?(bundler_config)
+      if old_config
+        File.open(bundler_config, 'w') {|io| io.write(old_config)}
+      else
+        File.delete(bundler_config) # there wasn't originally a config file
+      end
+    end
     if options.deploy
       puts "Deployed: #{archive_name}"
       puts "    into: #{ENV['TORQUEBOX_HOME']}"
