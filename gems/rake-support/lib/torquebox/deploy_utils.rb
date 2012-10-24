@@ -176,7 +176,16 @@ module TorqueBox
         end
       end
 
+      # name: (string) what to call the resulting knob file
+      # app_dir: (string) where the application to be packaged is
+      # dest_dir: (string) where to put the resulting knob file
       # precompile_assets: (boolean) whether or not to precompile assets. this is rails-specific.
+      # package_gems: (boolean) whether or not to install all bundle gems to vendor/bundle (this
+      #                         is rather convenient as it means that you don't have to run bundle
+      #                         install on your production servers)
+      # package_without: (array) all the bundler groups to run bundle install without (cuts down
+      #                          on package size by snipping out potentially inappropriate
+      #                          dependencies for a production environment).
       def create_archive(opts = {})
 
         archive = normalize_archive_name( find_option( opts, 'name' ) || archive_name )
