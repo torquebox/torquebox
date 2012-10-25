@@ -62,7 +62,7 @@ class TorqueBoxCommand < Thor
   desc "archive ROOT", "Create a nice self-contained application archive"
   method_option :deploy, :type => :boolean, :desc => "Deploy the archive to TORQUEBOX_HOME."
   method_option :package_gems, :type => :boolean, :desc => "Include all Bundler gem dependencies in the archive."
-  method_option :package_without, :type => :array, :desc => "Package without these bundler groups.", :default => "development test"
+  method_option :package_without, :type => :array, :desc => "Package without these bundler groups.", :default => "development test assets"
   method_option :precompile_assets, :type => :boolean, :desc => "Precompile all assets (Rails-specific)."
   long_desc <<-EOS
     Creates an application archive containing all of your application dependencies.
