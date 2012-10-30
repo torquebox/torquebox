@@ -70,8 +70,8 @@ describe "torquebox thor utility tests" do
     it "should package gems" do
       gem_version = RUBY_VERSION[0..2]
       bundle_dir = File.join(root_dir, 'vendor', 'bundle', 'jruby', gem_version)
-      Dir.glob("#{bundle_dir}/*").should be_empty
       begin
+        Dir.glob("#{bundle_dir}/*").should be_empty
         tb("archive #{root_dir} --package-gems --package-without assets")
         Dir.glob("#{bundle_dir}/*").should_not be_empty
         knob_files = `jar -tf basic.knob`
