@@ -10,5 +10,5 @@ def jruby
 end
 
 command = ARGV.join(" ")
-
-puts `#{jruby} #{command}`
+jruby_version = RUBY_VERSION =~ /^1\.9\./ ? " --1.9" : " --1.8"
+puts `#{jruby} #{jruby_version} #{command}`

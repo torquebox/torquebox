@@ -61,7 +61,8 @@ def integ_jruby_launcher
 end
 
 def integ_jruby(command)
-  `#{jruby_binary} #{integ_jruby_launcher} "#{command}"`
+  jruby_version = RUBY_VERSION =~ /^1\.9\./ ? " --1.9" : " --1.8"
+  `#{jruby_binary} #{jruby_version} #{integ_jruby_launcher} "#{command}"`
 end
 
 def normalize_path(path)
