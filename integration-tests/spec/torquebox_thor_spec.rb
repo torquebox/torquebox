@@ -42,6 +42,49 @@ describe "torquebox thor utility tests" do
       end
     end
 
+    it "should precompile assets" do
+      # Remove Gemfile.lock since varying Rake versions may get picked
+      # up during integ runs and bundler will complain during asset
+      # compilation
+      FileUtils.rm_rf(File.join(root_dir, 'Gemfile.lock'))
+      assets_dir = File.join(root_dir, 'public', 'assets')
+      File.exist?(File.join(assets_dir, 'application.css')).should == false
+      File.exist?(File.join(assets_dir, 'application.js')).should == false
+      begin
+        archive_output = tb("archive #{root_dir} --precompile-assets")
+        File.exist?('basic.knob').should == true
+        File.exist?(File.join(assets_dir, 'application.css')).should == true
+        File.exist?(File.join(assets_dir, 'application.js')).should == true
+        knob_files = `jar -tf basic.knob`
+        knob_files.should include('public/assets/application.css')
+        knob_files.should include('public/assets/application.js')
+      rescue Exception => ex
+        puts archive_output
+        raise ex
+      ensure
+        FileUtils.rm_rf('basic.knob')
+        FileUtils.rm_rf(File.join(root_dir, 'public', 'assets'))
+      end
+    end
+
+    it "should package gems" do
+      gem_version = RUBY_VERSION[0..2]
+      bundle_dir = File.join(root_dir, 'vendor', 'bundle', 'jruby', gem_version)
+      Dir.glob("#{bundle_dir}/*").should be_empty
+      begin
+        tb("archive #{root_dir} --package-gems --package-without assets")
+        Dir.glob("#{bundle_dir}/*").should_not be_empty
+        knob_files = `jar -tf basic.knob`
+        knob_files.should include("vendor/bundle/jruby/#{gem_version}/gems/torquebox")
+        knob_files.should_not include("vendor/bundle/jruby/#{gem_version}/gems/uglifier")
+        knob_files.should_not include('vendor/cache')
+      ensure
+        FileUtils.rm_rf('basic.knob')
+        FileUtils.rm_rf(bundle_dir)
+        FileUtils.rm_rf(File.join(root_dir, 'vendor', 'cache'))
+      end
+    end
+
   end
 
   describe "torquebox deploy" do
@@ -158,13 +201,10 @@ describe "torquebox thor utility tests" do
     end
 
     def rails( version, cmd )
-      gem_dir = '1.8'
       if JRUBY_VERSION >= '1.7'
         version = version.sub('>', '\>')
-        gem_dir = 'shared'
       end
-      rails = File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist',
-                         'jruby', 'lib', 'ruby', 'gems', gem_dir, 'bin', 'rails' )
+      rails = File.join( gem_dir, 'bin', 'rails' )
       integ_jruby( "#{rails} _#{version}_ #{cmd}" )
     end
   end
@@ -200,6 +240,13 @@ describe "torquebox thor utility tests" do
 
   def root_dir
     File.join( File.dirname(__FILE__), '..', 'apps', 'rails3.1', 'basic' )
+  end
+
+  def gem_dir
+    dir = JRUBY_VERSION >= '1.7' ? 'shared' : '1.8'
+    File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target',
+                                 'integ-dist', 'jruby', 'lib', 'ruby',
+                                 'gems', dir ) )
   end
 
   def tb(cmd)

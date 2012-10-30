@@ -179,6 +179,7 @@ module TorqueBox
       # name: (string) what to call the resulting knob file
       # app_dir: (string) where the application to be packaged is
       # dest_dir: (string) where to put the resulting knob file
+      # excludes: (string) string or regex of files to exclude from the archive
       # precompile_assets: (boolean) whether or not to precompile assets. this is rails-specific.
       # package_gems: (boolean) whether or not to install all bundle gems to vendor/bundle (this
       #                         is rather convenient as it means that you don't have to run bundle
@@ -187,51 +188,86 @@ module TorqueBox
       #                          on package size by snipping out potentially inappropriate
       #                          dependencies for a production environment).
       def create_archive(opts = {})
-
         archive = normalize_archive_name( find_option( opts, 'name' ) || archive_name )
-        app_dir = find_option( opts, 'app_dir') || Dir.pwd
-        dest_dir = find_option( opts, 'dest_dir') || Dir.pwd
-        package_gems = find_option( opts, 'package_gems' ) == true
+        app_dir = find_option( opts, 'app_dir' ) || Dir.pwd
+        dest_dir = find_option( opts, 'dest_dir' ) || Dir.pwd
+        excludes = find_option( opts, 'exclude' ) || ""
+        should_precompile_assets = find_option( opts, 'precompile_assets' ) == true
+        should_package_gems = find_option( opts, 'package_gems' ) == true
         package_without = find_option( opts, 'package_without' ) || Array.new
-        bundler_config = File.join( app_dir, '.bundle/config' )
 
-        precompile_assets if find_option( opts, 'precompile_assets' ) == true
-
-        if package_gems
-          # note - this is used instead of freeze gems because it should cause the
-          # archive to capture .bundle/config, thereby forcing the app to use the
-          # bundled gems. we delete the deployment configuration for rubygems afterward
-          if File.exists? bundler_config
-            old_config = File.read bundler_config
-          else
-            old_config = nil
-          end
-          cmd = %w{bundle install --deployment}
-          unless package_without.empty?
-            cmd << '--without'
-            cmd << package_without
-          end
-          run_command cmd.flatten.join(' ')
+        if should_precompile_assets
+          precompile_assets( app_dir )
+          raise 'Error precompiling assets' unless $? == 0
         end
 
-        default_skip_files = %w{ ^log/ ^tmp/ ^test/ ^spec/ ^[^/]*\.knob$ vendor/.*cache/.*\.gem$ }
-        opts_skip_files = (find_option(opts, 'exclude') || "").
-          split(/,/).
-          map { |r| "^[^/]*#{r}"}
-        skip_files = default_skip_files + opts_skip_files
+        archive_path = File.join( dest_dir, archive )
+        archive_proc = lambda { create_knob_archive( app_dir, archive_path, excludes ) }
 
-        archive_path = File.join(dest_dir, archive)
+        if should_package_gems
+          package_gems( app_dir, package_without ) {
+            raise 'Error packaging gems' unless $? == 0
+            archive_proc.call
+          }
+        else
+          archive_proc.call
+        end
+
+        archive_path
+      end
+
+      def precompile_assets(app_dir)
+        Dir.chdir( app_dir ) do
+          jruby_command( "-S rake assets:precompile" )
+        end
+      end
+
+      def package_gems(app_dir, package_without)
+        # note - this is used instead of freeze gems because it
+        # should cause the archive to capture .bundle/config,
+        # thereby forcing the app to use the bundled gems. we delete
+        # the deployment configuration for rubygems afterward
+        bundler_config = File.join( app_dir, '.bundle/config' )
+        if File.exists?( bundler_config )
+          old_config = File.read( bundler_config )
+        else
+          old_config = nil
+        end
+        cmd = %w{-S bundle install --local --deployment}
+        unless package_without.empty?
+          cmd << '--without'
+          cmd << package_without
+        end
+        Dir.chdir( app_dir ) do
+          jruby_command( '-S bundle package' )
+          jruby_command( cmd.flatten.join(' ') )
+        end
+        yield if block_given?
+      ensure
+        if File.exists?( bundler_config )
+          if old_config
+            File.open( bundler_config, 'w' ) { |io| io.write( old_config ) }
+          else
+            File.delete( bundler_config ) # there wasn't originally a config file there
+          end
+        end
+      end
+
+      def create_knob_archive(app_dir, archive_path, excludes)
+        default_skip_files = %w{ ^log/ ^tmp/ ^test/ ^spec/ ^[^/]*\.knob$ vendor/.*cache/.*\.gem$ }
+        opts_skip_files = excludes.split( /,/ ).map { |r| "^[^/]*#{r}" }
+        skip_files = default_skip_files + opts_skip_files
 
         Dir.chdir( app_dir ) do
           include_files = []
           Dir[ "**/**", ".bundle/**/**" ].each do |entry|
-            unless File.directory?(entry) || skip_files.any? {|regex| entry.match(regex)}
+            unless File.directory?( entry ) || skip_files.any? { |regex| entry.match( regex ) }
               include_files << '"' + entry.to_s + '"'
             end
           end
 
-          includes = Tempfile.new("include-files")
-          includes.write(include_files.join("\n"))
+          includes = Tempfile.new( "include-files" )
+          includes.write( include_files.join( "\n" ) )
           includes.flush
 
           cmd = "jar cvf '#{archive_path}' @#{includes.path}"
@@ -239,28 +275,12 @@ module TorqueBox
           run_command( cmd )
           includes.close( true )
         end
-
-        if package_gems and File.exists? bundler_config
-          if old_config
-            File.open(bundler_config, 'w') {|io| io.write(old_config)}
-          else
-            File.delete bundler_config # there wasn't originally a config file there
-          end
-        end
-
-        archive_path
-      end
-
-      def precompile_assets
-        run_command( "bundle exec rake assets:precompile" )
       end
 
       def freeze_gems(app_dir = Dir.pwd)
         Dir.chdir( app_dir ) do
-          jruby = File.join( RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'] )
-          jruby << " --1.9" if RUBY_VERSION =~ /^1\.9\./
-          run_command( "#{jruby} -S bundle package" )
-          run_command( "#{jruby} -S bundle install --local --path vendor/bundle" )
+          jruby_command( '-S bundle package' )
+          jruby_command( '-S bundle install --local --path vendor/bundle' )
         end
       end
 
@@ -346,6 +366,12 @@ module TorqueBox
           end
         end
         success
+      end
+
+      def jruby_command(cmd)
+        jruby = File.join( RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'] )
+        RUBY_VERSION =~ /^1\.9\./ ? jruby << " --1.9" : jruby << " --1.8"
+        run_command( "#{jruby} #{cmd}" )
       end
 
       def run_command(cmd)
