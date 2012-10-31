@@ -84,6 +84,39 @@ def wait_for_condition(timeout, interval, condition)
   nil
 end
 
+# JRuby 1.7.0 has a bug where two threads can deadlock if the thread
+# finishing normally and the thread being killed happened to get
+# interleaved. This impacts the DRb implemention in 1.8 mode so
+# workaround that by waiting a bit before killing any alive threads.
+#
+# See https://gist.github.com/02c60ec8a42d445acffa
+if RUBY_VERSION < '1.9' && JRUBY_VERSION > '1.7'
+  require 'drb'
+  require 'thread'
+  module DRb
+    class DRbServer
+      def kill_sub_thread
+        Thread.new do
+          grp = ThreadGroup.new
+          grp.add(Thread.current)
+          list = @grp.list
+          while list.size > 0
+            list.each do |th|
+              wait_count = 0
+              while wait_count < 5
+                sleep 0.1 if th.alive?
+                wait_count += 1
+              end
+              th.kill if th.alive?
+            end
+            list = @grp.list
+          end
+        end
+      end
+    end
+  end
+end
+
 # JRuby 1.6.7.2 in 1.9 mode has a bug where it needs ObjectSpace for
 # DRb to work. So, we swipe JRuby master's implementation and patch
 # things up.
