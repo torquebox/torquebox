@@ -142,7 +142,7 @@
             <configuration>
               <file>bin/generate_sha1.rb</file>
               <args>target/*.{zip,json}</args>
-              <jrubyJvmArgs>-Xmx1024m</jrubyJvmArgs>
+              <jrubyJvmArgs>-Xmx1536m</jrubyJvmArgs>
             </configuration>
           </execution>
         </executions>
