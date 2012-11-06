@@ -27,12 +27,6 @@ public class TaskMetaData {
     
     public static AttachmentKey<AttachmentList<TaskMetaData>> ATTACHMENTS_KEY = AttachmentKey.createList( TaskMetaData.class );
 
-    private String rubyClassName;
-    private String location;
-    private String queueSuffix;
-    private int concurrency = 1;
-    private String simpleName;
-
     public TaskMetaData() {
     
     }
@@ -82,6 +76,16 @@ public class TaskMetaData {
         return this.concurrency;
     }
 
+    public boolean isDurable() {
+        return durable;
+    }
+
+    public void setDurable(Boolean durable) {
+        if (durable != null) {
+            this.durable = durable;
+        }
+    }
+
     public void setSimpleName(String simpleName) {
         this.simpleName = simpleName;
     }
@@ -94,4 +98,10 @@ public class TaskMetaData {
         }
     }
 
+    private String rubyClassName;
+    private String location;
+    private String queueSuffix;
+    private int concurrency = 1;
+    private boolean durable = true;
+    private String simpleName;
 }

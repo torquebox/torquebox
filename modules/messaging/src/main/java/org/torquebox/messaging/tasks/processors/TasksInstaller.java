@@ -68,13 +68,14 @@ public class TasksInstaller implements DeploymentUnitProcessor {
         if (task.getConcurrency() > 0) {
             QueueMetaData queue = new QueueMetaData();
             queue.setName( queueName );
+            queue.setDurable( task.isDurable() );
             unit.addToAttachmentList( QueueMetaData.ATTACHMENTS_KEY, queue );
 
             MessageProcessorMetaData processorMetaData = new MessageProcessorMetaData();
             processorMetaData.setDestinationName( queueName );
             processorMetaData.setRubyClassName( task.getRubyClassName(), task.getLocation() );
             processorMetaData.setConcurrency( task.getConcurrency() );
-            processorMetaData.setMessageSelector( "JMSCorrelationID IS NULL" );
+                        processorMetaData.setMessageSelector( "JMSCorrelationID IS NULL" );
             unit.addToAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY, processorMetaData );
         }
     }

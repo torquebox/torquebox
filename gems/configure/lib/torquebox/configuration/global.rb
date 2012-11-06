@@ -62,6 +62,7 @@ module TorqueBox
                                                                 :optional => [
                                                                               :concurrency,
                                                                               { :disabled => [true, false] },
+                                                                              { :durable => [true, false] }, 
                                                                               :default_message_encoding
                                                                              ]
                                                               }),

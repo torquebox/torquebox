@@ -88,6 +88,7 @@ public class TasksYamlParsingProcessor extends AbstractSplitYamlParsingProcessor
 
             	if (options != null) {
             		task.setConcurrency( (Integer)options.get( "concurrency") );
+            	    task.setDurable( (Boolean)options.get( "durable" ) );
             	}
             }
             

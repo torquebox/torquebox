@@ -1614,11 +1614,15 @@ Widget.background(:ttl =&gt; 1000, :persistent =&gt; false).monetize
         processors</link> in a deployment descriptor are available to
         <classname>Backgroundable</classname> message processors, too,
         though possibly only the <varname>concurrency</varname> option
-        is applicable. Instead of a task class name, you specify
-        <classname>Backgroundable</classname>:</para>
+        is applicable. In addition to the processor options, you can
+        also specify the durability of the underlying queue. This 
+        <varname>durable</varname> option is different than the 
+        <varname>durable</varname> option for topic processors, and
+        instead controls the durability of the underlying queue. It 
+        is <varname>true</varname> by default.</para>
 
         <example>
-          <title>Task message processor options in a deployment
+          <title>Backgroundable message processor options in a deployment
           descriptor</title>
 
           <para>Using the YAML syntax:<programlisting>application:
@@ -1626,12 +1630,12 @@ Widget.background(:ttl =&gt; 1000, :persistent =&gt; false).monetize
 tasks:
   Backgroundable:
     concurrency: 2
+    durable: false
 </programlisting></para>
 
           <para>And via the DSL:<programlisting>TorqueBox.configure do
   ...
-  options_for Backgroundable, :concurrency =&gt; 2
-  options_for SomeTask, :concurrency =&gt; 5
+  options_for Backgroundable, :concurrency =&gt; 2, :durable =&gt; false
 end</programlisting></para>
         </example>
 

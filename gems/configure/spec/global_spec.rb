@@ -253,10 +253,10 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
     it_should_behave_like 'a thing with options'
 
     it_should_not_allow_invalid_options { options_for 'a-name', :foo => :bar }
-    it_should_allow_valid_options { options_for 'a-name', :concurrency => 1, :disabled => true }
+    it_should_allow_valid_options { options_for 'a-name', :concurrency => 1, :disabled => true, :durable => true }
 
-    it_should_not_allow_invalid_option_values { options_for 'a-name', :disabled => :bacon }
-    it_should_allow_valid_option_values { options_for 'a-name', :disabled => false }
+    it_should_not_allow_invalid_option_values { options_for 'a-name', :disabled => :bacon, :durable => :bacon }
+    it_should_allow_valid_option_values { options_for 'a-name', :disabled => false, :durable => false }
   end
 
   describe "#service" do
@@ -430,7 +430,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
                        :config => { :foo => :bar }
                      } ] ],
         'options_for' => {
-          FakeConstant.new( 'Backgroundable' ) => { :concurrency => 42 },
+          FakeConstant.new( 'Backgroundable' ) => { :concurrency => 42, :durable => false },
           'messaging' => { :default_message_encoding => :biscuit },
           'jobs' => { :concurrency => 55 }
           
@@ -504,6 +504,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
 
     it "should properly set task options from options_for" do
       @metadata['tasks']['Backgroundable']['concurrency'].should == 42
+      @metadata['tasks']['Backgroundable']['durable'].should == false
     end
 
     it "should properly set pooling" do

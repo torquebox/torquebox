@@ -139,6 +139,7 @@
       required: false
     map:
       -concurrency: integer
+      -durable: boolean
 -web:
   arbitrary: true
   dependencies: /application/root

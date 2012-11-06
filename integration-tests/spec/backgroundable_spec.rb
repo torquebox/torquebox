@@ -3,7 +3,7 @@ require 'torquebox-messaging'
 
 describe "backgroundable tests" do
 
-  deploy <<-END.gsub(/^ {4}/,'')
+  app1 = <<-END.gsub(/^ {4}/,'')
     ---
     application:
       root: #{File.dirname(__FILE__)}/../apps/rack/background
@@ -14,6 +14,23 @@ describe "backgroundable tests" do
     ruby:
       version: #{RUBY_VERSION[0,3]}
   END
+
+    app2 = <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/rack/background
+      env: development
+    web:
+      context: /background2
+    tasks:
+      Backgroundable:
+        durable: false
+
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
+  
+  deploy app1, app2 
 
   before(:each) do
     @foreground = TorqueBox::Messaging::Queue.new("queue/foreground")
@@ -64,4 +81,23 @@ describe "backgroundable tests" do
     it_should_behave_like "backgrounded methods"
   end
 
+  context "durability" do
+
+    def queue_mbean(app_name, &block)
+      name = "jms.queue./queues/torquebox/#{app_name}/tasks/torquebox_backgroundable"
+      mbean(%Q{org.hornetq:module=Core,type=Queue,address="#{name}",name="#{name}"}, &block) 
+    end
+    
+    it "should be durable by default" do
+      queue_mbean('backgroundable_tests_1') do |q|
+        q.durable.should be_true
+      end
+    end
+
+    it "should be configurable" do
+      queue_mbean('backgroundable_tests_2') do |q|
+        q.durable.should be_false
+      end
+    end
+  end
 end
