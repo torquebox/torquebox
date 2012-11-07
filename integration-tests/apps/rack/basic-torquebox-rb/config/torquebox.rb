@@ -80,8 +80,11 @@ TorqueBox.configure do
   end
 
   
-  web :context => '/torquebox-rb'
-
+  web  do
+    context '/torquebox-rb'
+    session_timeout '1234 m'
+  end
+  
   authentication :ham, :domain => 'torquebox-auth'
   authentication :biscuit do
     domain 'torquebox-auth'

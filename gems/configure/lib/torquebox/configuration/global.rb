@@ -109,7 +109,7 @@ module TorqueBox
           
           :topic       => destination_entry,
           :web         => OptionsEntry.with_settings(:validate => {
-                                                       :optional => [:context, :host, :rackup, :static, :'session-timeout' ]
+                                                       :optional => [:context, :host, :rackup, :static, :'session-timeout', :session_timeout]
                                                      })
         }
       end.call

@@ -154,3 +154,7 @@
   -session-timeout:
     type: string
     regex: ^[0-9]+(\s*(ms|s|m|h)\s*){0,1}$
+  -session_timeout:
+    type: string
+    regex: ^[0-9]+(\s*(ms|s|m|h)\s*){0,1}$
+

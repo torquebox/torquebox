@@ -166,9 +166,9 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
   describe '#web' do
     before(:each) { @method = 'web' }
     it_should_behave_like 'options'
-
+    
     it_should_not_allow_invalid_options { web :foo => :bar }
-    it_should_allow_valid_options { web :context => '', :host => '', :rackup => '', :static => '' }
+    it_should_allow_valid_options { web :context => '', :host => '', :rackup => '', :static => '', :session_timeout => '1s' }
   end
 
   describe '#pool' do
@@ -467,7 +467,8 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
                                  :client_id => 'client-id',
                                  :config => { :foo => :bar } } ] ] } },
         'web' => { :context => '/bacon',
-                   :host => ['host1', 'host2'] }
+                   :host => ['host1', 'host2'],
+                   :session_timeout => '42m' }       
       }
 
       @metadata = @config.to_metadata_hash
@@ -560,7 +561,9 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
       @metadata['web']['host'].to_a.should == ['host1', 'host2']
     end
 
-    
+    it "should properly set session_timeout" do
+      @metadata['web']['session_timeout'].should == '42m'
+    end
   end
   
 end

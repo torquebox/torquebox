@@ -1,4 +1,4 @@
 web:
   host: mordor.com
   context: /tengwar
-  session-timeout: 10
+  session_timeout: 10

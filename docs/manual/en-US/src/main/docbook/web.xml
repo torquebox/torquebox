@@ -145,7 +145,7 @@
             </row>
 
             <row>
-              <entry><varname>session-timeout</varname></entry>
+              <entry><varname>session_timeout</varname></entry>
 
               <entry>Time (defaults to minutes) for idle sessions to timeout.
               Specified as an integer followed by a units
@@ -229,19 +229,26 @@ end</programlisting></para>
     <literal>ms</literal> = milliseconds, <literal>s</literal> =
     seconds, <literal>m</literal> = minutes and <literal>h</literal> =
     hours. If no unit of measure is provided, minutes will be assumed.
-    Ex: <literal>session-timeout: 10 h</literal> will set the session
+    Ex: <literal>session_timeout: 10 h</literal> will set the session
     timeout to 10 hours.</para>
 
-    <para><example>
-        <title>Example deployment descriptor</title>
-
-        <para>Configuring session timeout:<programlisting>...
+    <para>Configuring session timeout, in YAML:<informalexample>
+        <para><programlisting>...
   
 web:
   host: foobar.com
   context: /tacos
-  session-timeout: 10</programlisting></para>
-      </example></para>
+  session_timeout: 10 m</programlisting></para>
+      </informalexample>
+And via the DSL: <informalexample>
+          <para><programlisting>TorqueBox.configure do
+  web do
+    host "foobar.com"
+    context "/tacos"
+    session_timeout "10 m"
+  end
+end</programlisting></para>
+        </informalexample></para>
   </section>
 
   <section id="torque-box-store">

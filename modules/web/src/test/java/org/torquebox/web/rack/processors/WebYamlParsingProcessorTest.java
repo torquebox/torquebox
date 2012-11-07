@@ -80,6 +80,17 @@ public class WebYamlParsingProcessorTest extends AbstractDeploymentProcessorTest
     }
     
     @Test
+    public void testOldStyleDashedSessionTimeout() throws Exception {
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "timeout-dashed-web.yml" );
+
+        RackMetaData rackMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
+
+        assertNotNull( rackMetaData );
+
+        assertEquals( 600, rackMetaData.getSessionTimeout() );
+    }
+    
+    @Test
     public void testValidWebYmlCustomStaticPathPrefix() throws Exception {
         MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "static-path-web.yml" );
 

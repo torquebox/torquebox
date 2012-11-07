@@ -9,7 +9,7 @@ describe "sinatra with TorqueBox sessions" do
       env: development
     web:
       context: /sinatra-sessions
-      session-timeout: 2m
+      session_timeout: 2m
     ruby:
       version: #{RUBY_VERSION[0,3]}
 
