@@ -82,6 +82,12 @@ module TorqueBox
       self.send(method, *args, &block)
     end
 
+    # Make the Logger compatible with Rack::CommonLogger
+    #
+    def write(message)
+      info message.strip
+    end
+
     private
 
     def params_for_logger(args, block)
