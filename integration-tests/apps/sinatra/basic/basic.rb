@@ -25,3 +25,7 @@ end
 post '/poster' do
   haml :posted
 end
+
+get '/log-marker' do
+  erb :index
+end

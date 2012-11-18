@@ -5,8 +5,13 @@ require 'torquebox-rake-support'
 
 $: << File.dirname( __FILE__ )
 
-jboss_home = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss' ) )
-jboss_log_dir = File.join( jboss_home, 'standalone', 'log' )
+def jboss_home
+  File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss' ) )
+end
+
+def jboss_log_dir
+  File.join( jboss_home, 'standalone', 'log' )
+end
 
 TorqueSpec.local {
   require 'spec_helper_integ'
