@@ -46,7 +46,7 @@ public class InjectionAnalyzerVirtualFileVisitor implements VirtualFileVisitor {
         if ( shouldVisit(file) ) {
             try {
                 this.byteCodeVisitor.reset();
-                this.analyzer.analyze( file, this.byteCodeVisitor, this.rubyVersion );
+                this.analyzer.analyze( file, this.byteCodeVisitor.getNodeVisitor(), this.rubyVersion );
                 this.index.addInjectables( file, this.byteCodeVisitor.getInjectables() );
             } catch (IOException e) {
                 throw new InjectionException( e );

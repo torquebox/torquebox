@@ -72,7 +72,7 @@ public class InjectionAnalyzerTest {
 
     protected Set<Injectable> analyzeScript(String name, Version version) throws Exception {
         InputStream script = openScript( name );
-        analyzer.analyze( "testfile.rb", script, this.visitor, version );
+        analyzer.analyze( "testfile.rb", script, this.visitor.getNodeVisitor(), version );
         return this.visitor.getInjectables();
     }
 
@@ -177,7 +177,7 @@ public class InjectionAnalyzerTest {
         
         RubyProc proc = (RubyProc) ruby.evalScriptlet( "Proc.new do |arg1, arg2|\n  fetch('/queues/foo')\nend");
         this.visitor.assumeMarkerSeen();
-        analyzer.analyze( proc, this.visitor );
+        analyzer.analyze( proc, this.visitor.getNodeVisitor() );
         
         Set<Injectable> injectables = this.visitor.getInjectables();
         

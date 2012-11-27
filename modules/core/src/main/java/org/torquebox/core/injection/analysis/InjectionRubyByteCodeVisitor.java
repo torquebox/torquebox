@@ -24,6 +24,7 @@ import static org.torquebox.core.injection.analysis.RubyInjectionUtils.getString
 import static org.torquebox.core.injection.analysis.RubyInjectionUtils.isLegalInjection;
 import static org.torquebox.core.injection.analysis.RubyInjectionUtils.isValidInjectCall;
 
+import java.lang.reflect.Proxy;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +34,7 @@ import org.jboss.msc.inject.InjectionException;
 import org.jruby.ast.ArrayNode;
 import org.jruby.ast.FCallNode;
 import org.jruby.ast.Node;
+import org.jruby.ast.visitor.NodeVisitor;
 import org.torquebox.core.analysis.DefaultNodeVisitor;
 
 /**
@@ -50,11 +52,12 @@ public class InjectionRubyByteCodeVisitor extends DefaultNodeVisitor {
      *            The analyzer.
      */
     public InjectionRubyByteCodeVisitor(InjectionAnalyzer analyzer) {
+        this.nodeVisitor = createNodeVisitor();
         this.analyzer = analyzer;
     }
 
     @Override
-    public Object visitFCallNode(FCallNode node) throws InjectionException {
+    public Object visitFCallNode(NodeVisitor proxy, FCallNode node) throws InjectionException {
         String callName = node.getName();
 
         if (!this.markerSeen && (callName.equals( "include" ) || callName.equals( "extend" ))) {
@@ -104,7 +107,7 @@ public class InjectionRubyByteCodeVisitor extends DefaultNodeVisitor {
                     this.injectables.add( injectable );
                 }
             } else {
-                defaultVisitNode( node );
+                defaultVisitNode( proxy, node );
             }
         }
 
@@ -131,10 +134,27 @@ public class InjectionRubyByteCodeVisitor extends DefaultNodeVisitor {
         this.injectables.clear();
     }
 
+    public NodeVisitor getNodeVisitor() {
+        return this.nodeVisitor;
+    }
+    
+    private NodeVisitor createNodeVisitor() {
+        return (NodeVisitor) Proxy.newProxyInstance( NodeVisitor.class.getClassLoader(),
+                new Class[] { NodeVisitor.class },
+                new InjectionRubyByteCodeVisitorHandler( this ) );
+    }
+    
+    public static class InjectionRubyByteCodeVisitorHandler extends DefaultNodeVisitorHandler {
+        public InjectionRubyByteCodeVisitorHandler(InjectionRubyByteCodeVisitor visitor) {
+            super( visitor );
+        }
+    }
+
     private static final String INJECTION_PREFIX = "fetch_";
     private static final String OLD_INJECTION_PREFIX = "inject_";
     public static final String TORQUEBOX_MARKER_MODULE = "TorqueBox::Injectors";
 
+    private NodeVisitor nodeVisitor;
     private InjectionAnalyzer analyzer;
     private boolean markerSeen = false;
 

@@ -80,7 +80,7 @@ public class InjectableHandlerTest {
     @Test
     public void testGenericAnalysis() throws Exception {
         String script = readScript( "generic_injection.rb" );
-        analyzer.analyze( "generic_injection.rb", script.toString(), this.visitor, Version.V1_8 );
+        analyzer.analyze( "generic_injection.rb", script.toString(), this.visitor.getNodeVisitor(), Version.V1_8 );
         
         Set<Injectable> injectables = this.visitor.getInjectables();
         

@@ -48,7 +48,7 @@ public class RuntimeInjectionAnalyzer {
             RubyProc proc = (RubyProc) arg;
             InjectionRubyByteCodeVisitor visitor = new InjectionRubyByteCodeVisitor( this.analyzer );
             visitor.assumeMarkerSeen();
-            this.analyzer.analyze( proc, visitor );
+            this.analyzer.analyze( proc, visitor.getNodeVisitor() );
             Set<Injectable> injectables = visitor.getInjectables();
             InjectionRegistry registry = new InjectionRegistry();
 
