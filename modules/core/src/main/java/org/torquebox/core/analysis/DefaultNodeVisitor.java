@@ -44,7 +44,7 @@ public class DefaultNodeVisitor implements NodeVisitor {
         if (trace) {
             StringBuilder indent = new StringBuilder();
 
-            if (!node.isInvisible()) {
+            if (!(node instanceof InvisibleNode)) {
                 for (int i = 0; i < this.indentLevel; ++i) {
                     indent.append( "    " );
                 }
@@ -606,6 +606,18 @@ public class DefaultNodeVisitor implements NodeVisitor {
     // No @Override annotation since this method only exists in
     // NodeVisitor under JRuby 1.7
     public Object visitLambdaNode(LambdaNode iVisited) {
+        return defaultVisitNode( iVisited );
+    }
+
+    // No @Override annotation since this method only exists in
+    // NodeVisitor under JRuby 1.7.1
+    public Object visitKeywordArgNode(KeywordArgNode iVisited) {
+        return defaultVisitNode( iVisited );
+    }
+
+    // No @Override annotation since this method only exists in
+    // NodeVisitor under JRuby 1.7.1
+    public Object visitKeywordRestArgNode(KeywordRestArgNode iVisited) {
         return defaultVisitNode( iVisited );
     }
 }
