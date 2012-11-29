@@ -44,7 +44,7 @@ public class RubyServiceTest {
         this.componentResolver = new ComponentResolver( false );
         this.componentResolver.setComponentInstantiator( this.componentClass );
         this.componentResolver.setComponentWrapperClass( ServiceComponent.class );
-        this.service = new RubyService();
+        this.service = new RubyService( "test service" );
         this.service.setComponentResolver( this.componentResolver );
         this.service.setRubyRuntimePool( new SharedRubyRuntimePool( this.ruby ) );
     }
@@ -71,6 +71,7 @@ public class RubyServiceTest {
         this.componentClass.setRequirePath( "org/torquebox/services/test_service" );
         this.componentResolver.setInitializeParams( Collections.singletonMap( "foo", 42 ) );
 
+        assertEquals( "test service", service.getName() );
         service.create();
         service.start();
         Long foo = (Long) service.getComponent()._callRubyMethod( "[]", new Object[] { "foo" } );
@@ -105,6 +106,25 @@ public class RubyServiceTest {
         // Will throw an exception if we try to call stop on the Ruby object
         service.stop();
         
+        service.destroy();
+    }
+    
+    @Test
+    public void testOnlyStartsOnce() throws Exception {
+        this.componentClass.setClassName( "TestService" );
+        this.componentClass.setRequirePath( "org/torquebox/services/test_service" );
+        service.create();
+        
+        service.start();
+        Long start_count = (Long) service.getComponent()._callRubyMethod( "start_count" );
+        assertEquals( new Long( 1 ), start_count );
+        
+        // Ensure start doesn't actually start it if already started
+        service.start();
+        start_count = (Long) service.getComponent()._callRubyMethod( "start_count" );
+        assertEquals( new Long( 1 ), start_count );
+        
+        service.stop();
         service.destroy();
     }
     

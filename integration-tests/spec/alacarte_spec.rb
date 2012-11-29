@@ -54,6 +54,25 @@ describe "jobs alacarte" do
       error = errorq.receive( :timeout => 120_000 )
     end
   end
+
+  remote_describe "TorqueBox::ScheduledJob" do
+    it "should list jobs" do
+      jobs = TorqueBox::ScheduledJob.list
+      jobs.count.should == 3
+      jobs.map { |j| j.name }.should =~ [ 'job.one', 'job.two', 'job.three' ]
+    end
+
+    it "should lookup a job by name" do
+      job = TorqueBox::ScheduledJob.lookup( 'job.one' )
+      job.name.should == 'job.one'
+      job.status.should == 'STARTED'
+      job.stop
+      job.status.should == 'STOPPED'
+      job.start
+      job.status.should == 'STARTED'
+      job.should be_started
+    end
+  end
 end
 
 describe "modular jobs alacarte" do
@@ -105,6 +124,25 @@ describe "services alacarte" do
   END
 
   it_should_behave_like "alacarte"
+
+  remote_describe "TorqueBox::Service" do
+    it "should list services" do
+      services = TorqueBox::Service.list
+      services.count.should == 2
+      services.map { |s| s.name }.should =~ [ 'SimpleService', 'TorqueSpec::Daemon' ]
+    end
+
+    it "should lookup a service by name" do
+      service = TorqueBox::Service.lookup( 'SimpleService' )
+      service.name.should == 'SimpleService'
+      service.status.should == 'STARTED'
+      service.stop
+      service.status.should == 'STOPPED'
+      service.start
+      service.status.should == 'STARTED'
+      service.should be_started
+    end
+  end
 end
 
 describe "services alacarte with gemfile" do

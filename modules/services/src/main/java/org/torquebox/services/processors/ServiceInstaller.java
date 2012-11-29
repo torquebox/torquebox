@@ -68,7 +68,7 @@ public class ServiceInstaller implements DeploymentUnitProcessor {
         
         ServiceName serviceCreateName = ServicesServices.serviceCreateRubyService( unit, serviceMetaData.getName() );
         ServiceName serviceStartName = ServicesServices.serviceStartRubyService( unit, serviceMetaData.getName() );
-        RubyService service = new RubyService();
+        RubyService service = new RubyService( serviceMetaData.getName() );
         
         RubyServiceCreate serviceCreate = new RubyServiceCreate( service );
         ServiceBuilder<RubyService> builderCreate = phaseContext.getServiceTarget().addService( serviceCreateName, serviceCreate );

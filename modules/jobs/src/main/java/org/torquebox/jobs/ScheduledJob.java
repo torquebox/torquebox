@@ -40,9 +40,11 @@ public class ScheduledJob extends BaseScheduledJob implements ScheduledJobMBean 
     }
    
     public synchronized void start() throws ParseException, SchedulerException {
-        super.start();
-        JobScheduler jobScheduler = (JobScheduler)((Value)getJobSchedulerInjector()).getValue();
-        jobScheduler.addComponentResolver( getKey(), this.componentResolverInjector.getValue() );
+        if (!isStarted()) {
+            super.start();
+            JobScheduler jobScheduler = (JobScheduler)((Value)getJobSchedulerInjector()).getValue();
+            jobScheduler.addComponentResolver( getKey(), this.componentResolverInjector.getValue() );
+        }
     }
 
     public String getRubyClassName() {

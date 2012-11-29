@@ -35,7 +35,7 @@ public class ServicesServices {
     }
     
     public static ServiceName serviceCreateRubyService(DeploymentUnit unit, String serviceName ) {
-        return unit.getServiceName().append( "service " ).append( serviceName ).append( "create" );
+        return unit.getServiceName().append( "service" ).append( serviceName ).append( "create" );
     }
     
     public static ServiceName serviceStartRubyService(DeploymentUnit unit, String serviceName ) {

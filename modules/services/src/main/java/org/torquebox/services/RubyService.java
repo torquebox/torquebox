@@ -26,14 +26,20 @@ import org.torquebox.services.component.ServiceComponent;
 
 public class RubyService implements RubyServiceMBean {
 
+    public RubyService(String name) {
+        this.name = name;
+    }
+
     public void create() throws Exception {
         this.runtime = this.runtimePool.borrowRuntime( this.resolver.getComponentName() );
         this.servicesComponent = (ServiceComponent) this.resolver.resolve( runtime );
     }
 
     public void start() {
-        this.servicesComponent.start();
-        this.started = true;
+        if (!isStarted()) {
+            this.servicesComponent.start();
+            this.started = true;
+        }
     }
 
     public void stop() {
@@ -47,6 +53,10 @@ public class RubyService implements RubyServiceMBean {
         if (this.runtime != null) {
             this.runtimePool.returnRuntime( runtime );
         }
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     @Override
@@ -84,6 +94,7 @@ public class RubyService implements RubyServiceMBean {
         return this.servicesComponent;
     }
 
+    private String name;
     private boolean started;
 
     private ComponentResolver resolver;

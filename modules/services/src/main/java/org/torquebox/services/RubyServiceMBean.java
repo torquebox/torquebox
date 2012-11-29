@@ -26,6 +26,7 @@ public interface RubyServiceMBean {
     boolean isStarted();
     boolean isStopped();
     
+    String getName();
     String getRubyClassName();
     String getStatus() throws Exception;
 
