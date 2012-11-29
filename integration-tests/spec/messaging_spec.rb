@@ -109,7 +109,7 @@ remote_describe "in-container messaging tests" do
   end
 
   describe "decode" do
-    [:marshal, :marshal_base64, :clojure, :json, :text].each do |encoding|
+    [:marshal, :marshal_base64, :edn, :json, :text].each do |encoding|
       it "should be callable more than once for the #{encoding} encoding" do
         with_queue("/queues/decode") do |q|
           value = encoding == :text ? "foo" : ["foo"]
@@ -179,7 +179,7 @@ remote_describe "in-container messaging tests" do
 
   describe "sending and receiving" do
 
-    [:clojure, :json].each do |encoding|
+    [:edn, :json].each do |encoding|
 
       context "with an encoding of #{encoding}" do
         it "should be able to publish to and receive from a queue" do

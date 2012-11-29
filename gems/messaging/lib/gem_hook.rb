@@ -28,7 +28,7 @@ require 'torquebox/messaging/session'
 
 require 'torquebox/messaging/message'
 require 'torquebox/messaging/json_message'
-require 'torquebox/messaging/clojure_message'
+require 'torquebox/messaging/edn_message'
 require 'torquebox/messaging/text_message'
 require 'torquebox/messaging/marshal_base64_message'
 require 'torquebox/messaging/marshal_message'

@@ -15,23 +15,23 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'clj'
+require 'edn'
 
 module TorqueBox
   module Messaging
-    class ClojureMessage < Message
-      ENCODING = :clojure
+    class EdnMessage < Message
+      ENCODING = :edn
       JMS_TYPE = :text
 
       def encode(message)
-        @jms_message.text = Clojure.dump(message)
+        @jms_message.text = message.to_edn
       end
 
       def decode
-        Clojure.parse(@jms_message.text) unless @jms_message.text.nil?
+        EDN.read(@jms_message.text) unless @jms_message.text.nil?
       end
     end
 
-    Message.register_encoding( ClojureMessage )
+    Message.register_encoding( EdnMessage )
   end
 end

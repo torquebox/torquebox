@@ -32,8 +32,8 @@
 
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>clj</artifactId>
-      <version>0.0.5.6</version>
+      <artifactId>edn</artifactId>
+      <version>1.0.0</version>
       <type>gem</type>
     </dependency>
 
