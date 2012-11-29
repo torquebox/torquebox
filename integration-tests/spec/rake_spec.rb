@@ -144,7 +144,9 @@ describe "rake tasks" do
   end
 
   def rake(task)
-    integ_jruby("-S rake -f #{File.dirname(__FILE__)}/../apps/rails3.1/basic/Rakefile #{task} --trace")
+    with_bundle_gemfile do
+      integ_jruby("#{root_dir}/bin/rake -f #{root_dir}/Rakefile #{task} --trace")
+    end
   end
 
   private
@@ -195,9 +197,17 @@ describe "rake tasks" do
       page.source.should be_empty
     end
 
-  def root_dir
-    File.join( File.dirname(__FILE__), '..', 'apps', 'rails3.1', 'basic' )
-  end
+    def root_dir
+      File.join( File.dirname(__FILE__), '..', 'apps', 'rails3.1', 'basic' )
+    end
+
+    def with_bundle_gemfile
+      old_bundle_gemfile = ENV['BUNDLE_GEMFILE']
+      ENV['BUNDLE_GEMFILE'] = File.join( root_dir, 'Gemfile' )
+      yield
+    ensure
+      ENV['BUNDLE_GEMFILE'] = old_bundle_gemfile
+    end
 
 end
 
