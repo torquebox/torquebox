@@ -40,6 +40,7 @@ import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.DuplicateServiceException;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
@@ -157,10 +158,14 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
         final ServiceName hornetQServiceName = org.jboss.as.messaging.MessagingServices.getHornetQServiceName( "default" );
         final ServiceName serviceName = HornetQStartupPoolService.getServiceName( hornetQServiceName );
         HornetQStartupPoolService service = new HornetQStartupPoolService();
-        newControllers.add( context.getServiceTarget().addService( serviceName, service )
-                .addListener( verificationHandler )
-                .setInitialMode( Mode.ON_DEMAND )
-                .install() );
+        try {
+            newControllers.add( context.getServiceTarget().addService( serviceName, service )
+                                .addListener( verificationHandler )
+                                .setInitialMode( Mode.ON_DEMAND )
+                                .install() );
+        } catch (DuplicateServiceException ignored) {
+            //can happen if overlaid with Immutant
+        }
     }
 
     protected ServiceName getJMSConnectionFactoryServiceName() {
