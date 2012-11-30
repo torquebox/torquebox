@@ -17,6 +17,11 @@
 
 require 'torquebox/stomp/jms_stomplet'
 require 'torquebox/stomp/message'
-require 'torquebox/stomp/ext/stomplet_config'
-require 'torquebox/stomp/ext/stomp_session'
 require 'torquebox/stomp/rack/stomp_javascript_client_provider'
+begin
+  require 'torquebox/stomp/ext/stomplet_config'
+  require 'torquebox/stomp/ext/stomp_session'
+rescue NameError
+  # This is expected if torquebox-stomp gets loaded when not running
+  # inside TorqueBox, like in Rake tasks.
+end
