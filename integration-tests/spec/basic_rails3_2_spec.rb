@@ -4,7 +4,7 @@ require 'set'
 describe 'basic rails3.2 test' do
   mutable_app 'rails3.2/basic'
 
-    deploy <<-END.gsub(/^ {4}/,'')
+  deploy <<-END.gsub(/^ {4}/,'')
     ---
     application:
       RAILS_ROOT: #{File.dirname(__FILE__)}/../target/apps/rails3.2/basic
@@ -85,4 +85,28 @@ describe 'basic rails3.2 test' do
     page.driver.cookies['foo3'].value.should == 'bar3'
   end
 
+  it 'should use config.ru' do
+    visit '/basic-rails32'
+    page.find('#rackup_file').text.should == 'config.ru'
+  end
+
+end
+
+describe 'basic rails3.2 test with alternate rackup file' do
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails3.2/basic
+      RAILS_ENV: development
+    web:
+      context: /basic-rails32
+      rackup: alternate_config.ru
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
+
+  it 'should use alternate_config.ru' do
+    visit '/basic-rails32'
+    page.find('#rackup_file').text.should == 'alternate_config.ru'
+  end
 end

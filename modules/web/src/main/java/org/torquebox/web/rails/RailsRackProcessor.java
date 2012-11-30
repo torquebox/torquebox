@@ -40,9 +40,7 @@ public class RailsRackProcessor implements DeploymentUnitProcessor {
             return;
         }
         
-        if (railsAppMetaData.isRails3()) {
-            rackAppMetaData.setRackUpScriptLocation( "config.ru" );
-        } else {
+        if (!railsAppMetaData.isRails3()) {
             rackAppMetaData.setRackUpScript( getRackUpScript( rackAppMetaData.getContextPath() ) );
         }
     }
