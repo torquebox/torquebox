@@ -58,7 +58,14 @@ public class RackEnvironment {
         rackVersion.add( RubyFixnum.one( ruby ) );
         rackVersion.add( RubyFixnum.one( ruby ) );
 
-        String pathInfo = (request.getPathInfo() == null ? "" : request.getPathInfo());
+        // Don't use request.getPathInfo because that gets decoded by the container
+        String pathInfo = request.getRequestURI();
+        if (pathInfo.startsWith( request.getContextPath() )) {
+            pathInfo = pathInfo.substring( request.getContextPath().length() );
+        }
+        if (pathInfo.startsWith( request.getServletPath() )) {
+            pathInfo = pathInfo.substring( request.getServletPath().length() );
+        }
 
         env.put( "REQUEST_METHOD", request.getMethod() );
         env.put( "SCRIPT_NAME", request.getContextPath() + request.getServletPath() );

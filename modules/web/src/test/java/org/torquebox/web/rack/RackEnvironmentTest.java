@@ -68,8 +68,9 @@ public class RackEnvironmentTest extends AbstractRubyTestCase {
 
         when( servletRequest.getInputStream() ).thenReturn( inputStream );
         when( servletRequest.getMethod() ).thenReturn( "GET" );
-        when( servletRequest.getContextPath() ).thenReturn( "/" );
-        when( servletRequest.getServletPath() ).thenReturn( "myapp/" );
+        when( servletRequest.getRequestURI() ).thenReturn( "/myapp/the_path" );
+        when( servletRequest.getContextPath() ).thenReturn( "/myapp" );
+        when( servletRequest.getServletPath() ).thenReturn( "/" );
         when( servletRequest.getPathInfo() ).thenReturn( "the_path" );
         when( servletRequest.getQueryString() ).thenReturn( "cheese=cheddar&bob=mcwhirter" );
         when( servletRequest.getServerName() ).thenReturn( "torquebox.org" );
@@ -129,8 +130,9 @@ public class RackEnvironmentTest extends AbstractRubyTestCase {
 
         when( servletRequest.getInputStream() ).thenReturn( inputStream );
         when( servletRequest.getMethod() ).thenReturn( "GET" );
-        when( servletRequest.getContextPath() ).thenReturn( "/" );
-        when( servletRequest.getServletPath() ).thenReturn( "myapp/" );
+        when( servletRequest.getRequestURI() ).thenReturn( "/myapp/the_path" );
+        when( servletRequest.getContextPath() ).thenReturn( "/myapp" );
+        when( servletRequest.getServletPath() ).thenReturn( "/" );
         when( servletRequest.getPathInfo() ).thenReturn( "the_path" );
         when( servletRequest.getQueryString() ).thenReturn( "cheese=cheddar&bob=mcwhirter" );
         when( servletRequest.getServerName() ).thenReturn( "torquebox.org" );
@@ -182,6 +184,9 @@ public class RackEnvironmentTest extends AbstractRubyTestCase {
 
         when( servletRequest.getInputStream() ).thenReturn( inputStream );
         when( servletRequest.getContentLength() ).thenReturn( -1 );
+        when( servletRequest.getRequestURI() ).thenReturn( "/myapp/the_path" );
+        when( servletRequest.getContextPath() ).thenReturn( "/myapp" );
+        when( servletRequest.getServletPath() ).thenReturn( "/" );
 
         RackEnvironment env = new RackEnvironment( ruby, servletContext, servletRequest );
         RubyHash envHash = env.getEnv();
@@ -197,6 +202,9 @@ public class RackEnvironmentTest extends AbstractRubyTestCase {
         final ServletInputStream inputStream = new MockServletInputStream( new ByteArrayInputStream( "".getBytes() ) );
 
         when( servletRequest.getInputStream() ).thenReturn( inputStream );
+        when( servletRequest.getRequestURI() ).thenReturn( "/myapp/the_path" );
+        when( servletRequest.getContextPath() ).thenReturn( "/myapp" );
+        when( servletRequest.getServletPath() ).thenReturn( "/" );
 
         // This is hacky to do via reflection but we've had a leak in this specific HashMap
         // and need to ensure it's fixed

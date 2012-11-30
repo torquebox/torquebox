@@ -9,6 +9,8 @@ shared_examples_for "basic rack" do
 
   it "should work" do
     page.find("#success")[:class].strip.should == 'basic-rack'
+    page.find("#path_info").text.strip.should == '/'
+    page.find("#request_uri").text.strip.should == '/basic-rack/'
   end
 
   it "should be running under the proper ruby version" do
@@ -21,6 +23,12 @@ shared_examples_for "basic rack" do
 
   it "should set ENV['TORQUEBOX_CONTEXT'] to 'web'" do
     page.find("#context").text.strip.should == 'web'
+  end
+
+  it "should not decode characters in URL" do
+    visit "/basic-rack/foo%23%2C"
+    page.find("#path_info").text.strip.should == '/foo%23%2C'
+    page.find("#request_uri").text.strip.should == '/basic-rack/foo%23%2C'
   end
 
 end
