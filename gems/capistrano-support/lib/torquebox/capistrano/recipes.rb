@@ -51,6 +51,11 @@ module Capistrano
           dd['environment']['RAILS_ENV'] = rails_env
         end
 
+	if (exists?( :stomp_host ) )
+	  dd['stomp'] ||= {}
+	  dd['stomp']['host'] = stomp_host
+	end
+
         dd
     end
   end
