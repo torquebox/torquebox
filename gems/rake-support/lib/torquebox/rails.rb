@@ -23,6 +23,7 @@ rescue LoadError
 end
 
 module TorqueBox
+  # @api private
   class Rails
 
     def self.new_app( root )

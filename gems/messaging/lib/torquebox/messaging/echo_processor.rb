@@ -1,7 +1,8 @@
-# A message processor that echos any messages sent to it back to
-# another queue specified by the response_queue configuration option
+# @api private
 module Torquebox
   module Messaging
+    # A message processor that echos any messages sent to it back to
+    # another queue specified by the response_queue configuration option
     class EchoProcessor < TorqueBox::Messaging::MessageProcessor
 
       def initialize(options={})

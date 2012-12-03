@@ -28,6 +28,7 @@ module TorqueBox
 
     # These are only mixed in when ActiveRecord is loaded. They make
     # ActiveRecord's transactions distributed.
+    # @api private
     module ActiveRecordAdapters
 
       module Connection
@@ -123,6 +124,7 @@ end
 
 if TORQUEBOX_XA_JDBC
   module ActiveRecord
+    # @api private
     module ConnectionAdapters
       class JdbcAdapter
         include TorqueBox::Transactions::ActiveRecordAdapters::Connection

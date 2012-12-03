@@ -20,6 +20,7 @@ require 'torquebox/configuration'
 
 module TorqueBox
   module Configuration
+    # @api private
     class GlobalConfiguration < TorqueBox::Configuration::Configuration
       def self.load_configuration(file)
         config = new

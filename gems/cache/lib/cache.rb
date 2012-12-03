@@ -23,6 +23,7 @@ require 'sequence'
 module TorqueBox
   module Infinispan
 
+    # @api private
     class ContainerTransactionManagerLookup
       include TorqueBox::Injectors
       begin

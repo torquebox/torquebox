@@ -17,6 +17,7 @@
 
 require 'capistrano'
 
+# @api private
 module Capistrano
   class Configuration
     def create_deployment_descriptor( root )

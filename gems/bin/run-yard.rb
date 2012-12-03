@@ -29,6 +29,7 @@ OUTPUT_DIR = "target/yardocs/"
 OPTIONS = [
            "--title", "TorqueBox Gems Documentation",
            "-o", OUTPUT_DIR,
+           "--query", "@api.text != 'private'",
            FILES
           ]
 

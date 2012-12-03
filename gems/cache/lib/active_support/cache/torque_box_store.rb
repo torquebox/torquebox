@@ -19,8 +19,10 @@ require 'active_support/cache'
 require 'torquebox/kernel'
 require 'cache'
 
+# @api private
 module ActiveSupport
   module Cache
+    # @api public
     class TorqueBoxStore < Store
 
       SECONDS = java.util.concurrent.TimeUnit::SECONDS

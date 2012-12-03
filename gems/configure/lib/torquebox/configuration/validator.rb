@@ -19,6 +19,7 @@ require 'torquebox/configuration'
 
 module TorqueBox
   module Configuration
+    # @api private
     class Validator
       
       def initialize(ruleset, entry, options_to_validate)

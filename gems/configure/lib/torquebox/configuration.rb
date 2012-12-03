@@ -34,6 +34,7 @@ module TorqueBox
       FakeConstant.new( name ).to_const
     end
 
+    # @api private
     class Entry < BlankSlate
       def initialize(name, config, entry_map, options = { })
         @name = name
@@ -133,6 +134,7 @@ module TorqueBox
       end
     end
 
+    # @api private
     class OptionsEntry < Entry
       def process_args(args)
         hash = args.first || { }
@@ -141,6 +143,7 @@ module TorqueBox
       end
     end
 
+    # @api private
     class ThingWithOptionsEntry < Entry
       def process_args(args)
         @thing, hash = args
@@ -157,19 +160,22 @@ module TorqueBox
       end
     end
 
+    # @api private
     class ThingsEntry < Entry
       def process_args(args)
         @entry_options = args.map(&:to_s)
         local_config
       end
     end
-    
+
+    # @api private
     class Configuration < Hash
       def initialize
         super { |hash, key| hash[key] = { } }
       end
     end
 
+    # @api private
     class FakeConstant
       def initialize(name)
         @name = name.to_s

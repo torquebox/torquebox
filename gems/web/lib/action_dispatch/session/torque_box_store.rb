@@ -15,8 +15,10 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+# @api private
 module ActionDispatch
   module Session
+    # @api public
     class TorqueBoxStore < TorqueBox::Session::ServletStore
     end
   end
