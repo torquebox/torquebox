@@ -16,9 +16,15 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 module TorqueBox
+  # This class is a Ruby API to manipulating TorqueBox services (daemons).
   class Service
     class << self
 
+      # List all services of this application.
+      #
+      # @return [Array<org.torquebox.services.RubyService>] the list
+      #   of RubyService instances - see {TorqueBox::Service.lookup}
+      #   for more details on these instances
       def list
         prefix = service_prefix.canonical_name
         suffix = '.create'
@@ -31,6 +37,29 @@ module TorqueBox
         end
       end
 
+      # Lookup a service of this application by name.
+      #
+      # @param [String] name the service's name (as given in
+      #   torquebox.rb or torquebox.yml)
+      #
+      # @return [org.torquebox.services.RubyService] The RubyService
+      #   instance.
+      #
+      # @note The RubyService instances returned by this and the
+      #   {TorqueBox::Service.list} methods are not instances of this
+      #   class but are instead Java objects of type
+      #   org.torquebox.services.RubyService. There are more methods
+      #   available on these instances than what's shown in the
+      #   example here, but only the methods shown are part of our
+      #   documented API.
+      #
+      # @example Stop a running service
+      #   service = TorqueBox::Service.lookup('my_service')
+      #   service.name => 'my_service'
+      #   service.started? => true
+      #   service.status => 'STARTED'
+      #   service.stop
+      #   service.status => 'STOPPED'
       def lookup(name)
         service_name = service_prefix.append(name).append('create')
         service = TorqueBox::MSC.get_service(service_name)

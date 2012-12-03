@@ -16,9 +16,16 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 module TorqueBox
+  # This class is a Ruby API to manipulating TorqueBox scheduled jobs.
   class ScheduledJob
     class << self
 
+      # List all scheduled jobs of this application.
+      #
+      # @return [Array<org.torquebox.jobs.ScheduledJob>] the list of
+      #   ScheduledJob instances - see
+      #   {TorqueBox::ScheduledJob.lookup} for more details on these
+      #   instances
       def list
         prefix = job_prefix.canonical_name
         service_names = TorqueBox::MSC.service_names.select do |service_name|
@@ -30,6 +37,28 @@ module TorqueBox
         end
       end
 
+      # Lookup a scheduled job of this application by name.
+      #
+      # @param [String] name the scheduled job's name (as given in
+      #   torquebox.rb or torquebox.yml)
+      #
+      # @return [org.torquebox.jobs.ScheduledJob] The ScheduledJob instance.
+      #
+      # @note The ScheduledJob instances returned by this and the
+      #   {TorqueBox::ScheduledJob.list} methods are not instances of
+      #   this class but are instead Java objects of type
+      #   org.torquebox.jobs.ScheduledJob. There are more methods
+      #   available on these instances than what's shown in the
+      #   example here, but only the methods shown are part of our
+      #   documented API.
+      #
+      # @example Stop a scheduled job
+      #   job = TorqueBox::ScheduledJob.lookup('my_job')
+      #   job.name => 'my_job'
+      #   job.started? => true
+      #   job.status => 'STARTED'
+      #   job.stop
+      #   job.status => 'STOPPED'
       def lookup(name)
         service_name = job_prefix.append(name)
         service = TorqueBox::MSC.get_service(service_name)
