@@ -82,7 +82,7 @@ public class GlobalRuby implements GlobalRubyMBean, Service<GlobalRuby> {
             Thread.sleep( 50 );
         }
         
-        return RuntimeHelper.evalScriptlet( this.runtime, script );
+        return RuntimeHelper.evalScriptlet( this.runtime, script, false );
     }
 
     /**

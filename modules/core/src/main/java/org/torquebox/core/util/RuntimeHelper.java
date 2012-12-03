@@ -166,12 +166,17 @@ public class RuntimeHelper {
     // ------------------------------------------------------------------------
 
     public static IRubyObject evalScriptlet(final Ruby ruby, final String script) {
+        return evalScriptlet( ruby, script, true );
+    }
+
+    public static IRubyObject evalScriptlet(final Ruby ruby, final String script, final boolean logErrors) {
         return withinContext( ruby, new Callable<IRubyObject>() {
             public IRubyObject call() throws Exception {
                 try {
                     return ruby.evalScriptlet( script );
                 } catch (Exception e) {
-                    log.errorf( e, "Error during evaluation: %s", script );
+                    if (logErrors)
+                        log.errorf( e, "Error during evaluation: %s", script );
                     throw e;
                 }
             }
