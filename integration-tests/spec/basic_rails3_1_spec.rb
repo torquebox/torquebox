@@ -26,16 +26,32 @@ describe "basic rails3.1 test" do
   end
 
   if RUBY_VERSION[0,3] == '1.9'
-    it "should support streaming templates" do
-      uri = URI.parse(page.driver.send(:url, "/basic-rails31/root/streaming"))
-      Net::HTTP.get_response(uri) do |response|
-        chunk_count, body = 0, ""
-        response.read_body do |chunk|
-          chunk_count += 1
-          body += chunk
+    context 'streaming' do
+
+      it "should work for small responses" do
+        verify_streaming("/basic-rails31/root/streaming?count=0")
+      end
+
+      it "should work for large responses" do
+        verify_streaming("/basic-rails31/root/streaming?count=500")
+      end
+
+      def verify_streaming(url)
+        uri = URI.parse(page.driver.send(:url, url))
+        Net::HTTP.get_response(uri) do |response|
+          response.should be_chunked
+          response.header['transfer-encoding'].should == 'chunked'
+          chunk_count, body = 0, ""
+          response.read_body do |chunk|
+            chunk_count += 1
+            body += chunk
+          end
+          body.should include('It works')
+          body.each_line do |line|
+            line.should_not match(/^\d+\s*$/)
+          end
+          chunk_count.should be > 1
         end
-        body.should include('It works')
-        chunk_count.should be > 1
       end
     end
   end

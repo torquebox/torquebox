@@ -1,3 +1,6 @@
+<% (params[:count] || 500).to_i.times do |i| %>
+  Some text to make the response longer - <%= i %>
+<% end %> 
 <div id="success" class="basic-rails">
 It works
 </div>
