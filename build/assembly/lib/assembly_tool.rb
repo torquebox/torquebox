@@ -123,12 +123,35 @@ class AssemblyTool
       :wrappers    => true
     }
 
-    # Trick RubyGems into generating .bat stubs for us
-    Gem.class_eval('@@win_platform = true')
     installer = Gem::DependencyInstaller.new( opts )
     installer.install( gem )
-    Gem.class_eval('@@win_platform = nil')
+    generate_windows_bat_files( gem, opts )
     copy_gem_to_repo(gem, update_index) if File.exist?( gem )
+  end
+
+  def generate_windows_bat_files(gem, opts)
+    # Completely hacked together from JRuby .bat templates and RubyGems
+    bin_dir = opts[:bin_dir] || Gem.bindir( opts[:install_dir] )
+    cache_dir = opts[:cache_dir] || opts[:install_dir]
+    installer = Gem::DependencyInstaller.new( opts )
+    spec, source_uri = installer.find_spec_by_name_and_version( gem ).first
+    local_gem_path = Gem::RemoteFetcher.fetcher.download( spec, source_uri,
+                                                          cache_dir )
+    local_spec = Gem::Format.from_file_by_path( local_gem_path ).spec
+    local_spec.executables.each do |filename|
+      script_name = filename + ".bat"
+      script_path = File.join( bin_dir, File.basename( script_name ) )
+      File.open( script_path, 'wb', 0755 ) do |file|
+        file.puts <<-TEXT.gsub( /^ {10}/,'' )
+          @ECHO OFF
+          IF NOT "%~f0" == "~f0" GOTO :WinNT
+          @"jruby" -S "#{filename}" %1 %2 %3 %4 %5 %6 %7 %8 %9
+          GOTO :EOF
+          :WinNT
+          @"%~dp0jruby.exe" "%~dpn0" %*
+          TEXT
+      end
+    end
   end
 
   def copy_gem_to_repo(gem, update_index=false)
