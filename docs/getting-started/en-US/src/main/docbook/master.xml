@@ -50,7 +50,7 @@
 
 <prompt>$</prompt> <command>unzip torquebox-dist-${project.version}-bin.zip -d ~ </command>
 ...
-  inflating: torquebox-2.1.1/Rakefile
+  inflating: torquebox-${project.version}/Rakefile
 <prompt>$</prompt> <command>export TORQUEBOX_HOME=~/torquebox-${project.version}</command>
 <prompt>$</prompt> <command>export JBOSS_HOME=$TORQUEBOX_HOME/jboss</command>
 <prompt>$</prompt> <command>export JRUBY_HOME=$TORQUEBOX_HOME/jruby</command>
@@ -70,15 +70,15 @@
 <prompt>$</prompt> <command>cd ~/torquebox_examples/rails_example</command>
 <prompt>$</prompt> <command>gem install rails</command>
 ...
-Successfully installed rails-3.2.8
+Successfully installed rails-3.2.9
 27 gems installed
 <prompt>$</prompt> <command>rails new .</command>
 ...
-Using rails (3.2.8) 
-Installing sass (3.2.1) 
+Using rails (3.2.9) 
+Installing sass (3.2.3) 
 Installing sass-rails (3.2.5) 
 Installing therubyrhino_jar (1.7.4) 
-Installing therubyrhino (2.0.1) 
+Installing therubyrhino (2.0.2) 
 Installing uglifier (1.3.0) 
 Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem is installed.</screen>
           <note>
@@ -244,15 +244,15 @@ Deployed: rack_example-knob.yml
 <prompt>&gt;</prompt> <command>cd %HOME%\torquebox_examples\rails_example</command>
 <prompt>&gt;</prompt> <command>gem install rails</command>
 ...
-Successfully installed rails-3.2.8
+Successfully installed rails-3.2.9
 27 gems installed
 <prompt>&gt;</prompt> <command>rails new .</command>
 ...
-Using rails (3.2.8) 
-Installing sass (3.2.1) 
+Using rails (3.2.9) 
+Installing sass (3.2.5) 
 Installing sass-rails (3.2.5) 
 Installing therubyrhino_jar (1.7.4) 
-Installing therubyrhino (2.0.1) 
+Installing therubyrhino (2.0.2) 
 Installing uglifier (1.3.0) 
 Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem is installed.</screen>
           <note>
@@ -444,7 +444,7 @@ gemsets for jruby-${version.jruby} (found in /Users/someone/.rvm/gems/jruby-${ve
 
 <prompt>$</prompt> <command>gem install rails</command>
 ...
-Successfully installed rails-3.2.8
+Successfully installed rails-3.2.9
 27 gems installed</screen>
         </para>
 
@@ -454,11 +454,11 @@ Successfully installed rails-3.2.8
 
         <screen><prompt>$</prompt> <command>rails new .</command>
 ...
-Using rails (3.2.8) 
-Installing sass (3.2.1) 
+Using rails (3.2.9) 
+Installing sass (3.2.5) 
 Installing sass-rails (3.2.5) 
 Installing therubyrhino_jar (1.7.4) 
-Installing therubyrhino (2.0.1) 
+Installing therubyrhino (2.0.2) 
 Installing uglifier (1.3.0) 
 Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem is installed.
 <prompt>$</prompt> <command>rails g scaffold post title body:text</command>
@@ -515,7 +515,7 @@ Deployed: rails_example-knob.yml
             <title><filename>~/torquebox_examples/rails_example/Gemfile</filename></title>
             <programlisting>source 'https://rubygems.org'
 
-gem 'rails', '3.2.8'
+gem 'rails', '3.2.9'
 
 gem 'activerecord-jdbcsqlite3-adapter'
 gem 'jruby-openssl'
