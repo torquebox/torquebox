@@ -30,6 +30,8 @@ import java.util.List;
 
 import javax.management.MBeanServer;
 
+import jnr.constants.ConstantSet;
+
 import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
@@ -103,6 +105,7 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         try {
             addCoreServices( context, verificationHandler, newControllers, registry );
             addTorqueBoxStdioContext();
+            workaroundJRubyConstantSetRaceCondition();
         } catch (Exception e) {
             throw new OperationFailedException( e, null );
         }
@@ -224,6 +227,28 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         StdioContext.install();
         StdioContext.setStdioContextSelector( selector );
+    }
+
+    protected void workaroundJRubyConstantSetRaceCondition() {
+        ConstantSet.getConstantSet( "AddressFamily" );
+        ConstantSet.getConstantSet( "Errno" );
+        ConstantSet.getConstantSet( "Fcntl" );
+        ConstantSet.getConstantSet( "INAddr" );
+        ConstantSet.getConstantSet( "IPProto" );
+        ConstantSet.getConstantSet( "NameInfo" );
+        ConstantSet.getConstantSet( "OpenFlags" );
+        ConstantSet.getConstantSet( "PRIO" );
+        ConstantSet.getConstantSet( "ProtocolFamily" );
+        ConstantSet.getConstantSet( "RLIM" );
+        ConstantSet.getConstantSet( "RLIMIT" );
+        ConstantSet.getConstantSet( "Shutdown" );
+        ConstantSet.getConstantSet( "Signal" );
+        ConstantSet.getConstantSet( "Sock" );
+        ConstantSet.getConstantSet( "SocketLevel" );
+        ConstantSet.getConstantSet( "SocketOption" );
+        ConstantSet.getConstantSet( "Sysconf" );
+        ConstantSet.getConstantSet( "TCP" );
+        ConstantSet.getConstantSet( "WaitFlags" );
     }
 
     static ModelNode createOperation(ModelNode address) {
