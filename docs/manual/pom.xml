@@ -87,6 +87,12 @@
               <include>images/*.jpg</include>
             </includes>
           </imageResource>
+          <cssResource>
+            <directory>${basedir}/src/main/docbook/</directory>
+            <includes>
+              <include>css/*.css</include>
+            </includes>
+          </cssResource>
           <formats>
             <format>
               <formatName>man</formatName>
@@ -100,7 +106,7 @@
             </format>
             <format>
               <formatName>xhtml</formatName>
-              <stylesheetResource>classpath:/xslt/org/jboss/xhtml.xsl</stylesheetResource>
+              <stylesheetResource>file:${project.parent.parent.basedir}/src/main/xsl/xhtml-style.xsl</stylesheetResource>
               <finalName>index.html</finalName>
             </format>
 <!--
