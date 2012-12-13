@@ -19,6 +19,9 @@
 
 package org.torquebox.core;
 
+import java.util.Map;
+import java.util.HashMap;
+
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
@@ -101,6 +104,30 @@ public class GlobalRuby implements GlobalRubyMBean, Service<GlobalRuby> {
         }
 
         return result.toString();
+    }
+
+    /**
+     * Evaluate key values using ERB
+     * 
+     */
+    public Map<String, Object> evaluateErb(Map<String, Object> data) throws Exception {
+        evaluate("require 'erb'");
+        return resolveErbAttributes(data);
+    }
+
+    Map<String, Object> resolveErbAttributes(Map<String, Object> data) throws Exception {
+        Map<String, Object> resolved = new HashMap<String, Object>();
+        for (String key : data.keySet()) {
+            Object value = data.get( key );
+            if (value instanceof String) {
+                resolved.put(key, evaluateToString( "ERB.new( %q{" + value + "}).result"));
+            } else if (value instanceof Map) {
+                resolved.put(key, resolveErbAttributes((Map<String,Object>) value));
+            } else {
+                resolved.put(key, value);
+            }
+        }
+        return resolved;
     }
 
     private RubyRuntimeFactory factory;

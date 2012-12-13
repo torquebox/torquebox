@@ -25,8 +25,11 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.logging.Logger;
+import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.datasource.DatabaseMetaData;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
+import org.torquebox.core.GlobalRuby;
+
 
 /**
  * This class is used to read rails database.yml, not a database section
@@ -44,6 +47,11 @@ public class DatabaseYamlParsingProcessor extends AbstractSplitYamlParsingProces
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         try {
+            this.ruby = (GlobalRuby) phaseContext.getServiceRegistry().getRequiredService( CoreServices.GLOBAL_RUBY ).getValue();        
+        } catch (org.jboss.msc.service.ServiceNotFoundException e) {
+            log.warn ("No GlobalRuby available to parse ERB in database.yml");
+        }
+        try {
             super.deploy( phaseContext );
         } catch (DeploymentUnitProcessingException ignored) {
             log.warnf( "Failed to parse database.yml - XA will not be enabled for %s", phaseContext.getDeploymentUnit() );
@@ -54,14 +62,14 @@ public class DatabaseYamlParsingProcessor extends AbstractSplitYamlParsingProces
     @SuppressWarnings("unchecked")
     protected void parse(DeploymentUnit unit, Object data) throws Exception {
         Map<String, Map<String, Object>> file = (Map<String, Map<String, Object>>) data;
-        
         for ( String configurationName : file.keySet() ) {
             Map<String, Object> config = file.get( configurationName );
+            if (ruby != null) config = ruby.evaluateErb( config );
             DatabaseMetaData md = new DatabaseMetaData( configurationName, config );
             unit.addToAttachmentList( DatabaseMetaData.ATTACHMENTS, md );
         }
     }
 
     private static final Logger log = Logger.getLogger( DatabaseYamlParsingProcessor.class );
-
+    private GlobalRuby ruby = null;
 }

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.torquebox.core.as.CoreServices;
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -42,6 +43,7 @@ import org.projectodd.polyglot.core.util.DeprecationLogger;
 import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.util.YAMLUtils;
+import org.torquebox.core.GlobalRuby;
 import org.yaml.snakeyaml.error.YAMLException;
 
 public class AppKnobYamlParsingProcessor extends AbstractParsingProcessor {
@@ -58,7 +60,14 @@ public class AppKnobYamlParsingProcessor extends AbstractParsingProcessor {
             if (appKnobYml == null) {
                 return;
             }
-            metaData = new TorqueBoxMetaData( YAMLUtils.parseYaml( appKnobYml ) );
+            GlobalRuby ruby = null;
+            try {
+                ruby = (GlobalRuby) phaseContext.getServiceRegistry().getRequiredService( CoreServices.GLOBAL_RUBY ).getValue();
+                metaData = new TorqueBoxMetaData( ruby.evaluateErb( YAMLUtils.parseYaml( appKnobYml ) ) );
+            } catch (org.jboss.msc.service.ServiceNotFoundException e) {
+                log.warn("No GlobalRuby available to parse ERB in deployment descriptor");
+                metaData = new TorqueBoxMetaData( YAMLUtils.parseYaml( appKnobYml ) );
+            }
             rootFile = metaData.getApplicationRootFile();
 
             if (rootFile != null) {
@@ -85,10 +94,10 @@ public class AppKnobYamlParsingProcessor extends AbstractParsingProcessor {
                 DeploymentUtils.markUnitAsRootless( unit );
             }
 
-        } catch (IOException e) {
-            throw new DeploymentUnitProcessingException( e );
         } catch (YAMLException e) {
             throw new DeploymentUnitProcessingException( "Error processing YAML: ", e );
+        } catch (Exception e) {
+            throw new DeploymentUnitProcessingException( e );
         }
 
         unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );

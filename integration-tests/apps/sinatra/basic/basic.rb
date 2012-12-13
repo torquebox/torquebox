@@ -29,3 +29,7 @@ end
 get '/log-marker' do
   erb :index
 end
+
+get '/torque-984' do
+  ENV['TORQUE-984']
+end

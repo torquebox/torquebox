@@ -64,7 +64,6 @@ import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jruby.Ruby;
-import org.torquebox.core.GlobalRuby;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.datasource.DataSourceInfoList;
@@ -223,14 +222,6 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         final ServiceName dataSourceServiceName = DataSourceServices.datasourceName( unit, dbMeta.getConfigurationName() );
 
         try {
-            GlobalRuby ruby = (GlobalRuby) phaseContext.getServiceRegistry().getRequiredService( CoreServices.GLOBAL_RUBY ).getValue();
-            try {
-                resolveErbAttributes( ruby, dbMeta );
-            } catch (Exception e) {
-                // There was an error resolving attributes with ERB so
-                // just leave the ERB in the attribute and hope it's not
-                // needed at this point.
-            }
             final ModifiableXaDataSource config = createConfig( unit, dbMeta, adapter );
             XaDataSourceService service = new XaDataSourceService( jndiName );
 
@@ -297,18 +288,6 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
             throw new DeploymentUnitProcessingException( e );
         }
 
-    }
-
-    protected void resolveErbAttributes(GlobalRuby ruby, DatabaseMetaData dbMeta) throws Exception {
-        ruby.evaluate( "require 'erb'" );
-        Map<String, Object> config = dbMeta.getConfiguration();
-        for (String key : config.keySet()) {
-            Object value = config.get( key );
-            if (value instanceof String) {
-                String newValue = ruby.evaluateToString( "ERB.new( %q{" + value + "}).result" );
-                config.put( key, newValue );
-            }
-        }
     }
 
     protected ModifiableXaDataSource createConfig(DeploymentUnit unit, DatabaseMetaData dbMeta, Adapter adapter) throws ValidateException {

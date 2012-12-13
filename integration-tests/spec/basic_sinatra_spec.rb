@@ -9,7 +9,8 @@ describe "basic sinatra test" do
       RACK_ENV: development
     web:
       context: /basic-sinatra
-    
+    environment:
+      TORQUE-984: <%= "fixed".upcase %>    
     ruby:
       version: #{RUBY_VERSION[0,3]}
   END
@@ -81,4 +82,9 @@ describe "basic sinatra test" do
     log_file.read.should include('GET /log-marker')
   end
 
+  it "should return an ERB-expanded expression (TORQUE-984)" do
+    visit "/basic-sinatra/torque-984"
+    page.find('body').text.should eql("FIXED")
+  end
+  
 end
