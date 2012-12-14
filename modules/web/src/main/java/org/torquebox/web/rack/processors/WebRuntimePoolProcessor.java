@@ -25,7 +25,11 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.msc.service.ServiceRegistry;
+import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.runtime.PoolMetaData;
+import org.torquebox.web.as.HttpConnectorStartService;
+import org.torquebox.web.as.WebServices;
 import org.torquebox.web.rack.RackMetaData;
 
 public class WebRuntimePoolProcessor implements DeploymentUnitProcessor {
@@ -48,6 +52,14 @@ public class WebRuntimePoolProcessor implements DeploymentUnitProcessor {
             unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, poolMetaData );
         }
         
+        String forceConnectorStart = System.getProperty( "org.torquebox.web.force_http_connector_start", "false" );
+        if (Boolean.parseBoolean( forceConnectorStart )) {
+            HttpConnectorStartService webStartService = new HttpConnectorStartService();
+            phaseContext.getServiceTarget().addService( WebServices.WEB_CONNECTOR_START, webStartService )
+                    .addDependency( CoreServices.runtimeStartPoolName( unit, "web" ) )
+                    .addDependency( CoreServices.serviceRegistryName( unit ), ServiceRegistry.class, webStartService.getServiceRegistryInjector() )
+                    .install();
+        }
     }
 
     @Override
