@@ -8,12 +8,17 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Collections;
+import java.util.List;
+import java.util.Collection;
+import java.util.ArrayList;
 
 public class SendfileFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -27,19 +32,32 @@ public class SendfileFilter implements Filter {
         if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
             doFilter( (HttpServletRequest) request, (HttpServletResponse) response, chain );
         }
+        else{
+            chain.doFilter(request, response);
+        }
     }
 
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, javax.servlet.FilterChain chain)
             throws java.io.IOException, javax.servlet.ServletException {
         // only activate the sendfile filter if connectors are capable and sendfile was not somehow enabled earlier
-        if(isEnabled(request, response) && request.getHeader("X-Sendfile-Type") == null){
-            request.addHeader
+        boolean doSendfile = isEnabled(request, response) && request.getHeader(HEADER_NAME_SENDFILE_TYPE) == null;
+        if(doSendfile){
+            request = new SendfileRequest(request);
+            response = new SendfileResponse(response);
         }
 
         chain.doFilter(request, response);
+
+        if(doSendfile && 200 <= response.getStatus() && response.getStatus() < 300){
+            File file = getResponseFile(response);
+            if(file != null){
+                sendFile((SendfileRequest) request, (SendfileResponse) response, file);
+                response.flushBuffer();
+            }
+        }
     }
 
-    protected void sendFile(HttpServletRequest request, HttpServletResponse response, File file){
+    protected void sendFile(SendfileRequest request, SendfileResponse response, File file){
         boolean modified = true;
         long fileSize = file.length();
         long mTime = file.lastModified();
@@ -55,7 +73,7 @@ public class SendfileFilter implements Filter {
 
             if(range.isSatisfiable()){
                 if(range.isPartial()){
-                    response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+                    response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT); // 206
                 }
                 else{
                     response.setStatus(HttpServletResponse.SC_OK);
@@ -82,62 +100,51 @@ public class SendfileFilter implements Filter {
                     response.setHeader("Last-Modified", httpDateFormat.format(mTime));
                 }
 
-                log.debug("Using APR native sendfile to send " + file.getPath() +
+                log.debug("Using APR native sendfile to send " +
                         ", " + file.getAbsolutePath() + " | " + range.getFileStartPos() + "-" + range.getFileEndPos());
-                ResponseFacade responseFacade = (ResponseFacade) response;
+                ResponseFacade responseFacade = (ResponseFacade) response.getOriginalResponse();
                 responseFacade.sendFile(file.getPath(), file.getAbsolutePath(), range.getFileStartPos(), range.getFileEndPos());
             }
             else{
-                response.setStatus(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
+                response.setStatus(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE); // 416
             }
         }
         else {
-            // Send status=304 (Not modified)
-            log.debug("Sendfile sending HTTP 304.");
-            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED); // 304
         }
 
-//        response.flushBuffer();
     }
 
     private File getResponseFile(HttpServletResponse response){
         File result = null;
-        // only perform sendfile processing on 2xx status codes
-        if(200 <= response.getStatus() && response.getStatus() < 300){
-            String filePath = response.getHeader("X-Sendfile");
-            if(filePath != null){
-                File file = new File(filePath);
-                if(file.exists()){
-                    result = file;
-                }
+        String filePath = response.getHeader("X-Sendfile");
+        if(filePath != null){
+            File file = new File(filePath);
+            if(file.exists()){
+                result = file;
             }
         }
         return result;
     }
 
     private boolean isEnabled(HttpServletRequest request, HttpServletResponse response){
-        return RequestFacade.class.getName().equals(request.getClass().getName()) &&
-               ResponseFacade.class.getName().equals(response.getClass().getName()) &&
+        return request instanceof RequestFacade &&
+               response instanceof ResponseFacade &&
                ((RequestFacade) request).hasSendfile();
-    }
-
-    private Long getLongOrNull(String number){
-        Long result = null;
-
-        try {
-            result = Long.parseLong(number);
-        }
-        catch(NumberFormatException e){
-            // silent catch
-        }
-
-        return result;
     }
 
     // Util class implementing (single) range functionality described in
     // 14.35.1 Byte Ranges at http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
     private class ByteRange{
-        private Long start, end, fileSize;
+        ByteRange(HttpServletRequest request, long fileSize){
+            this.fileSize = fileSize;
+
+            String rangeHeader = request.getHeader("Range");
+            if(rangeHeader == null){
+                rangeHeader = "";
+            }
+            determineRange(rangeHeader);
+        }
 
         /*
          The following method implements parsing and ignoring of syntactically invalid ranges.
@@ -159,7 +166,7 @@ public class SendfileFilter implements Filter {
 
             Matcher match = rangeHeaderPattern.matcher(range.replace("\\s", ""));
             if(match.find()){
-                boolean isSingleRange = match.group(4) == null,
+                boolean isSingleRange = match.group(4) == null || "".equals(match.group(4)),
                         hasRangeStart = !"".equals(match.group(2)),
                         hasRangeEnd = !"".equals(match.group(3));
                 Long rangeStart = getLongOrNull(match.group(2)),
@@ -169,7 +176,7 @@ public class SendfileFilter implements Filter {
                     if(hasRangeStart && rangeStart != null){
                         // assume normal range
                         if(hasRangeEnd && rangeEnd != null){
-                            rangeEnd = Math.min(rangeEnd, fileSize - 1);
+                            rangeEnd = Math.min(rangeEnd, Math.max(fileSize - 1, 0L));
                             if(rangeStart <= rangeEnd){
                                 // the range is syntactically valid
                                 this.start = rangeStart;
@@ -193,13 +200,17 @@ public class SendfileFilter implements Filter {
             }
         }
 
-        ByteRange(HttpServletRequest request, long fileSize){
-            this.fileSize = fileSize;
+        private Long getLongOrNull(String number){
+            Long result = null;
 
-            String rangeHeader = request.getHeader("Range");
-            if(rangeHeader != null){
-                determineRange(rangeHeader);
+            try {
+                result = Long.parseLong(number);
             }
+            catch(NumberFormatException e){
+                // silent catch
+            }
+
+            return result;
         }
 
         public boolean isSatisfiable(){
@@ -229,6 +240,8 @@ public class SendfileFilter implements Filter {
         public long getFileEndPos(){
             return Math.min(this.end + 1, fileSize);
         }
+
+        private Long start, end, fileSize;
     }
 
     // Request wrapper for adding the sendfile type header
@@ -237,19 +250,76 @@ public class SendfileFilter implements Filter {
             super(request);
         }
 
-        public String getHeader(java.lang.String name) {
-
+        @Override
+        public String getHeader(String name) {
+            String result = super.getHeader(name);
+            if(HEADER_NAME_SENDFILE_TYPE.equals(name)){
+                result = HEADER_NAME_SENDFILE;
+            }
+            return result;
         }
 
-        public Enumeration<String> getHeaders(String name) {
-
-        }
-
+        @Override
         public Enumeration<String> getHeaderNames() {
-
+            List<String> list = Collections.list(super.getHeaderNames());
+            list.add(HEADER_NAME_SENDFILE_TYPE);
+            return Collections.enumeration(list);
         }
     }
 
+    // Response wrapper so the X-Sendfile header isn't sent to the client
+    private class SendfileResponse extends HttpServletResponseWrapper {
+        private String value = null;
+        private HttpServletResponse originalResponse;
+
+        public SendfileResponse(HttpServletResponse response){
+            super(response);
+            originalResponse = response;
+        }
+
+        public HttpServletResponse getOriginalResponse(){
+            return this.originalResponse;
+        }
+
+        @Override
+        public String getHeader(String name) {
+            String result = super.getHeader(name);
+            if(HEADER_NAME_SENDFILE.equals(name)){
+                result = value;
+            }
+            return result;
+        }
+
+        @Override
+        public Collection<String> getHeaderNames() {
+            List<String> list = new ArrayList<String>(super.getHeaderNames());
+            list.add(HEADER_NAME_SENDFILE);
+            return list;
+        }
+
+        @Override
+        public void setHeader(String name, String value) {
+            if(HEADER_NAME_SENDFILE.equals(name)){
+                this.value = value;
+            }
+            else {
+                super.setHeader(name, value);
+            }
+        }
+
+        @Override
+        public void addHeader(String name, String value) {
+            if(HEADER_NAME_SENDFILE.equals(name)){
+                this.value = value;
+            }
+            else {
+                super.addHeader(name, value);
+            }
+        }
+    }
+
+    private static final String HEADER_NAME_SENDFILE_TYPE = "X-Sendfile-Type";
+    private static final String HEADER_NAME_SENDFILE = "X-Sendfile";
     private static final Pattern rangeHeaderPattern = Pattern.compile("^bytes=((\\d*)-(\\d*))((,\\d*-\\d*)*)?$");
     private static final SimpleDateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
     private static final Logger log = Logger.getLogger( SendfileFilter.class );
