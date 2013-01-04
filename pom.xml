@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>6-beta-1</version>
+    <version>9</version>
   </parent>
 
   <groupId>org.torquebox</groupId>
@@ -502,13 +502,8 @@
 
       <dependency>
         <groupId>org.hornetq</groupId>
-        <artifactId>hornetq-jms-client</artifactId>
-        <version>${version.org.hornetq.hornetq-jms}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hornetq</groupId>
         <artifactId>hornetq-logging</artifactId>
-        <version>${version.org.hornetq.hornetq-jms}</version>
+        <version>${version.org.hornetq}</version>
       </dependency>
 
       <dependency>
@@ -628,7 +623,7 @@
 
   <properties>
     <ruby.compat.version>1.8</ruby.compat.version>
-    <version.polyglot>1.10.0</version.polyglot>
+    <version.polyglot>1.11.0-SNAPSHOT</version.polyglot>
     <version.jruby-maven-plugins>0.28.4</version.jruby-maven-plugins> 
     <version.junit>4.7</version.junit>
     <version.jmock>2.5.1</version.jmock>
@@ -662,7 +657,7 @@
     <version.rspec>2.7.0</version.rspec>
     <version.newrelic>3.3.2</version.newrelic>
 
-    <version.jbossas>7.1.x.incremental.129</version.jbossas>
+    <version.jbossas>7.x.incremental.630</version.jbossas>
 
     <version.org.projectodd.stilts>0.1.28</version.org.projectodd.stilts>
     <version.org.projectodd.yaml-schema>0.2</version.org.projectodd.yaml-schema>

@@ -27,7 +27,7 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
-import org.jboss.as.weld.WeldContainer;
+import org.jboss.as.weld.WeldStartService;
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
@@ -49,8 +49,8 @@ public class CDIInjectableService implements Service<Object> {
 
     @Override
     public void start(StartContext context) throws StartException {
-        WeldContainer container = this.weldContainerInjector.getValue();
-        BeanManager beanManager = container.getBeanManager();
+        WeldStartService startService = this.weldStartServiceInjector.getValue();
+        BeanManager beanManager = startService.getBootstrap().getValue().getBeanManager();
 
         ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
         try {
@@ -88,11 +88,11 @@ public class CDIInjectableService implements Service<Object> {
 
     }
 
-    public Injector<WeldContainer> getWeldContainerInjector() {
-        return this.weldContainerInjector;
+    public Injector<WeldStartService> getWeldStartServiceInjector() {
+        return this.weldStartServiceInjector;
     }
 
-    private InjectedValue<WeldContainer> weldContainerInjector = new InjectedValue<WeldContainer>();
+    private InjectedValue<WeldStartService> weldStartServiceInjector = new InjectedValue<WeldStartService>();
     private Class<?> type;
     private Object bean;
 

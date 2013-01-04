@@ -9,12 +9,16 @@ TORQUEBOX_APP_NAME = 'active-support-unit-test'
 describe ActiveSupport::Cache::TorqueBoxStore do
 
   before(:each) do
-    manager = org.infinispan.manager.DefaultCacheManager.new 
+    @manager = org.infinispan.manager.DefaultCacheManager.new 
     service = org.projectodd.polyglot.cache.as.CacheService.new
-    service.stub!(:cache_container).and_return( manager )
+    service.stub!(:cache_container).and_return( @manager )
     TorqueBox::ServiceRegistry.stub!(:[]).with(org.projectodd.polyglot.cache.as.CacheService::CACHE).and_return( service )
     TorqueBox::ServiceRegistry.service_registry = nil
     @cache = ActiveSupport::Cache::TorqueBoxStore.new()
+  end
+
+  after(:each) do
+    @manager.stop
   end
 
   describe "basics" do

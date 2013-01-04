@@ -140,11 +140,11 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
             warMetaData.setWebFragmentsMetaData( webFragmentsMetaData );
         }
 
-        JBossWebMetaData jbossWebMetaData = warMetaData.getJbossWebMetaData();
+        JBossWebMetaData jbossWebMetaData = warMetaData.getJBossWebMetaData();
 
         if (jbossWebMetaData == null) {
             jbossWebMetaData = new JBossWebMetaData();
-            warMetaData.setJbossWebMetaData( jbossWebMetaData );
+            warMetaData.setJBossWebMetaData( jbossWebMetaData );
         }
 
         setUpSessionConfig( jbossWebMetaData, rackAppMetaData );

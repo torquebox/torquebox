@@ -76,7 +76,8 @@ module TorqueBox
       end
 
       def create_xa_session
-        jms_session = @jms_connection.create_xa_session()
+        @jms_connection.check_closed
+        jms_session = @jms_connection.create_session_internal(true, true, Session::SESSION_TRANSACTED, org.hornetq.jms.client::HornetQConnection::TYPE_GENERIC_CONNECTION)
         transaction.enlist_resource( jms_session.xa_resource )
         session = TransactedSession.new( jms_session, transaction, self )
         transaction.registerSynchronization( session )

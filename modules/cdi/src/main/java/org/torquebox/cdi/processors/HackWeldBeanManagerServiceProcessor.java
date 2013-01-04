@@ -24,13 +24,12 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.jboss.as.weld.WeldContainer;
+import org.jboss.as.weld.WeldBootstrapService;
 import org.jboss.as.weld.WeldDeploymentMarker;
 import org.jboss.as.weld.arquillian.WeldContextSetup;
 import org.jboss.as.weld.deployment.BeanDeploymentArchiveImpl;
 import org.jboss.as.weld.deployment.WeldAttachments;
 import org.jboss.as.weld.services.BeanManagerService;
-import org.jboss.as.weld.services.WeldService;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
 import org.torquebox.core.app.RubyAppMetaData;
@@ -72,11 +71,11 @@ public class HackWeldBeanManagerServiceProcessor implements DeploymentUnitProces
             return;
         }
 
-        final ServiceName weldServiceName = topLevelDeployment.getServiceName().append( WeldService.SERVICE_NAME );
+        final ServiceName weldServiceName = topLevelDeployment.getServiceName().append( WeldBootstrapService.SERVICE_NAME );
 
         BeanManagerService beanManagerService = new BeanManagerService( rootBda.getId() );
         serviceTarget.addService( beanManagerServiceName, beanManagerService ).addDependency( weldServiceName,
-                    WeldContainer.class, beanManagerService.getWeldContainer() ).install();
+                    WeldBootstrapService.class, beanManagerService.getWeldContainer() ).install();
 
         deploymentUnit.addToAttachmentList( Attachments.SETUP_ACTIONS, new WeldContextSetup() );
     }

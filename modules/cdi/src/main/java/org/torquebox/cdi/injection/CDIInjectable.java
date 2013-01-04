@@ -21,8 +21,7 @@ package org.torquebox.cdi.injection;
 
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentUnit;
-import org.jboss.as.weld.WeldContainer;
-import org.jboss.as.weld.services.WeldService;
+import org.jboss.as.weld.WeldStartService;
 import org.jboss.modules.Module;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
@@ -82,10 +81,10 @@ public class CDIInjectable extends SimpleNamedInjectable {
         Module module = unit.getAttachment( Attachments.MODULE );
         Class<?> injectionType = module.getClassLoader().loadClass( getName() );
 
-        ServiceName weldServiceName = unit.getServiceName().append( WeldService.SERVICE_NAME );
+        ServiceName weldServiceName = unit.getServiceName().append( WeldStartService.SERVICE_NAME );
         CDIInjectableService injectionService = new CDIInjectableService( injectionType );
         serviceTarget.addService( injectionServiceName, injectionService )
-                .addDependency( weldServiceName, WeldContainer.class, injectionService.getWeldContainerInjector() )
+                .addDependency( weldServiceName, WeldStartService.class, injectionService.getWeldStartServiceInjector() )
                 .install();
         return injectionServiceName;
     }
