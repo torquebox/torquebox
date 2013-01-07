@@ -1,0 +1,39 @@
+%html{:xmlns => "http://www.w3.org/1999/xhtml", "xml:lang" => "en", :lang => "en"}  
+  %head
+    %title Poorsmatic
+  %body
+    %ul
+      %li
+        %a{:href => url('/terms')} Terms
+      %li
+        %a{:href => url('/urls')} Urls
+
+    %h2 Add new term
+    - unless session[:errors].nil?
+      %h3 Ooops
+      %ul
+        - session[:errors].each do |error|
+          %li #{error}
+      - session[:errors].clear
+    %form{:action => url('/terms'), :method => "post"}
+      %fieldset
+        %label{:for => "term"} Term:
+        %input{:type => "text", :name => "term", :class => "text"}
+        %input{:type => "submit", :value => "Send", :class => "button"}
+
+    %h2 Terms
+    %p Terms in database: #{@terms.size}
+
+    - unless @terms.empty?
+      %table
+        %tbody
+          %tr
+            %th Name
+            %th Actions
+          - @terms.each do |term|
+            %tr
+              %td= term.term
+              %td
+                %form{:action => url("/term/#{term.id}"), :method => "post"}
+                  %input{:name => "_method", :type => :hidden, :value => "delete"}
+                  %input{:type => "submit", :value => "Delete", :class => "button"}
