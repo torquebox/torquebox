@@ -1,4 +1,4 @@
-source :rubygems
+source "file://#{File.dirname(__FILE__)}/../../../../build/assembly/target/stage/gem-repo"
 
 # Project requirements
 #gem 'sinatra-flash', :require => 'sinatra/flash'

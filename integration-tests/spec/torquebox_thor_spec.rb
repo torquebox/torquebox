@@ -153,32 +153,32 @@ describe "torquebox thor utility tests" do
     end
 
     it "should create the app and its directory" do
-      tb( "rails #{@app_dir}" )
+      tb( "rails #{@app_dir} --skip-bundle" )
       check_app_dir
     end
 
     it "should create the app even if its directory already exists" do
       FileUtils.mkdir_p( @app_dir )
       Dir.chdir( @app_dir ) do
-        tb( 'rails' )
+        tb( 'rails --skip-bundle' )
       end
       check_app_dir
     end
 
     it "should modify the app if it already exists" do
-      rails( ENV['RAILS_VERSION'], "new #{@app_dir}" )
+      rails( ENV['RAILS_VERSION'], "new #{@app_dir} --skip-bundle" )
       File.exist?( File.join( @app_dir, 'Gemfile' ) ).should be_true
       File.read( File.join( @app_dir, 'Gemfile' ) ).should_not include( 'torquebox' )
-      tb( "rails #{@app_dir}" )
+      tb( "rails #{@app_dir} --skip-bundle" )
       check_app_dir
     end
 
     it "should modify the app in the current directory if it already exists" do
-      rails( ENV['RAILS_VERSION'], "new #{@app_dir}" )
+      rails( ENV['RAILS_VERSION'], "new #{@app_dir} --skip-bundle" )
       File.exist?( File.join( @app_dir, 'Gemfile' ) ).should be_true
       File.read( File.join( @app_dir, 'Gemfile' ) ).should_not include( 'torquebox' )
       Dir.chdir( @app_dir ) do
-        tb( 'rails' )
+        tb( 'rails --skip-bundle' )
       end
       check_app_dir
     end

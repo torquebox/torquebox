@@ -1,4 +1,4 @@
-source 'http://rubygems.org'
+source "file://#{File.dirname(__FILE__)}/../../../../build/assembly/target/stage/gem-repo"
 
 gem 'torquebox'
 gem 'rails', '~>3.1.0'

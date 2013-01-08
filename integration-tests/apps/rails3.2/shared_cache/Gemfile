@@ -1,4 +1,4 @@
-source 'http://rubygems.org'
+source "file://#{File.dirname(__FILE__)}/../../../../build/assembly/target/stage/gem-repo"
 
 gem 'rails', '~> 3.2.0'
 

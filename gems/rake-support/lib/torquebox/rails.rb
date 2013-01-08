@@ -29,7 +29,9 @@ module TorqueBox
       print_rails_not_installed_and_exit unless rails_installed?
       require_generators
       # Ensure ARGV[0] has the application path
-      ARGV.unshift( root ) if ARGV.empty?
+      if ARGV.empty? || ARGV[0] != root
+        ARGV.unshift( root )
+      end
       ARGV << [ "-m", TorqueBox::Rails.template ]
       ARGV.flatten!
       if using_rails3?

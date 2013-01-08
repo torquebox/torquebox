@@ -1,4 +1,4 @@
-source "http://rubygems.org"
+source "file://#{File.dirname(__FILE__)}/../../../../build/assembly/target/stage/gem-repo"
 gem "sinatra"
 gem "torquebox"
 gem "data_mapper", "1.1.0"

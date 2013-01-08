@@ -49,8 +49,14 @@ class TorqueBoxCommand < Thor
   end
 
   desc "rails ROOT", "Create a Rails application at ROOT using the TorqueBox Rails template, or apply the TorqueBox template to an existing application at ROOT."
-  def rails(root = ".")
+  def rails(root = ".", *args)
     ARGV.shift
+    # Ensure the root defaults to the current directory if the user
+    # doesn't specify one but passes in additional args
+    if root.start_with?('-')
+      args.unshift( root )
+      root = '.'
+    end
     TorqueBox::Server.setup_environment
     if File.exist?( File.join(root, 'config', 'environment.rb') )
       TorqueBox::Rails.apply_template( root )
