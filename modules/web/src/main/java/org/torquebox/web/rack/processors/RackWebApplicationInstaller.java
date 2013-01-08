@@ -62,6 +62,7 @@ import org.torquebox.web.as.WebServices;
 import org.torquebox.web.rack.RackMetaData;
 import org.torquebox.web.rails.RailsMetaData;
 import org.torquebox.web.servlet.RackFilter;
+import org.torquebox.web.servlet.SendfileFilter;
 
 /**
  * <pre>
@@ -78,6 +79,7 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
     /** Default session timeout (30 minutes). */
     public static final int DEFAULT_SESSION_TIMEOUT_MINUTES = 30;
 
+    public static final String SENDFILE_FILTER_NAME = "torquebox.sendfile";
     public static final String RACK_FILTER_NAME = "torquebox.rack";
 
     public static final String STATIC_RESROUCE_SERVLET_NAME = "torquebox.static";
@@ -150,6 +152,7 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
         setUpSessionConfig( jbossWebMetaData, rackAppMetaData );
 
         setUpMimeTypes( jbossWebMetaData );
+        setUpSendfileFilter(jbossWebMetaData);
         setUpRackFilter( unit, rackAppMetaData, jbossWebMetaData );
         setUpStaticResourceServlet( rackAppMetaData, jbossWebMetaData, railsAppMetaData != null );
         ensureSomeServlet( rackAppMetaData, jbossWebMetaData );
@@ -225,7 +228,31 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
         }
 
         filterMappings.add( filterMapping );
+    }
 
+    protected void setUpSendfileFilter(JBossWebMetaData jbossWebMetaData) {
+        FilterMetaData sendfileFilter = new FilterMetaData();
+        sendfileFilter.setId(SENDFILE_FILTER_NAME);
+        sendfileFilter.setFilterClass(SendfileFilter.class.getName());
+        sendfileFilter.setFilterName(SENDFILE_FILTER_NAME);
+
+        FiltersMetaData filters = jbossWebMetaData.getFilters();
+        if (filters == null) {
+            filters = new FiltersMetaData();
+            jbossWebMetaData.setFilters(filters);
+        }
+        filters.add(sendfileFilter);
+
+        FilterMappingMetaData filterMapping = new FilterMappingMetaData();
+        filterMapping.setFilterName(SENDFILE_FILTER_NAME);
+        filterMapping.setUrlPatterns(Collections.singletonList("*"));
+
+        List<FilterMappingMetaData> filterMappings = jbossWebMetaData.getFilterMappings();
+        if (filterMappings == null) {
+            filterMappings = new ArrayList<FilterMappingMetaData>();
+            jbossWebMetaData.setFilterMappings(filterMappings);
+        }
+        filterMappings.add(filterMapping);
     }
 
     protected void setUpStaticResourceServlet(RackMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData, boolean enablePageCache) {
