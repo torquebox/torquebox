@@ -107,7 +107,7 @@ describe "torquebox thor utility tests" do
       Dir.chdir( root_dir ) do
         check_deployment 'deploy --context_path=/leftorium'
         contents = File.read("#{TorqueBox::DeployUtils.deploy_dir}/basic-knob.yml")
-        contents.should include('context: /leftorium')
+        contents.should match(/context: ['"]?\/leftorium['"]?/)
         check_undeployment 'undeploy'
       end
     end

@@ -63,7 +63,7 @@ describe "rake tasks" do
       Dir.chdir( root_dir ) do
         check_deployment( 'torquebox:deploy[/foo]', :context => '/foo' )
         contents = File.read("#{TorqueBox::DeployUtils.deploy_dir}/basic-knob.yml")
-        contents.should include('context: /foo')
+        contents.should match(/context: ['"]?\/foo['"]?/)
         check_undeployment( 'torquebox:undeploy', :context => '/foo' )
       end
     end
@@ -72,7 +72,7 @@ describe "rake tasks" do
       Dir.chdir( root_dir ) do
         check_deployment( 'torquebox:deploy[/foo,foo]', :name => 'foo', :context => '/foo' )
         contents = File.read("#{TorqueBox::DeployUtils.deploy_dir}/foo-knob.yml")
-        contents.should include('context: /foo')
+        contents.should match(/context: ['"]?\/foo['"]?/)
         check_undeployment( 'torquebox:undeploy[foo]', :name => 'foo', :context => '/foo' )
       end
     end
