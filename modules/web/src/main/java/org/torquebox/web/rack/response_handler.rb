@@ -38,9 +38,9 @@ module TorqueBox
           }
           out = servlet_response.getOutputStream()
 
-          if body.respond_to?( :each )
+          if body.respond_to?( :each_line ) || body.respond_to?( :each )
             chunked = headers.fetch( 'Transfer-Encoding', '' ) == 'chunked'
-            body.each { |chunk|
+            body.send( body.respond_to?( :each_line ) ? :each_line : :each ) { |chunk|
               output = chunked ? strip_term_markers( chunk ) : chunk
               unless output.nil?
                 out.write( output.to_java_bytes )
