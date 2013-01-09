@@ -217,7 +217,8 @@ end
       <classname>ActiveRecord</classname> models (persisted to your
       XA-compliant database) within
       <methodname>on_message(msg)</methodname> will become part of its
-      transaction.
+      transaction if distributed transactions have been enabled for
+      that database.
     </para>
     <para>
       Occasionally, you may not want a published message to assume the
@@ -229,13 +230,14 @@ end
   </section>
 
   <section id="transaction-configuration">
-    <title>Configuration</title>
+    <title>Database Configuration</title>
     <para>
-      No extra configuration of your app is required other that what
-      you'd normally do for a database-aware Ruby application,
-      i.e. standard configuration of the
-      <code>activerecord-jdbc-adapter</code>.  See <xref
-      linkend="database"/> for more details.
+      Ensure your application is correctly configured to use the
+      <code>activerecord-jdbc-adapter</code> and then add <code>xa: true</code>
+      to your <filename>database.yml</filename> entry for each
+      database you want to use in a distributed transaction. See <xref
+      linkend="database"/> for more details on configuring ActiveRecord
+      JDBC support.
     </para>
     <para>
       Distributed transactions are restricted to those databases
@@ -269,40 +271,14 @@ end
       </para>
     </section>
 
-  </section>
+    <section>
+      <title>Example</title>
 
-  <section>
-    <title>Examples</title>
+      <para><example>
+        <title>Enabling XA support
+        (<filename>config/database.yml</filename>)</title>
 
-    <para>Distributed transactions support comes enabled by default,
-    so no extra configuration is required to enable it. If you don't
-    need this feature, it is possible to disable it by setting
-    <code>xa</code> to false in your
-    <filename>database.yml</filename>. If your application uses more
-    than one database, you'll need to enable distributed transactions
-    explicitly for the additional databases by setting <code>xa</code>
-    to true.</para>
-
-    <para><example>
-      <title>Disabling XA support
-      (<filename>config/database.yml</filename>)</title>
-
-      <para><programlisting>production:
-  adapter: mysql
-  xa: false
-  database: my_database
-  host: my_host
-  username: my_username
-  password: my_password
-  encoding: utf8
-      </programlisting></para>
-    </example></para>
-
-    <para><example>
-      <title>Enabling XA support for additional databases
-      (<filename>config/database.yml</filename>)</title>
-
-      <para><programlisting>some_other_database:
+        <para><programlisting>production:
   adapter: mysql
   xa: true
   database: my_database
@@ -310,7 +286,8 @@ end
   username: my_username
   password: my_password
   encoding: utf8
-      </programlisting></para>
-    </example></para>
+        </programlisting></para>
+      </example></para>
+    </section>
   </section>
 </chapter>

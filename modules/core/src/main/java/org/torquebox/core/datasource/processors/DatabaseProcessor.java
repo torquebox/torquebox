@@ -138,17 +138,11 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
 
         for (DatabaseMetaData each : allMetaData) {
 
-            String configName = each.getConfigurationName();
-
-            if (!isCurrentEnvironmentDatabase( currentEnv, configName ) && !isXAExplicitlyEnabled( each )) {
+            if (!isXAExplicitlyEnabled( each )) {
                 continue;
             }
 
             if (each.getConfiguration().containsKey( "jndi" )) {
-                continue;
-            }
-
-            if (isXAExplicitlyDisabled( each )) {
                 continue;
             }
 
