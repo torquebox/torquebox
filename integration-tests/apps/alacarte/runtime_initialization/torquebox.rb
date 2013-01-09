@@ -11,5 +11,7 @@ TorqueBox.configure do
   service SimpleService 
   job SimpleJob do
     cron '*/1 * * * * ?'
+    # https://issues.jboss.org/browse/TORQUE-986
+    description 'A description for a job'
   end
 end
