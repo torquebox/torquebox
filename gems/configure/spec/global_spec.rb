@@ -335,7 +335,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
     it_should_behave_like 'a thing with options'
 
     it_should_not_allow_invalid_options { job 'AClass', :foo => :bar }
-    it_should_allow_valid_options { job 'AClass', :config => '', :singleton => true, :name => '' , :cron => '234'}
+    it_should_allow_valid_options { job 'AClass', :config => '', :singleton => true, :name => '' , :cron => '234', :description => 'A description'}
 
     it_should_not_allow_invalid_option_values { job 'AClass', :singleton => :bacon }
     it_should_allow_valid_option_values { job 'AClass', :singleton => false, :cron => '234' }
@@ -357,6 +357,15 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
       
       config['<root>']['job'].should == [['One::AJob', { :cron => '1234' }],
                                          ['Two::AJob', { :cron => '1234' }]]
+    end
+
+    # https://issues.jboss.org/browse/TORQUE-986
+    it "should allow job description" do
+      config = TorqueBox.configure do
+        job 'AJob', :cron => '1234', :description => 'A description'
+      end
+
+      config['<root>']['job'].should == [['AJob', { :cron => '1234', :description => 'A description' }]]
     end
 
     it "should allow jobs as constants" do

@@ -56,6 +56,7 @@ module TorqueBox
                                                                 :optional => [
                                                                               :config,
                                                                               :name,
+                                                                              :description,
                                                                               { :singleton => [true, false] }
                                                                              ]
                                                               }),
