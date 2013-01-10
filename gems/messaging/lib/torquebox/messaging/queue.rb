@@ -53,6 +53,88 @@ module TorqueBox
         end
       end
 
+      # Returns true if queue is paused, false
+      # otherwise.
+      def paused?
+        with_queue_control do |control|
+          control.is_paused
+        end
+      end
+
+      # Pauses a queue.
+      #
+      # Messages put into a queue will not be delivered even
+      # if there are connected consumers.
+      #
+      # When executed on a paused queue, nothing happens.
+      def pause
+        with_queue_control do |control|
+          control.pause
+        end
+      end
+
+      # Resumes a queue after it was paused.
+      # When executed on a active queue, nothing happens.
+      def resume
+        with_queue_control do |control|
+          control.resume
+        end
+      end
+
+      # Removes messages from the queue.
+      #
+      # Accepts optional :filter parameter to remove only
+      # selected messages from the queue. By default
+      # *all* messages will be removed.
+      #
+      # The :filter parameter is a String where you define
+      # expressions in a SQL92-like syntax based on properties
+      # set on the messages.
+      #
+      # Example:
+      #
+      # type = 'tomatoe' OR type = 'garlic'
+      #
+      # This will remove messages with :type property set
+      # to 'tomatoe' or 'garlic'
+      #
+      # This function returns number of removed messages.
+      def remove_messages(filter = nil)
+        with_queue_control do |control|
+          control.remove_messages(filter)
+        end
+      end
+
+      # Counts messages in the queue.
+      #
+      # Accepts optional :filter parameter to count only
+      # selected messages in the queue. By default
+      # all messages will be counted.
+      #
+      # The :filter parameter is a String where you define
+      # expressions in a SQL92-like syntax based on properties
+      # set on the messages.
+      #
+      # Example:
+      #
+      # type = 'tomatoe' OR type = 'garlic'
+      #
+      # This will count messages with :type property set
+      # to 'tomatoe' or 'garlic'
+      def count_messages(filter = nil)
+        with_queue_control do |control|
+          control.count_messages(filter)
+        end
+      end
+
+      # Retrieves the JMSQueueControl implenetation for current
+      # queue.
+      def with_queue_control
+        TorqueBox::ServiceRegistry.lookup("jboss.messaging.default") do |server|
+          yield server.management_service.get_resource("jms.queue.#{_dump(nil)}")
+        end
+      end
+
       def to_s
         "[Queue: #{super}]"
       end
