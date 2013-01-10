@@ -3,6 +3,7 @@ require 'class_methods_model'
 
 class RackApp
   def call(env)
+    session = env['rack.session']
     if env['QUERY_STRING'] =~ /class_method/
       klass = ClassMethodsModel
       object = ClassMethodsModel
@@ -15,8 +16,13 @@ class RackApp
     if env['QUERY_STRING'] =~ /bar/
       object.background.bar
     else
-      object.foo
+      future = object.foo
+      session[:future] = future
     end
-    [200, {'Content-Type' => 'text/html'}, "it worked" ]
+    if env['QUERY_STRING'] =~ /future_result/
+      [200, {'Content-Type' => 'text/html'}, session[:future].result ]
+    else
+      [200, {'Content-Type' => 'text/html'}, "it worked" ]
+    end
   end
 end

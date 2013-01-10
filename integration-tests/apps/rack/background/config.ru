@@ -1,4 +1,5 @@
 require 'rack_app'
+require 'torquebox/session/servlet_store'
 
 use Rack::Reloader
 # Workaround Rack::Reloader & JRuby 1.6.7.2 bug:
@@ -16,4 +17,5 @@ module Rack
   end
 end
 
+use TorqueBox::Session::ServletStore
 run RackApp.new 

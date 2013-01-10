@@ -27,7 +27,7 @@ class ClassMethodsModel
           if "release" == @background.receive(:timeout => 25000)
             @foreground.publish "success"
           end
-          nil
+          'foo'
         end
       end
     end

@@ -49,6 +49,8 @@ describe "backgroundable tests" do
       @background.publish "release"
       result = @foreground.receive(:timeout => 120000)
       result.should == "success"
+      visit url(:future_result => 1)
+      page.should have_content('foo')
     end
 
     it "should properly handle backgrounded methods on reloaded classes" do
