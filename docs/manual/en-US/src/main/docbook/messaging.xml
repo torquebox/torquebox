@@ -610,6 +610,20 @@ queue.publish "Some message"</programlisting></para>
               </row>
 
               <row>
+                <entry><parameter>:scheduled</parameter></entry>
+
+                <entry>nil</entry>
+
+                <entry>By default a message will be delivered to the queue or topic
+                immediately. You can delay the delivery by using the
+                <parameter>:scheduled</parameter>. The specified value must be a
+                <ulink url="http://www.ruby-doc.org/core/Time.html">Time</ulink>
+                object containing the time it should be delivered. Please note that
+                scheduled messages will be delivered only to the consumers connected
+                at the time of publishing the message.</entry>
+              </row>
+
+              <row>
                 <entry><parameter>:tx</parameter></entry>
 
                 <entry>true</entry>
