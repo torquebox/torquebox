@@ -33,6 +33,7 @@ class TorqueBoxCommand < Thor
   method_option 'extra', :aliases => '-e', :type => :string, :desc => 'Extra options to pass through to JBoss AS, you will need to escape dashes with \ (e.g. \--help)'
   method_option 'max-threads', :type => :numeric, :desc => "Maximum number of HTTP threads"
   method_option 'bind-address', :aliases => '-b', :type => :string, :desc => "IP address to bind to - don't set this to 0.0.0.0 if used with --clustered"
+  method_option 'port', :aliases => '-p', :type => :numeric, :desc => 'HTTP port to listen on'
   method_option 'node-name', :type => :string, :desc => 'Override the name of the node (which by default is the hostname)'
   method_option 'port-offset', :type => :numeric, :desc => 'Offset all port numbers listened on by TorqueBox by this number'
   method_option 'jvm-options', :aliases => '-J', :type => :string, :desc => 'Pass options on to the JVM'
@@ -41,6 +42,7 @@ class TorqueBoxCommand < Thor
     TorqueBox::DeployUtils.run_server(:clustered => options.clustered,
                                       :max_threads => options['max-threads'],
                                       :bind_address => options['bind-address'],
+                                      :port => options['port'],
                                       :port_offset => options['port-offset'],
                                       :pass_through => options['extra'],
                                       :node_name => options['node-name'],

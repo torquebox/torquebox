@@ -320,6 +320,15 @@ class AssemblyTool
     end
   end
 
+  def adjust_socket_bindings(doc)
+    socket_binding_groups = doc.root.get_elements( '//server/socket-binding-group' ) + doc.root.get_elements( '//domain/socket-binding-groups/socket-binding-group' )
+
+    socket_binding_groups.each do |group|
+      http_binding = group.get_elements("socket-binding[@name='http']").first
+      http_binding.attributes['port'] = '${torquebox.http.port:8080}'
+    end
+  end
+
   def remove_non_web_subsystems(doc)
     to_remove = %W(datasources ejb3 infinispan jacorb jaxrs jca jpa messaging osgi
                    resource-adapters sar threads
@@ -519,6 +528,7 @@ class AssemblyTool
       end
 
       add_socket_bindings(doc, options[:extra_modules])
+      adjust_socket_bindings(doc)
 
       if ( domain || ha )
         adjust_modcluster_config(doc)

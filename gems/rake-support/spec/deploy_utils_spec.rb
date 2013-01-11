@@ -360,6 +360,15 @@ describe TorqueBox::DeployUtils do
       options.should include('--help')
     end
 
+    it 'should set the http port' do
+      command, options = @util.run_command_line(:port => 9090)
+      options.should include('-Dtorquebox.http.port=9090')
+    end
+
+    it 'should not set HTTP port by default' do
+      command, options = @util.run_command_line
+      options.should_not include('-Dtorquebox.http.port')
+    end
   end
 
   describe '.create_archive' do
