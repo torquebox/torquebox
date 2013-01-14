@@ -13,5 +13,7 @@ TorqueBox.configure do
     cron '*/1 * * * * ?'
     # https://issues.jboss.org/browse/TORQUE-986
     description 'A description for a job'
+    # https://issues.jboss.org/browse/TORQUE-999
+    timeout '30s'
   end
 end

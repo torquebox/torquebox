@@ -57,6 +57,7 @@ module TorqueBox
                                                                               :config,
                                                                               :name,
                                                                               :description,
+                                                                              :timeout,
                                                                               { :singleton => [true, false] }
                                                                              ]
                                                               }),
