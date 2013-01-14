@@ -785,7 +785,7 @@ end]]></programlisting>
         the TorqueBox Rails template to have the contents below.
 
         <example>
-          <title><filename>~/torquebox_examples/rails_example/app/config/torquebox.yml</filename></title>
+          <title><filename>~/torquebox_examples/rails_example/config/torquebox.yml</filename></title>
           <programlisting>---
 # This is the TorqueBox configuration file. Refer to the TorqueBox
 # documentation at http://torquebox.org/documentation/current/ 
@@ -848,7 +848,7 @@ end]]></programlisting>
         about this new service and the message queue it uses.
 
         <example>
-          <title><filename>~/torquebox_examples/rails_example/app/config/torquebox.yml</filename></title>
+          <title><filename>~/torquebox_examples/rails_example/config/torquebox.yml</filename></title>
           <programlisting>---
 # This is the TorqueBox configuration file. Refer to the TorqueBox
 # documentation at http://torquebox.org/documentation/current/ 
@@ -907,7 +907,7 @@ end]]></programlisting>
         how to wire up this new message processor.
 
         <example>
-          <title><filename>~/torquebox_examples/rails_example/app/config/torquebox.yml</filename></title>
+          <title><filename>~/torquebox_examples/rails_example/config/torquebox.yml</filename></title>
           <programlisting>---
 # This is the TorqueBox configuration file. Refer to the TorqueBox
 # documentation at http://torquebox.org/documentation/current/ 
