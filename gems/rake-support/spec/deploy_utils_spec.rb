@@ -362,12 +362,12 @@ describe TorqueBox::DeployUtils do
 
     it 'should set the http port' do
       command, options = @util.run_command_line(:port => 9090)
-      options.should include('-Dtorquebox.http.port=9090')
+      options.should include('-Dhttp.port=9090')
     end
 
     it 'should not set HTTP port by default' do
       command, options = @util.run_command_line
-      options.should_not include('-Dtorquebox.http.port')
+      options.should_not include('-Dhttp.port')
     end
   end
 

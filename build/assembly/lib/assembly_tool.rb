@@ -325,7 +325,7 @@ class AssemblyTool
 
     socket_binding_groups.each do |group|
       http_binding = group.get_elements("socket-binding[@name='http']").first
-      http_binding.attributes['port'] = '${torquebox.http.port:8080}'
+      http_binding.attributes['port'] = '${http.port:8080}'
     end
   end
 
