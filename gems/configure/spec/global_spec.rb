@@ -368,6 +368,15 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
       config['<root>']['job'].should == [['AJob', { :cron => '1234', :description => 'A description' }]]
     end
 
+    # https://issues.jboss.org/browse/TORQUE-999
+    it "should allow job timeout" do
+      config = TorqueBox.configure do
+        job 'AJob', :cron => '1234', :timeout => '30s'
+      end
+
+      config['<root>']['job'].should == [['AJob', { :cron => '1234', :timeout => '30s' }]]
+    end
+
     it "should allow jobs as constants" do
       config = TorqueBox.configure do |cfg|
         cfg.instance_eval("job JobX, :cron => '1234'")
