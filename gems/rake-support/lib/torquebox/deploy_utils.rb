@@ -132,7 +132,7 @@ module TorqueBox
         options = "#{options} -Dorg.torquebox.web.http.maxThreads=#{opts[:max_threads]}" if opts[:max_threads]
         options = "#{options} -b #{opts[:bind_address]}" if opts[:bind_address]
         options = "#{options} -Djboss.socket.binding.port-offset=#{opts[:port_offset]}" if opts[:port_offset]
-        options = "#{options} -Dtorquebox.http.port=#{opts[:port]}" if opts[:port]
+        options = "#{options} -Dhttp.port=#{opts[:port]}" if opts[:port]
         options = "#{options} -Djboss.node.name=#{opts[:node_name]}" if opts[:node_name]
         options = "#{options} -Djboss.server.data.dir=#{opts[:data_directory]}" if opts[:data_directory]
         options = "#{options} #{opts[:pass_through]}" if opts[:pass_through]
