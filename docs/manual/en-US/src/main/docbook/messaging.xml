@@ -1767,6 +1767,11 @@ end</programlisting></para>
         status can be any marshalable object, and its semantics are defined by
         your application.</para>
 
+        <para>Please note that the <function>future.status=</function> method
+        is the only method available on the <classname>future</classname> object
+        inside the task or backgrounded method since it is a
+        <classname>FutureProxy</classname> instance.</para>
+
         <example>
           <title>Sending a status message</title>
 
@@ -1784,12 +1789,12 @@ end</programlisting></para>
   end
 end
 
-future = Something.process_some_stuff
+f = Something.process_some_stuff
 # time passes
-future.started? # =&gt; true
-future.status   # =&gt; 22
+f.started? # =&gt; true
+f.status   # =&gt; 22
 # time passes
-future.status   # =&gt; 87</programlisting></para>
+f.status   # =&gt; 87</programlisting></para>
         </example>
       </section>
     </section>
