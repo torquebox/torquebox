@@ -424,8 +424,20 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     protected Map<String, String> createEnvironment() {
         Map<String, String> env = new HashMap<String, String>();
         env.putAll( System.getenv() );
-        String path = (String) env.get( "PATH" );
+
+        // From javadocs:
+        //
+        // On UNIX systems the alphabetic case of name is typically significant,
+        // while on Microsoft Windows systems it is typically not. For example,
+        // the expression System.getenv("FOO").equals(System.getenv("foo")) is
+        // likely to be true on Microsoft Windows.
+        //
+        // This means that if on Windows the env variable is set as Path,
+        // we should still retrieve it.
+        String path = System.getenv( "PATH" );
         if (path == null) {
+            // There is no PATH (or Path) environment variable set,
+            // let's create an empty one
             env.put( "PATH", "" );
         }
 
