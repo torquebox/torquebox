@@ -330,8 +330,6 @@ remote_describe "in-container messaging tests" do
     end
 
     context "scheduled messages" do
-      # Allow to use fancy time in tests
-      require 'active_support/core_ext/numeric/time'
 
       it "should successfully send a scheduled message to the queue" do
         with_queue("/queues/scheduled") do |queue|
@@ -355,6 +353,9 @@ remote_describe "in-container messaging tests" do
       end
 
       it "should successfully send a scheduled message to the topic" do
+        # Allow to use fancy time in tests
+        require 'active_support/core_ext/numeric/time'
+
         with_topic("/topics/scheduled") do |topic|
 
           start_time = Time.now
