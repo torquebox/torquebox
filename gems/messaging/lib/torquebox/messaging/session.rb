@@ -42,6 +42,22 @@ module TorqueBox
         producer    = @jms_session.create_producer( java_destination( destination ) )
         message     = Message.new( @jms_session, payload, options[:encoding] )
 
+        options[:properties] ||= {}
+
+        # This will let us create messages to be scheduled later like this:
+        #
+        # queue.publish(:ham => :biscuit, :scheduled => Time.now + 10)
+        # queue.publish(:ham => :biscuit, :scheduled => Time.now + 2.5)
+        #
+        # In Rails it is possible to do:
+        #
+        # queue.publish(:ham => :biscuit, :scheduled => 3.minutes.from_now)
+        #
+        # Please note that the :scheduled parameter takes a Time object.
+        if options.has_key?(:scheduled)
+          options[:properties][Java::org.hornetq.api.core.Message::HDR_SCHEDULED_DELIVERY_TIME.to_s] = (options[:scheduled].to_f * 1000).to_i
+        end
+
         message.populate_message_headers(options)
         message.populate_message_properties(options[:properties])
 

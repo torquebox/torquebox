@@ -329,6 +329,67 @@ remote_describe "in-container messaging tests" do
       end
     end
 
+    context "scheduled messages" do
+      # Allow to use fancy time in tests
+      require 'active_support/core_ext/numeric/time'
+
+      it "should successfully send a scheduled message to the queue" do
+        with_queue("/queues/scheduled") do |queue|
+
+          start_time = Time.now
+
+          # Schedule a message for 2 seconds
+          # Timeout after 10 seconds
+          t = Thread.new do
+            message = queue.receive(:timeout => 10000)
+            duration = (Time.now - start_time) * 1000.0
+
+            message.should eql( "wassup" )
+            duration.should be_within(200.0).of(2000.0)
+          end
+
+          queue.publish "wassup", :scheduled => Time.now + 2
+
+          t.join
+        end
+      end
+
+      it "should successfully send a scheduled message to the topic" do
+        with_topic("/topics/scheduled") do |topic|
+
+          start_time = Time.now
+
+          # Schedule a message for 2 seconds
+          # Timeout after 10 seconds
+          t = Thread.new do
+            message = topic.receive(:timeout => 10000)
+            duration = (Time.now - start_time) * 1000.0
+
+            message.should eql( "wassup" )
+            duration.should be_within(200.0).of(2000.0)
+          end
+
+          topic.publish "wassup", :scheduled => 2.seconds.from_now
+
+          t.join
+        end
+      end
+
+      it "should not deliver the message before timeout" do
+        with_queue("/queues/scheduled") do |queue|
+
+          start_time = Time.now
+
+          # Schedule a message for 5 seconds
+          # Timeout after 1 second
+          queue.publish_and_receive "wassup", :timeout => 1000, :scheduled => Time.now + 5
+          duration = (Time.now - start_time) * 1000.0
+
+          duration.should be_within(200.0).of(1000.0)
+        end
+      end
+    end
+
     context "destination not ready" do
       it "should block on publish until queue is ready" do
         queue = TorqueBox::Messaging::Queue.new "/queues/not_ready"
