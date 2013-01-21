@@ -30,6 +30,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
@@ -44,6 +45,7 @@ import org.torquebox.core.util.JRubyConstants;
 public class RubyRuntimeFactoryTest {
 
     private RubyRuntimeFactory factory;
+    private final Pattern windowsPattern = Pattern.compile( ".*windows.*", Pattern.CASE_INSENSITIVE );
 
     @After
     public void destroyFactory() {
@@ -107,6 +109,10 @@ public class RubyRuntimeFactoryTest {
     @Test
     public void currentDirectoryIsSetBeforeInitialization() throws Exception {
         String root = "/path/to/root";
+        if (windowsPattern.matcher( System.getProperty( "os.name" ) ).matches()) {
+            String windowsPrefix = System.getProperty( "windows.absolute.prefix", "C:" );
+            root = windowsPrefix + "\\path\\to\\root";
+        }
         RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "test_app" );
         rubyAppMetaData.setRoot( new File( root ) );
         BaseRuntimePreparer preparer = new BaseRuntimePreparer( rubyAppMetaData );
