@@ -334,19 +334,18 @@ remote_describe "in-container messaging tests" do
       it "should successfully send a scheduled message to the queue" do
         with_queue("/queues/scheduled") do |queue|
 
-          start_time = Time.now
-
           # Schedule a message for 2 seconds
           # Timeout after 10 seconds
           t = Thread.new do
-            message = queue.receive(:timeout => 10000)
-            duration = (Time.now - start_time) * 1000.0
-
-            message.should eql( "wassup" )
-            duration.should be_within(200.0).of(2000.0)
+            queue.receive(:timeout => 10000) do |start_time|
+              start_time.should_not be_nil
+              
+              duration = (Time.now - start_time) * 1000.0
+              duration.should be_within(200.0).of(2000.0)
+            end
           end
 
-          queue.publish "wassup", :scheduled => Time.now + 2
+          queue.publish Time.now, :scheduled => Time.now + 2
 
           t.join
         end
@@ -356,21 +355,22 @@ remote_describe "in-container messaging tests" do
         # Allow to use fancy time in tests
         require 'active_support/core_ext/numeric/time'
 
-        with_topic("/topics/scheduled") do |topic|
+        with_topic("/topics/scheduled", :client_id => 'scheduled-topic') do |topic|
 
-          start_time = Time.now
-
+          topic.receive(:durable => true, :timeout => 1)
+          
           # Schedule a message for 2 seconds
           # Timeout after 10 seconds
           t = Thread.new do
-            message = topic.receive(:timeout => 10000)
-            duration = (Time.now - start_time) * 1000.0
-
-            message.should eql( "wassup" )
-            duration.should be_within(200.0).of(2000.0)
+            topic.receive(:durable => true, :timeout => 10_000) do |start_time|
+              start_time.should_not be_nil
+            
+              duration = (Time.now - start_time) * 1000.0
+              duration.should be_within(200.0).of(2000.0)
+            end
           end
 
-          topic.publish "wassup", :scheduled => 2.seconds.from_now
+          topic.publish Time.now, :scheduled => 2.seconds.from_now
 
           t.join
         end
@@ -442,8 +442,9 @@ ensure
   queue.stop if queue
 end
 
-def with_topic(name)
-  topic = TorqueBox::Messaging::Topic.start name
+def with_topic(name, opts = {})
+  TorqueBox::Messaging::Topic.start name
+  topic = TorqueBox::Messaging::Topic.new name, opts
   yield topic
 ensure
   topic.stop if topic
