@@ -20,6 +20,7 @@
 package org.torquebox.messaging.component;
 
 import javax.jms.Message;
+import javax.jms.Session;
 import javax.jms.XASession;
 
 import org.jruby.RubyModule;
@@ -36,7 +37,7 @@ public class MessageProcessorComponent extends AbstractRubyComponent {
         process( message, (XASession) null );
     }
 
-    public void process(Message message, XASession session) {
+    public void process(Message message, Session session) {
         RubyModule messageWrapperClass = getClass( "TorqueBox::Messaging::Message" );
         Object wrappedMessage = _callRubyMethod( messageWrapperClass, "new", message );
         _callRubyMethod( findMiddleware(), "invoke", session, wrappedMessage, getRubyComponent() );
