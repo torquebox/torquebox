@@ -847,6 +847,236 @@ message = topic.receive
         </section>
       </section>
 
+      <section id="managing-destinations">
+          <title>Destination management</title>
+
+          <para>
+              TorqueBox offers simple way to manage queues and topics deployed with the
+              application.
+          </para>
+
+          <section id="managing-queue-instances">
+              <title>Queue management</title>
+
+              <para>
+                  There are several methods available in the
+                  <classname>TorqueBox::Messaging::Queue</classname> to manage
+                  the current instance of the queue.
+
+                  <example>
+                      <title>Queue instance management</title>
+
+                      <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/vegetables')
+queue.paused? # => true
+queue.resume
+queue.paused? # => false
+queue.count_messages # => 300
+queue.count_messages('vegetable = tomatoe') # => 30
+queue.remove_messages('vegetable = tomatoe') # => 30
+queue.count_messages # => 270
+queue.stop</programlisting>
+                      </para>
+                  </example>
+
+                  <table id="queue-instance-management-options">
+                      <title>Queue instance management options</title>
+
+                      <tgroup cols="3">
+                          <colspec align="left" />
+
+                          <thead>
+                              <row>
+                                  <entry>Method</entry>
+
+                                  <entry>Params</entry>
+
+                                  <entry>Description</entry>
+                              </row>
+                          </thead>
+
+                          <tbody>
+                              <row>
+                                  <entry>stop</entry>
+
+                                  <entry>None</entry>
+
+                                  <entry>
+                                      Stops and destroys the queue.
+                                  </entry>
+                              </row>
+
+                              <row>
+                                  <entry>paused?</entry>
+
+                                  <entry>None</entry>
+
+                                  <entry>
+                                      Returns <parameter>true</parameter> if queue is pause, <parameter>false</parameter>
+                                      otherwise.
+                                  </entry>
+                              </row>
+
+                              <row>
+                                  <entry>pause</entry>
+
+                                  <entry>None</entry>
+
+                                  <entry>
+                                      Pauses the queue. Messages put into a queue will not be delivered even
+                                      if there are connected consumers.
+                                  </entry>
+                              </row>
+
+                              <row>
+                                  <entry>resume</entry>
+
+                                  <entry>None</entry>
+
+                                  <entry>
+                                      Resumes the queue.
+                                  </entry>
+                              </row>
+
+                              <row>
+                                  <entry>remove_messages</entry>
+
+                                  <entry><parameter>filter</parameter></entry>
+
+                                  <entry>
+                                      Removes messages from the queue. The optional <parameter>filter</parameter>
+                                      parameter allows to remove only selected messages by filtering them
+                                      by the properties with a SQL92-like syntax. If no filter is set, all
+                                      messages will be removed. This method returns the count of removed
+                                      messages from the queue.
+                                  </entry>
+                              </row>
+
+                              <row>
+                                  <entry>count_messages</entry>
+
+                                  <entry><parameter>filter</parameter></entry>
+
+                                  <entry>
+                                      Counts messages in the queue. The optional <parameter>filter</parameter>
+                                      parameter allows to count only selected messages by filtering them
+                                      by the properties with a SQL92-like syntax. If no filter is set, all
+                                      messages will be counted.
+                                  </entry>
+                              </row>
+                          </tbody>
+                      </tgroup>
+                  </table>
+              </para>
+          </section>
+
+          <section id="managing-topic-instances">
+              <title>Topic management</title>
+
+              <para>
+                  The <classname>TorqueBox::Messaging::Topic</classname> objects expose
+                  only one method to manage the current instance of the topic.
+
+                  <example>
+                      <title>Topic instance management</title>
+
+                      <para><programlisting>topic = TorqueBox::Messaging::Topic.new('/topics/vegetables')
+topic.stop</programlisting>
+                      </para>
+                  </example>
+
+                  <table id="topic-instance-management-options">
+                      <title>Topic instance management options</title>
+
+                      <tgroup cols="3">
+                          <colspec align="left" />
+
+                          <thead>
+                              <row>
+                                  <entry>Method</entry>
+
+                                  <entry>Params</entry>
+
+                                  <entry>Description</entry>
+                              </row>
+                          </thead>
+
+                          <tbody>
+                              <row>
+                                  <entry>stop</entry>
+
+                                  <entry>None</entry>
+
+                                  <entry>
+                                      Stops and destroys the topic.
+                                  </entry>
+                              </row>
+                          </tbody>
+                      </tgroup>
+                  </table>
+              </para>
+          </section>
+      </section>
+
+      <section id="listing-destinations">
+          <title>Listing and looking up destinations</title>
+
+          <para>
+              TorqueBox makes it easy to list and lookup any particular queue or topic
+              deployed with the application. There are two class methods available in the
+              <classname>TorqueBox::Messaging::Queue</classname> and
+              <classname>TorqueBox::Messaging::Topic</classname> classes:
+              <methodname>list</methodname> and <methodname>lookup</methodname>.
+          </para>
+
+          <para>
+              The <methodname>list</methodname> method allows to list all queues
+              (or topics) deployed with the application. It returns an array of
+              <classname>TorqueBox::Messaging::Queue</classname> (or
+              <classname>TorqueBox::Messaging::Topic</classname>) objects on which
+              you can easily execute management methods mentioned above. If no destinations
+              are available, empty array is returned.
+
+              <example>
+                  <title>Application-deployed queue and topic list</title>
+
+                  <para><programlisting>TorqueBox::Messaging::Queue.list.each do |queue|
+    queue.name # => '/queues/vegetables'
+    queue.count_messages # => 300
+    queue.remove_messages('foo = bar') # => 23
+    queue.pause
+end
+
+TorqueBox::Messaging::Topic.list.each do |topic|
+    topic.name # => '/topics/cars'
+end</programlisting>
+                  </para>
+              </example>
+
+          </para>
+
+          <para>
+              The <methodname>lookup</methodname> method allows to lookup a queue (or topic)
+              by its name. If a particular queue (or topic) is available it returns a
+              <classname>TorqueBox::Messaging::Queue</classname> (or
+              <classname>TorqueBox::Messaging::Topic</classname>) object. If there is no
+              destination found, <literal>nil</literal> is returned.
+
+              <example>
+                  <title>Application-deployed queue and topic lookup</title>
+
+                  <para><programlisting>queue = TorqueBox::Messaging::Queue.lookup('/queues/vegetables')
+
+if queue
+    queue.count_messages # => 25
+end
+
+TorqueBox::Messaging::Topic.lookup('/topics/cars') # => [Topic: '/topics/cars']
+TorqueBox::Messaging::Topic.lookup('/topics/doesntexist') # => nil</programlisting>
+                  </para>
+              </example>
+          </para>
+      </section>
+
     <section id="synchronous-messaging">
       <title>Synchronous Messaging</title>
 
