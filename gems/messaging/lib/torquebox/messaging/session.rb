@@ -109,17 +109,12 @@ module TorqueBox
       #
       def publish_and_receive(destination, message, options = {})
         options[:timeout] ||= 10_000 # 10s
-        decode = options.fetch(:decode, false)
         options[:properties] ||= {}
         options[:properties]["synchronous"] = "true"
         message = publish(destination, message, options)
     
         options[:selector] = "JMSCorrelationID='#{message.jms_message.jms_message_id}'"
-        response = receive(destination, options)
-    
-        if response
-          decode ? Message.new( response ).decode : response
-        end
+        receive(destination, options)
       end
 
       # Receiving end of the request-response pattern. The return value of
