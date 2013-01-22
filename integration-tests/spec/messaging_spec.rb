@@ -391,6 +391,48 @@ remote_describe "in-container messaging tests" do
       end
     end
 
+    context "management" do
+      before(:each) do
+        @queue1 = TorqueBox::Messaging::Queue.start('/queues/1')
+        @queue2 = TorqueBox::Messaging::Queue.start('/queues/2')
+        @topic1 = TorqueBox::Messaging::Topic.start('/topics/1')
+        @topic2 = TorqueBox::Messaging::Topic.start('/topics/2')
+      end
+
+      after(:each) do
+        @queue1.stop
+        @queue2.stop
+        @topic1.stop
+        @topic2.stop
+      end
+
+      it "should list queues" do
+        queue_names = TorqueBox::Messaging::Queue.list.map(&:name)
+        queue_names.should include("/queues/1")
+        queue_names.should include("/queues/2")
+        queue_names.should_not include("/topics/1")
+      end
+
+      it "should lookup a queue by name" do
+        queue = TorqueBox::Messaging::Queue.lookup("/queues/1")
+        queue.should_not be_nil
+        queue.name.should == "/queues/1"
+      end
+
+      it "should list topics" do
+        topic_names = TorqueBox::Messaging::Topic.list.map(&:name)
+        topic_names.should include("/topics/1")
+        topic_names.should include("/topics/2")
+        topic_names.should_not include("/queues/1")
+      end
+
+      it "should lookup a topic by name" do
+        topic = TorqueBox::Messaging::Topic.lookup("/topics/1")
+        topic.should_not be_nil
+        topic.name.should == "/topics/1"
+      end
+    end
+
     context "destination not ready" do
       it "should block on publish until queue is ready" do
         queue = TorqueBox::Messaging::Queue.new "/queues/not_ready"
