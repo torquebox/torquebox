@@ -851,8 +851,7 @@ message = topic.receive
           <title>Destination management</title>
 
           <para>
-              TorqueBox offers simple way to manage queues and topics deployed with the
-              application.
+              TorqueBox offers a simple way to manage queues and topics.
           </para>
 
           <section id="managing-queue-instances">
@@ -1022,7 +1021,7 @@ topic.stop</programlisting>
 
           <para>
               TorqueBox makes it easy to list and lookup any particular queue or topic
-              deployed with the application. There are two class methods available in the
+              deployed in the server. There are two class methods available in the
               <classname>TorqueBox::Messaging::Queue</classname> and
               <classname>TorqueBox::Messaging::Topic</classname> classes:
               <methodname>list</methodname> and <methodname>lookup</methodname>.
@@ -1030,14 +1029,14 @@ topic.stop</programlisting>
 
           <para>
               The <methodname>list</methodname> method allows to list all queues
-              (or topics) deployed with the application. It returns an array of
+              (or topics) deployed in the server. It returns an array of
               <classname>TorqueBox::Messaging::Queue</classname> (or
               <classname>TorqueBox::Messaging::Topic</classname>) objects on which
               you can easily execute management methods mentioned above. If no destinations
               are available, empty array is returned.
 
               <example>
-                  <title>Application-deployed queue and topic list</title>
+                  <title>Queue and Topic list</title>
 
                   <para><programlisting>TorqueBox::Messaging::Queue.list.each do |queue|
     queue.name # => '/queues/vegetables'
@@ -1062,7 +1061,7 @@ end</programlisting>
               destination found, <literal>nil</literal> is returned.
 
               <example>
-                  <title>Application-deployed queue and topic lookup</title>
+                  <title>Queue and Topic lookup</title>
 
                   <para><programlisting>queue = TorqueBox::Messaging::Queue.lookup('/queues/vegetables')
 
