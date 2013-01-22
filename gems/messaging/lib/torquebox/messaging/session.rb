@@ -108,12 +108,11 @@ module TorqueBox
       #            default: true
       #
       def publish_and_receive(destination, message, options = {})
-        options[:timeout] ||= 10000 # 10s
+        options[:timeout] ||= 10_000 # 10s
         decode = options.fetch(:decode, false)
         options[:properties] ||= {}
         options[:properties]["synchronous"] = "true"
-        wrapped_message = { :timeout => options[:timeout], :message => message }
-        message = publish(destination, wrapped_message, options)
+        message = publish(destination, message, options)
     
         options[:selector] = "JMSCorrelationID='#{message.jms_message.jms_message_id}'"
         response = receive(destination, options)
@@ -135,11 +134,8 @@ module TorqueBox
     
         request = receive(destination, receive_options)
         unless request.nil?
-          decoded_request = Message.new( request ).decode
-          request_message = decoded_request[:message]
-          # Base the response ttl off the original request timeout
-          request_timeout = decoded_request[:timeout]
-          options[:ttl] ||= request_timeout
+          request_message = Message.new( request ).decode
+          options[:ttl] ||= 60_000 # 1m
     
           response = block_given? ? yield(request_message) : request_message
     
