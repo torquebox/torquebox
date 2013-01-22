@@ -166,4 +166,115 @@ describe TorqueBox::Messaging::Destination do
     end
   end
 
+  context "queue management" do
+    before(:each) do
+      TorqueBox::MSC.stub_chain(:deployment_unit, :service_name, :canonical_name).and_return('jboss.deployment.unit."application-knob.yml"')
+    end
+
+    describe "lookup" do
+      it "should return nil lookup if queue unavailable" do
+        TorqueBox::Messaging::Queue.should_receive(:get_service_status).with('jboss.messaging.default.jms.queue./queues/doesntexist').and_return(nil)
+        TorqueBox::Messaging::Queue.lookup('/queues/doesntexist').should be_nil
+      end
+    end
+
+    describe "list" do
+      before(:each) do
+        jms_manager = mock('JMSManager')
+        @server_control = mock('ServerControl')
+
+        TorqueBox::ServiceRegistry.stub!(:lookup).with("jboss.messaging.default.jms.manager").and_yield(jms_manager)
+        Java::org.hornetq.jms.management.impl.JMSServerControlImpl.stub!(:new).with(jms_manager).and_return(@server_control)
+      end
+
+      it "should return empty list if no queues are available" do
+        @server_control.should_receive(:queue_names).and_return([])
+
+        TorqueBox::Messaging::Queue.list.should == []
+      end
+
+      it "should return empty list if no topics are available" do
+        @server_control.should_receive(:topic_names).and_return([])
+
+        TorqueBox::Messaging::Topic.list.should == []
+      end
+
+      it "should return list with available queues for current application" do
+        @server_control.should_receive(:queue_names).and_return(['/queues/one', '/queues/two'])
+
+        status = mock('status')
+        status.stub!(:get).with('parentName').and_return('jboss.deployment.unit."application-knob.yml".INSTALL')
+
+        TorqueBox::Messaging::Queue.should_receive(:get_service_status).with('jboss.messaging.default.jms.queue./queues/one').and_return(status)
+        TorqueBox::Messaging::Queue.should_receive(:get_service_status).with('jboss.messaging.default.jms.queue./queues/two').and_return(status)
+
+        queues = TorqueBox::Messaging::Queue.list
+        queues.size.should == 2
+        queues[0].name.should == '/queues/one'
+        queues[1].name.should == '/queues/two'
+      end
+
+      it "should return list with available topics for current application" do
+        @server_control.should_receive(:topic_names).and_return(['/topics/one', '/topics/two'])
+
+        status = mock('status')
+        status.stub!(:get).with('parentName').and_return('jboss.deployment.unit."application-knob.yml".INSTALL')
+
+        TorqueBox::Messaging::Topic.should_receive(:get_service_status).with('jboss.messaging.default.jms.topic./topics/one').and_return(status)
+        TorqueBox::Messaging::Topic.should_receive(:get_service_status).with('jboss.messaging.default.jms.topic./topics/two').and_return(status)
+
+        topics = TorqueBox::Messaging::Topic.list
+        topics.size.should == 2
+        topics[0].name.should == '/topics/one'
+        topics[1].name.should == '/topics/two'
+      end
+
+      it "should return list with available queues without queues from other applications" do
+        @server_control.should_receive(:queue_names).and_return(['/queues/one', '/queues/two'])
+
+        this_status = mock('status')
+        this_status.stub!(:get).with('parentName').and_return('jboss.deployment.unit."application-knob.yml".INSTALL')
+
+        other_status = mock('status')
+        other_status.stub!(:get).with('parentName').and_return('jboss.deployment.unit."other-application-knob.yml".INSTALL')
+
+        TorqueBox::Messaging::Queue.should_receive(:get_service_status).with('jboss.messaging.default.jms.queue./queues/one').and_return(this_status)
+        TorqueBox::Messaging::Queue.should_receive(:get_service_status).with('jboss.messaging.default.jms.queue./queues/two').and_return(other_status)
+
+        queues = TorqueBox::Messaging::Queue.list
+        queues.size.should == 1
+        queues[0].name.should == '/queues/one'
+      end
+
+      it "should return list with available topics without topics from other applications" do
+        @server_control.should_receive(:topic_names).and_return(['/topics/one', '/topics/two'])
+
+        this_status = mock('status')
+        this_status.stub!(:get).with('parentName').and_return('jboss.deployment.unit."application-knob.yml".INSTALL')
+
+        other_status = mock('status')
+        other_status.stub!(:get).with('parentName').and_return('jboss.deployment.unit."other-application-knob.yml".INSTALL')
+
+        TorqueBox::Messaging::Topic.should_receive(:get_service_status).with('jboss.messaging.default.jms.topic./topics/one').and_return(this_status)
+        TorqueBox::Messaging::Topic.should_receive(:get_service_status).with('jboss.messaging.default.jms.topic./topics/two').and_return(other_status)
+
+        topics = TorqueBox::Messaging::Topic.list
+        topics.size.should == 1
+        topics[0].name.should == '/topics/one'
+      end
+
+      it "should return list with available queues without backgroundables" do
+        @server_control.should_receive(:queue_names).and_return(['/queues/one', '/queues/torquebox/TORQUE-847/tasks/torquebox_backgroundable'])
+
+        status = mock('status')
+        status.stub!(:get).with('parentName').and_return('jboss.deployment.unit."application-knob.yml".INSTALL')
+
+        TorqueBox::Messaging::Queue.should_receive(:get_service_status).with('jboss.messaging.default.jms.queue./queues/one').and_return(status)
+
+        queues = TorqueBox::Messaging::Queue.list
+        queues.size.should == 1
+        queues[0].name.should == '/queues/one'
+      end
+    end
+  end
 end

@@ -16,6 +16,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'torquebox/injectors'
+require 'torquebox/msc'
 require 'torquebox/messaging/session'
 require 'torquebox/messaging/connection_factory'
 require 'torquebox/messaging/ext/javax_jms_queue_browser'
@@ -155,6 +156,80 @@ module TorqueBox
       
       def to_s 
         name
+      end
+
+      class << self
+
+        # List all destinations of this application.
+        #
+        # @return Array of {TorqueBox::Messaging::Queue} or {TorqueBox::Messaging::Topic}
+        #  depending on the destination type.
+        def list
+          destinations = []
+
+          # Get the JMS Manager
+          TorqueBox::ServiceRegistry.lookup("jboss.messaging.default.jms.manager") do |manager|
+
+            # JMSServerControl will let us grab the deployed queue/topic list
+            server_control = Java::org.hornetq.jms.management.impl.JMSServerControlImpl.new(manager)
+
+            # Retrieve the destination list appropriate to the destination type
+            if self == TorqueBox::Messaging::Topic
+              names = server_control.topic_names
+            elsif self == TorqueBox::Messaging::Queue
+              names = server_control.queue_names
+            else
+              return []
+            end
+
+            names.each do |name|
+              destinations << self.new(name) if destination_application_deployed?(name)
+            end
+          end
+
+          return destinations
+        end
+
+        # Lookup a destination of this application by name. A destination could be
+        # a queue or topic.
+        #
+        # @param [String] name of the destination
+        #
+        # @return [TorqueBox::Messaging::Queue] or [TorqueBox::Messaging::Topic]
+        #   The destination instance.
+        def lookup(name)
+          return self.new(name) if destination_application_deployed?(name)
+          nil
+        end
+
+        protected
+
+        # Checks whether the destination is deployed with the application.
+        # Skips all TorqueBox internal destinations like backgroundables.
+        def destination_application_deployed?(name)
+          # We do not want to include backgroudables
+          return false if name.end_with?("torquebox_backgroundable")
+
+          # Get the destination status
+          status = get_service_status("jboss.messaging.default.jms.#{self.name.to_s.split('::').last.downcase}.#{name}")
+
+          # No destination available?
+          return false if status.nil?
+
+          # Is the destination deployed with the application?
+          return true if status.get("parentName").start_with?(TorqueBox::MSC.deployment_unit.service_name.canonical_name)
+
+          false
+        end
+
+        # Retrieves the service status for selected destination. This allows us later
+        # to check the parent of the specific destination.
+        def get_service_status(service)
+          mbean_server = Java::java.lang.management.ManagementFactory.getPlatformMBeanServer
+          object_name = Java::javax.management.ObjectName.new('jboss.msc:type=container,name=jboss-as')
+
+          mbean_server.invoke(object_name, "getServiceStatus", [service].to_java, [service.to_java.java_class.to_s].to_java(:string))
+        end
       end
 
     end
