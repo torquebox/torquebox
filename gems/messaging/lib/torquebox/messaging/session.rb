@@ -136,7 +136,8 @@ module TorqueBox
         unless request.nil?
           request_message = Message.new( request ).decode
           options[:ttl] ||= 60_000 # 1m
-    
+          options[:encoding] ||= Message.extract_encoding_from_message( request )
+
           response = block_given? ? yield(request_message) : request_message
     
           options[:correlation_id] = request.jms_message_id

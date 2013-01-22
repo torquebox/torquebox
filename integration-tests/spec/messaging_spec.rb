@@ -265,6 +265,24 @@ remote_describe "in-container messaging tests" do
             end
           end
 
+          if encoding
+            it "receive_and_publish should use the same encoding it was given" do
+              with_queue("/queues/publish_and_receive") do |queue|
+                response_thread = Thread.new {
+                  queue.receive_and_publish( :timeout => 10000 ) { |msg| msg.upcase }
+                }
+                message = queue.publish_and_receive( "ping", :timeout => 10000,
+                                                     :encoding => encoding, :decode => false)
+                response_thread.join
+                
+                TorqueBox::Messaging::Message.
+                  extract_encoding_from_message( message ).to_sym.should == encoding
+                TorqueBox::Messaging::Message.new( message ).
+                  decode.should eql( "PING" )
+              end
+            end
+          end
+          
           it "should return request message if no block given" do
             with_queue("/queues/publish_and_receive") do |queue|
               response_thread = Thread.new {
