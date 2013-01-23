@@ -80,6 +80,7 @@ describe "basic sinatra test" do
     log_file = File.new(File.join(jboss_log_dir, 'server.log'))
     log_file.seek(-200, IO::SEEK_END)
     log_file.read.should include('GET /log-marker')
+    log_file.close
   end
 
   it "should return an ERB-expanded expression (TORQUE-984)" do
