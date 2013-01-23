@@ -18,6 +18,7 @@ describe "messaging rack test" do
     visit "/messaging-rack/?ham-biscuit"
     result = TorqueBox::Messaging::Queue.new('/queues/results').receive(:timeout => 30_000)
     result.should == "TestQueueConsumer=ham-biscuit"
+    ensure_no_xa_error
   end
 
   it "should receive a topic ham biscuit" do
@@ -30,14 +31,23 @@ describe "messaging rack test" do
     sleep(0.3) # ensure thread is blocking on receive from topic
     visit "/messaging-rack/?topic-ham-biscuit"
     receive_thread.join
+    ensure_no_xa_error
   end
 
   it "should work with a processor that doesn't inherit from MessageProcessor" do
     visit "/messaging-rack/?parentless-ham-biscuit"
     result = TorqueBox::Messaging::Queue.new('/queues/results').receive(:timeout => 30_000)
     result.should == "ParentlessQueueConsumer=parentless-ham-biscuit"
+    ensure_no_xa_error
   end
-  
+
+  def ensure_no_xa_error
+    log_file = File.new(File.join(jboss_log_dir, 'server.log'))
+    log_file.seek(-4096, IO::SEEK_END)
+    log_file.read.should_not include('Invalid transaction state')
+    log_file.close
+  end
+
 
 end
 

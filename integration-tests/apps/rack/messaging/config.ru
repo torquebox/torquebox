@@ -13,7 +13,7 @@ class RackApp
                     fetch('/queues/test')
                   end
 
-    destination.publish(msg)
+    destination.publish(msg, :priority => rand(10))
     
     [200, { 'Content-Type' => 'text/html' }, "<div id='success'>it worked</div>"] 
   end

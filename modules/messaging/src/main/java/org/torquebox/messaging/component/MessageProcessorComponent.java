@@ -21,7 +21,6 @@ package org.torquebox.messaging.component;
 
 import javax.jms.Message;
 import javax.jms.Session;
-import javax.jms.XASession;
 
 import org.jruby.RubyModule;
 import org.torquebox.core.component.AbstractRubyComponent;
@@ -34,7 +33,7 @@ public class MessageProcessorComponent extends AbstractRubyComponent {
 
    
     public void process(Message message) {
-        process( message, (XASession) null );
+        process( message, (Session) null );
     }
 
     public void process(Message message, Session session) {

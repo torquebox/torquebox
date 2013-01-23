@@ -21,21 +21,14 @@ module TorqueBox
   module Messaging
     module ProcessorMiddleware
       class WithTransaction
-      
+
         def call(session, message)
-          if session
-            begin
-              TorqueBox.transaction( session ) { yield }
-            rescue Exception => ex
-              $stderr.puts("Unable to process inbound message", ex)
-            end
-          else
-            yield
-          end
+          # This middleware is now a no-op and should be removed
+          yield
         end
-        
+
       end
-      
+
     end
   end
 end
