@@ -38,7 +38,6 @@ module TorqueBox
             super
           rescue ActiveRecord::JDBCError => e
             unless self.is_a?(XAResource)
-              puts "Creating an XAResource; exception=#{e}"
               self.extend(XAResource)
               retry
             else
