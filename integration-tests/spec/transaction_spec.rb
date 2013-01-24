@@ -14,6 +14,7 @@ remote_describe "transactions testing" do
 
   before(:each) do
     @input  = TorqueBox::Messaging::Queue.new('/queue/input')
+    @no_xa_input = TorqueBox::Messaging::Queue.new('/queue/no_xa_input')
     @output = TorqueBox::Messaging::Queue.new('/queue/output')
     @cache  = TorqueBox::Infinispan::Cache.new(:name => 'tx-test')
     @default_dir = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
@@ -230,6 +231,29 @@ remote_describe "transactions testing" do
       queue.count.should == 1
     ensure
       queue.stop
+    end
+  end
+
+  context "without xa" do
+    it "should retry delivery when an error is tossed" do
+      @no_xa_input.publish("This message should trigger 5 retries")
+      response = @output.receive(:timeout => 10_000)
+      puts "!!! RESPONSE IS #{response}"
+      response.should match /success.*\s5\s/
+    end
+
+    it "should not rollback published messages when an error is tossed" do
+      responses = []
+      thread = Thread.new {
+        # default messages retry 10 times
+        10.times {
+          responses << @output.receive(:timeout => 5_000)
+        }
+      }
+      @no_xa_input.publish("This message should cause an error to be raised")
+      thread.join
+      responses.count.should == 10
+      responses.each { |response| response.should == "yay!" }
     end
   end
 

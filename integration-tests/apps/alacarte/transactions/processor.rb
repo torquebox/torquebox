@@ -29,6 +29,7 @@ class Processor < TorqueBox::Messaging::MessageProcessor
 
   def test_retries(count)
     if $count == count
+      $count = 0
       "retried successfully #{count} times"
     else
       $count ||= 0

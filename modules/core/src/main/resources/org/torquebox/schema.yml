@@ -57,6 +57,7 @@
             arbitrary: true
           -client_id: string
           -singleton: boolean
+          -xa: boolean
     list:
       value-types:
         string:
@@ -71,6 +72,7 @@
                 arbitrary: true
               -client_id: string
               -singleton: boolean
+              -xa: boolean
 -pooling:
   dependencies: /application/root
   arbitrary: true

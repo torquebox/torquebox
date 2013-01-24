@@ -241,7 +241,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
 
     it_should_allow_valid_options  do
       topic 'a-topic' do
-        processor 'AClass', :concurrency => 1, :config => '', :selector => '', :name => '', :durable => true, :client_id => 'client-id', :singleton=>true
+        processor 'AClass', :concurrency => 1, :config => '', :selector => '', :name => '', :durable => true, :client_id => 'client-id', :singleton=>true, :xa => true
       end
     end
 
@@ -483,6 +483,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
                                  :name => 'a-proc',
                                  :durable => true,
                                  :client_id => 'client-id',
+                                 :xa => false,
                                  :config => { :foo => :bar } } ] ] } },
         'web' => { :context => '/bacon',
                    :host => ['host1', 'host2'],
@@ -539,6 +540,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
         "name" => 'a-proc',
         "durable" => true,
         "client_id" => 'client-id',
+        "xa" => false,
         "config" => { 'foo' => :bar }
       }
     end

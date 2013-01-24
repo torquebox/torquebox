@@ -98,10 +98,19 @@ public class TaskMetaData {
         }
     }
 
+    public void setXAEnabled(boolean xaEnabled) {
+        this.xaEnabled = xaEnabled;
+    }
+
+    public boolean isXAEnabled() {
+        return this.xaEnabled;
+    }
+
     private String rubyClassName;
     private String location;
     private String queueSuffix;
     private int concurrency = 1;
     private boolean durable = true;
     private String simpleName;
+    private boolean xaEnabled = true;
 }

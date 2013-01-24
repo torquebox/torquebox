@@ -46,14 +46,19 @@ public class MessageProcessor extends BaseMessageProcessor {
             try {
                 component.process( message, getSession() );
                 if (isXAEnabled()) {
-                    commitTransaction();
+                    commitXATransaction();
+                } else {
+                    getSession().commit();
                 }
             } catch (Throwable e) {
                 if (isXAEnabled()) {
-                    rollbackTransaction( e );
+                    rollbackXATransaction( e );
+                } else {
+                    getSession().rollback();
+                    throw e;
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error( "Unexpected error in " + group.getName(), e );
         } finally {
             clearCurrentRuntime();
@@ -71,13 +76,13 @@ public class MessageProcessor extends BaseMessageProcessor {
         }
     }
 
-    protected void rollbackTransaction(Throwable e) {
+    protected void rollbackXATransaction(Throwable e) {
         if (this.currentRuby != null && this.currentRubyTM != null) {
             RuntimeHelper.call( this.currentRuby, this.currentRubyTM, "error", new Object[] { e } );
         }
     }
 
-    protected void commitTransaction() {
+    protected void commitXATransaction() {
         if (this.currentRuby != null && this.currentRubyTM != null) {
             RuntimeHelper.call( this.currentRuby, this.currentRubyTM, "commit", new Object[] {} );
         }

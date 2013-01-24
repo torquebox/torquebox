@@ -6,4 +6,6 @@ queues:
     durable: false
 
 messaging:
-  /queue/input: Processor
+  /queue/input:
+    Processor:
+      xa: true

@@ -85,6 +85,7 @@ public class MessageProcessorInstaller implements DeploymentUnitProcessor {
         service.setClientID( metaData.getClientID() );
         service.setMessageSelector( metaData.getMessageSelector() );
         service.setName( metaData.getName() );
+        service.setXAEnabled( metaData.isXAEnabled() );
 
         ServiceBuilder<BaseMessageProcessorGroup> builder = phaseContext.getServiceTarget().addService( baseServiceName, service )
                 .addDependency( MessagingServices.messageProcessorComponentResolver( unit, name ), ComponentResolver.class, service.getComponentResolverInjector() )

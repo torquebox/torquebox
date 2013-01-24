@@ -42,11 +42,6 @@ module TorqueBox
         end
       end
 
-      # Do not begin a transaction before invoking a Backgroundable method
-      def middleware
-        super.remove(TorqueBox::Messaging::ProcessorMiddleware::WithTransaction)
-      end
-
       private
       def self.log
         @logger ||= TorqueBox::Logger.new( self )

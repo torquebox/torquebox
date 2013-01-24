@@ -1,7 +1,8 @@
 messaging:
   tweets:                             # queue name
     TweetProcessor:                   # processor class name
-      selector: "language = 'java'"     # JMS message selector
+      selector: "language = 'java'"   # JMS message selector
+      xa: true                        # use distributed transactions
 
 jobs:
   tweet_remover:

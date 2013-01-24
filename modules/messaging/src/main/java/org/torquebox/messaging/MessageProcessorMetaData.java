@@ -113,6 +113,14 @@ public class MessageProcessorMetaData {
     public boolean isSingleton() {
         return this.singleton;
     }
+
+    public void setXAEnabled(boolean xaEnabled) {
+        this.xaEnabled = xaEnabled;
+    }
+
+    public boolean isXAEnabled() {
+        return this.xaEnabled;
+    }
     
     private String rubyClassName;
     private String rubyRequirePath;
@@ -122,6 +130,7 @@ public class MessageProcessorMetaData {
     private boolean durable = false; //only has meaning for Topic processors
     private String clientID;         //only has meaning for Topic processors
     private boolean singleton = false;
+    private boolean xaEnabled = false;
 
     private Map<String, Object> rubyConfig;
 

@@ -5,6 +5,7 @@ messaging:
     - One
     - Two: &foo
         selector: "x > 18"
+        xa: false
         config:
           x: ex
           y: why
@@ -14,6 +15,7 @@ messaging:
     A:
     B:
       selector: "y < 18"
+      xa: true
       config:
         h: ache
         i: eye

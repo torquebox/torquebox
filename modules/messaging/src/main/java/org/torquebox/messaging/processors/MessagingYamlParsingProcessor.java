@@ -126,6 +126,9 @@ public class MessagingYamlParsingProcessor extends AbstractSplitYamlParsingProce
             if (options.containsKey( "singleton" )) {
                 result.setSingleton( (Boolean) options.get( "singleton" ) );
             }
+            if (options.containsKey( "xa" )) {
+                result.setXAEnabled( (Boolean ) options.get( "xa" ) );
+            }
             result.setRubyClassName( StringUtils.camelize( handler ) );
             result.setRubyRequirePath( StringUtils.underscore( handler ) );
             result.setRubyConfig( (Map) options.get( "config" ) );

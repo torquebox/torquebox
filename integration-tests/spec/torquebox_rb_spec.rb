@@ -76,6 +76,7 @@ describe "an app using a torquebox.rb" do
         proc.destination_name.should == '/queue/another-queue'
         proc.concurrency.should == 2
         proc.message_selector.should == "steak = 'salad'"
+        proc.xa_enabled.should == false
       end
     end
 
@@ -84,6 +85,7 @@ describe "an app using a torquebox.rb" do
         proc.destination_name.should == '/queue/yet-another-queue'
         proc.concurrency.should == 2
         proc.message_selector.should == "steak = 'salad'"
+        proc.xa_enabled.should == true
       end
     end
 
@@ -91,6 +93,7 @@ describe "an app using a torquebox.rb" do
       mbean('torquebox.messaging.processors:name=/queue/singleton_queue/a_processor,app=an_app_using_a_torquebox_rb') do |proc|
         proc.destination_name.should == '/queue/singleton-queue'
         proc.concurrency.should == 1
+        proc.xa_enabled.should == false
       end
     end
 

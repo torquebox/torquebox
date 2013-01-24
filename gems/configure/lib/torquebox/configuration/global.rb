@@ -80,6 +80,7 @@ module TorqueBox
                                                                               :concurrency,
                                                                               { :singleton => [true, false] },
                                                                               { :durable => [true, false] },
+                                                                              { :xa => [true, false] },
                                                                               :client_id,
                                                                               :config,
                                                                               :selector,

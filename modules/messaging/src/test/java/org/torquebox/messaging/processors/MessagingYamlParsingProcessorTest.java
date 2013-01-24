@@ -20,6 +20,7 @@
 package org.torquebox.messaging.processors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -125,6 +126,7 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
         List<MessageProcessorMetaData> allMetaData = getMetaData( "messaging.yml" );
         MessageProcessorMetaData metadata = find( allMetaData, "/array", "Two" );
         assertEquals( "x > 18", metadata.getMessageSelector() );
+        assertFalse( metadata.isXAEnabled() );
         Map<String, Object> config = metadata.getRubyConfig();
         assertEquals( "ex", config.get( "x" ) );
         assertEquals( "why", config.get( "y" ) );
@@ -137,6 +139,7 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
         List<MessageProcessorMetaData> allMetaData = getMetaData( "messaging.yml" );
         MessageProcessorMetaData metadata = find( allMetaData, "/hash", "B" );
         assertEquals( "y < 18", metadata.getMessageSelector() );
+        assertTrue( metadata.isXAEnabled() );
         Map<String, Object> config = metadata.getRubyConfig();
         assertEquals( "ache", config.get( "h" ) );
         assertEquals( "eye", config.get( "i" ) );
@@ -149,6 +152,7 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
         List<MessageProcessorMetaData> allMetaData = getMetaData( "messaging.yml" );
         MessageProcessorMetaData metadata = find( allMetaData, "/hash", "Two" );
         assertEquals( "x > 18", metadata.getMessageSelector() );
+        assertFalse( metadata.isXAEnabled() );
         Map<String, Object> config = metadata.getRubyConfig();
         assertEquals( "ex", config.get( "x" ) );
         assertEquals( "why", config.get( "y" ) );

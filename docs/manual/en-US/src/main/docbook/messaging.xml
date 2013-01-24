@@ -631,10 +631,7 @@ queue.publish "Some message"</programlisting></para>
                 <entry>By default, messages published within the scope
                 of a transaction will not be delivered until that
                 transaction commits. Set to
-                <parameter>false</parameter> to override. Note that
-                <link linkend="transaction-messaging">message
-                processors define an implicit
-                transaction</link>.</entry>
+                <parameter>false</parameter> to override.</entry>
               </row>
 
               <row>
@@ -1473,6 +1470,19 @@ end</programlisting></para>
                 </row>
 
                 <row>
+                  <entry><parameter>xa</parameter></entry>
+
+                  <entry>false</entry>
+
+                  <entry>By default, message processors do not
+                  initiate a distributed transaction. Setting this to
+                  true will automatically enlist the message
+                  processor's receipt of the message and any
+                  messaging, cache, or database access inside that
+                  processor in single transaction.</entry>
+                </row>
+
+                <row>
                   <entry><parameter>config</parameter></entry>
 
                   <entry></entry>
@@ -1496,12 +1506,14 @@ messaging:
     MyFooHandler:
       selector: "cost &gt; 30"
       concurrency: 2
+      xa: false
       config:
         type: "premium"
         season: "fall"
   /topics/bar:
     MyBarHandler:
       durable: true
+      xa: true
       client_id: my-awesome-client</programlisting></para>
 
             <para>And via the DSL:<programlisting>TorqueBox.configure do
@@ -1510,6 +1522,7 @@ messaging:
     processor MyFooHandler do 
       selector "cost &gt; 30"
       concurrency 2
+      xa false
       config do
         type "premium"
         season "fall"
@@ -1518,7 +1531,7 @@ messaging:
   end
 
   topic '/topics/bar' do
-    processor MyBarHandler, :durable =&gt; true, :client_id =&gt; 'my-awesome-client'
+    processor MyBarHandler, :durable =&gt; true, :client_id =&gt; 'my-awesome-client', :xa =&gt; true
   end
 end</programlisting></para>
           </example>

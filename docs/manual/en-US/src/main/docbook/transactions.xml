@@ -195,22 +195,26 @@ end
   <section id="transaction-messaging">
     <title>Messaging</title>
     <para>
-      By default, all <classname>MessageProcessors</classname> are
-      transactional, so each <methodname>on_message(msg)</methodname>
-      invocation demarcates a transaction. If no exceptions are
-      raised, the transaction commits. Otherwise, it rolls back. This
-      is the default behavior and requires no additional configuration
-      on your part.
+      By default, <classname>MessageProcessors</classname> are not
+      transactional. To make them transactional, add <code>xa: true</code>
+      to the processor's entry in
+      <filename>torquebox.yml</filename> or
+      <filename>torquebox.rb</filename> - see <xref
+      linkend="connecting-consumers-to-destinations"/> for more
+      information.
+    </para>
+    <para>
+      After you've enabled transactions for the message processor,
+      each <methodname>on_message(msg)</methodname> invocation
+      demarcates a transaction. If no exceptions are raised, the
+      transaction commits. Otherwise, it rolls back. This is the
+      default behavior and requires no additional configuration on
+      your part.
     </para>
     <para>
       Any messages published to any JMS destinations automatically
       become part of the current transaction, by default. So they
       won't be delivered until that transaction commits.
-    </para>
-    <para>
-      All <classname>Backgroundable</classname> tasks are
-      transactional, so if invoked within a transaction, it will only
-      start when the transaction commits.
     </para>
     <para>
       Any manipulations of your Rails
@@ -226,6 +230,10 @@ end
       false</code>, and the message will be delivered whether the
       active transaction commits or not.  This option works for
       backgrounded tasks as well.
+    </para>
+    <para>
+      <classname>Backgroundable</classname> tasks are not
+      transactional.
     </para>
   </section>
 

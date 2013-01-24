@@ -57,6 +57,7 @@ public class BackgroundablePresetsProcessor implements DeploymentUnitProcessor {
         task.setLocation( "torquebox/messaging/backgroundable_processor" );
         task.setQueueSuffix( "torquebox_backgroundable" );
         task.setSimpleName( "Backgroundable" );
+        task.setXAEnabled( false );
 
         unit.addToAttachmentList( TaskMetaData.ATTACHMENTS_KEY, task );
     }

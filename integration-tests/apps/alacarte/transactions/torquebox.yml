@@ -2,8 +2,13 @@
 queues:
   /queue/input:
     durable: false
+  /queue/no_xa_input:
+    durable: false
   /queue/output:
     durable: false
 
 messaging:
-  /queue/input: Processor
+  /queue/input:
+    Processor:
+      xa: true
+  /queue/no_xa_input: NoXaProcessor
