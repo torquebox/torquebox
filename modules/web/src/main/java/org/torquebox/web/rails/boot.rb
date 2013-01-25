@@ -82,7 +82,6 @@ class Class
                     require 'torquebox/transactions/ext/active_record/base'
                     require 'torquebox/active_record_adapters'
                   rescue LoadError
-                    $stderr.puts "Unable to patch transaction support into ActiveRecord.  Try adding torquebox-transactions gem to your Gemfile."
                   end
                 end
               end
