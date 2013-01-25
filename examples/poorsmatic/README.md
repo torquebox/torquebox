@@ -30,10 +30,6 @@ postgres=# \q
 
 Please make sure you have the appropriate authentication method enabled too. In `/var/lib/pgsql/data/pg_hba.conf` make sure authentication is set to `md5`, not `ident` (Fedora's default).
 
-### Enable transactions
-
-In `/var/lib/pgsql/data/postgresql.conf` please set `max_prepared_transactions` to value greater than `0`. I think `10` should be sufficient.
-
 ## License
 
-[MIT](https://github.com/goldmann/poorsmatic/blob/master/LICENSE)
+[MIT](https://github.com/torquebox/torquebox/blob/2x-dev/examples/poorsmatic/LICENSE)

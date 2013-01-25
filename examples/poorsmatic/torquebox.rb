@@ -22,8 +22,4 @@ TorqueBox.configure do
       access_secret 'Access token secret'
     end
   end
-
-  environment do
-    DB_URL "postgres://poorsmatic:poorsmatic@localhost/poorsmatic"
-  end
 end

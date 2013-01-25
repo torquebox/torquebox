@@ -15,6 +15,11 @@ class TwitterService
 
     @log.info "Initializing Twitter client..."
 
+    if credentials['consumer_key'] == 'Consumer key'
+      @log.warn "No Twitter credentials given - Twitter client will not be started"
+      return
+    end
+
     # Create the Twitter client with credentials proviided in the
     # torquebox.yml file
     @client = Twitter4j4r::Client.new(
@@ -39,11 +44,13 @@ class TwitterService
   end
 
   def start
+    return if @client.nil?
+
     if @terms.empty?
       @log.warn "No terms to watch. Twitter client will be not launched"
       return
     else
-      @log.info "New terms arrived: #{@terms.join(', ')}"    
+      @log.info "New terms arrived: #{@terms.join(', ')}"
     end
 
     @log.info "Starting Twitter stream client..."
@@ -64,6 +71,7 @@ class TwitterService
   end
 
   def stop
+    return if @client.nil?
     @log.info "Stopping Twitter client..."
     @client.stop
     @log.info "Client stopped"
