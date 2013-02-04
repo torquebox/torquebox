@@ -502,7 +502,83 @@ remote_describe "in-container messaging tests" do
       end
     end
   end
+end
 
+remote_describe "messaging processor tests" do
+  deploy <<-END.gsub(/^ {4}/,'')
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/alacarte/messaging
+      env: production
+    environment:
+      BASEDIR: #{File.dirname(__FILE__)}/..
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
+
+  describe "message processors management" do
+    describe "list" do
+      it "should list all available message processors" do
+        processors = TorqueBox::Messaging::MessageProcessor.list
+
+        processors.size.should == 4
+
+        processors.map { |p| p.name }.sort.should == [
+            "/queue/simple_queue.SimpleProcessor",
+            "/queue/stateless_queue.StatelessProcessor",
+            "/queues/torquebox/messaging_processor_tests/tasks/torquebox_backgroundable.TorqueBox::Messaging::BackgroundableProcessor",
+            "/queue/echo_queue.Torquebox::Messaging::EchoProcessor"
+        ].sort
+      end
+    end
+
+    describe "lookup" do
+      it "should lookup a message processor" do
+        processor = TorqueBox::Messaging::MessageProcessor.lookup("/queue/simple_queue", "SimpleProcessor")
+
+        processor.should_not be_nil
+        processor.name.should eql("/queue/simple_queue.SimpleProcessor")
+        processor.concurrency.should == 1
+
+        processor = TorqueBox::Messaging::MessageProcessor.lookup("/queue/echo_queue", "Torquebox::Messaging::EchoProcessor")
+
+        processor.should_not be_nil
+        processor.name.should eql("/queue/echo_queue.Torquebox::Messaging::EchoProcessor")
+        processor.concurrency.should == 10
+      end
+
+      it "should return nil if a message processor lookup fails" do
+        processor = TorqueBox::Messaging::MessageProcessor.lookup("/queue/doesnotexists", "SomeProcessor")
+
+        processor.should be_nil
+      end
+    end
+
+    describe "update concurrency" do
+      it "should update the concurrency (adding)" do
+        processor = TorqueBox::Messaging::MessageProcessor.lookup("/queue/simple_queue", "SimpleProcessor")
+
+        processor.should_not be_nil
+        processor.name.should eql("/queue/simple_queue.SimpleProcessor")
+        processor.concurrency.should == 1
+
+        processor.concurrency = 5
+
+        processor.concurrency.should == 5
+      end
+
+      it "should update the concurrency (removing)" do
+        processor = TorqueBox::Messaging::MessageProcessor.lookup("/queue/echo_queue", "Torquebox::Messaging::EchoProcessor")
+
+        processor.should_not be_nil
+        processor.name.should eql("/queue/echo_queue.Torquebox::Messaging::EchoProcessor")
+        processor.concurrency.should == 10
+
+        processor.concurrency = 5
+
+        processor.concurrency.should == 5
+      end
+    end
+  end
 end
 
 def with_queue(name)
