@@ -96,7 +96,10 @@ DataMapper.setup(:default, 'postgres://user:pass@localhost/databasename')
       </screen>
     </para>
   </section>
-
+  <section>
+    <title>Raw JDBC</title>
+    <para>It is also possible to use JDBC directly without the need for a object-relational mapping library. For more information on this, see the <ulink url="https://github.com/jruby/jruby/wiki/JDBC">JRuby wiki</ulink>.</para>
+  </section>
   <section>
     <title>Distributed Transactions</title>
     <para>TorqueBox includes support for distributed (XA) transactions. Depending
