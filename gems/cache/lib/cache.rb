@@ -147,7 +147,7 @@ module TorqueBox
 
       # Get an entry from the cache 
       def get(key)
-        cache.get( key.to_s )
+        __massage_symbols( cache.get( key.to_s ) )
       end
 
       # Write an entry to the cache 
@@ -332,6 +332,24 @@ module TorqueBox
           args << expires << SECONDS
         end
         cache.send( *args ) && true
+      end
+
+      def __massage_symbols(val)
+        case val.class.to_s
+        when Hash.to_s
+          val.keys.each do |k|
+            val[__massage_symbols(k)] = __massage_symbols(val.delete(k))
+          end
+          val
+        when Array.to_s
+          val.map do |v|
+            __massage_symbols(v)
+          end
+        when Symbol.to_s
+          val.to_s.to_sym
+        else
+          val
+        end
       end
 
     end

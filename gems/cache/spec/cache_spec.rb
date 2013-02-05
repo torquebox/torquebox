@@ -151,6 +151,21 @@ describe TorqueBox::Infinispan::Cache do
     @cache.get(:asymbol).should == "a value"
   end
 
+  it "should allow a Hash with Symbols as values" do
+    @cache.put(:asymbol, {:testing => 213})
+    @cache.get(:asymbol).should == {:testing => 213}
+  end
+
+  it "should allow an Array with Symbols as values" do
+    @cache.put(:asymbol, [:testing, 213])
+    @cache.get(:asymbol).should =~ [:testing, 213]
+  end
+
+  it "should allow a Symbols as a value" do
+    @cache.put(:asymbol, :testing)
+    @cache.get(:asymbol).should == :testing
+  end
+
   it "should allow symbols as keys for increment" do
     @cache.increment :countsymbol
     @cache.get(:countsymbol).should == "1"
