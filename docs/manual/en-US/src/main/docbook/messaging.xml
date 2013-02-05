@@ -545,9 +545,9 @@ queue.publish "Some message"</programlisting></para>
                     </listitem>
 
                     <listitem>
-                      <para><parameter>:clojure</parameter> - The
+                      <para><parameter>:edn</parameter> - The
                       message is encoded/decoded via the
-                      <filename>clj</filename> gem, and is transmitted
+                      <filename>edn</filename> gem, and is transmitted
                       as a text message. This encoding is most
                       convenient for messages that can be represented
                       using standard Clojure data structures.</para>
@@ -1155,8 +1155,8 @@ message = queue.publish_and_receive "ping", :timeout =&gt; 5000
             </listitem>
 
             <listitem>
-              <para><parameter>:clojure</parameter> - The message in
-              encoded/decoded via the <filename>clj</filename>
+              <para><parameter>:edn</parameter> - The message in
+              encoded/decoded via the <filename>edn</filename>
               rubygem, and is transmitted as a text message.  This
               encoding is intended to provide interoperability with
               message producers and consumers written in Clojure. See
