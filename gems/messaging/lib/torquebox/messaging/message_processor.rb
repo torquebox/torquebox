@@ -45,6 +45,123 @@ module TorqueBox
         end 
       end
 
+      class << self
+
+        # List all available message processors for current application.
+        #
+        # @return [Array<TorqueBox::Messaging::MessageProcessorProxy>] List of
+        #         proxy objets to read and manage state of selected message
+        #         processor
+        def list
+          processors = []
+
+          TorqueBox::MSC.get_services(/^#{messaging_service_name.canonical_name}\.\".*\"$/) do |service|
+            processors << MessageProcessorProxy.new(service.value)
+          end
+
+          processors
+        end
+
+        # Lookup a message processor by its destination and class name.
+        #
+        # @param [String] The destination name (queue, topic) to which
+        #         a message processor is bound.
+        #
+        # @param [String] The class name of the message processor
+        #         implementation.
+        def lookup(destination_name, class_name)
+          sn = messaging_service_name.append("#{destination_name}.#{class_name}")
+
+          # Try to find a message procesor for specified parameters
+          group = TorqueBox::ServiceRegistry::lookup(sn)
+
+          return MessageProcessorProxy.new(group) if group
+
+          # Ooops, no processor is found. Most probably wrong data.
+          return nil
+        end
+
+        protected
+
+        def messaging_service_name
+          TorqueBox::MSC.deployment_unit.service_name.append('torquebox').append('messaging')
+        end
+      end
+    end
+
+    class MessageProcessorProxy
+      def initialize(group)
+        @group = group
+
+        raise "Cannot create MessageProcessorProxy for non-existing MessageProcessorGroup" if @group.nil?
+      end
+
+      attr_reader :destination_name, :class_name
+
+      # Updates the concurrency,
+      #
+      # @note This method sets the concurrency and changes immediately
+      #       the number of consumers for specified destination.
+      def concurrency=(size)
+        raise "Setting concurrency for '#{name}' to value < 0 is not allowed. You tried '#{size}'." if size < 0
+
+        return size if size == @group.concurrency
+
+        @group.update_concurrency(size)
+
+        concurrency
+      end
+
+      # Returns the concurrency
+      #
+      # @return Integer
+      def concurrency
+        @group.concurrency
+      end
+
+      # Returns the group name
+      #
+      # @return String
+      def name
+        @group.name
+      end
+
+      # Returns the destination (queue or topic) name
+      #
+      # @return String
+      def destination_name
+        @group.destination_name
+      end
+
+      # Returns the message processor implementation
+      # class name
+      #
+      # @return String
+      def class_name
+        @group.message_processor_class.name
+      end
+
+      # Returns the message selector
+      #
+      # If there is no message selector specified,
+      # returns empty string
+      #
+      # @return String
+      def message_selector
+        @group.message_selector
+      end
+
+      # Returns true if the message processor is a durable
+      # subscriber, false otherwise
+      #
+      # @return Boolean
+      def durable?
+        @group.durable
+      end
+
+      def to_s
+        "[MessageProcessorProxy: #{name}]"
+      end
     end
   end
 end
