@@ -1621,6 +1621,73 @@ end</programlisting></para>
             block.</para>
           </example>
       </section>
+
+        <section id="listing-message-processors">
+            <title>Listing and looking up message processors</title>
+
+            <para>
+                TorqueBox makes it easy to list and lookup any particular message
+                processor (including Backgroudables). There are two class methods available in the
+                <classname>TorqueBox::Messaging::MessageProcessor</classname> class:
+                <methodname>list</methodname> and <methodname>lookup</methodname>.
+            </para>
+
+            <para>
+                Both methods return instances of <classname>TorqueBox::Messaging::MessageProcessorProxy</classname>
+                class which is a proxy for accessing the particular message processor service
+                configuration. The class exposes many methods, like:
+                <methodname>concurrency</methodname>, <methodname>name</methodname>.
+                For more information please refer to RDocs for messaging gem.
+            </para>
+
+            <para>
+                The <methodname>list</methodname> method allows to list all message
+                processors deployed with the application. It returns an array of
+                <classname>TorqueBox::Messaging::MessageProcessorProxy</classname> objects.
+                If no message processors are available, empty array is returned.
+
+                <example>
+                    <title>Message processor list</title>
+
+                    <para><programlisting>TorqueBox::Messaging::MessageProcessor.list.each do |processor|
+    # Get the concurrency
+    processor.concurrency # => 1
+    # Get the destination name (queue or topic name)
+    processor.destination_name # => "/queues/foo"
+    # Get the implementation class name
+    processor.class_name # => "SimpleProcessor"
+    # Change the message processor concurrency to 3
+    processor.concurrency = 3 # => 3
+end</programlisting>
+                    </para>
+                </example>
+
+            </para>
+
+            <para>
+                The <methodname>lookup</methodname> method allows to lookup a message processor
+                by providing destination and class name (as <classname>String</classname>) of the implementation.
+                If a particular message processor is available it returns a
+                <classname>TorqueBox::Messaging::MessageProcessorProxy</classname> object. If there is no
+                message processor found, <literal>nil</literal> is returned.
+
+                <example>
+                    <title>Message processor lookup</title>
+
+                    <para><programlisting>processor = TorqueBox::Messaging::MessageProcessor.lookup('/queues/foo', 'SimpleProcessor')
+
+if processor
+    # Get the name
+    processor.name # => "/queues/foo.SimpleProcessor"
+    # Get the concurrency
+    processor.concurrency # => 1
+    # Change the message processor concurrency to 3
+    processor.concurrency = 3 # => 3
+end</programlisting>
+                    </para>
+                </example>
+            </para>
+        </section>
     </section>
 
     <section id="backgroundable">
