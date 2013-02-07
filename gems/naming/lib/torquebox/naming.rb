@@ -16,91 +16,65 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'torquebox/naming/ext/javax_naming_context'
+require 'torquebox/logger'
+
 module TorqueBox
   module Naming
 
-    FACTORY = 'org.jnp.interfaces.NamingContextFactory'
-    FACTORY_URL_PKGS = 'org.jboss.naming:org.jnp.interfaces'
+    REMOTE_NAMING_FACTORY = 'org.jboss.naming.remote.client.InitialContextFactory'
+    LOCAL_NAMING_FACTORY = 'org.jboss.as.naming.InitialContextFactory'
 
-    class Configuration
-      attr_accessor :host
-      attr_accessor :port
+    # Connects to a remote server and returns (or yields) InitialContext for
+    # lookups.
+    #
+    # @note If you use this method without providing a block, make sure you
+    #       close the context after usage (use <tt>close</tt> method).
+    #
+    # @note JBoss AS 7.1+ provides the <tt>java:jboss/exported</tt> context,
+    #       entries bound to this context are accessible over remote JNDI.
+    #       No other objects will be available for remote lookups.
+    #       This means that if you want to have a JNDI object available
+    #       for remote lookup you need to export it first. For more information
+    #       please refer to the JBoss AS 7 wiki:
+    #       https://docs.jboss.org/author/display/AS71/JNDI+Reference
+    def self.remote_context(options = {}, &block)
+      ctx = javax.naming::InitialContext.new(populate_properties(options.merge(:remote => true)))
 
-      def initialize(host='localhost', port=1099)
-        @host = host
-        @port = port
-      end
+      return ctx unless block
 
-    end
-
-    def self.configure(&block)
-      config = Configuration.new
-      if ( block ) 
-        block.call( config ) 
-      end
-      url = "jnp://#{config.host}:#{config.port}/"
-      java.lang::System.setProperty( 'java.naming.provider.url', url )
-      java.lang::System.setProperty( 'java.naming.factory.initial', FACTORY )
-      java.lang::System.setProperty( 'java.naming.factory.url.pkgs', FACTORY_URL_PKGS )
-    end
-
-    def self.configure_local
-      java.lang::System.clearProperty( 'java.naming.provider.url' )
-      java.lang::System.setProperty( 'java.naming.factory.initial', FACTORY )
-    end
-
-    def self.[](name)
-      connect { |context| context[name] }
-    end
-
-    def self.[]=(name, value)
-      connect { |context| context[name] = value }
-    end
-    
-    def self.names
-      connect { |context| context.to_a }
-    end
-    
-    def self.context(host=nil, port=nil)
-      if ( ! ( host.nil? || port.nil? ) ) 
-        props = java.util.Hashtable.new( {
-          'java.naming.provider.url'=>"jnp://#{host}:#{port}/",
-          'java.naming.factory.initial'=>FACTORY,
-          'java.naming.factory.url.pkgs'=>'org.jboss.naming:org.jnp.interfaces'
-        } )
-        javax.naming::InitialContext.new(props)
-      else
-        javax.naming::InitialContext.new
-      end
-    end
-
-    def self.connect(host=nil, port=nil, &block)
-      return context(host, port) if ( block.nil? )
-
-      reconfigure_on_error do
-        ctx = context(host, port)
-        begin
-          block.call( ctx )
-        ensure
-          ctx.close
-        end
-      end
-    end
-
-    def self.reconfigure_on_error( max_retries = 1 )
-      attempts = 0
       begin
-        attempts += 1
-        yield
-      rescue javax.naming.NoInitialContextException, javax.naming.CommunicationException
-        if attempts > max_retries
-          raise
-        else
-          configure
-          retry
-        end
+        block.call(ctx)
+      ensure
+        ctx.close
       end
     end
 
+    private
+
+    def self.populate_properties(options = {})
+      options = { :host => 'localhost',
+                  :port => 4447,
+                  :remote => false }.merge(options)
+
+      properties = {}
+
+      if options[:remote]
+        properties[javax.naming.Context.INITIAL_CONTEXT_FACTORY] = REMOTE_NAMING_FACTORY
+        properties[javax.naming.Context.PROVIDER_URL] = "remote://#{options[:host]}:#{options[:port]}"
+
+        properties[javax.naming.Context.SECURITY_PRINCIPAL] = options[:username] if options[:username]
+        properties[javax.naming.Context.SECURITY_CREDENTIALS] = options[:password] if options[:password]
+      else
+        properties[javax.naming.Context.INITIAL_CONTEXT_FACTORY] = LOCAL_NAMING_FACTORY
+      end
+
+      log.debug("Naming properties used to connect: #{properties}")
+
+      java.util.Hashtable.new(properties)
+    end
+
+    def self.log
+      @logger ||= TorqueBox::Logger.new(self)
+    end
   end
 end
