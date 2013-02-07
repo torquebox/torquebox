@@ -265,7 +265,7 @@ end</programlisting>
     </formalpara>
 
     <formalpara>
-      <title><methodname>fetch_naming(...)</methodname></title>
+      <title><methodname>fetch_jndi(...)</methodname></title>
 
       <para>Injects JNDI resources by literal name.</para>
     </formalpara>

@@ -15,28 +15,24 @@
   <url>http://torquebox.org/</url>
 
   <dependencies>
-
-<!--
-    <dependency>
-      <groupId>org.jboss.naming</groupId>
-      <artifactId>jnp-client</artifactId>
-      <scope>compile</scope>
-    </dependency>
--->
-
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
       <scope>runtime</scope>
     </dependency>
 
-<!--
     <dependency>
-      <groupId>org.jboss.naming</groupId>
-      <artifactId>jnpserver</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-core</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-remote-naming</artifactId>
       <scope>test</scope>
     </dependency>
--->
 
     <dependency>
       <groupId>rubygems</groupId>
