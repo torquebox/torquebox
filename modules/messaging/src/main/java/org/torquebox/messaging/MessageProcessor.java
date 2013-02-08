@@ -42,9 +42,10 @@ public class MessageProcessor extends BaseMessageProcessor {
             if (getConsumer() == null) {
                 return; // racist!
             }
+
             MessageProcessorComponent component = (MessageProcessorComponent) group.getComponentResolver().resolve( this.currentRuby );
             try {
-                component.process( message, getSession() );
+                component.process( message, getSession(), group );
                 if (isXAEnabled()) {
                     commitXATransaction();
                 } else {

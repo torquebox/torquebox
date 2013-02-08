@@ -24,11 +24,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.net.URL;
 import java.util.List;
 
+import javax.jms.Destination;
 import javax.jms.Message;
+import javax.jms.Queue;
 import javax.jms.TextMessage;
 
 import org.jruby.Ruby;
@@ -36,6 +39,7 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.core.util.RuntimeHelper;
+import org.torquebox.messaging.MessageProcessorGroup;
 import org.torquebox.test.ruby.AbstractRubyTestCase;
 
 public class MessageProcessorComponentTest extends AbstractRubyTestCase {
@@ -58,7 +62,9 @@ public class MessageProcessorComponentTest extends AbstractRubyTestCase {
         processor.setRubyComponent( this.rubyProcessor );
 
         Message message = mock( TextMessage.class );
-        processor.process( message );
+        MessageProcessorGroup group = mock( MessageProcessorGroup.class );
+
+        processor.process( message, null, group );
         
         List messages = (List) RuntimeHelper.getIfPossible( ruby, rubyProcessor, "messages" );
         assertNotNull( messages );

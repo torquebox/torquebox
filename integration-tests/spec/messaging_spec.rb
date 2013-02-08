@@ -515,18 +515,20 @@ remote_describe "messaging processor tests" do
       version: #{RUBY_VERSION[0,3]}
   END
 
-  describe "message processors management" do
+  context "message processors management" do
     describe "list" do
       it "should list all available message processors" do
         processors = TorqueBox::Messaging::MessageProcessor.list
 
-        processors.size.should == 4
+        processors.size.should == 6
 
         processors.map { |p| p.name }.sort.should == [
             "/queue/simple_queue.SimpleProcessor",
             "/queue/stateless_queue.StatelessProcessor",
             "/queues/torquebox/messaging_processor_tests/tasks/torquebox_backgroundable.TorqueBox::Messaging::BackgroundableProcessor",
-            "/queue/echo_queue.Torquebox::Messaging::EchoProcessor"
+            "/queue/echo_queue.Torquebox::Messaging::EchoProcessor",
+            "/queue/synchronous.SynchronousProcessor",
+            "/queue/synchronous_with_selectors.SynchronousProcessor"
         ].sort
       end
     end
@@ -577,6 +579,25 @@ remote_describe "messaging processor tests" do
 
         processor.concurrency.should == 5
       end
+    end
+  end
+
+  context "synchronous message processors" do
+    before(:each) do
+      @queue = TorqueBox::Messaging::Queue.new('/queue/synchronous')
+      @queue_with_selectors = TorqueBox::Messaging::Queue.new('/queue/synchronous_with_selectors')
+    end
+
+    it "should reply to the message" do
+      @queue.publish_and_receive("something", :timeout => 2000).should eql("Got something but I want bacon!")
+    end
+
+    it "should reply to the message when a selector is provided" do
+      @queue_with_selectors.publish_and_receive("bike", :timeout => 2000, :properties => {"awesomeness" => 20}).should eql("Got bike but I want bacon!")
+    end
+
+    it "should timeout since the selector is not satisfied" do
+      @queue_with_selectors.publish_and_receive("food", :timeout => 500, :properties => {"awesomeness" => 5}).should be_nil
     end
   end
 end

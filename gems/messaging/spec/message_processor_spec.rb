@@ -39,12 +39,14 @@ describe TorqueBox::Messaging::MessageProcessor do
   end
 
   it "should process text messages" do
+    @processor.should_receive(:synchronous?).and_return(false)
     @message = TorqueBox::Messaging::Message.new(@jms_session, "foo", :marshal_base64)
     @processor.process! @message
     @processor.body.should eql("foo")
   end
 
   it "should process non-text messages" do
+    @processor.should_receive(:synchronous?).and_return(false)
     payload = {:foo => "foo", :sym => :sym, "bar" => :bar}
     @message = TorqueBox::Messaging::Message.new(@jms_session, payload, :marshal_base64)
     @processor.process! @message

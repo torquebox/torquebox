@@ -28,3 +28,4 @@ Infinispan-FileCacheStore
 rubyObj.*
 schema.rb
 *.cache
+build/assembly/d*

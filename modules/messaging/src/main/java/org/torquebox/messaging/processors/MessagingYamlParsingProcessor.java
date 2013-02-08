@@ -120,10 +120,24 @@ public class MessagingYamlParsingProcessor extends AbstractSplitYamlParsingProce
                 options = Collections.EMPTY_MAP;
             MessageProcessorMetaData result = new MessageProcessorMetaData();
             result.setDurable( (Boolean) options.get( "durable" ) );
-            result.setClientID( (String) options.get( "client_id" ) );
-            result.setDestinationName( destination );
-            result.setMessageSelector( (String) options.get( "selector" ) );
-            if (options.containsKey( "singleton" )) {
+            result.setSynchronous((Boolean) options.get("synchronous"));
+            result.setClientID((String) options.get("client_id"));
+            result.setDestinationName(destination);
+            result.setMessageSelector((String) options.get("selector"));
+
+            // In case this is a synchronous message processor
+            // we do not want to receive own replies
+            if (result.isSynchronous()) {
+                if (result.getMessageSelector() == null) {
+                    // Message selector was not provided
+                    result.setMessageSelector( "JMSCorrelationID IS NULL" );
+                } else {
+                    // Message selector was provided, we need to use it
+                    result.setMessageSelector( "(JMSCorrelationID IS NULL) AND (" + result.getMessageSelector() + ")" );
+                }
+            }
+
+            if (options.containsKey("singleton")) {
                 result.setSingleton( (Boolean) options.get( "singleton" ) );
             }
             if (options.containsKey( "xa" )) {
@@ -133,6 +147,7 @@ public class MessagingYamlParsingProcessor extends AbstractSplitYamlParsingProce
             result.setRubyRequirePath( StringUtils.underscore( handler ) );
             result.setRubyConfig( (Map) options.get( "config" ) );
             result.setConcurrency( (Integer) options.get( "concurrency" ) );
+
             return result;
         }
 
