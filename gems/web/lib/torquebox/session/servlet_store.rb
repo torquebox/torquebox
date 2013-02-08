@@ -1,15 +1,15 @@
 # Copyright 2008-2013 Red Hat, Inc, and individual contributors.
-# 
+#
 # This is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as
 # published by the Free Software Foundation; either version 2.1 of
 # the License, or (at your option) any later version.
-# 
+#
 # This software is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this software; if not, write to the Free
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
@@ -17,32 +17,32 @@
 
 module TorqueBox
   module Session
-    class ServletStore 
-      
+    class ServletStore
+
       RAILS_SESSION_KEY = '__current_rails_session'
       SYMBOL_KEYS       = '__torquebox_symbol_keys'
-      
+
       def initialize(app, options={})
         @app = app
-      end 
-      
+      end
+
       def call(env)
         ServletStore.load_session(env)
         status, headers, body = @app.call(env)
         ServletStore.commit_session(env, status, headers, body)
         return [ status, headers, body ]
       end
-      
+
       def self.load_session(env)
         env['rack.session'] = load_session_data( env['java.servlet_request'].getSession(true) )
         env['rack.session.options' ] = {}
       end
-      
-      def self.commit_session(env, status, headers, body) 
-        session_data = env['rack.session' ]        
+
+      def self.commit_session(env, status, headers, body)
+        session_data = env['rack.session' ]
         ServletStore.store_session_data( env['java.servlet_request'].getSession(true), session_data )
       end
-      
+
       def self.load_session_data(session)
         session_data = SessionData.new
         session_data.java_session = session
@@ -68,18 +68,18 @@ module TorqueBox
         symbol_keys = session_data[ SYMBOL_KEYS ] || []
         keys = session_data.keys
         keys.each do |key|
-          if ( symbol_keys.include?( key ) ) 
-            session_data[ key.to_sym ] = session_data.delete( key ) 
+          if ( symbol_keys.include?( key ) )
+            session_data[ key.to_sym ] = session_data.delete( key )
           end
         end
       end
-      
+
       def self.store_session_data(session, session_data)
         hash = session_data.dup
         # java session shouldn't be marshalled
         hash.java_session = nil if hash.respond_to?(:java_session=)
         initial_keys = hash[:TORQUEBOX_INITIAL_KEYS] || []
-        removed_keys = initial_keys - hash.keys 
+        removed_keys = initial_keys - hash.keys
         symbol_keys = []
         hash.delete(:TORQUEBOX_INITIAL_KEYS)
         hash.delete(:TORQUEBOX_SYMBOL_KEYS)
