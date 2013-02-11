@@ -8,6 +8,9 @@ queues:
   /queues/results:
     durable: false
 
+  /queues/remote:
+    durable: false
+
 topics:
   /topics/test:
     durable: false
