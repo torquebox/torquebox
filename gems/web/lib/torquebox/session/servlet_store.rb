@@ -24,6 +24,17 @@ module TorqueBox
 
       def initialize(app, options={})
         @app = app
+
+        web_context = TorqueBox::MSC.java_web_context
+        web_context.session_timeout = options[:timeout] / 60 if options[:timeout]
+
+        cookie_config = web_context.session_cookie
+        cookie_config.name = options[:key] if options[:key]
+        cookie_config.domain = options[:domain] if options[:domain]
+        cookie_config.path = options[:path] if options[:path]
+        cookie_config.http_only = !!options[:httponly]
+        cookie_config.secure = !!options[:secure]
+        cookie_config.max_age = options[:max_age] if options[:max_age]
       end
 
       def call(env)

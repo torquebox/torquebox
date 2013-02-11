@@ -3,7 +3,19 @@ require 'sinatra'
 
 class SinatraSessions < Sinatra::Base
   # Enable TorqueBox sessions
-  use TorqueBox::Session::ServletStore
+  if ENV['ALL_SESSION_COOKIE_OPTIONS']
+    use TorqueBox::Session::ServletStore, {
+      :key => 'sinatra_sessions',
+      :domain => 'foobar.com',
+      :path => '/baz',
+      :httponly => true,
+      :secure => true,
+      :max_age => 60,
+      :timeout => 180
+    }
+  else 
+    use TorqueBox::Session::ServletStore
+  end
 
   get '/foo' do
     session[:message] = 'Hello World!'

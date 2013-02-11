@@ -65,6 +65,17 @@ module TorqueBox
           services
         end
       end
+
+      def java_web_context
+        war_meta_data = deployment_unit.get_attachment(org.jboss.as.web.deployment.WarMetaData::ATTACHMENT_KEY)
+        return nil if war_meta_data.nil? # no web component in this application
+        jboss_web_meta_data = war_meta_data.getMergedJBossWebMetaData
+        virtual_host = jboss_web_meta_data.virtual_hosts.first || 'default-host'
+        context_path = jboss_web_meta_data.context_root
+        service_string = "jboss.web.deployment.#{virtual_host}.#{context_path}"
+        service_name = org.jboss.msc.service.ServiceName.parse(service_string)
+        get_service(service_name).value
+      end
     end
   end
 end
