@@ -71,6 +71,7 @@ module TorqueBox
         return nil if war_meta_data.nil? # no web component in this application
         jboss_web_meta_data = war_meta_data.getMergedJBossWebMetaData
         virtual_host = jboss_web_meta_data.virtual_hosts.first || 'default-host'
+        virtual_host = %Q("#{virtual_host}") if virtual_host.include?('.')
         context_path = jboss_web_meta_data.context_root
         service_string = "jboss.web.deployment.#{virtual_host}.#{context_path}"
         service_name = org.jboss.msc.service.ServiceName.parse(service_string)
