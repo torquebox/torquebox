@@ -75,7 +75,7 @@ public class TasksInstaller implements DeploymentUnitProcessor {
             processorMetaData.setDestinationName( queueName );
             processorMetaData.setRubyClassName( task.getRubyClassName(), task.getLocation() );
             processorMetaData.setConcurrency( task.getConcurrency() );
-                        processorMetaData.setMessageSelector( "JMSCorrelationID IS NULL" );
+            processorMetaData.setMessageSelector( "JMSCorrelationID IS NULL" );
             processorMetaData.setXAEnabled( task.isXAEnabled() );
             unit.addToAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY, processorMetaData );
         }

@@ -10,8 +10,19 @@ queues:
     durable: false
   /queue/echo_backchannel:
     durable: false
+  /queue/synchronous:
+    durable: false
+  /queue/synchronous_with_selectors:
+    durable: false
 
 messaging:
+  /queue/synchronous:
+    SynchronousProcessor:
+      synchronous: true
+  /queue/synchronous_with_selectors:
+    SynchronousProcessor:
+      synchronous: true
+      selector: "awesomeness IS NOT NULL AND awesomeness > 10"
   /queue/simple_queue: SimpleProcessor
   /queue/stateless_queue: StatelessProcessor
   /queue/echo_queue:

@@ -25,9 +25,18 @@ module TorqueBox
       attr_accessor :message
 
       def initialize
-        @message = nil 
+        @message = nil
+        @proxy = nil
       end
-      
+
+      def initialize_proxy(group)
+        @proxy = MessageProcessorProxy.new(group)
+      end
+
+      def method_missing(method, *args, &block)
+        @proxy.send( method, *args, &block )
+      end
+
       def on_message(body)
         throw "Your subclass must implement on_message(body)"
       end
@@ -39,10 +48,15 @@ module TorqueBox
       def process!(message)
         @message = message
         begin
-          on_message( message.decode )
+          value = on_message(message.decode)
+          reply(value) if synchronous?
         rescue Exception => e
           on_error( e ) 
         end 
+      end
+
+      def reply(value)
+        TorqueBox::Messaging::Queue.new(@message.jms_message.jms_destination.queue_name).publish(value, :correlation_id => @message.jms_message.jms_message_id)
       end
 
       class << self
@@ -157,6 +171,14 @@ module TorqueBox
       # @return Boolean
       def durable?
         @group.durable
+      end
+
+      # Returns true if the message processor is synchronous,
+      # false otherwise
+      #
+      # @return Boolean
+      def synchronous?
+        @group.synchronous
       end
 
       def to_s
