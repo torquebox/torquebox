@@ -73,6 +73,7 @@ module TorqueBox
         virtual_host = jboss_web_meta_data.virtual_hosts.first || 'default-host'
         virtual_host = %Q("#{virtual_host}") if virtual_host.include?('.')
         context_path = jboss_web_meta_data.context_root
+        context_path = "/#{context_path}" unless context_path.start_with?('/')
         service_string = "jboss.web.deployment.#{virtual_host}.#{context_path}"
         service_name = org.jboss.msc.service.ServiceName.parse(service_string)
         get_service(service_name).value
