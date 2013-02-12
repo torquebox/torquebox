@@ -271,7 +271,7 @@ module TorqueBox
           includes.write( include_files.join( "\n" ) )
           includes.flush
 
-          cmd = "jar cvf '#{archive_path}' @#{includes.path}"
+          cmd = "jar cvf \"#{archive_path}\" @#{includes.path}"
 
           run_command( cmd )
           includes.close( true )
