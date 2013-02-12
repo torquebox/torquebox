@@ -81,7 +81,7 @@ public class MessageProcessorMetaData {
     }
 
     public void setConcurrency(Integer concurrency) {
-        if (concurrency != null && concurrency > 0)
+        if (concurrency != null && concurrency >= 0)
             this.concurrency = concurrency;
     }
 
@@ -97,7 +97,16 @@ public class MessageProcessorMetaData {
     public Boolean isDurable() {
         return this.durable;
     }
-    
+
+    public boolean isSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(Boolean synchronous) {
+        if (synchronous != null)
+            this.synchronous = synchronous;
+    }
+
     public String getClientID() {
         return clientID;
     }
@@ -127,6 +136,7 @@ public class MessageProcessorMetaData {
     private String destinationName;
     private String messageSelector;
     private int concurrency = 1;
+    private boolean synchronous = false;
     private boolean durable = false; //only has meaning for Topic processors
     private String clientID;         //only has meaning for Topic processors
     private boolean singleton = false;

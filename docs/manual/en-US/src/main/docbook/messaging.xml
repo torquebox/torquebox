@@ -1688,6 +1688,78 @@ end</programlisting>
                 </example>
             </para>
         </section>
+
+        <section id="synchronous-message-processors">
+            <title>Synchronous Message Processors</title>
+
+            <para>
+                Message processors by default are asynchronous, but sometimes you
+                would like to receive some value after the message was processed.
+                in TorqueBox you can mark a selected message processor as
+                synchronous which would send the return value of the
+                <methodname>on_message(body)</methodname> method back to the sender.
+            </para>
+
+            <example>
+                <title>Synchronous message processor</title>
+
+                <para>
+                    Consider the following simple message processor:
+
+                    <programlisting>require 'torquebox-messaging'
+
+class SynchronousProcessor &lt; TorqueBox::Messaging::MessageProcessor
+    def on_message(body)
+        "Got #{body} but I want bacon!"
+    end
+end</programlisting>
+
+                    In this case every received message (we assume a text message
+                    in this example) will be transformed and returned back.
+
+                </para>
+            </example>
+
+            <para>
+                You can use the <methodname>publish_and_receive</methodname> method available
+                in the <classname>TorqueBox::Messaging::Queue</classname> objects to send messages
+                to synchronous message processors and receive the return values.
+            </para>
+
+            <example>
+                <title>Message sender</title>
+
+                <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/samplequeue')
+queue.publish_and_receive("something") # => "Got something but I want bacon!"</programlisting>
+
+                    As you can see, the message sender receives the return value from
+                    the processor.
+
+                </para>
+            </example>
+
+            <para>
+                To make a message processor work synchronously, you need to set the
+                <literal>synchronous</literal> parameter.
+            </para>
+
+            <example>
+                <title>Deployment descriptor configuration</title>
+                <para>Using the DSL:<programlisting>TorqueBox.configure do
+    queue "/queues/samplequeue" do
+        processor SynchronousProcessor do
+            synchronous true
+        end
+    end
+end</programlisting></para>
+
+                <para>Using YAML:<programlisting>messaging:
+    /queues/samplequeue:
+        SynchronousProcessor:
+            synchronous: true</programlisting></para>
+
+            </example>
+        </section>
     </section>
 
     <section id="backgroundable">

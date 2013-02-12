@@ -24,6 +24,7 @@ import javax.jms.Session;
 
 import org.jruby.RubyModule;
 import org.torquebox.core.component.AbstractRubyComponent;
+import org.torquebox.messaging.MessageProcessorGroup;
 
 public class MessageProcessorComponent extends AbstractRubyComponent {
 
@@ -31,14 +32,10 @@ public class MessageProcessorComponent extends AbstractRubyComponent {
 
     }
 
-   
-    public void process(Message message) {
-        process( message, (Session) null );
-    }
-
-    public void process(Message message, Session session) {
+    public void process(Message message, Session session, MessageProcessorGroup group) {
         RubyModule messageWrapperClass = getClass( "TorqueBox::Messaging::Message" );
         Object wrappedMessage = _callRubyMethod( messageWrapperClass, "new", message );
+        _callRubyMethodIfDefined("initialize_proxy", group);
         _callRubyMethod( findMiddleware(), "invoke", session, wrappedMessage, getRubyComponent() );
     }
     

@@ -52,6 +52,7 @@
           -concurrency: integer
           -selector: string
           -durable: boolean
+          -synchronous: boolean
           -config:
             type: map
             arbitrary: true
@@ -68,6 +69,7 @@
               -concurrency: integer
               -selector: string
               -durable: boolean
+              -synchronous: boolean
               -config:
                 arbitrary: true
               -client_id: string
