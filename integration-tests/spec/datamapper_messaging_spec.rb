@@ -28,14 +28,12 @@ describe "torquebox-messaging with datamapper" do
   end
   
   it "should support always_backgrounded jobs on DataMapper::Resource" do
-    pending 'JRuby 1.7-compatible do_sqlite3 release' if JRUBY_VERSION =~ /^1\.7/
     visit '/datamapper-messaging/foo/hello'
     page.should have_content('success')
     @queue.receive( :timeout => 120_000 ).should == 'hello'
   end
 
   it "should support ad hoc backgrounded jobs on DataMapper::Resource" do
-    pending 'JRuby 1.7-compatible do_sqlite3 release' if JRUBY_VERSION =~ /^1\.7/
     visit '/datamapper-messaging/bar/world'
     page.should have_content('success')
     @queue.receive( :timeout => 120_000 ).should == 'world'
