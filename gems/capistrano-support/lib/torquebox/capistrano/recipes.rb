@@ -52,10 +52,10 @@ module Capistrano
           dd['environment']['RAILS_ENV'] = rails_env
         end
 
-	if (exists?( :stomp_host ) )
-	  dd['stomp'] ||= {}
-	  dd['stomp']['host'] = stomp_host
-	end
+      	if (exists?( :stomp_host ) )
+      	  dd['stomp'] ||= {}
+      	  dd['stomp']['host'] = stomp_host
+      	end
 
         dd
     end
@@ -64,6 +64,7 @@ module Capistrano
   module TorqueBox
 
     def self.load_into( configuration )
+
       configuration.load do 
         # --
 
@@ -84,11 +85,13 @@ module Capistrano
         set( :bundle_cmd,          lambda{ "#{jruby_bin} -S bundle" } ) unless exists?( :bundle_cmd )
         set( :bundle_flags,        '' ) unless exists?( :bundle_flags )
         
+        set( :torquebox_app_name,  lambda{ application } ) unless exists?( :torquebox_app_name )
+
         namespace :deploy do
 
           desc "Restart Application"
           task :restart do
-            run "touch #{jboss_home}/standalone/deployments/#{application}-knob.yml.dodeploy"
+            run "touch #{jboss_home}/standalone/deployments/#{torquebox_app_name}-knob.yml.dodeploy"
           end
  
           namespace :torquebox do
@@ -158,7 +161,7 @@ module Capistrano
             task :deployment_descriptor do
               puts "creating deployment descriptor"
               dd_str = YAML.dump_stream( create_deployment_descriptor(latest_release) )
-              dd_file = "#{jboss_home}/standalone/deployments/#{application}-knob.yml"
+              dd_file = "#{jboss_home}/standalone/deployments/#{torquebox_app_name}-knob.yml"
               cmd =  "cat /dev/null > #{dd_file}"
               dd_str.each_line do |line|
                 cmd += " && echo \"#{line}\" >> #{dd_file}"
