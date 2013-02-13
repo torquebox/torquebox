@@ -1,6 +1,7 @@
 
 require 'java'
 require 'fileutils'
+require 'rexml/document'
 
 assembly_dir = File.expand_path( ARGV[0] )
 output_dir   = File.expand_path( ARGV[1] )
@@ -33,6 +34,27 @@ Dir.chdir( assembly_dir ) do
             output_dir ].join( ' ' )
     puts cmd
     puts `#{cmd}`
+  end
+
+  categories = ["org.torquebox", "TorqueBox"]
+  standalone_xml = "#{output_dir}/jboss/standalone/configuration/standalone.xml"
+
+  puts "Adding trace log level for #{categories.join(", ")} categories to #{standalone_xml} file"
+
+  doc = REXML::Document.new(File.read(standalone_xml))
+
+  profiles = doc.root.get_elements("//profile")
+  profiles.each do |profile|
+    logging_subsystem = profile.get_elements("subsystem[contains(@xmlns, 'urn:jboss:domain:logging:')]").first
+
+    categories.each do |category|
+      logger = logging_subsystem.add_element("logger", "category" => category)
+      logger.add_element("level", "name" => "TRACE")
+    end
+  end
+
+  open(standalone_xml, 'w') do |file|
+    doc.write(file, 4)
   end
 end
 
