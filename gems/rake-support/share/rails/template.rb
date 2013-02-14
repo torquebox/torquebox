@@ -69,7 +69,7 @@ environment do
   <<-ENVIRONMENT
   # Use TorqueBox::Infinispan::Cache for the Rails cache store
   if defined? TorqueBox::Infinispan::Cache
-    config.cache_store = :torque_box_store
+    config.cache_store = :torquebox_store
   end
   ENVIRONMENT
 end

@@ -5,4 +5,4 @@ require File.expand_path('../application', __FILE__)
 Basic::Application.initialize!
 
 require 'torquebox-cache' # triggers TORQUE-635 error
-Basic::Application.config.cache_store = :torque_box_store
+Basic::Application.config.cache_store = :torquebox_store

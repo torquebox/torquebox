@@ -653,7 +653,7 @@ gem 'jdbc-sqlite3'</programlisting></para>
       <para><programlisting language="ruby">module YourApp
   class Application &lt; Rails::Application
 <emphasis>
-    config.cache_store = :torque_box_store
+    config.cache_store = :torquebox_store
 </emphasis>
   end
 end</programlisting></para>
@@ -668,7 +668,7 @@ end</programlisting></para>
       clustered and <emphasis>local</emphasis> mode when not. But you
       can certainly override the defaults:</para>
 
-      <para><programlisting language="ruby">config.cache_store = :torque_box_store, {:mode =&gt; :distributed, :sync =&gt; true}</programlisting></para>
+      <para><programlisting language="ruby">config.cache_store = :torquebox_store, {:mode =&gt; :distributed, :sync =&gt; true}</programlisting></para>
 
       <para>You can even create multiple cache stores in your app, each
       potentially in a different clustering mode. You should use the
