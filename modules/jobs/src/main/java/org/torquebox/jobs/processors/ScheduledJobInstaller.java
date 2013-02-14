@@ -110,8 +110,9 @@ public class ScheduledJobInstaller implements DeploymentUnitProcessor {
             }
         } ).toString();
 
-        MBeanRegistrationService<ScheduledJobMBean> mbeanService = new MBeanRegistrationService<ScheduledJobMBean>( mbeanName );
-        phaseContext.getServiceTarget().addService( serviceName.append( "mbean" ), mbeanService )
+        ServiceName mbeanServiceName = serviceName.append( "mbean" );
+        MBeanRegistrationService<ScheduledJobMBean> mbeanService = new MBeanRegistrationService<ScheduledJobMBean>( mbeanName, mbeanServiceName );
+        phaseContext.getServiceTarget().addService( mbeanServiceName, mbeanService )
                 .addDependency( DependencyType.OPTIONAL, MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
                 .addDependency( serviceName, ScheduledJobMBean.class, mbeanService.getValueInjector() )
                 .setInitialMode( Mode.PASSIVE )

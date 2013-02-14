@@ -17,40 +17,37 @@
 
 module TorqueBox
   module Messaging
-    class XaConnection
+    class XaConnection < Connection
 
-      def initialize(jms_connection)
-        @jms_connection = jms_connection
+      def with_session(&block)
+        # Re-use a single XaSession per XaConnection
+        # This session gets closed by the afterCompletion
+        # callback on XaSession
+        @session ||= create_session
+        block.call( @session )
       end
 
-      def start
-        @jms_connection.start
+      def create_session(auto_enlist = true)
+        jms_session = jms_connection.create_xa_session
+        session = XaSession.new( jms_session, transaction, self )
+        if auto_enlist
+          transaction.enlist_resource( jms_session.xa_resource )
+          transaction.registerSynchronization( session )
+        end
+        session
+      end
+
+      def session_transaction
+        @session.nil? ? nil : @session.transaction
       end
 
       def close
-        @jms_connection.close
+        super if @complete
       end
 
-      def client_id
-        @jms_connection.client_id
-      end
-
-      def client_id=(client_id)
-        @jms_connection.client_id = client_id
-      end
-      
-      def with_session(&block)
-        session = self.create_session()
-        begin
-          result = block.call( session )
-        ensure
-          session.close
-        end
-        return result
-      end
-
-      def create_session()
-        XaSession.new( @jms_connection.create_xa_session() )
+      def complete!
+        @complete = true
+        close
       end
 
     end

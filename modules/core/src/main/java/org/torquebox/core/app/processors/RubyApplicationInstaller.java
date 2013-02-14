@@ -66,8 +66,9 @@ public class RubyApplicationInstaller implements DeploymentUnitProcessor {
         application.setRootPath( rubyAppMetaData.getRoot().getAbsolutePath() );
         application.setName( rubyAppMetaData.getApplicationName() );
         
-        MBeanRegistrationService<RubyApplicationMBean> mbeanService = new MBeanRegistrationService<RubyApplicationMBean>( mbeanName, new ImmediateValue<RubyApplicationMBean>( application ) );
-        phaseContext.getServiceTarget().addService( serviceName.append( "mbean" ), mbeanService )
+        ServiceName mbeanServiceName = serviceName.append( "mbean" );
+        MBeanRegistrationService<RubyApplicationMBean> mbeanService = new MBeanRegistrationService<RubyApplicationMBean>( mbeanName, mbeanServiceName, new ImmediateValue<RubyApplicationMBean>( application ) );
+        phaseContext.getServiceTarget().addService( mbeanServiceName, mbeanService )
                 .addDependency( DependencyType.OPTIONAL, MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
                 .setInitialMode( Mode.PASSIVE )
                 .install();

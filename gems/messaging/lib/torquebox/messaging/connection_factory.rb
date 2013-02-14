@@ -21,9 +21,10 @@ require 'torquebox/messaging/connection'
 module TorqueBox
   module Messaging
     class ConnectionFactory
+      include TorqueBox::Injectors
 
       attr_reader :internal_connection_factory
-      
+
       def self.new(internal_connection_factory = nil)
         return internal_connection_factory if internal_connection_factory.is_a?( ConnectionFactory )
         super
@@ -31,31 +32,70 @@ module TorqueBox
 
       def initialize(internal_connection_factory = nil)
         @internal_connection_factory = internal_connection_factory
+        @tm = fetch('transaction-manager')
       end
 
-      def with_new_connection(options, &block)
+      def with_new_connection(options, enlist_tx = true, &block)
         client_id = options[:client_id]
-        connection = create_connection( options )
+        create_internal_connection_factory( options )
+        if !enlist_tx || (current.nil? && !transaction)
+          connection = create_connection( options )
+          connection.client_id = client_id if client_id
+          begin
+            connection.start
+            result = block.call( connection )
+          ensure
+            connection.close
+          end
+        elsif transaction && (!current.respond_to?(:session_transaction) || current.session_transaction != transaction)
+          result = block.call( activate( create_xa_connection( options ), client_id ) )
+          # XaSession's afterCompletion callback deactivates XA connections
+        else
+          result = block.call( current )
+        end
+        result
+      end
+
+      def connections
+        Thread.current[:torquebox_connection] ||= []
+      end
+
+      def current
+        connections.last
+      end
+
+      def activate(connection, client_id)
         connection.client_id = client_id if client_id
         connection.start
-        begin
-          result = block.call( connection )
-        ensure
-          connection.close
-        end
-        return result
+        connections.push(connection) && current
       end
 
-      def create_connection(options)
+      def deactivate
+        connections.pop.close
+      end
+
+      def transaction
+        @tm && @tm.transaction
+      end
+
+      def create_internal_connection_factory(options)
         host     = options[:host] || "localhost"
         port     = options[:port] || 5445
-        username = options[:username]
-        password = options[:password]
         if !@internal_connection_factory
           @internal_connection_factory = create_connection_factory( host, port )
         end
+      end
 
-        Connection.new( @internal_connection_factory.create_connection( username, password ) )
+      def create_connection(options={})
+        username = options[:username]
+        password = options[:password]
+        Connection.new( @internal_connection_factory.create_connection( username, password ), self )
+      end
+
+      def create_xa_connection(options={})
+        username = options[:username]
+        password = options[:password]
+        XaConnection.new( @internal_connection_factory.create_xa_connection( username, password ), self )
       end
 
       def create_connection_factory(host, port)

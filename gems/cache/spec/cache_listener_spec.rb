@@ -19,15 +19,16 @@ require 'cache_listener'
 
 describe TorqueBox::Infinispan::CacheListener do
   before :each do
-    manager = org.infinispan.manager.DefaultCacheManager.new 
+    @manager = org.infinispan.manager.DefaultCacheManager.new 
     service = org.projectodd.polyglot.cache.as.CacheService.new
-    service.stub!(:cache_container).and_return( manager )
+    service.stub!(:cache_container).and_return( @manager )
     TorqueBox::ServiceRegistry.stub!(:[]).with(org.projectodd.polyglot.cache.as.CacheService::CACHE).and_return( service )
     @cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache' )
   end
 
   after :each do
     @cache.clear
+    @manager.stop
   end
 
   it "the cache should accept listeners" do
