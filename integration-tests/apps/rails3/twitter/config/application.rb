@@ -1,7 +1,7 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
-#require 'active_support/cache/torque_box_store'
+#require 'active_support/cache/torquebox_store'
 
 # If you have a Gemfile, require the gems listed there, including any gems
 # you've limited to :test, :development, or :production.
@@ -41,6 +41,6 @@ module Twitter
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
 
-    config.cache_store = :torque_box_store
+    config.cache_store = :torquebox_store
   end
 end

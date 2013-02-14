@@ -41,6 +41,6 @@ module Basic
     config.assets.enabled = true
 
     require 'torquebox-cache'
-    config.cache_store = :torque_box_store
+    config.cache_store = :torquebox_store
   end
 end

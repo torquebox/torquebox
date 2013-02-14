@@ -10,7 +10,7 @@ module Basic
   class Application < Rails::Application
     # Use TorqueBox::Infinispan::Cache for the Rails cache store
     if defined? TorqueBox::Infinispan::Cache
-      config.cache_store = :torque_box_store
+      config.cache_store = :torquebox_store
     end
 
     # Settings in config/environments/* take precedence over those specified here.
