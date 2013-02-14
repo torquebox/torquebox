@@ -19,6 +19,27 @@ module TorqueBox
   module Messaging
 
     class XaSession < Session
+      include javax.transaction.Synchronization
+      attr_reader :transaction
+
+      def initialize( jms_session, transaction, connection )
+        super( jms_session )
+        @transaction = transaction
+        @connection = connection
+      end
+
+      def close
+        # eat the close, until tx completes
+      end
+
+      def beforeCompletion
+        # required interface
+      end
+
+      def afterCompletion(status)
+        @connection.deactivate
+        @connection.complete!
+      end
 
       def xa_resource
         @jms_session.xa_resource

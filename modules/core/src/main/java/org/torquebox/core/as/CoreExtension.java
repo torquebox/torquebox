@@ -27,12 +27,12 @@ import java.io.IOException;
 import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.PathElement;
 import org.jboss.as.controller.SubsystemRegistration;
+import org.jboss.as.controller.operations.common.GenericSubsystemDescribeHandler;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.as.controller.registry.OperationEntry;
 import org.jboss.logging.Logger;
 import org.projectodd.polyglot.core.as.AbstractBootstrappableExtension;
-import org.projectodd.polyglot.core.as.GenericSubsystemDescribeHandler;
 import org.torquebox.TorqueBox;
 
 public class CoreExtension extends AbstractBootstrappableExtension {

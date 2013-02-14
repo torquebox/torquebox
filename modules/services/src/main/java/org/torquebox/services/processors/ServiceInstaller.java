@@ -103,8 +103,9 @@ public class ServiceInstaller implements DeploymentUnitProcessor {
             }
         } ).toString();
 
-        MBeanRegistrationService<RubyServiceMBean> mbeanService = new MBeanRegistrationService<RubyServiceMBean>( mbeanName, new ImmediateValue<RubyServiceMBean>( service ) );
-        phaseContext.getServiceTarget().addService( serviceStartName.append( "mbean" ), mbeanService )
+        ServiceName mbeanServiceName = serviceStartName.append( "mbean" );
+        MBeanRegistrationService<RubyServiceMBean> mbeanService = new MBeanRegistrationService<RubyServiceMBean>( mbeanName, mbeanServiceName, new ImmediateValue<RubyServiceMBean>( service ) );
+        phaseContext.getServiceTarget().addService( mbeanServiceName, mbeanService )
                 .addDependency( DependencyType.OPTIONAL, MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
                 .setInitialMode( Mode.PASSIVE )
                 .install(); 

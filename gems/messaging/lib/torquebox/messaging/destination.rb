@@ -107,8 +107,8 @@ module TorqueBox
 
       def with_session(opts = {})
         transactional = opts.fetch(:tx, true)
-        connection_factory.with_new_connection( connect_options ) do |connection|
-          connection.with_session(transactional) do |session|
+        connection_factory.with_new_connection(connect_options, transactional) do |connection|
+          connection.with_session do |session|
             yield session
           end
         end

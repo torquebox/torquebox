@@ -110,7 +110,8 @@ module ActiveSupport
 
       # Write an entry to the cache implementation. Subclasses must implement this method.
       def write_entry(key, entry, options = {})
-        options[:unless_exist] ? cache.put_if_absent( key, encode(entry) ) : cache.put( key, encode(entry) )
+        previous_value = options[:unless_exist] ? cache.put_if_absent( key, encode(entry) ) : cache.put( key, encode(entry) )
+        decode( previous_value ) unless previous_value.nil?
       end
 
       # Delete an entry from the cache implementation. Subclasses must implement this method.
