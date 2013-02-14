@@ -326,7 +326,7 @@ cache.transaction do
       the Rails cache to explicitly store and retreive values across a cluster
       you should change the default clustering mode to <code>:replicated</code>
       or <code>:distributed</code> mode.
-      <programlisting>config.cache_store = :torque_box_store, {:mode => :distributed}</programlisting>
+      <programlisting>config.cache_store = :torquebox_store, {:mode => :distributed}</programlisting>
     </para>
 
     <para> 

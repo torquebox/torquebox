@@ -39,6 +39,6 @@ module Basic
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
 
-    config.cache_store = :torque_box_store
+    config.cache_store = :torquebox_store
   end
 end
