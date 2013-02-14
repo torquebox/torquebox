@@ -18,7 +18,7 @@ topics:
 messaging:
   /queues/test: TestQueueConsumer
   /queues/parentless: ParentlessQueueConsumer
-  /topics/test: 
+  /topics/test:
     TestTopicConsumer:
       durable: true
       client_id: the-client

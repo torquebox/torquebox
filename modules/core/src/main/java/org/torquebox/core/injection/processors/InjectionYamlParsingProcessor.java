@@ -19,16 +19,19 @@
 
 package org.torquebox.core.injection.processors;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.logging.Logger;
 import org.torquebox.core.injection.InjectionMetaData;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 
 public class InjectionYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
 
     public InjectionYamlParsingProcessor() {
-        setSectionName( "injection" );
+        setSectionName("injection");
     }
 
     @SuppressWarnings("unchecked")
@@ -37,11 +40,27 @@ public class InjectionYamlParsingProcessor extends AbstractSplitYamlParsingProce
         Map<String, Object> injection = (Map<String, Object>) data;
         if (injection != null) {
             InjectionMetaData imd = new InjectionMetaData();
-            Boolean enabled = (Boolean) injection.get( "enabled" );
-            imd.setEnabled( enabled );
-            unit.putAttachment( InjectionMetaData.ATTACHMENT_KEY, imd );
+
+            if (injection.containsKey("enabled"))
+                imd.setEnabled((Boolean) injection.get("enabled"));
+
+            if (injection.containsKey("path")) {
+                log.trace("Using application provided injection paths for indexing");
+
+                Object o = injection.get("path");
+
+                if (o instanceof String)
+                    imd.setPaths(Arrays.asList(new String[] {(String) o}));
+                else
+                    imd.setPaths((List<String>) o);
+
+            }
+
+            unit.putAttachment(InjectionMetaData.ATTACHMENT_KEY, imd);
         }
 
     }
 
+
+    private static final Logger log = Logger.getLogger("org.torquebox.core");
 }

@@ -90,7 +90,7 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
         
-        List<String> prefixes = defaultInjectionPathPrefixes();
+        List<String> prefixes = defaultInjectionPathPrefixes(phaseContext.getDeploymentUnit());
         prefixes.add(  rackAppMetaData.getRackUpScriptLocation() );
         
         return prefixes;
