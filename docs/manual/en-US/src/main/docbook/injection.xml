@@ -52,7 +52,7 @@
         </listitem>
       </itemizedlist></para>
 
-    <para>TorqueBox supports injection for source files in the following
+    <para>By default TorqueBox supports injection for source files in the following
     locations (relative to the root directory of your application):
     <itemizedlist>
         <listitem>
@@ -93,6 +93,11 @@
 
 end</programlisting>
       </informalexample></para>
+
+    <para>
+      Paths are configurable per-app, see the <link linkend="configuring-the-scanner">configuration section</link>.
+    </para>
+
   </section>
 
   <section id="injectable-resources">
@@ -304,19 +309,73 @@ end</programlisting>
     key.</para>
   </section>
 
-  <section id="disabling-the-scanner">
-    <title>Disabling the Injection Scanner</title>
+  <section id="configuring-the-scanner">
+    <title>Configuring the Injection Scanner</title>
 
-    <para>If you're not making use of injection, you can disable the injection
-    scanner on a per-application basis. Simply add:</para>
+    <para>You can change the default values for the injection scanner
+      configuration using the <literal>injection</literal>
+      section in the deployment descriptor.
+    </para>
 
-    <para><informalexample>
-        <programlisting>injection:
-  enabled: false
-    </programlisting>
-      </informalexample></para>
+    <section id="disabling-the-scanner">
+      <title>Disabling the Injection Scanner</title>
 
-    <para>to your -knob.yml or torquebox.yml file, and injection scanning will
-    be disabled for your application.</para>
+      <para>
+        If you're not making use of injection, you can disable the injection
+        scanner on a per-application basis. Simply add:
+      </para>
+
+      <example>
+        <para>Using the DSL:<programlisting>TorqueBox.configure do
+  injection do
+    enabled false
+  end
+end</programlisting></para>
+
+        <para>Using YAML:<programlisting>injection:
+  enabled: false</programlisting></para>
+      </example>
+    </section>
+
+    <section id="configuring-paths-of-the-scanner">
+      <title>Configuring paths of the Injection Scanner</title>
+
+      <para>
+        If you want to change the default path where the Injection Scanner is
+        looking for files to inject to you can use the <literal>paths</literal>
+        attribute.
+      </para>
+
+      <para>
+        Please note that the specified paths will override the default paths.
+        The root directory is always added to the scanner.
+      </para>
+
+      <example>
+        <para>Using the DSL:<programlisting># Single directory
+TorqueBox.configure do
+  injection do
+    path "directory"
+  end
+end
+
+# Multiple directories
+TorqueBox.configure do
+  injection do
+    path ["directory1", "directory2"]
+  end
+end</programlisting></para>
+
+        <para>Using YAML:<programlisting># Single directory
+injection:
+  path: directory
+
+# Multiple directories
+injection:
+  path:
+    - directory1
+    - directory2</programlisting></para>
+      </example>
+    </section>
   </section>
 </chapter>

@@ -47,7 +47,10 @@ module TorqueBox
                                                    :discrete => true),
           :environment => OptionsEntry,
           :injection   => OptionsEntry.with_settings(:validate => {
-                                                       :required => [{ :enabled => [true, false] }]
+                                                       :optional => [
+                                                                      { :enabled => [true, false] },
+                                                                      :path
+                                                                    ]
                                                      }),
           :config => OptionsEntry,
           :job         => ThingWithOptionsEntry.with_settings(:discrete => true,

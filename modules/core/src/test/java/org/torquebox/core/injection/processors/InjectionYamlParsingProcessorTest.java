@@ -19,6 +19,8 @@
 
 package org.torquebox.core.injection.processors;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -65,6 +67,29 @@ public class InjectionYamlParsingProcessorTest extends AbstractDeploymentProcess
         InjectionMetaData injectionMetaData = unit.getAttachment( InjectionMetaData.ATTACHMENT_KEY );
         assertNotNull( injectionMetaData );
         assertFalse( injectionMetaData.isEnabled() );
-    }    
-    
+    }
+
+    @Test
+    public void testArrayPathsInjectionYml() throws Exception {
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "array-paths-injection.yml" );
+        InjectionMetaData injectionMetaData = unit.getAttachment( InjectionMetaData.ATTACHMENT_KEY );
+        assertNotNull( injectionMetaData );
+        assertEquals( injectionMetaData.getPaths().size(), 2 );
+
+        String[] paths = {"foo", "bar"};
+
+        assertArrayEquals( injectionMetaData.getPaths().toArray(), paths );
+    }
+
+    @Test
+    public void testSimplePathInjectionYml() throws Exception {
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "path-injection.yml" );
+        InjectionMetaData injectionMetaData = unit.getAttachment( InjectionMetaData.ATTACHMENT_KEY );
+        assertNotNull( injectionMetaData );
+        assertEquals( injectionMetaData.getPaths().size(), 1 );
+
+        String[] paths = {"foo"};
+
+        assertArrayEquals( injectionMetaData.getPaths().toArray(), paths );
+    }
 }
