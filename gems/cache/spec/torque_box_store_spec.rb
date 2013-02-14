@@ -9,42 +9,46 @@ TORQUEBOX_APP_NAME = 'active-support-unit-test'
 describe ActiveSupport::Cache::TorqueBoxStore do
 
   before(:each) do
-    manager = org.infinispan.manager.DefaultCacheManager.new 
+    @manager = org.infinispan.manager.DefaultCacheManager.new 
     service = org.projectodd.polyglot.cache.as.CacheService.new
-    service.stub!(:cache_container).and_return( manager )
+    service.stub!(:cache_container).and_return( @manager )
     TorqueBox::ServiceRegistry.stub!(:[]).with(org.projectodd.polyglot.cache.as.CacheService::CACHE).and_return( service )
     TorqueBox::ServiceRegistry.service_registry = nil
     @cache = ActiveSupport::Cache::TorqueBoxStore.new()
   end
 
+  after(:each) do
+    @manager.stop
+  end
+
   describe "basics" do
 
     it "should write and read a string" do
-      @cache.write("key", "value").should be_true
+      @cache.write("key", "value")
       @cache.read("key").should == "value"
     end
 
     it "should write and read a number" do
-      @cache.write("key", 42).should be_true
+      @cache.write("key", 42)
       @cache.read("key").should == 42
     end
 
     it "should exist after writing" do
-      @cache.write("key", 42).should be_true
+      @cache.write("key", 42)
       @cache.exist?("key").should be_true
     end
 
     it "should be gone after deleting" do
-      @cache.write("key", 42).should be_true
+      @cache.write("key", 42)
       @cache.read("key").should == 42
       @cache.delete("key").should be_true
       @cache.read("key").should be_nil
     end
 
     it "should overwrite an existing key" do
-      @cache.write("key", 42).should be_true
+      @cache.write("key", 42)
       @cache.read("key").should == 42
-      @cache.write("key", 44).should be_true
+      @cache.write("key", 44)
       @cache.read("key").should == 44
     end
 
@@ -53,22 +57,22 @@ describe ActiveSupport::Cache::TorqueBoxStore do
   describe "options" do
 
     it "should be expirable" do
-      @cache.write("key", 42, :expires_in => 1.second).should be_true
+      @cache.write("key", 42, :expires_in => 1.second)
       @cache.read("key").should == 42
       sleep(1.1)
       @cache.read("key").should be_nil
     end
 
     it "should optionally not overwrite an existing key" do
-      @cache.write("key", 42).should be_true
+      @cache.write("key", 42)
       @cache.read("key").should == 42
-      @cache.write("key", 44, :unless_exist => true).should be_true
+      @cache.write("key", 44, :unless_exist => true)
       @cache.read("key").should == 42
     end
 
     it "should merge initialized options" do
       @cache = ActiveSupport::Cache::TorqueBoxStore.new(:expires_in => 1.second)
-      @cache.write("key", 42).should be_true
+      @cache.write("key", 42)
       @cache.read("key").should == 42
       sleep(1.1)
       @cache.read("key").should be_nil
@@ -182,14 +186,14 @@ describe ActiveSupport::Cache::TorqueBoxStore do
   describe "advanced" do
     
     it "should support incrementation" do
-      @cache.write("key", 42).should be_true
+      @cache.write("key", 42)
       @cache.read("key").should == 42
       @cache.increment("key").should == 43
       @cache.read("key").should == 43
     end
 
     it "should support decrementation" do
-      @cache.write("key", 42).should be_true
+      @cache.write("key", 42)
       @cache.read("key").should == 42
       @cache.decrement("key").should == 41
       @cache.read("key").should == 41

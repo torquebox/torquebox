@@ -23,104 +23,52 @@ module TorqueBox
     class Connection
       include TorqueBox::Injectors
 
-      def initialize(jms_connection)
+      attr_accessor :jms_connection
+
+      def initialize(jms_connection, connection_factory)
         @jms_connection = jms_connection
+        @connection_factory = connection_factory
         @tm = fetch('transaction-manager')
       end
 
       def start
-        @jms_connection.start
+        jms_connection.start
       end
 
       def close
-        @jms_connection.close
+        jms_connection.close
       end
 
       def client_id
-        @jms_connection.client_id
+        jms_connection.client_id
       end
 
       def client_id=(client_id)
-        @jms_connection.client_id = client_id
-      end
-      
-      def with_session(enlist_tx = true)
-        if !enlist_tx || (current.nil? && !transaction)
-          begin
-            yield activate( create_session )
-          ensure
-            deactivate
-          end
-        elsif transaction && (!current.respond_to?(:transaction) || current.transaction != transaction)
-          yield activate( create_xa_session )
-        else
-          yield( current )
-        end
+        jms_connection.client_id = client_id
       end
 
-      def sessions
-        Thread.current[:session] ||= []
+      def with_session(&block)
+        begin
+          session = create_session
+          result = block.call( session )
+        ensure
+          session.close
+        end
+        result
       end
-      def current
-        sessions.last
-      end
-      def activate(session)
-        sessions.push(session) && current
-      end
-      def deactivate
-        sessions.pop.close
+
+      def create_session
+        Session.new( jms_connection.create_session( false, Session::AUTO_ACK ) )
       end
 
       def transaction
         @tm && @tm.transaction
       end
 
-      def create_xa_session
-        jms_session = @jms_connection.create_xa_session()
-        transaction.enlist_resource( jms_session.xa_resource )
-        session = TransactedSession.new( jms_session, transaction, self )
-        transaction.registerSynchronization( session )
-        session
+      def deactivate
+        @connection_factory.deactivate
       end
 
-      def create_session
-        Session.new( @jms_connection.create_session( false, Session::AUTO_ACK ) )
-      end
-
-    end
-    
-    class TransactedSession < Session
-      include javax.transaction.Synchronization
-      attr_reader :transaction
-
-      def initialize( jms_session, transaction, connection )
-        super( jms_session )
-        @transaction = transaction
-        @connection = connection.extend(TransactedConnection)
-      end
-
-      def close
-        # eat the close, until tx completes
-      end
-
-      def beforeCompletion
-        # required interface
-      end
-
-      def afterCompletion(status)
-        @connection.deactivate
-        @connection.complete!
-      end
-    end
-
-    module TransactedConnection
-      def close
-        super if @complete
-      end
-      def complete!
-        @complete = true
-        close
-      end
     end
 
   end

@@ -46,14 +46,18 @@ public class MessageProcessor extends BaseMessageProcessor {
             try {
                 component.process( message, getSession() );
                 if (isXAEnabled()) {
+                    log.trace( "Committing XA transaction for messageId " + message.getJMSMessageID() );
                     commitXATransaction();
                 } else {
+                    log.trace( "Committing non-XA transaction for messageId " + message.getJMSMessageID() );
                     getSession().commit();
                 }
             } catch (Throwable e) {
                 if (isXAEnabled()) {
+                    log.trace( "Rolling back XA transaction for messageId " + message.getJMSMessageID() );
                     rollbackXATransaction( e );
                 } else {
+                    log.trace( "Rolling back non-XA transaction for messageId " + message.getJMSMessageID() );
                     getSession().rollback();
                     throw e;
                 }

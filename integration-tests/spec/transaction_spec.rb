@@ -238,7 +238,6 @@ remote_describe "transactions testing" do
     it "should retry delivery when an error is tossed" do
       @no_xa_input.publish("This message should trigger 5 retries")
       response = @output.receive(:timeout => 10_000)
-      puts "!!! RESPONSE IS #{response}"
       response.should match /success.*\s5\s/
     end
 

@@ -107,8 +107,9 @@ public class RuntimePoolInstaller implements DeploymentUnitProcessor {
                 }
             } ).toString();
 
-            MBeanRegistrationService<BasicRubyRuntimePoolMBean> mbeanService = new MBeanRegistrationService<BasicRubyRuntimePoolMBean>( mbeanName );
-            phaseContext.getServiceTarget().addService( name.append( "mbean" ), mbeanService )
+            ServiceName mbeanServiceName = name.append( "mbean" );
+            MBeanRegistrationService<BasicRubyRuntimePoolMBean> mbeanService = new MBeanRegistrationService<BasicRubyRuntimePoolMBean>( mbeanName, mbeanServiceName );
+            phaseContext.getServiceTarget().addService( mbeanServiceName, mbeanService )
                     .addDependency( DependencyType.OPTIONAL, MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
                     .addDependency( name, BasicRubyRuntimePoolMBean.class, mbeanService.getValueInjector() )
                     .setInitialMode( Mode.PASSIVE )
@@ -144,8 +145,9 @@ public class RuntimePoolInstaller implements DeploymentUnitProcessor {
                 }
             } ).toString();
             
-            MBeanRegistrationService<DefaultRubyRuntimePoolMBean> mbeanService = new MBeanRegistrationService<DefaultRubyRuntimePoolMBean>( mbeanName );
-            phaseContext.getServiceTarget().addService( name.append( "mbean" ), mbeanService )
+            ServiceName mbeanServiceName = name.append( "mbean" );
+            MBeanRegistrationService<DefaultRubyRuntimePoolMBean> mbeanService = new MBeanRegistrationService<DefaultRubyRuntimePoolMBean>( mbeanName, mbeanServiceName );
+            phaseContext.getServiceTarget().addService( mbeanServiceName, mbeanService )
                     .addDependency( DependencyType.OPTIONAL, MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
                     .addDependency( name, DefaultRubyRuntimePoolMBean.class, mbeanService.getValueInjector() )
                     .setInitialMode( Mode.PASSIVE )

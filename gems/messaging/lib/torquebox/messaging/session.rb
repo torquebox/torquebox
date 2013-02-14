@@ -23,6 +23,7 @@ module TorqueBox
       AUTO_ACK = javax.jms::Session::AUTO_ACKNOWLEDGE
       CLIENT_ACK = javax.jms::Session::CLIENT_ACKNOWLEDGE
       DUPS_OK_ACK = javax.jms::Session::DUPS_OK_ACKNOWLEDGE
+      SESSION_TRANSACTED = javax.jms::Session::SESSION_TRANSACTED
 
       attr_accessor :jms_session
       

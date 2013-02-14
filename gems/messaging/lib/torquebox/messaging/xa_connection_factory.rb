@@ -20,22 +20,11 @@ require 'torquebox/messaging/connection'
 
 module TorqueBox
   module Messaging
-    class XaConnectionFactory
-
-      attr_reader :internal_connection_factory
-      
-      def self.new(internal_connection_factory = nil)
-        return internal_connection_factory if internal_connection_factory.is_a?( XaConnectionFactory )
-        super
-      end
-
-      def initialize(internal_connection_factory = nil)
-        @internal_connection_factory = internal_connection_factory
-      end
+    class XaConnectionFactory < ConnectionFactory
 
       def with_new_connection(options, &block)
         client_id = options[:client_id]
-        connection = create_connection
+        connection = create_xa_connection( options )
         connection.client_id = client_id
         connection.start
         begin
@@ -44,10 +33,6 @@ module TorqueBox
           connection.close
         end
         return result
-      end
-
-      def create_connection()
-        XaConnection.new( @internal_connection_factory.create_xa_connection )
       end
 
 

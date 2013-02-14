@@ -18,15 +18,16 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 describe TorqueBox::Infinispan::Cache do
   before :each do
-    manager = org.infinispan.manager.DefaultCacheManager.new 
+    @manager = org.infinispan.manager.DefaultCacheManager.new
     service = org.projectodd.polyglot.cache.as.CacheService.new
-    service.stub!(:cache_container).and_return( manager )
+    service.stub!(:cache_container).and_return( @manager )
     TorqueBox::ServiceRegistry.stub!(:[]).with(org.projectodd.polyglot.cache.as.CacheService::CACHE).and_return( service )
     @cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache' )
   end
 
   after :each do
     @cache.clear
+    @manager.stop
   end
 
   it "should have a name" do
@@ -34,17 +35,17 @@ describe TorqueBox::Infinispan::Cache do
   end
 
   it "should respond to clustering_mode" do
-    @cache.should respond_to( :clustering_mode ) 
+    @cache.should respond_to( :clustering_mode )
   end
 
   it "should accept and return strings" do
-    @cache.put('foo', 'bar').should be_true
+    @cache.put('foo', 'bar').should be_nil
     @cache.get('foo').should == 'bar'
   end
 
   it "should accept and return ruby objects" do
     heffalump = Snuffleuffagus.new(100, 'snuffle')
-    @cache.put('heffalump', heffalump).should be_true
+    @cache.put('heffalump', heffalump).should be_nil
     rheffalump = @cache.get('heffalump')
     rheffalump.name.should == heffalump.name
     rheffalump.id.should == heffalump.id
@@ -69,13 +70,13 @@ describe TorqueBox::Infinispan::Cache do
   end
 
   it "should only insert on put_if_absent if the key is not already in the cache" do
-    @cache.put_if_absent('foo', 'bar').should be_true
-    @cache.put_if_absent('foo', 'foobar')
+    @cache.put_if_absent('foo', 'bar').should be_nil
+    @cache.put_if_absent('foo', 'foobar').should == 'bar'
     @cache.get('foo').should == 'bar'
   end
 
   it "should clear" do
-    @cache.clear.should be_true
+    @cache.clear.should be_nil
   end
 
   it "should replace existing string values" do
@@ -290,7 +291,7 @@ describe TorqueBox::Infinispan::Cache do
     it "should persist dates with a configured directory" do
       cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-configured-date-cache', :persist => @date_cfg_dir.to_s )
       entry = java.util.Date.new
-      cache.put('foo', entry).should be_true
+      cache.put('foo', entry).should be_nil
       File.exist?("#{@date_cfg_dir.to_s}/persisted-configured-date-cache").should be_true
     end
 

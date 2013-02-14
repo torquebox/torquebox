@@ -31,9 +31,9 @@ module TorqueBox
       end
     
       def configure(stomplet_config)
-        @connection = @connection_factory.create_connection
+        @connection = @connection_factory.create_xa_connection
         @connection.start
-        @session = @connection.create_session
+        @session = @connection.create_session( false )
         @xa_resources = [ @session.xa_resource ]
       end
     

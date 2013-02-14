@@ -19,7 +19,7 @@
 
 package org.torquebox.core.processor;
 
-import org.jboss.as.logging.LoggingConfigurationProcessor;
+import org.jboss.as.logging.LoggingDeploymentUnitProcessor;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -43,7 +43,7 @@ public class LoggingPropertiesWorkaroundProcessor implements DeploymentUnitProce
             return;
         }
 
-        unit.putAttachment( LoggingConfigurationProcessor.LOG_CONTEXT_KEY, null );
+        unit.putAttachment( LoggingDeploymentUnitProcessor.LOG_CONTEXT_KEY, null );
     }
 
     @Override

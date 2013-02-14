@@ -46,6 +46,7 @@ import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController;
+import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.stdio.StdioContext;
 import org.projectodd.polyglot.core.processors.ApplicationExploder;
@@ -174,8 +175,9 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
             }
         } ).toString();
 
-        MBeanRegistrationService<TorqueBoxMBean> mbeanService = new MBeanRegistrationService<TorqueBoxMBean>( mbeanName );
-        newControllers.add( context.getServiceTarget().addService( CoreServices.TORQUEBOX.append( "mbean" ), mbeanService )
+        ServiceName mbeanServiceName = CoreServices.TORQUEBOX.append( "mbean" );
+        MBeanRegistrationService<TorqueBoxMBean> mbeanService = new MBeanRegistrationService<TorqueBoxMBean>( mbeanName, mbeanServiceName );
+        newControllers.add( context.getServiceTarget().addService( mbeanServiceName, mbeanService )
                 .addDependency( DependencyType.OPTIONAL, MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
                 .addDependency( CoreServices.TORQUEBOX, TorqueBoxMBean.class, mbeanService.getValueInjector() )
                 .addListener( verificationHandler )
@@ -198,8 +200,9 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
             }
         } ).toString();
 
-        MBeanRegistrationService<GlobalRubyMBean> mbeanService = new MBeanRegistrationService<GlobalRubyMBean>( mbeanName );
-        newControllers.add( context.getServiceTarget().addService( CoreServices.GLOBAL_RUBY.append( "mbean" ), mbeanService )
+        ServiceName mbeanServiceName = CoreServices.GLOBAL_RUBY.append( "mbean" );
+        MBeanRegistrationService<GlobalRubyMBean> mbeanService = new MBeanRegistrationService<GlobalRubyMBean>( mbeanName, mbeanServiceName );
+        newControllers.add( context.getServiceTarget().addService( mbeanServiceName, mbeanService )
                 .addDependency( DependencyType.OPTIONAL, MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
                 .addDependency( CoreServices.GLOBAL_RUBY, GlobalRubyMBean.class, mbeanService.getValueInjector() )
                 .addListener( verificationHandler )

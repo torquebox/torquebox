@@ -111,8 +111,9 @@ public class MessageProcessorInstaller implements DeploymentUnitProcessor {
             }
         } ).toString();
 
-        MBeanRegistrationService<MessageProcessorGroupMBean> mbeanService = new MBeanRegistrationService<MessageProcessorGroupMBean>( mbeanName );
-        phaseContext.getServiceTarget().addService( baseServiceName.append( "mbean" ), mbeanService )
+        ServiceName mbeanServiceName = baseServiceName.append( "mbean" );
+        MBeanRegistrationService<MessageProcessorGroupMBean> mbeanService = new MBeanRegistrationService<MessageProcessorGroupMBean>( mbeanName, mbeanServiceName );
+        phaseContext.getServiceTarget().addService( mbeanServiceName, mbeanService )
                 .addDependency( DependencyType.OPTIONAL, MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
                 .addDependency( baseServiceName, MessageProcessorGroupMBean.class, mbeanService.getValueInjector() )
                 .setInitialMode( Mode.PASSIVE )

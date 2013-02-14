@@ -129,7 +129,7 @@ module TorqueBox
       # Clear the entire cache. Be careful with this method since it could
       # affect other processes if shared cache is being used.
       def clear
-        cache.clearAsync
+        cache.clear
       end
 
       # Return the keys in the cache; potentially very expensive depending on configuration
@@ -152,11 +152,11 @@ module TorqueBox
 
       # Write an entry to the cache 
       def put(key, value, expires = 0)
-        __put(key, value, expires, :put_async)
+        __put(key, value, expires, :put)
       end
 
       def put_if_absent(key, value, expires = 0)
-        __put(key, value, expires, :put_if_absent_async)
+        __put(key, value, expires, :put_if_absent)
       end
 
       def evict( key )
@@ -177,16 +177,19 @@ module TorqueBox
         end
       end
 
-      # Delete an entry from the cache 
+      # Delete an entry from the cache
       def remove(key)
-        cache.removeAsync( key.to_s ) && true
+        cache.remove( key.to_s )
       end
 
-      def increment( sequence_name, amount = 1 )
+      def increment(sequence_name, amount = 1)
         current_entry = Sequence::Codec.decode( get( sequence_name )  )
 
         # If we can't find the sequence in the cache, create a new one and return
-        put( sequence_name, Sequence::Codec.encode( Sequence.new( amount ) ) ) and return amount if current_entry.nil?
+        if current_entry.nil?
+          put( sequence_name, Sequence::Codec.encode( Sequence.new( amount ) ) )
+          return amount
+        end
 
         # Increment the sequence, stash it, and return
         next_entry = current_entry.next( amount )
@@ -331,7 +334,7 @@ module TorqueBox
           args << expires_in << SECONDS
           args << expires << SECONDS
         end
-        cache.send( *args ) && true
+        cache.send( *args )
       end
 
     end
