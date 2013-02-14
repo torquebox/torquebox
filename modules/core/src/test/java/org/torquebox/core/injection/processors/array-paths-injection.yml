@@ -1,0 +1,5 @@
+
+injection:
+  path:
+    - "foo"
+    - "bar"

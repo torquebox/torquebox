@@ -16,6 +16,12 @@
   arbitrary: true
 -injection:
   -enabled: boolean
+  -path:
+    type:
+      - string
+      - list:
+        value-types: string
+
 -jobs:
   dependencies: /application/root
   type: map

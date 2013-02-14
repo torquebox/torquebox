@@ -38,6 +38,7 @@ import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.component.ComponentResolverService;
+import org.torquebox.core.injection.InjectionMetaData;
 import org.torquebox.core.injection.analysis.Injectable;
 import org.torquebox.core.injection.analysis.InjectionIndex;
 
@@ -66,6 +67,9 @@ public abstract class BaseRubyComponentInstaller implements DeploymentUnitProces
         if (index != null) {
             Set<Injectable> injectables = index.getInjectablesFor( injectionPathPrefixes );
 
+            if (!injectables.isEmpty())
+                log.tracef("Adding dependencies to %s unit for %s injectables", phaseContext.getDeploymentUnit().getName(), injectables);
+
             for (Injectable injectable : injectables) {
                 if (typesToExcludeList.contains( injectable.getType() )) {
                     continue; // Used by services to prevent circular injection
@@ -73,6 +77,7 @@ public abstract class BaseRubyComponentInstaller implements DeploymentUnitProces
                 }
                 try {
                     ServiceName serviceName = injectable.getServiceName( phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit() );
+                    log.tracef("Adding '%s' service dependency", serviceName.getSimpleName());
                     builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );
                 } catch (Exception e) {
                     throw new DeploymentUnitProcessingException( e );
@@ -83,10 +88,14 @@ public abstract class BaseRubyComponentInstaller implements DeploymentUnitProces
         AttachmentList<Injectable> additionalInjectables = unit.getAttachment( ComponentResolver.ADDITIONAL_INJECTABLES );
 
         if (additionalInjectables != null) {
+
+            log.tracef("Adding additional dependencies to %s unit", phaseContext.getDeploymentUnit().getName());
+
             for (Injectable injectable : additionalInjectables) {
                 try {
                     ServiceName serviceName = injectable.getServiceName( phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit() );
                     if (serviceName != null) {
+                        log.tracef("Adding additional '%s' service dependency", serviceName.getSimpleName());
                         builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );
                     } else if (!injectable.isOptional()) {
                         log.error( "Unable to inject: " + injectable.getName() );
@@ -143,12 +152,12 @@ public abstract class BaseRubyComponentInstaller implements DeploymentUnitProces
         return new ComponentResolver( alwaysReload );
     }
 
-    protected List<String> defaultInjectionPathPrefixes() {
+    protected List<String> defaultInjectionPathPrefixes(DeploymentUnit unit) {
         List<String> defaults = new ArrayList<String>();
-        defaults.add( "app/" );
-        defaults.add( "lib/" );
-        defaults.add( "models/" );
-        defaults.add( "." );
+
+        defaults.addAll(InjectionMetaData.injectionPaths(unit));
+        defaults.add(".");
+
         return defaults;
     }
 

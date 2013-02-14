@@ -20,6 +20,7 @@
 package org.torquebox.core.injection.analysis.processors;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
@@ -44,20 +45,18 @@ import org.torquebox.core.runtime.RubyRuntimeMetaData;
 /**
  * Processor which scans Ruby application deployments, building an
  * {@link InjectionIndex} for the entire deployment.
- * 
+ *
  * <p>
  * This processor causes no injection to occur, but rather builds and attaches
  * the <code>InjectionIndex</code> to the unit.
  * </p>
- * 
+ *
  * @see InjectionIndex
  * @see InjectionIndex#ATTACHMENT_KEY
- * 
+ *
  * @author Bob McWhirter
  */
 public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
-
-    private static final String[] INJECTION_WHITELIST = { "app", "lib", "models", "helpers" };
 
     public InjectionIndexingProcessor(InjectableHandlerRegistry registry) {
         this.registry = registry;
@@ -75,7 +74,7 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
         }
 
         deployRuntimeInjectionAnalyzer( phaseContext );
-        
+
         if (!InjectionMetaData.injectionIsEnabled( unit )) {
             log.infof( "Per configuration, injection analysis is disabled for deployment unit %s.", unit.getName() );
             return;
@@ -92,9 +91,10 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
         }
 
         InjectionAnalyzer analyzer = getAnalyzer();
+        List<String> paths = InjectionMetaData.injectionPaths(unit);
 
         for (VirtualFile each : root.getChildren()) {
-            if (shouldProcess( each )) {
+            if (shouldProcess( each, paths )) {
                 try {
                     log.tracef( "Preparing analyzer for: %s", each.getName() );
                     analyzer.analyzeRecursively( index, each, runtimeMetaData.getVersionOrDefault() );
@@ -117,13 +117,12 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
 
     }
 
-    protected boolean shouldProcess(VirtualFile dir) {
+    protected boolean shouldProcess(VirtualFile dir, List<String> paths) {
         if (!dir.isDirectory()) {
             return true;
-        }
-        else {
-            for (String element : INJECTION_WHITELIST) {
-                if (element.equals( dir.getName() )) {
+        } else {
+            for (String path : paths) {
+                if (path.equals( dir.getName() )) {
                     return true;
                 }
             }

@@ -86,7 +86,7 @@ public class ServiceComponentResolverInstaller extends BaseRubyComponentInstalle
 
     protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext, String requirePath) {
 
-        final List<String> prefixes = defaultInjectionPathPrefixes();
+        final List<String> prefixes = defaultInjectionPathPrefixes(phaseContext.getDeploymentUnit());
 
         if (requirePath != null) {
 

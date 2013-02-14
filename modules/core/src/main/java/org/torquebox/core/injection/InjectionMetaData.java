@@ -22,9 +22,17 @@ package org.torquebox.core.injection;
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.DeploymentUnit;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class InjectionMetaData {
 
+    // The default list with injection-enabled directories
+    private static final String[] DEFAULT_INJECTION_PATHS = {"app", "lib", "models", "helpers"};
+
     private boolean enabled = true;
+
+    private List<String> paths = Arrays.asList(DEFAULT_INJECTION_PATHS);
 
     public boolean isEnabled() {
         return enabled;
@@ -34,11 +42,27 @@ public class InjectionMetaData {
         this.enabled = enabled;
     }
 
-    public static final AttachmentKey<InjectionMetaData> ATTACHMENT_KEY = AttachmentKey.create( InjectionMetaData.class );    
-    
+    public List<String> getPaths() {
+        return paths;
+    }
+
+    public void setPaths(List<String> paths) {
+        this.paths = paths;
+    }
+
+    public static final AttachmentKey<InjectionMetaData> ATTACHMENT_KEY = AttachmentKey.create(InjectionMetaData.class);
+
     public static boolean injectionIsEnabled(DeploymentUnit unit) {
-        InjectionMetaData injectionMetaData = unit.getAttachment( ATTACHMENT_KEY );
+        InjectionMetaData injectionMetaData = unit.getAttachment(ATTACHMENT_KEY);
         return (injectionMetaData == null || injectionMetaData.isEnabled());
     }
-    
+
+    public static List<String> injectionPaths(DeploymentUnit unit) {
+        InjectionMetaData injectionMetaData = unit.getAttachment(ATTACHMENT_KEY);
+
+        if (injectionMetaData == null)
+            return Arrays.asList(DEFAULT_INJECTION_PATHS);
+        else
+            return injectionMetaData.getPaths();
+    }
 }

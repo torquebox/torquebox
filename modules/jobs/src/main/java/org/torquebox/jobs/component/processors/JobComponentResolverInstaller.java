@@ -80,7 +80,7 @@ public class JobComponentResolverInstaller extends BaseRubyComponentInstaller {
 
     protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext, String requirePath) {
 
-        final List<String> prefixes = defaultInjectionPathPrefixes();
+        final List<String> prefixes = defaultInjectionPathPrefixes(phaseContext.getDeploymentUnit());
 
         if (requirePath != null) {
             final DeploymentUnit unit = phaseContext.getDeploymentUnit();
