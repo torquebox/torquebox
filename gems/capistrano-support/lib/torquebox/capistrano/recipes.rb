@@ -126,7 +126,7 @@ module Capistrano
                   puts "Restarting TorqueBox AS"
                   puts "JBOSS_HOME=#{jboss_home} #{jboss_init_script} restart"
                 when :binscripts
-                  run "JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
+                  run "#{jboss_home}/bin/jboss-cli.sh --connect :shutdown"
                   run "nohup #{jboss_home}/bin/standalone.sh -bpublic=#{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
                 when :runit
                   puts "Restarting TorqueBox AS"
