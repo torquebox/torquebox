@@ -38,7 +38,7 @@ import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.projectodd.polyglot.core.util.ClusterUtil;
 import org.projectodd.polyglot.jobs.BaseJobScheduler;
-import org.projectodd.polyglot.jobs.BaseScheduledJob;
+import org.projectodd.polyglot.jobs.BaseJob;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
@@ -93,7 +93,7 @@ public class ScheduledJobInstaller implements DeploymentUnitProcessor {
 
         ServiceName serviceName = JobsServices.scheduledJob( unit, metaData.getName() );
 
-        ServiceBuilder<BaseScheduledJob> builder = phaseContext.getServiceTarget().addService( serviceName, job );
+        ServiceBuilder<BaseJob> builder = phaseContext.getServiceTarget().addService( serviceName, job );
         builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, job.getRubyRuntimePoolInjector() );
         builder.addDependency( JobsServices.jobComponentResolver( unit, metaData.getName() ), ComponentResolver.class, job.getComponentResolverInjector() );
         builder.addDependency( JobsServices.jobScheduler( unit, metaData.isSingleton() && ClusterUtil.isClustered( phaseContext ) ), BaseJobScheduler.class, job.getJobSchedulerInjector() );

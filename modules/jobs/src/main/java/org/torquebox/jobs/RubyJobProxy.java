@@ -22,7 +22,7 @@ package org.torquebox.jobs;
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.projectodd.polyglot.core.util.TimeInterval;
-import org.projectodd.polyglot.jobs.BaseJob;
+import org.projectodd.polyglot.jobs.NotifiableJob;
 import org.projectodd.polyglot.jobs.TimeoutListener;
 import org.quartz.InterruptableJob;
 import org.quartz.Job;
@@ -35,7 +35,7 @@ import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.jobs.component.JobComponent;
 
-public class RubyJobProxy extends BaseJob implements Job, StatefulJob, InterruptableJob {
+public class RubyJobProxy extends NotifiableJob implements Job, StatefulJob, InterruptableJob {
 
     public RubyJobProxy(RubyRuntimePool runtimePool, ComponentResolver resolver, JobDetail detail) {
         super( detail.getKey() );
