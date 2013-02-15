@@ -612,15 +612,15 @@ remote_describe "messaging processor tests" do
     end
 
     it "should reply to the message" do
-      @queue.publish_and_receive("something", :timeout => 2000).should eql("Got something but I want bacon!")
+      @queue.publish_and_receive("something", :timeout => 10000).should eql("Got something but I want bacon!")
     end
 
     it "should reply to the message when a selector is provided" do
-      @queue_with_selectors.publish_and_receive("bike", :timeout => 2000, :properties => {"awesomeness" => 20}).should eql("Got bike but I want bacon!")
+      @queue_with_selectors.publish_and_receive("bike", :timeout => 10000, :properties => {"awesomeness" => 20}).should eql("Got bike but I want bacon!")
     end
 
     it "should timeout since the selector is not satisfied" do
-      @queue_with_selectors.publish_and_receive("food", :timeout => 500, :properties => {"awesomeness" => 5}).should be_nil
+      @queue_with_selectors.publish_and_receive("food", :timeout => 1000, :properties => {"awesomeness" => 5}).should be_nil
     end
   end
 end
