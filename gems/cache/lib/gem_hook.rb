@@ -19,6 +19,7 @@ require 'cache'
 begin
   ActiveSupport
   require 'active_support/cache/torque_box_store.rb'
+  require 'active_support/cache/torquebox_store.rb'
 rescue NameError
   # ActiveSupport not used
 end
