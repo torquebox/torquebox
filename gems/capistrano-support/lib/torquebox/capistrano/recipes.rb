@@ -87,14 +87,14 @@ module Capistrano
         namespace :deploy do
 
           desc "Restart Application"
-          task :restart do
+          task :restart, :except => { :no_release => true } do
             run "touch #{jboss_home}/standalone/deployments/#{application}-knob.yml.dodeploy"
           end
  
           namespace :torquebox do
 
             desc "Start TorqueBox Server"
-            task :start do
+            task :start, :except => { :no_release => true } do
               puts "Starting TorqueBox AS"
               case ( jboss_control_style )
                 when :initd
@@ -107,7 +107,7 @@ module Capistrano
             end
         
             desc "Stop TorqueBox Server"
-            task :stop do
+            task :stop, :except => { :no_release => true } do
               puts "Stopping TorqueBox AS"
               case ( jboss_control_style )
                 when :initd
@@ -120,7 +120,7 @@ module Capistrano
             end
         
             desc "Restart TorqueBox Server"
-            task :restart do
+            task :restart, :except => { :no_release => true } do
               case ( jboss_control_style )
                 when :initd
                   puts "Restarting TorqueBox AS"
@@ -134,14 +134,14 @@ module Capistrano
               end
             end
 
-            task :info do
+            task :info, :except => { :no_release => true } do
               puts "torquebox_home.....#{torquebox_home}"
               puts "jboss_home.........#{jboss_home}"
               puts "jruby_home.........#{jruby_home}"
               puts "bundle command.....#{bundle_cmd}"
             end
 
-            task :check do
+            task :check, :except => { :no_release => true } do
               puts "style #{jboss_control_style}"
               case jboss_control_style
               when :initd
@@ -155,7 +155,7 @@ module Capistrano
               end
             end
 
-            task :deployment_descriptor do
+            task :deployment_descriptor, :except => { :no_release => true } do
               puts "creating deployment descriptor"
               dd_str = YAML.dump_stream( create_deployment_descriptor(latest_release) )
               dd_file = "#{jboss_home}/standalone/deployments/#{application}-knob.yml"
@@ -170,7 +170,7 @@ module Capistrano
 
 
           desc "Dump the deployment descriptor"
-          task :dump do
+          task :dump, :except => { :no_release => true } do
             dd = create_deployment_descriptor( latest_release )
             puts dd
             exit
