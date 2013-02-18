@@ -111,7 +111,7 @@ module Capistrano
               puts "Stopping TorqueBox AS"
               case ( jboss_control_style )
                 when :initd
-                  run "#{sudo} JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
+                  run "#{sudo} #{jboss_init_script} stop"
                 when :binscripts
                   run "#{jboss_home}/bin/jboss-cli.sh --connect :shutdown"
                 when :runit
@@ -124,7 +124,7 @@ module Capistrano
               case ( jboss_control_style )
                 when :initd
                   puts "Restarting TorqueBox AS"
-                  puts "#{sudo} JBOSS_HOME=#{jboss_home} #{jboss_init_script} restart"
+                  puts "#{sudo} #{jboss_init_script} restart"
                 when :binscripts
                   run "JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
                   run "nohup #{jboss_home}/bin/standalone.sh -bpublic=#{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
