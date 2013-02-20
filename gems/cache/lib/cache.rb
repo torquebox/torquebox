@@ -37,12 +37,26 @@ module TorqueBox
       end
     end
 
-    class NoOpCodec
+    class SmartMarshalCodec
+      MARSHAL_MARKER = "_|marshalled|_"
+
       def self.encode(object)
-        object
+        case object
+        when String, Numeric, true, false, nil
+          object
+        else
+          if object.respond_to?(:java_object)
+            object
+          else
+            MARSHAL_MARKER + Marshal.dump(object)
+          end
+        end
       end
 
       def self.decode(object)
+        if object.is_a?(String) && object.start_with?(MARSHAL_MARKER)
+          object = Marshal.load(object.sub(MARSHAL_MARKER, ''))
+        end
         object
       end
     end
@@ -147,7 +161,7 @@ module TorqueBox
 
       # Get an entry from the cache 
       def get(key)
-        cache.get( key.to_s )
+        SmartMarshalCodec.decode(cache.get(key.to_s))
       end
 
       # Write an entry to the cache 
@@ -163,17 +177,14 @@ module TorqueBox
         cache.evict( key.to_s )
       end
 
-      def replace(key, original_value, new_value, codec=NoOpCodec)
+      def replace(key, original_value, new_value, codec=SmartMarshalCodec)
         # First, grab the raw value from the cache, which is a byte[]
 
-        current = get( key )
-        decoded = codec.decode( current )
+        current = cache.get(key.to_s)
+        decoded = codec.decode(current)
 
-        # great!  we've got a byte[] now.  Let's apply == to it, like Jim says will work always
-
-        if ( decoded == original_value )
-           # how does this work?
-           cache.replace( key.to_s, current, codec.encode( new_value ) )
+        if (decoded == original_value)
+           cache.replace(key.to_s, current, codec.encode(new_value))
         end
       end
 
@@ -325,7 +336,7 @@ module TorqueBox
       end
 
       def __put(key, value, expires, operation)
-        args = [ operation, key.to_s, value ]
+        args = [ operation, key.to_s, SmartMarshalCodec.encode(value) ]
         if expires > 0
           # Set the Infinispan expire a few minutes into the future to support
           # :race_condition_ttl on read
