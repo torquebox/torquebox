@@ -17,6 +17,7 @@
 
 require 'spec_helper'
 require 'torquebox-capistrano-support'
+require 'yaml'
 
 describe Capistrano::TorqueBox, "loaded into a configuration" do
 
@@ -63,13 +64,25 @@ describe Capistrano::TorqueBox, "loaded into a configuration" do
     @configuration.fetch( :jruby_opts ).should == "-X+C"
   end
 
+  it "should set RAILS_ENV based on :rails_env" do
+    @configuration.set( :rails_env, 'development' )
+    @configuration.create_deployment_descriptor('/path/to/app')['environment']['RAILS_ENV'].should == 'development'
+  end
+
   it "should create a deployment descriptor" do
     @configuration.should respond_to(:create_deployment_descriptor)
   end
 
-  it "should set RAILS_ENV based on :rails_env" do
-    @configuration.set( :rails_env, 'development' )
-    @configuration.create_deployment_descriptor('/path/to/app')['environment']['RAILS_ENV'].should == 'development'
+  it "should set torquebox_app_name based on :application if unset" do
+    @configuration.set( :application, "my-app" )
+    Capistrano::TorqueBox.load_into(@configuration)
+    @configuration.fetch( :torquebox_app_name ).should == "my-app"
+  end
+
+  it "should allow default :application override for :torquebox_app_name" do
+    @configuration.set( :torquebox_app_name, "my-app" )
+    Capistrano::TorqueBox.load_into(@configuration)
+    @configuration.fetch( :torquebox_app_name ).should == "my-app"
   end
 
   context "Virtual host configuration" do
@@ -90,5 +103,28 @@ describe Capistrano::TorqueBox, "loaded into a configuration" do
       @configuration.create_deployment_descriptor('/path/to/app')['stomp']['host'].should eq("awesome.com")
     end
   end
+
+  describe "deployment_descriptor task" do
+    it "should name the knob file using the torquebox_app_name option" do 
+      @configuration.extend(Capistrano::Spec::ConfigurationExtension)
+
+      app_path = "/path/to/app"
+      app_name = "alt-named-app"
+      deployment_path = @configuration.fetch(:jboss_home) + "/standalone/deployments"
+
+      @configuration.stub(:create_deployment_descriptor).and_return({ :application => app_path})
+      @configuration.set(:application, 'awesome-app')
+      @configuration.set(:latest_release, app_path)
+      @configuration.set(:torquebox_app_name, app_name)
+  
+
+      @configuration.find_and_execute_task('deploy:torquebox:deployment_descriptor')
+      @configuration.runs.should_not be_empty
+      # last command ran: each occurrence of the deployment descriptor file name should end with :torquebox_app_name
+      @configuration.runs.keys.last.scan(/#{deployment_path}\/.*?\.yml/).each do |dd_occurrence|
+        dd_occurrence.should match(/#{app_name}\-knob.yml$/)
+      end
+    end
+  end    
 
 end
