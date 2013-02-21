@@ -47,6 +47,20 @@
       <version>${version.polyglot}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>edn</artifactId>
+      <version>1.0.0</version>
+      <type>gem</type>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>json</artifactId>
+      <type>gem</type>
+      <version>1.4.6</version>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 

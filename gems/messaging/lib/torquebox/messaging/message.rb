@@ -15,6 +15,8 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'torquebox/codecs'
+
 module TorqueBox
   module Messaging
     class Message
@@ -78,6 +80,14 @@ module TorqueBox
 
       def respond_to?(symbol, include_private = false)
         super || @jms_message.respond_to?(symbol, include_private)
+      end
+
+      def encode(message)
+        @jms_message.text = TorqueBox::Codecs.encode(message, self.class::ENCODING)
+      end
+
+      def decode
+        TorqueBox::Codecs.decode(@jms_message.text, self.class::ENCODING)
       end
 
       class << self

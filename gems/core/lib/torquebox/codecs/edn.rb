@@ -15,12 +15,22 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'edn'
+
 module TorqueBox
-  module Messaging
-    class JSONMessage < Message
-      ENCODING = :json
-      JMS_TYPE = :text
+  module Codecs
+    module EDN
+      class << self
+
+        def encode(data)
+          data.to_edn
+        end
+
+        def decode(data)
+          ::EDN.read(data) unless data.nil?
+        end
+
+      end
     end
-    Message.register_encoding( JSONMessage )
   end
 end

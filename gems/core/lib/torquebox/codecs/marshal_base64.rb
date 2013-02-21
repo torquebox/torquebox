@@ -15,12 +15,22 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'base64'
+
 module TorqueBox
-  module Messaging
-    class JSONMessage < Message
-      ENCODING = :json
-      JMS_TYPE = :text
+  module Codecs
+    module MarshalBase64
+      class << self
+
+        def encode(data)
+          Base64.encode64(::Marshal.dump(data)) unless data.nil?
+        end
+
+        def decode(data)
+          ::Marshal.restore(Base64.decode64(data)) unless data.nil?
+        end
+        
+      end
     end
-    Message.register_encoding( JSONMessage )
   end
 end

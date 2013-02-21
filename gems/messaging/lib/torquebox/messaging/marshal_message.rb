@@ -15,6 +15,8 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'torquebox/codecs'
+
 module TorqueBox
   module Messaging
     class MarshalMessage < Message
@@ -22,10 +24,7 @@ module TorqueBox
       JMS_TYPE = :bytes
       
       def encode(message)
-        unless message.nil?
-          marshalled = Marshal.dump( message )
-          @jms_message.write_bytes( marshalled.to_java_bytes )
-        end
+        @jms_message.write_bytes(TorqueBox::Codecs.encode(message, ENCODING))
       end
 
       def decode
@@ -33,7 +32,7 @@ module TorqueBox
           bytes = Java::byte[length].new
           @jms_message.read_bytes( bytes )
           @jms_message.reset
-          Marshal.restore( String.from_java_bytes( bytes ) )
+          TorqueBox::Codecs.decode(bytes, ENCODING)
         end
       end
 
