@@ -217,6 +217,24 @@
               completes.  
             </entry>
           </row>
+          <row>
+            <entry><parameter>:encoding</parameter></entry>
+
+            <entry><parameter>:marshal_smart</parameter></entry>
+
+            <entry>
+              The default value provides the widest support for the
+              type of objects you can cache, i.e. any type of Ruby or
+              Java object. Two other possible values for
+              <parameter>:encoding</parameter> include
+              <parameter>:edn</parameter> and
+              <parameter>:json</parameter>. And while limited in the
+              types of data that can be cached with them (essentially
+              just the standard Ruby data types and collections) they
+              can be used to share data among non-Ruby applications
+              with access to the same Infinispan-backed caches.
+            </entry>
+          </row>
         </tbody>
       </tgroup>
     </table>

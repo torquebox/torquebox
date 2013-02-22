@@ -18,7 +18,7 @@
 require 'torquebox/kernel'
 require 'torquebox/injectors'
 require 'torquebox/transactions'
-require 'sequence'
+require 'torquebox/codecs'
 
 module TorqueBox
   module Infinispan
@@ -34,30 +34,6 @@ module TorqueBox
 
       def getTransactionManager
         fetch('transaction-manager')
-      end
-    end
-
-    class SmartMarshalCodec
-      MARSHAL_MARKER = "_|marshalled|_"
-
-      def self.encode(object)
-        case object
-        when String, Numeric, true, false, nil
-          object
-        else
-          if object.respond_to?(:java_object)
-            object
-          else
-            MARSHAL_MARKER + Marshal.dump(object)
-          end
-        end
-      end
-
-      def self.decode(object)
-        if object.is_a?(String) && object.start_with?(MARSHAL_MARKER)
-          object = Marshal.load(object.sub(MARSHAL_MARKER, ''))
-        end
-        object
       end
     end
 
@@ -83,6 +59,7 @@ module TorqueBox
         options[:transaction_mode] = :transactional unless options.has_key?( :transaction_mode )
         options[:locking_mode] ||= :optimistic if (transactional? && !options.has_key?( :locking_mode ))
         options[:sync] = true if options[:sync].nil?
+        @codec = TorqueBox::Codecs[ options[:encoding] || :marshal_smart ]
         cache
       end
 
@@ -148,20 +125,20 @@ module TorqueBox
 
       # Return the keys in the cache; potentially very expensive depending on configuration
       def keys
-        cache.key_set
+        cache.key_set.map{|k| decode(k)}
       end
 
       def all
-        cache.key_set.collect{|k| get(k)}
+        cache.keys.map{|k| get(k)}
       end
 
       def contains_key?( key )
-        cache.contains_key( key.to_s )
+        cache.contains_key( encode(key) )
       end
 
       # Get an entry from the cache 
       def get(key)
-        SmartMarshalCodec.decode(cache.get(key.to_s))
+        decode(cache.get(encode(key)))
       end
 
       # Write an entry to the cache 
@@ -174,43 +151,29 @@ module TorqueBox
       end
 
       def evict( key )
-        cache.evict( key.to_s )
+        cache.evict( encode(key) )
       end
 
-      def replace(key, original_value, new_value, codec=SmartMarshalCodec)
-        # First, grab the raw value from the cache, which is a byte[]
-
-        current = cache.get(key.to_s)
-        decoded = codec.decode(current)
-
-        if (decoded == original_value)
-           cache.replace(key.to_s, current, codec.encode(new_value))
-        end
+      def replace(key, original_value, new_value)
+        cache.replace(encode(key), encode(original_value), encode(new_value))
       end
 
       # Delete an entry from the cache
       def remove(key)
-        cache.remove( key.to_s )
+        decode(cache.remove(encode(key)))
       end
 
       def increment(sequence_name, amount = 1)
-        current_entry = Sequence::Codec.decode( get( sequence_name )  )
-
-        # If we can't find the sequence in the cache, create a new one and return
-        if current_entry.nil?
-          put( sequence_name, Sequence::Codec.encode( Sequence.new( amount ) ) )
-          return amount
-        end
-
-        # Increment the sequence, stash it, and return
-        next_entry = current_entry.next( amount )
-
-        # Since replace() doesn't encode, let's encode everything to a byte[] for it, no?
-        if replace( sequence_name, current_entry, next_entry, Sequence::Codec  )
-          return next_entry.value
+        result, current = amount, get(sequence_name)
+        if current.nil?
+          put(sequence_name, result)
         else
-          raise "Concurrent modification, old value was #{current_entry.value} new value #{next_entry.value}"
+          result = current + amount
+          unless replace(sequence_name, current, result)
+            raise "Concurrent modification, old value was #{current} new value #{result}"
+          end
         end
+        result
       end
 
       # Decrement an integer value in the cache; return new value
@@ -269,6 +232,14 @@ module TorqueBox
 
       private
 
+      def encode(data)
+        @codec.encode(data)
+      end
+
+      def decode(data)
+        @codec.decode(data)
+      end
+      
       def options 
         @options ||= {}
       end
@@ -336,7 +307,8 @@ module TorqueBox
       end
 
       def __put(key, value, expires, operation)
-        args = [ operation, key.to_s, SmartMarshalCodec.encode(value) ]
+        # encode
+        args = [ operation, encode(key), encode(value) ]
         if expires > 0
           # Set the Infinispan expire a few minutes into the future to support
           # :race_condition_ttl on read
@@ -345,7 +317,7 @@ module TorqueBox
           args << expires_in << SECONDS
           args << expires << SECONDS
         end
-        cache.send( *args )
+        decode(cache.send(*args))
       end
 
     end

@@ -19,42 +19,34 @@ module TorqueBox
   module Codecs
     class << self
 
-      def encode(data, encoding)
-        case encoding
+      def [](key)
+        case key
         when :edn
           require 'torquebox/codecs/edn' unless defined?(TorqueBox::Codecs::EDN)
-          TorqueBox::Codecs::EDN.encode(data)
+          TorqueBox::Codecs::EDN
         when :json
           require 'torquebox/codecs/json' unless defined?(TorqueBox::Codecs::JSON)
-          TorqueBox::Codecs::JSON.encode(data)
+          TorqueBox::Codecs::JSON
         when :marshal
           require 'torquebox/codecs/marshal' unless defined?(TorqueBox::Codecs::Marshal)
-          TorqueBox::Codecs::Marshal.encode(data)
+          TorqueBox::Codecs::Marshal
         when :marshal_base64
           require 'torquebox/codecs/marshal_base64' unless defined?(MarshalBase64)
-          MarshalBase64.encode(data)
+          MarshalBase64
+        when :marshal_smart
+          require 'torquebox/codecs/marshal_smart' unless defined?(MarshalSmart)
+          MarshalSmart
         else
-          data
+          raise "Unsupported codec #{key}"
         end
+      end
+      
+      def encode(data, encoding)
+        self[encoding].encode(data)
       end
 
       def decode(data, encoding)
-        case encoding
-        when :edn
-          require 'torquebox/codecs/edn' unless defined?(TorqueBox::Codecs::EDN)
-          TorqueBox::Codecs::EDN.decode(data)
-        when :json
-          require 'torquebox/codecs/json' unless defined?(TorqueBox::Codecs::JSON)
-          TorqueBox::Codecs::JSON.decode(data)
-        when :marshal
-          require 'torquebox/codecs/marshal' unless defined?(TorqueBox::Codecs::Marshal)
-          TorqueBox::Codecs::Marshal.decode(data)
-        when :marshal_base64
-          require 'torquebox/codecs/marshal_base64' unless defined?(MarshalBase64)
-          MarshalBase64.decode(data)
-        else
-          data
-        end
+        self[encoding].decode(data)
       end
       
     end

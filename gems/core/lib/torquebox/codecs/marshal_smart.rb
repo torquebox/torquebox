@@ -15,44 +15,35 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+
 module TorqueBox
-  module Infinispan
+  module Codecs
+    module MarshalSmart
+      class << self
 
-    class Sequence
-      include java.io.Serializable
+        MARSHAL_MARKER = "_|marshalled|_"
 
-      class Codec
-        def self.encode(sequence)
-          sequence.value.to_s
+        def encode(object)
+          case object
+          when String, Numeric, true, false, nil
+            object
+          else
+            if object.respond_to?(:java_object)
+              object
+            else
+              MARSHAL_MARKER + ::Marshal.dump(object)
+            end
+          end
         end
 
-        def self.decode(sequence_bytes)
-          sequence_bytes && Sequence.new( sequence_bytes.to_s.to_i )
+        def decode(object)
+          if object.is_a?(String) && object.start_with?(MARSHAL_MARKER)
+            object = ::Marshal.load(object.sub(MARSHAL_MARKER, ''))
+          end
+          object
         end
       end
 
-      def initialize(amount = 1) 
-        @data = amount
-      end
-
-      def value
-        @data ? @data.to_i : @data
-      end
-
-      def next(amount = 1)
-        Sequence.new( @data.to_i + amount )
-      end
-
-      def ==(other)
-        self.value == other.value
-      end
-
-      def to_s
-        "Sequence: #{self.value}"
-      end
     end
-
   end
 end
-
-

@@ -154,7 +154,7 @@ describe TorqueBox::Infinispan::Cache do
 
   it "should allow symbols as keys for increment" do
     @cache.increment :countsymbol
-    @cache.get(:countsymbol).should == "1"
+    @cache.get(:countsymbol).should == 1
     @cache.increment(:countsymbol).should == 2
   end
 
