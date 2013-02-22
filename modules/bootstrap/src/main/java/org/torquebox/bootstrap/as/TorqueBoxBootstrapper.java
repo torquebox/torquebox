@@ -39,9 +39,13 @@ import org.torquebox.bootstrap.JRubyHomeLocator;
 
 public class TorqueBoxBootstrapper {
     private static final Logger log = Logger.getLogger( "org.torquebox.bootstrap" );
+    
+    public static void announce() {
+        System.err.println( "announcing the bootstrap!" );
+    }
 
     static {
-        log.debug( "Bootstrapping TorqueBox" );
+        log.info( "Bootstrapping TorqueBox" );
 
         String jrubyHome = JRubyHomeLocator.determineJRubyHome( true );
 

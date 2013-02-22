@@ -26,7 +26,6 @@
 
     <resources>
         <resource-root path="${project.artifactId}.jar"/>
-        <resource-root path="polyglot-core.jar"/>
         <resource-root path="yaml-schema.jar"/>
     </resources>
 
@@ -71,6 +70,7 @@
         <module name="org.jboss.logmanager"/>
         <module name="org.jboss.stdio"/>
         <module name="org.jboss.vfs"/>
+        <module name="org.projectodd.polyglot.core"/>
 <!--
         <module name="org.jboss.threads"/>
         <module name="org.jboss.as.deployment-repository"/>

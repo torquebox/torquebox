@@ -42,6 +42,7 @@
         <module name="org.torquebox.core"/>
         <module name="org.jboss.as.security"/>
         <module name="org.picketbox"/>
+        <module name="org.projectodd.polyglot.core"/>
     </dependencies>
 </module>
 
