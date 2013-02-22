@@ -22,11 +22,11 @@ module TorqueBox
       class << self
 
         def encode(data)
-          ::Marshal.dump(data).to_java_bytes unless data.nil?
+          ::Marshal.dump(data) unless data.nil?
         end
         
         def decode(data)
-          ::Marshal.restore(String.from_java_bytes(data)) unless data.nil?
+          ::Marshal.restore(data) unless data.nil?
         end
 
       end

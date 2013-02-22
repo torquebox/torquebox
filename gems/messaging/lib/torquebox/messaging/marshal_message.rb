@@ -24,7 +24,7 @@ module TorqueBox
       JMS_TYPE = :bytes
       
       def encode(message)
-        @jms_message.write_bytes(TorqueBox::Codecs.encode(message, ENCODING))
+        @jms_message.write_bytes(TorqueBox::Codecs.encode(message, ENCODING).to_java_bytes)
       end
 
       def decode
@@ -32,7 +32,7 @@ module TorqueBox
           bytes = Java::byte[length].new
           @jms_message.read_bytes( bytes )
           @jms_message.reset
-          TorqueBox::Codecs.decode(bytes, ENCODING)
+          TorqueBox::Codecs.decode(String.from_java_bytes(bytes), ENCODING)
         end
       end
 
