@@ -212,21 +212,19 @@ Listen 127.0.0.1:6666
 
       <para>In either case, you'll know TorqueBox is running in clustered mode when you see something like the output below in the console upon startup.</para>
 
-      <screen>
-        10:38:17,118 INFO  [stdout] (ServerService Thread Pool -- 86)
-        10:38:17,118 INFO  [stdout] (ServerService Thread Pool -- 86) ------------------------------------------------------------------
-        10:38:17,118 INFO  [stdout] (ServerService Thread Pool -- 86) GMS: address=node2/web, cluster=web, physical address=192.168.1.163:55300
-        10:38:17,119 INFO  [stdout] (ServerService Thread Pool -- 86) -------------------------------------------------------------------</screen>
+      <screen>10:38:17,118 INFO  [stdout] (ServerService Thread Pool -- 86)
+10:38:17,118 INFO  [stdout] (ServerService Thread Pool -- 86) ------------------------------------------------------------------
+10:38:17,118 INFO  [stdout] (ServerService Thread Pool -- 86) GMS: address=node2/web, cluster=web, physical address=192.168.1.163:55300
+10:38:17,119 INFO  [stdout] (ServerService Thread Pool -- 86) -------------------------------------------------------------------</screen>
 
       <para>When additional nodes are started and become connected to the other nodes, you will seem something like the following in the console of both nodes:</para>
 
       <screen>10:38:17,226 INFO  [org.infinispan.remoting.transport.jgroups.JGroupsTransport] (Incoming-1,null) ISPN000094: Received new cluster view: [node1/web|1] [node1/web, node2/web]
-        10:38:18,362 INFO  [org.hornetq.core.server.cluster.impl.BridgeImpl] (Thread-7 (HornetQ-server-HornetQServerImpl::serverUUID=e40c150a-7d0d-11e2-81a7-c54946823213-1095366819)) Bridge ClusterConnectionBridge@2d9efd57 [name=sf.my-cluster.41849c5b-7d0e-11e2-b6fc-f37690770a10, queue=QueueImpl[name=sf.my-cluster.41849c5b-7d0e-11e2-b6fc-f37690770a10, postOffice=PostOfficeImpl [server=HornetQServerImpl::serverUUID=e40c150a-7d0d-11e2-81a7-c54946823213]]@210a7227 targetConnector=ServerLocatorImpl (identity=(Cluster-connection-bridge::ClusterConnectionBridge@2d9efd57 [name=sf.my-cluster.41849c5b-7d0e-11e2-b6fc-f37690770a10, queue=QueueImpl[name=sf.my-cluster.41849c5b-7d0e-11e2-b6fc-f37690770a10, postOffice=PostOfficeImpl [server=HornetQServerImpl::serverUUID=e40c150a-7d0d-11e2-81a7-c54946823213]]@210a7227 targetConnector=ServerLocatorImpl [initialConnectors=[org-hornetq-core-remoting-impl-netty-NettyConnectorFactory?port=5545&amp;host=192-168-1-163], discoveryGroupConfiguration=null]]::ClusterConnectionImpl@1368605238[nodeUUID=e40c150a-7d0d-11e2-81a7-c54946823213, connector=org-hornetq-core-remoting-impl-netty-NettyConnectorFactory?port=5445&amp;host=192-168-1-163, address=jms, server=HornetQServerImpl::serverUUID=e40c150a-7d0d-11e2-81a7-c54946823213])) [initialConnectors=[org-hornetq-core-remoting-impl-netty-NettyConnectorFactory?port=5545&amp;host=192-168-1-163], discoveryGroupConfiguration=null]] is connected</screen>
+10:38:18,362 INFO  [org.hornetq.core.server.cluster.impl.BridgeImpl] (Thread-7 (HornetQ-server-HornetQServerImpl::serverUUID=e40c150a-7d0d-11e2-81a7-c54946823213-1095366819)) Bridge ClusterConnectionBridge@2d9efd57 [name=sf.my-cluster.41849c5b-7d0e-11e2-b6fc-f37690770a10, queue=QueueImpl[name=sf.my-cluster.41849c5b-7d0e-11e2-b6fc-f37690770a10, postOffice=PostOfficeImpl [server=HornetQServerImpl::serverUUID=e40c150a-7d0d-11e2-81a7-c54946823213]]@210a7227 targetConnector=ServerLocatorImpl (identity=(Cluster-connection-bridge::ClusterConnectionBridge@2d9efd57 [name=sf.my-cluster.41849c5b-7d0e-11e2-b6fc-f37690770a10, queue=QueueImpl[name=sf.my-cluster.41849c5b-7d0e-11e2-b6fc-f37690770a10, postOffice=PostOfficeImpl [server=HornetQServerImpl::serverUUID=e40c150a-7d0d-11e2-81a7-c54946823213]]@210a7227 targetConnector=ServerLocatorImpl [initialConnectors=[org-hornetq-core-remoting-impl-netty-NettyConnectorFactory?port=5545&amp;host=192-168-1-163], discoveryGroupConfiguration=null]]::ClusterConnectionImpl@1368605238 [nodeUUID=e40c150a-7d0d-11e2-81a7-c54946823213, connector=org-hornetq-core-remoting-impl-netty-NettyConnectorFactory?port=5445&amp;host=192-168-1-163, address=jms, server=HornetQServerImpl::serverUUID=e40c150a-7d0d-11e2-81a7-c54946823213])) [initialConnectors=[org-hornetq-core-remoting-impl-netty-NettyConnectorFactory?port=5545&amp;host=192-168-1-163], discoveryGroupConfiguration=null]] is connected</screen>
+
+      <para>This indicates that the two nodes have successfully connected as part of the cluster.</para>
+
     </section>
-
-    <para>This indicates that the two nodes have successfully connected as part of the cluster.</para>
-
-  </section>
 
     <section>
       <title>Multicast Out of the Box</title>
