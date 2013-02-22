@@ -53,6 +53,14 @@
     </dependency>
     <dependency>
       <groupId>org.projectodd</groupId>
+      <artifactId>polyglot-web</artifactId>
+      <version>${version.polyglot}</version>
+      <type>zip</type>
+      <classifier>module</classifier>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectodd</groupId>
       <artifactId>polyglot-stomp</artifactId>
       <version>${version.polyglot}</version>
       <type>zip</type>

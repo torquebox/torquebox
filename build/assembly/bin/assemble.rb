@@ -97,8 +97,12 @@ class Assembler
     end
   end
 
+  def polyglot_extensions
+    @polyglot_extensions ||= ['hasingleton', 'cache', 'stomp']
+  end
+
   def polyglot_modules
-    @polyglot_modules ||= ['hasingleton', 'cache', 'stomp']
+    @polyglot_modules ||= ( polyglot_extensions + [ 'core', 'web' ] )
   end
   
   def install_modules
@@ -190,17 +194,17 @@ class Assembler
   def transform_configs
     stash_stock_configs
     trash_stock_configs
-    polyglot_mods = polyglot_modules.map { |name| ["projectodd", "polyglot", name]}
+    polyglot_exts = polyglot_extensions.map { |name| ["projectodd", "polyglot", name]}
     tool.transform_config(config_stash + '/standalone-full.xml',
                           'standalone/configuration/standalone-full.xml',
-                          :extra_modules => polyglot_mods)
+                          :extra_modules => polyglot_exts)
     tool.transform_config(config_stash + '/standalone-full-ha.xml',
                           'standalone/configuration/standalone-full-ha.xml',
-                          :extra_modules => polyglot_mods,
+                          :extra_modules => polyglot_exts,
                           :ha => true )
     tool.transform_config(config_stash + '/domain.xml',
                           'domain/configuration/domain.xml',
-                          :extra_modules => polyglot_mods,
+                          :extra_modules => polyglot_exts,
                           :domain => true,
                           :ha => true )
   end

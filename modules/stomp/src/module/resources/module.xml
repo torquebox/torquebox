@@ -45,6 +45,8 @@
         <module name="org.jboss.msc"/>
         <module name="org.jboss.logging"/>
         <module name="org.jboss.vfs"/>
+        <module name="org.projectodd.polyglot.core"/>
+        <module name="org.projectodd.polyglot.web"/>
         <module name="org.projectodd.polyglot.stomp"/>
         <module name="org.torquebox.core"/>
         <module name="org.torquebox.web"/>
