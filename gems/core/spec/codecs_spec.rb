@@ -12,8 +12,14 @@ end
 describe TorqueBox::Codecs do
 
   context "json" do
-    it "should decode what it encodes" do
+    it "should decode an encoded array" do
       TorqueBox::Codecs.decode(TorqueBox::Codecs.encode(['abc'], :json), :json).should eql(['abc'])
+    end
+    
+    if RUBY_VERSION >= '1.9'
+      it "should decode an encoded string" do
+        TorqueBox::Codecs.decode(TorqueBox::Codecs.encode('abc', :json), :json).should eql('abc')
+      end
     end
     
     context "requiring json" do

@@ -34,13 +34,21 @@ module TorqueBox
         end
         
         def encode(data)
-          require_json 
-          ::JSON.fast_generate( data ) unless data.nil?
+          require_json
+          begin
+            ::JSON.fast_generate( data ) unless data.nil?
+          rescue ::JSON::GeneratorError
+            ::JSON.dump(data)
+          end
         end
 
         def decode(data)
-          require_json 
-          ::JSON.parse( data, :symbolize_names => true ) unless data.nil?
+          require_json
+          begin
+            ::JSON.parse( data, :symbolize_names => true ) unless data.nil?
+          rescue ::JSON::ParserError
+            ::JSON.load(data)
+          end
         end
 
       end
