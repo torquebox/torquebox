@@ -379,6 +379,13 @@
     </dependency>
 
     <dependency>
+      <groupId>org.projectodd.stilts</groupId>
+      <artifactId>stilts-stomp-client</artifactId>
+      <version>${version.org.projectodd.stilts}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>rubygems</groupId>
       <artifactId>activesupport</artifactId>
       <version>${version.rails3}</version>
