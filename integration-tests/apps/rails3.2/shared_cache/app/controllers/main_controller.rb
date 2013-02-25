@@ -9,7 +9,7 @@ class MainController < ApplicationController
 
   def check_for_success( persisted )
     name = persisted ? "persisted_cache" : "memory_cache"
-    cache = TorqueBox::Infinispan::Cache.new( :name => name, :persist => persisted )
+    cache = TorqueBox::Infinispan::Cache.new( :name => name, :persist => persisted, :encoding => :marshal_base64 )
     @success = !cache.get( "time" ).nil?
     cache.clear
   end
