@@ -129,8 +129,9 @@ module TorqueBox
       end
 
       def all
-        cache.keys.map{|k| get(k)}
+        keys.map{|k| get(k)}
       end
+      alias_method :values, :all
 
       def contains_key?( key )
         cache.contains_key( encode(key) )

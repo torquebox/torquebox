@@ -62,6 +62,14 @@ describe TorqueBox::Infinispan::Cache do
     keys.include?('three').should be_true
   end
 
+  it "should return all values" do
+    @cache.put(:a, 1)
+    @cache.put(:b, 2)
+    @cache.put(:c, 3)
+    @cache.all.sort.should eql([1, 2, 3])
+    @cache.values.sort.should eql([1, 2, 3])
+  end
+
   it "should allow removal of a key/value" do
     @cache.put('foo', 'bar')
     @cache.keys.length.should == 1
