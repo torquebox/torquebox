@@ -53,7 +53,7 @@
     </dependency>
     <dependency>
       <groupId>org.projectodd</groupId>
-      <artifactId>polyglot-hasingleton</artifactId>
+      <artifactId>polyglot-web</artifactId>
       <version>${version.polyglot}</version>
       <type>zip</type>
       <classifier>module</classifier>
@@ -61,7 +61,15 @@
     </dependency>
     <dependency>
       <groupId>org.projectodd</groupId>
-      <artifactId>polyglot-web</artifactId>
+      <artifactId>polyglot-core</artifactId>
+      <version>${version.polyglot}</version>
+      <type>zip</type>
+      <classifier>module</classifier>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectodd</groupId>
+      <artifactId>polyglot-hasingleton</artifactId>
       <version>${version.polyglot}</version>
       <type>zip</type>
       <classifier>module</classifier>
