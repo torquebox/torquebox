@@ -71,5 +71,5 @@ public class TorqueBoxLoginModule extends UsernamePasswordLoginModule {
         return roleSets;
     }
 
-    static final Logger log = Logger.getLogger( "org.torquebox.auth" );
+    static final Logger log = Logger.getLogger( "org.torquebox.security" );
 }

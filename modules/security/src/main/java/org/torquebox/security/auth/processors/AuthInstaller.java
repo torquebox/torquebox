@@ -101,7 +101,6 @@ public class AuthInstaller implements DeploymentUnitProcessor {
         final ApplicationPolicy applicationPolicy = new ApplicationPolicy( domain );
         AuthenticationInfo authenticationInfo = new AuthenticationInfo( domain );
 
-        // TODO: Can we feed usernames/passwords into the options hash?
         Map<String, Object> options = new HashMap<String, Object>();
         Map<String, String> credentials = config.getCredentials();
         if (credentials != null) {
@@ -111,9 +110,6 @@ public class AuthInstaller implements DeploymentUnitProcessor {
         authenticationInfo.addAppConfigurationEntry( entry );
         applicationPolicy.setAuthenticationInfo( authenticationInfo );
 
-        // TODO: Do we need to bother with a JSSESecurityDomain? Null in this
-        // case may be OK
-        // TODO: Null cache type?
         final SecurityDomainService securityDomainService = new SecurityDomainService( domain, applicationPolicy, null, null );
         final ServiceTarget target = context.getServiceTarget();
 
@@ -131,31 +127,16 @@ public class AuthInstaller implements DeploymentUnitProcessor {
         String name = config.getName();
         String domain = config.getDomain();
         if (name != null && domain != null) {
-            if (domain.equals( AuthSubsystemAdd.TORQUEBOX_DOMAIN )) {
-                // activate the service
-                log.debug( "Activating SecurityDomainService for " + domain );
-                ServiceController<?> torqueboxService = phaseContext.getServiceRegistry().getService(
-                        SecurityDomainService.SERVICE_NAME.append( AuthSubsystemAdd.TORQUEBOX_DOMAIN ) );
-                if (torqueboxService != null)
-                    torqueboxService.setMode( Mode.ACTIVE );
-            } else if (domain.equals( this.getTorqueBoxDomainServiceName() )) {
-                // activate the service
+            log.debug( "Activating SecurityDomainService for " + domain );
+            if (domain.equals( this.getTorqueBoxDomainServiceName() )) {
+                // activate the configured username/password service
                 this.addTorqueBoxSecurityDomainService( phaseContext, config );
-                log.debug( "Activating SecurityDomainService for " + domain );
-                ServiceController<?> torqueboxService = phaseContext.getServiceRegistry().getService(
-                        SecurityDomainService.SERVICE_NAME.append( this.getTorqueBoxDomainServiceName() ) );
-                if (torqueboxService != null) {
-                    torqueboxService.setMode( Mode.ACTIVE );
-                }
+            }
+            ServiceController<?> securityService = phaseContext.getServiceRegistry().getService( SecurityDomainService.SERVICE_NAME.append( domain ) );
+            if (securityService != null) {
+                securityService.setMode( Mode.ACTIVE );
             } else {
-                this.addTorqueBoxSecurityDomainService( phaseContext, config );
-                ServiceController<?> securityService = phaseContext.getServiceRegistry().getService(SecurityDomainService.SERVICE_NAME.append( domain ));
-                if (securityService != null) {
-                    securityService.setMode( Mode.ACTIVE );
-                    log.debug( "Found security service for " + domain + ". " + securityService.getName().getCanonicalName() );
-                } else {
-                    log.error( "Cannot initialize security service for domain: " + domain );
-                }
+                log.error( "Cannot initialize security service for domain: " + domain );
             }
             ServiceName serviceName = AuthServices.authenticationService( this.getApplicationName(), name );
             log.debug( "Deploying Authenticator: " + serviceName + " for security domain: " + domain );
@@ -168,5 +149,5 @@ public class AuthInstaller implements DeploymentUnitProcessor {
     }
 
     private String applicationName;
-    private static final Logger log = Logger.getLogger( "org.torquebox.auth" );
+    private static final Logger log = Logger.getLogger( "org.torquebox.security" );
 }

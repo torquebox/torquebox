@@ -82,7 +82,7 @@ public class Authenticator implements Service<Authenticator> {
         // TODO what's up with this classloader?
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader( Authenticator.class.getClassLoader() );
+//            Thread.currentThread().setContextClassLoader( Authenticator.class.getClassLoader() );
             this.securityContext = SecurityFactory.establishSecurityContext( this.getAuthDomain() );
             this.authenticationManager = securityContext.getAuthenticationManager();
             log.debug( "Found authentication manager for security context [" + this.securityContext.getSecurityDomain() + "]. " + this.authenticationManager.getSecurityDomain() );
@@ -113,5 +113,5 @@ public class Authenticator implements Service<Authenticator> {
     private String authDomain;
     private SecurityContext securityContext;
     private AuthenticationManager authenticationManager;
-    private static final Logger log = Logger.getLogger( "org.torquebox.auth" );
+    private static final Logger log = Logger.getLogger( "org.torquebox.security" );
 }
