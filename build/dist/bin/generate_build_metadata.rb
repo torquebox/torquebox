@@ -5,7 +5,8 @@ require 'json'
 require File.join( File.dirname( __FILE__ ), '../../../modules/core/target/torquebox-core.jar' )
 require File.join( File.dirname( __FILE__ ), '../../../modules/core/target/torquebox-core-module/polyglot-core.jar' )
 
-props = org.projectodd.polyglot.core.util.BuildInfo.new( "org/torquebox/torquebox.properties" )
+props = org.projectodd.polyglot.core.util.BuildInfo.new( JRuby.runtime.jruby_class_loader,
+                                                         "org/torquebox/torquebox.properties" )
 torquebox = props.getComponentInfo( 'TorqueBox' )
 
 metadata = {}
