@@ -47,3 +47,20 @@ so, set `TORQUEBOX_HOME`, and add `$TORQUEBOX_HOME/jruby/bin` to your
 You can then use the `torquebox` command to control your creation. Run
 it without parameters to see a list of its supported subcommands.
 
+Testing
+-------
+
+All unit tests will be run during the build process, but tests can be run independently with the following command:
+
+    mvn -s support/settings.xml test
+
+The integration tests (a.k.a. integs), which are not run as part of the main build, can be run like this:
+
+    cd integration-tests
+    mvn test -s ../support/settings.xml
+
+Or a single integration test can be run like this:
+
+    mvn test -s ../support/settings.xml -Dspec=spec/session_handling_spec.rb
+
+If you wish to skip the unit tests during the build
