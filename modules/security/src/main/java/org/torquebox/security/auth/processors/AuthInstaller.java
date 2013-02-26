@@ -147,6 +147,15 @@ public class AuthInstaller implements DeploymentUnitProcessor {
                 if (torqueboxService != null) {
                     torqueboxService.setMode( Mode.ACTIVE );
                 }
+            } else {
+                this.addTorqueBoxSecurityDomainService( phaseContext, config );
+                ServiceController<?> securityService = phaseContext.getServiceRegistry().getService(SecurityDomainService.SERVICE_NAME.append( domain ));
+                if (securityService != null) {
+                    securityService.setMode( Mode.ACTIVE );
+                    log.debug( "Found security service for " + domain + ". " + securityService.getName().getCanonicalName() );
+                } else {
+                    log.error( "Cannot initialize security service for domain: " + domain );
+                }
             }
             ServiceName serviceName = AuthServices.authenticationService( this.getApplicationName(), name );
             log.debug( "Deploying Authenticator: " + serviceName + " for security domain: " + domain );

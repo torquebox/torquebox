@@ -41,9 +41,13 @@ public class Authenticator implements Service<Authenticator> {
     }
 
     public boolean authenticate(String name, String pass) {
+        log.debug( "Authenticating " + name );
         Principal principal = getPrincipal( name );
-        Object credential = pass == null ? null : new String( pass );
-        return this.authenticationManager.isValid( principal, credential );
+        log.debug( "Found principal: " + principal.getName() );
+        Object credential = (pass == null ? null : new String( pass ));
+        boolean isValid = this.authenticationManager.isValid( principal, credential );
+        log.debug("Auth manager says this login " + (isValid ? "is" : "is not") + " valid.");
+        return isValid;
     }
 
     public AuthenticationManager getAuthenticationManager() {
@@ -81,6 +85,7 @@ public class Authenticator implements Service<Authenticator> {
             Thread.currentThread().setContextClassLoader( Authenticator.class.getClassLoader() );
             this.securityContext = SecurityFactory.establishSecurityContext( this.getAuthDomain() );
             this.authenticationManager = securityContext.getAuthenticationManager();
+            log.debug( "Found authentication manager for security context [" + this.securityContext.getSecurityDomain() + "]. " + this.authenticationManager.getSecurityDomain() );
         } catch (Exception e) {
             log.error( "Unable to initialize TorqueBox security subsystem: " + e.getLocalizedMessage() );
             throw e;
