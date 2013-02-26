@@ -63,4 +63,4 @@ Or a single integration test can be run like this:
 
     mvn test -s ../support/settings.xml -Dspec=spec/session_handling_spec.rb
 
-If you wish to skip the unit tests during the build
+If you wish to skip the unit tests during the build process (to speed things up) you can add the `-Dmaven.test.skip=true` option when running the `mvn install` command.
