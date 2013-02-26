@@ -37,6 +37,14 @@
     </dependency>
     <dependency>
       <groupId>org.projectodd</groupId>
+      <artifactId>polyglot-core</artifactId>
+      <version>${version.polyglot}</version>
+      <type>zip</type>
+      <classifier>module</classifier>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectodd</groupId>
       <artifactId>polyglot-cache</artifactId>
       <version>${version.polyglot}</version>
       <type>zip</type>
