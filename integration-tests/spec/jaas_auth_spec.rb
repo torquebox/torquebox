@@ -28,6 +28,8 @@ remote_describe "jaas" do
         domain: torquebox-jaas
         credentials:
           scott: tiger
+      pork:
+        domain: pork
   END
 
   it "should authenticate against 'torquebox' with proper credentials" do
@@ -53,6 +55,17 @@ remote_describe "jaas" do
   it "should not authenticate against 'torquebox-jaas' with improper credentials" do
     authenticator = TorqueBox::Authentication[ 'local' ]
     authenticator.authenticate('foo', 'bar').should be_false
+  end
+
+  it "should fail to authenticate against domains configured in standalone.xml if credentials are invalid" do
+    authenticator = TorqueBox::Authentication[ 'pork' ]
+    authenticator.authenticate('crunchy', 'chicken').should be_false
+  end
+
+  it "should authenticate against domains configured in standalone.xml" do
+    pending 
+    #authenticator = TorqueBox::Authentication[ 'pork' ]
+    #authenticator.authenticate('crunchy', 'bacon').should be_true
   end
 
 end

@@ -36,7 +36,7 @@ Dir.chdir( assembly_dir ) do
     puts `#{cmd}`
   end
 
-  categories = ["org.torquebox", "TorqueBox"]
+  categories = ["org.torquebox", "TorqueBox", "org.jboss.security"]
   standalone_xml = "#{output_dir}/jboss/standalone/configuration/standalone.xml"
 
   puts "Adding trace log level for #{categories.join(", ")} categories to #{standalone_xml} file"
@@ -51,6 +51,19 @@ Dir.chdir( assembly_dir ) do
       logger = logging_subsystem.add_element("logger", "category" => category)
       logger.add_element("level", "name" => "TRACE")
     end
+  end
+
+  # Configure a test JAAS login module
+  puts "Adding test security domain to #{standalone_xml}"
+  domain_set = doc.root.get_elements("//security-domains").first
+  domain = domain_set.add_element("security-domain", "name"=>"pork", "cache-type"=>"none")
+  auth = domain.add_element("authentication")
+  login_module = auth.add_element("login-module", "code"=>"UsersRoles", "flag"=>"required")
+  login_module.add_element("module-option", "name"=>"userProperties", "value"=>"pork.properties")
+
+  # Write the login properties file
+  File.open("#{output_dir}/jboss/standalone/configuration/pork.properties", File::CREAT|File::TRUNC|File::RDWR, 0644) do |f|
+    f.write("crunchy=bacon\n")
   end
 
   open(standalone_xml, 'w') do |file|
