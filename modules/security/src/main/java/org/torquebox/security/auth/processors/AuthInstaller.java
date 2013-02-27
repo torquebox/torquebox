@@ -82,7 +82,8 @@ public class AuthInstaller implements DeploymentUnitProcessor {
 
     @Override
     public void undeploy(DeploymentUnit unit) {
-        this.authService.setMode( Mode.REMOVE );
+        if (this.authService != null)
+            this.authService.setMode( Mode.REMOVE );
     }
 
     public void setApplicationName(String applicationName) {
