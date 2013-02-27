@@ -59,11 +59,15 @@ Dir.chdir( assembly_dir ) do
   domain = domain_set.add_element("security-domain", "name"=>"pork", "cache-type"=>"none")
   auth = domain.add_element("authentication")
   login_module = auth.add_element("login-module", "code"=>"UsersRoles", "flag"=>"required")
-  login_module.add_element("module-option", "name"=>"usersProperties", "value"=>"pork.properties")
+  login_module.add_element("module-option", "name"=>"usersProperties", "value"=>"${jboss.server.config.dir}/pork-users.properties")
+  login_module.add_element("module-option", "name"=>"rolesProperties", "value"=>"${jboss.server.config.dir}/pork-roles.properties")
 
-  # Write the login properties file
-  File.open("#{output_dir}/jboss/standalone/configuration/pork.properties", File::CREAT|File::TRUNC|File::RDWR, 0644) do |f|
+  # Write the users and roles properties files
+  File.open("#{output_dir}/jboss/standalone/configuration/pork-users.properties", File::CREAT|File::TRUNC|File::RDWR, 0644) do |f|
     f.write("crunchy=bacon\n")
+  end
+  File.open("#{output_dir}/jboss/standalone/configuration/pork-roles.properties", File::CREAT|File::TRUNC|File::RDWR, 0644) do |f|
+    f.write("crunchy=carnivore\n")
   end
 
   open(standalone_xml, 'w') do |file|
