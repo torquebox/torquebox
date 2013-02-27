@@ -59,7 +59,7 @@ Dir.chdir( assembly_dir ) do
   domain = domain_set.add_element("security-domain", "name"=>"pork", "cache-type"=>"none")
   auth = domain.add_element("authentication")
   login_module = auth.add_element("login-module", "code"=>"UsersRoles", "flag"=>"required")
-  login_module.add_element("module-option", "name"=>"userProperties", "value"=>"pork.properties")
+  login_module.add_element("module-option", "name"=>"usersProperties", "value"=>"pork.properties")
 
   # Write the login properties file
   File.open("#{output_dir}/jboss/standalone/configuration/pork.properties", File::CREAT|File::TRUNC|File::RDWR, 0644) do |f|

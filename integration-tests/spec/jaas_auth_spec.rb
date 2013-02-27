@@ -63,7 +63,7 @@ remote_describe "jaas" do
   end
 
   it "should authenticate against domains configured in standalone.xml" do
-    pending 
+    pending
     #authenticator = TorqueBox::Authentication[ 'pork' ]
     #authenticator.authenticate('crunchy', 'bacon').should be_true
   end
