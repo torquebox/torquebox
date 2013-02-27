@@ -86,8 +86,8 @@ TorqueBox.configure do
     session_timeout '1234 m'
   end
   
-  authentication :ham, :domain => 'torquebox-auth'
+  authentication :ham, :domain => 'torquebox'
   authentication :biscuit do
-    domain 'torquebox-auth'
+    domain 'torquebox'
   end
 end

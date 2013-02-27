@@ -55,6 +55,7 @@ import org.torquebox.security.auth.as.AuthSubsystemAdd;
 
 public class AuthInstaller implements DeploymentUnitProcessor {
 
+    private ServiceController<Authenticator> authService;
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
@@ -81,7 +82,7 @@ public class AuthInstaller implements DeploymentUnitProcessor {
 
     @Override
     public void undeploy(DeploymentUnit unit) {
-        // TODO Clean up?
+        this.authService.setMode( Mode.REMOVE );
     }
 
     public void setApplicationName(String applicationName) {
@@ -96,7 +97,7 @@ public class AuthInstaller implements DeploymentUnitProcessor {
         return AuthSubsystemAdd.TORQUEBOX_DOMAIN + "-" + this.getApplicationName();
     }
 
-    private void addTorqueBoxSecurityDomainService(DeploymentPhaseContext context, TorqueBoxAuthConfig config) {
+    private ServiceController<SecurityDomainContext> addTorqueBoxSecurityDomainService(DeploymentPhaseContext context, TorqueBoxAuthConfig config) {
         String domain = this.getTorqueBoxDomainServiceName();
         final ApplicationPolicy applicationPolicy = new ApplicationPolicy( domain );
         AuthenticationInfo authenticationInfo = new AuthenticationInfo( domain );
@@ -120,7 +121,7 @@ public class AuthInstaller implements DeploymentUnitProcessor {
                 .addDependency( JaasConfigurationService.SERVICE_NAME, Configuration.class,
                         securityDomainService.getConfigurationInjector() );
 
-        builder.setInitialMode( Mode.ON_DEMAND ).install();
+        return builder.setInitialMode( Mode.ON_DEMAND ).install();
     }
 
     private void installAuthenticator(DeploymentPhaseContext phaseContext, TorqueBoxAuthConfig config) {
@@ -128,15 +129,21 @@ public class AuthInstaller implements DeploymentUnitProcessor {
         String domain = config.getDomain();
         if (name != null && domain != null) {
             log.debug( "Activating SecurityDomainService for " + domain );
-            if (domain.equals( this.getTorqueBoxDomainServiceName() )) {
-                // activate the configured username/password service
-                this.addTorqueBoxSecurityDomainService( phaseContext, config );
-            }
             ServiceController<?> securityService = phaseContext.getServiceRegistry().getService( SecurityDomainService.SERVICE_NAME.append( domain ) );
-            if (securityService != null) {
+            
+            if (domain.equals( this.getTorqueBoxDomainServiceName() ) && securityService == null) {
+                // install the configured username/password service for this application
+                log.debug( "Installing torquebox username/password security service for " + domain );
+                securityService = this.addTorqueBoxSecurityDomainService( phaseContext, config );
+            }
+            
+            if (securityService == null) {
+                log.error( "Cannot initialize security service for domain: " + domain );
+            } else if (securityService.getMode() != Mode.ACTIVE) {
+                // Make sure the service is active
                 securityService.setMode( Mode.ACTIVE );
             } else {
-                log.error( "Cannot initialize security service for domain: " + domain );
+                log.warn( "SecurityDomainService for " + domain + " already active" );
             }
             ServiceName serviceName = AuthServices.authenticationService( this.getApplicationName(), name );
             log.debug( "Deploying Authenticator: " + serviceName + " for security domain: " + domain );
@@ -144,7 +151,7 @@ public class AuthInstaller implements DeploymentUnitProcessor {
             authenticator.setAuthDomain( domain );
             ServiceBuilder<Authenticator> builder = phaseContext.getServiceTarget().addService( serviceName, authenticator );
             builder.setInitialMode( Mode.PASSIVE );
-            builder.install();
+            this.authService = builder.install();
         }
     }
 
