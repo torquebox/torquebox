@@ -39,19 +39,42 @@ public class BundlerAwareRuntimePreparer extends BaseRuntimePreparer {
         // isn't in the Gemfile. Don't directly require torquebox-core
         // to avoid constant already initialized errors later on
         RuntimeHelper.require( ruby, "rubygems" );
-        RuntimeHelper.require( ruby, "torquebox/service_registry" );
-        RuntimeHelper.require( ruby, "torquebox/component_manager" );
-        RuntimeHelper.require( ruby, "torquebox/injectors" );
-        RuntimeHelper.require( ruby, "torquebox/logger" );
+        String tbCorePath = null;
+        try {
+            tbCorePath = RuntimeHelper.evalScriptlet( ruby, "Gem::Specification.find_by_name('torquebox-core').full_gem_path", false ).asJavaString();
+            tbCorePath += "/lib";
+        } catch (Exception e) {
+            // It's possible RubyGems can't see torquebox-core but Bundler
+            // still can so ignore for now
+            log.debug( "torquebox-core not found in RubyGems", e );
+        }
 
         File gemfile = new File( rubyAppMetaData.getRoot(), "Gemfile" );
         if (gemfile.exists()) {
-            log.info(  "Setting up Bundler" );
+            log.info( "Setting up Bundler" );
             RuntimeHelper.evalScriptlet( ruby, "ENV['BUNDLE_GEMFILE']='" + gemfile.getAbsolutePath() +  "'" );
             RuntimeHelper.require( ruby, "bundler/setup" );
             RuntimeHelper.evalScriptlet( ruby, "ENV['BUNDLE_GEMFILE']=nil" );
-            RuntimeHelper.require( ruby, "jruby" );
-            RuntimeHelper.evalScriptlet( ruby, "JRuby.runtime.load_service.addLoadedFeature( 'torquebox/service_registry' )" );
+            boolean tbInGemfile = RuntimeHelper.requireIfAvailable( ruby, "torquebox-core" );
+            if (!tbInGemfile) {
+                // TorqueBox is not in the user's Gemfile
+                if (tbCorePath == null) {
+                    // Nor did we find TorqueBox via RubyGems earlier
+                    log.error( "The torquebox-core gem could not be found by Bundler or RubyGems - is it installed?" );
+                } else {
+                    log.debug( "Adding torquebox-core to load path with with value " + tbCorePath );
+                    // Add the torquebox-core path we found earlier to the load path
+                    RuntimeHelper.evalScriptlet( ruby, "$LOAD_PATH.unshift('" + tbCorePath + "')" );
+                }
+            } else {
+                log.debug( "torquebox-core is in Gemfile" );
+            }
+            RuntimeHelper.require( ruby, "torquebox/service_registry" );
+            RuntimeHelper.require( ruby, "torquebox/component_manager" );
+            RuntimeHelper.require( ruby, "torquebox/injectors" );
+            RuntimeHelper.require( ruby, "torquebox/logger" );
+        } else {
+            
         }
         super.prepareRuntime( ruby, runtimeContext, serviceRegistry );
     }

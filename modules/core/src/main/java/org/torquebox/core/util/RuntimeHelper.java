@@ -141,16 +141,14 @@ public class RuntimeHelper {
         boolean success = false;
         try {
             StringBuilder script = new StringBuilder();
-            script.append("begin\n");
             script.append("require %q(");
             script.append(requirement);
             script.append(")\n");
-            script.append("rescue LoadError\n");
-            script.append("end\n");
-            evalScriptlet( ruby, script.toString() );
+            evalScriptlet( ruby, script.toString(), false );
             success = true;
         } catch (Throwable t) {
-            log.errorf( t, "Error encountered. Unable to require file: %s", requirement );
+            success = false;
+            log.debugf( t, "Error encountered. Unable to require file: %s", requirement );
         }
         return success;
     }
