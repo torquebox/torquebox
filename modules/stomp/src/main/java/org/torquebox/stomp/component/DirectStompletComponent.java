@@ -19,12 +19,15 @@
 
 package org.torquebox.stomp.component;
 
+import org.jruby.Ruby;
+import org.jruby.javasupport.JavaEmbedUtils;
 import org.projectodd.stilts.stomp.StompException;
 import org.projectodd.stilts.stomp.StompMessage;
 import org.projectodd.stilts.stomp.spi.StompSession;
 import org.projectodd.stilts.stomplet.Stomplet;
 import org.projectodd.stilts.stomplet.StompletConfig;
 import org.projectodd.stilts.stomplet.Subscriber;
+import org.torquebox.core.util.RuntimeHelper;
 
 public class DirectStompletComponent implements Stomplet {
 
@@ -49,34 +52,50 @@ public class DirectStompletComponent implements Stomplet {
 
     @Override
     public void onMessage(StompMessage message, StompSession session) throws StompException {
-        session.access();
+        loadSessionData( session );
         try {
             this.component._callRubyMethodIfDefined( "on_message", message, session );
         } finally {
-            session.endAccess();
+            storeSessionData( session );
         }
     }
 
     @Override
     public void onSubscribe(Subscriber subscriber) throws StompException {
-        subscriber.getSession().access();
+        loadSessionData( subscriber.getSession() );
         try {
             this.component._callRubyMethodIfDefined( "on_subscribe", subscriber );
         } finally {
-            subscriber.getSession().endAccess();
+            storeSessionData( subscriber.getSession() );
         }
     }
 
     @Override
     public void onUnsubscribe(Subscriber subscriber) throws StompException {
-        subscriber.getSession().access();
+        loadSessionData( subscriber.getSession() );
         try {
             this.component._callRubyMethodIfDefined( "on_unsubscribe", subscriber );
         } finally {
-            subscriber.getSession().endAccess();
+            storeSessionData( subscriber.getSession() );
         }
     }
 
+    protected void loadSessionData(StompSession session) {
+        session.access();
+        Ruby ruby = this.component.getRubyComponent().getRuntime();
+        RuntimeHelper.callIfPossible( ruby, session, "load_session_data", EMPTY_OBJECT_ARRAY );
+    }
+
+    protected void storeSessionData(StompSession session) {
+        try {
+            Ruby ruby = this.component.getRubyComponent().getRuntime();
+            RuntimeHelper.callIfPossible( ruby, session, "store_session_data", EMPTY_OBJECT_ARRAY );
+        } finally {
+            session.endAccess();
+        }
+    }
+
+    private static final Object[] EMPTY_OBJECT_ARRAY = {};
     private XAStompletComponent component;
 
 }

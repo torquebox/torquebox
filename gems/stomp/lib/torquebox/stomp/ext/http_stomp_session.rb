@@ -15,14 +15,32 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'torquebox/stomp/jms_stomplet'
-require 'torquebox/stomp/message'
-require 'torquebox/stomp/rack/stomp_javascript_client_provider'
-begin
-  require 'torquebox/stomp/ext/stomplet_config'
-  require 'torquebox/stomp/ext/stomp_session'
-  require 'torquebox/stomp/ext/http_stomp_session'
-rescue NameError
-  # This is expected if torquebox-stomp gets loaded when not running
-  # inside TorqueBox, like in Rake tasks.
+class org.projectodd.polyglot.stomp::HttpStompSession
+
+  def [](name) 
+    @ruby_session[name]
+  end
+
+  def []=(name,value)
+    @ruby_session[name] = value
+  end
+
+  def delete(name)
+    @ruby_session.delete(name)
+  end
+
+  def method_missing(sym,*args)
+    @ruby_session.send(sym, *args)
+  end
+
+  def load_session_data()
+    @ruby_session = TorqueBox::Session::ServletStore.load_session_data(http_session)
+  end
+
+  def store_session_data()
+    TorqueBox::Session::ServletStore.store_session_data(http_session, @ruby_session)
+  end
+
 end
+
+org.projectodd.polyglot.stomp::HttpStompSession.__persistent__ = true
