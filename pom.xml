@@ -252,25 +252,6 @@
           </plugin>
         </plugins>
       </build>
-
-      <reporting>
-        <plugins>
-          <plugin>
-            <artifactId>maven-project-info-reports-plugin</artifactId>
-            <version>2.6</version>
-            <configuration>
-              <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
-              <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-            </configuration>
-            <reportSets>
-              <reportSet>
-                <reports>
-                </reports>
-              </reportSet>
-            </reportSets>
-          </plugin>
-        </plugins>
-      </reporting>
     </profile>
 
     <profile>
@@ -918,4 +899,23 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
