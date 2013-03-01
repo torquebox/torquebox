@@ -141,11 +141,13 @@ module TorqueBox
       def get(key)
         decode(cache.get(encode(key)))
       end
+      alias_method :[], :get
 
       # Write an entry to the cache 
       def put(key, value, expires = 0)
         __put(key, value, expires, :put)
       end
+      alias_method :[]=, :put
 
       def put_if_absent(key, value, expires = 0)
         __put(key, value, expires, :put_if_absent)

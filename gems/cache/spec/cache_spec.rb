@@ -43,6 +43,13 @@ describe TorqueBox::Infinispan::Cache do
     @cache.get('foo').should == 'bar'
   end
 
+  it "should work with index operators" do
+    @cache[:a] = 1
+    @cache[:a].should == 1
+    @cache[:b] = "two"
+    @cache[:b].should == "two"
+  end
+
   it "should accept and return ruby objects" do
     heffalump = Snuffleuffagus.new(100, 'snuffle')
     @cache.put('heffalump', heffalump).should be_nil
