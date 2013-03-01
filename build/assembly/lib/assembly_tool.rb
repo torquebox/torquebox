@@ -305,15 +305,21 @@ class AssemblyTool
       module_names.each do |name|
         binding_path = find_subsystem_file( name, "socket-binding.conf")
         if ( binding_path )
-          group_name, port_name, port = File.read( binding_path ).chomp.split(':')
-          binding_group = server.get_elements( "socket-binding-group[@name='#{group_name}']" )
-          if ( binding_group.empty? )
-            $stderr.puts "invalid binding group #{group_name}"
-            next
-          end
-          previous_binding = binding_group.first.get_elements( "socket-binding[@name='#{port_name}']" )
-          if ( previous_binding.empty? )
-            binding_group.first.add_element( 'socket-binding', 'name'=>port_name, 'port'=>port )
+          File.open( binding_path ).each do |line|
+            if ( line.chomp == '' ) 
+              next
+            end
+            puts "#{binding_path} -> #{line}"
+            group_name, port_name, port = line.chomp.split(':')
+            binding_group = server.get_elements( "socket-binding-group[@name='#{group_name}']" )
+            if ( binding_group.empty? )
+              $stderr.puts "invalid binding group #{group_name}"
+              next
+            end
+            previous_binding = binding_group.first.get_elements( "socket-binding[@name='#{port_name}']" )
+            if ( previous_binding.empty? )
+              binding_group.first.add_element( 'socket-binding', 'name'=>port_name, 'port'=>port )
+            end
           end
         end
       end
