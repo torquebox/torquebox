@@ -32,4 +32,4 @@ gem 'therubyrhino'
 # gem 'ruby-debug'
 
 gem "torquebox-rake-support"
-gem "torquebox", "~> 2.x.incremental"
+gem "torquebox", "~> 3.x.incremental"
