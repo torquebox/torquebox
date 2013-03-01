@@ -43,7 +43,20 @@ class GemInstaller
     puts "Must specify version of #{gem_name}" and return unless version
     puts "Installing #{gem_name} #{version}"
     installer = include_deps ? @installer : @no_deps_installer
-    installer.install( gem_name, version )
+
+    retry_count = 0
+    begin
+      installer.install( gem_name, version )
+    rescue Gem::RemoteFetcher::FetchError => e
+      retry_count += 1
+      if retry_count > 5
+        raise e
+      else
+        puts "Error fetching remote gem - sleeping and retrying"
+        sleep 1
+        retry
+      end
+    end
 
   end
 
