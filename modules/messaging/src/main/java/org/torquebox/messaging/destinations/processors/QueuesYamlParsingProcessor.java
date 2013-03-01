@@ -24,7 +24,6 @@ import java.util.Map;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.projectodd.polyglot.messaging.destinations.QueueMetaData;
-import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 
 /**
  * <pre>
@@ -32,15 +31,14 @@ import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
  *    In: queues.yml
  *   Out: QueueMetaData
  * </pre>
- * 
+ * <p/>
  * Creates QueueMetaData instances from queues.yml
  */
-public class QueuesYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
+public class QueuesYamlParsingProcessor extends AbstractDestinationYamlParsingProcessor {
 
     public QueuesYamlParsingProcessor() {
-        setSectionName( "queues" );
-        setSupportsSuffix( true );
-        setSupportsRootless( true );
+        super();
+        setSectionName("queues");
     }
 
     @SuppressWarnings("unchecked")
@@ -49,17 +47,25 @@ public class QueuesYamlParsingProcessor extends AbstractSplitYamlParsingProcesso
         Map<String, Map<String, Object>> data = (Map<String, Map<String, Object>>) dataObject;
 
         for (String queueName : data.keySet()) {
-            QueueMetaData queueMetaData = new QueueMetaData( queueName );
-            Map<String, Object> queueOptions = data.get( queueName );
-            if (queueOptions == null || !queueOptions.containsKey( "durable" )) {
-                queueMetaData.setDurable( true );
-            }
-            else if (queueOptions.containsKey( "durable" )) {
-                queueMetaData.setDurable( (Boolean) queueOptions.get( "durable" ) );
+            QueueMetaData queueMetaData = new QueueMetaData(queueName);
+            Map<String, Object> queueOptions = data.get(queueName);
+
+            // Default value for durability
+            queueMetaData.setDurable(true);
+
+            if (queueOptions != null) {
+                if (queueOptions.containsKey("durable")) {
+                    queueMetaData.setDurable((Boolean) queueOptions.get("durable"));
+                }
+
+                if (queueOptions.containsKey("exported")) {
+                    queueMetaData.setExported((Boolean) queueOptions.get("exported"));
+                }
+
+                parseRemote(queueMetaData, queueOptions.get("remote"));
             }
 
-            unit.addToAttachmentList( QueueMetaData.ATTACHMENTS_KEY, queueMetaData );
+            unit.addToAttachmentList(QueueMetaData.ATTACHMENTS_KEY, queueMetaData);
         }
     }
-
 }
