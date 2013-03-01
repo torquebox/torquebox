@@ -24,7 +24,6 @@ import java.util.Map;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.projectodd.polyglot.messaging.destinations.TopicMetaData;
-import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 
 /**
  * <pre>
@@ -35,12 +34,11 @@ import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
  * 
  * Creates TopicMetaData instances from topics.yml
  */
-public class TopicsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
+public class TopicsYamlParsingProcessor extends AbstractDestinationYamlParsingProcessor {
 
     public TopicsYamlParsingProcessor() {
+        super();
         setSectionName( "topics" );
-        setSupportsSuffix( true );
-        setSupportsRootless( true );
     }
 
     @SuppressWarnings("unchecked")
@@ -49,6 +47,17 @@ public class TopicsYamlParsingProcessor extends AbstractSplitYamlParsingProcesso
 
         for (String topicName : data.keySet()) {
             TopicMetaData topicMetaData = new TopicMetaData( topicName );
+
+            Map<String, Object> topicOptions = data.get(topicName);
+
+            if (topicOptions != null) {
+                if (topicOptions.containsKey("exported")) {
+                    topicMetaData.setExported((Boolean) topicOptions.get("exported"));
+                }
+
+                parseRemote(topicMetaData, topicOptions.get("remote"));
+            }
+
             unit.addToAttachmentList( TopicMetaData.ATTACHMENTS_KEY, topicMetaData );
         }
     }

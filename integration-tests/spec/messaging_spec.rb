@@ -543,7 +543,7 @@ remote_describe "messaging processor tests" do
       it "should list all available message processors" do
         processors = TorqueBox::Messaging::MessageProcessor.list
 
-        processors.size.should == 6
+        processors.size.should == 7
 
         processors.map { |p| p.name }.sort.should == [
             "/queue/simple_queue.SimpleProcessor",
@@ -551,7 +551,8 @@ remote_describe "messaging processor tests" do
             "/queues/torquebox/messaging_processor_tests/tasks/torquebox_backgroundable.TorqueBox::Messaging::BackgroundableProcessor",
             "/queue/echo_queue.Torquebox::Messaging::EchoProcessor",
             "/queue/synchronous.SynchronousProcessor",
-            "/queue/synchronous_with_selectors.SynchronousProcessor"
+            "/queue/synchronous_with_selectors.SynchronousProcessor",
+            "/queue/remotesync.SynchronousProcessor"
         ].sort
       end
     end
@@ -569,6 +570,13 @@ remote_describe "messaging processor tests" do
         processor.should_not be_nil
         processor.name.should eql("/queue/echo_queue.Torquebox::Messaging::EchoProcessor")
         processor.concurrency.should == 10
+
+        processor = TorqueBox::Messaging::MessageProcessor.lookup("/queue/remotesync", "SynchronousProcessor")
+
+        processor.should_not be_nil
+        processor.name.should eql("/queue/remotesync.SynchronousProcessor")
+        processor.concurrency.should == 2
+        processor.synchronous?.should == true
       end
 
       it "should return nil if a message processor lookup fails" do
@@ -621,6 +629,32 @@ remote_describe "messaging processor tests" do
 
     it "should timeout since the selector is not satisfied" do
       @queue_with_selectors.publish_and_receive("food", :timeout => 1000, :properties => {"awesomeness" => 5}).should be_nil
+    end
+  end
+
+  context "remote destinations" do
+    before(:each) do
+      # Local "remote" queue
+      @queue = TorqueBox::Messaging::Queue.new('/queue/remotesync')
+    end
+
+    it "should receive a message from remote queue" do
+      @queue.publish_and_receive("kingdom", :timeout => 10000).should eql("Got kingdom but I want bacon!")
+    end
+
+  end
+
+  context "exported destinations" do
+    describe "exporting" do
+      require 'torquebox-naming'
+
+      it "should export a queue or topic" do
+        TorqueBox::Naming.remote_context do |context|
+          context.to_a.should_not be_empty
+          context['queue/remotesync'].should_not be_nil
+          context['topic/remotesync'].should_not be_nil
+        end
+      end
     end
   end
 end

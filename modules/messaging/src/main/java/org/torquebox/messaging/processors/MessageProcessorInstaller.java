@@ -19,6 +19,7 @@
 
 package org.torquebox.messaging.processors;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -33,13 +34,17 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.projectodd.polyglot.hasingleton.HASingleton;
 import org.projectodd.polyglot.messaging.BaseMessageProcessorGroup;
+import org.projectodd.polyglot.messaging.destinations.AbstractDestinationMetaData;
 import org.projectodd.polyglot.messaging.destinations.DestinationUtils;
+import org.projectodd.polyglot.messaging.destinations.QueueMetaData;
+import org.projectodd.polyglot.messaging.destinations.TopicMetaData;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
@@ -48,6 +53,7 @@ import org.torquebox.core.util.StringUtils;
 import org.torquebox.messaging.MessageProcessorGroup;
 import org.torquebox.messaging.MessageProcessorGroupMBean;
 import org.torquebox.messaging.MessageProcessorMetaData;
+import org.torquebox.messaging.RemoteMessageProcessorGroup;
 import org.torquebox.messaging.as.MessagingServices;
 
 /**
@@ -68,18 +74,31 @@ public class MessageProcessorInstaller implements DeploymentUnitProcessor {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         List<MessageProcessorMetaData> allMetaData = unit.getAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY );
 
-        for (MessageProcessorMetaData each : allMetaData) {
-            deploy( phaseContext, each );
+        for (MessageProcessorMetaData mpMetaData : allMetaData) {
+            deploy( phaseContext, mpMetaData, findMetadataForDestination(unit, mpMetaData.getDestinationName()) );
         }
     }
 
-    protected void deploy(DeploymentPhaseContext phaseContext, final MessageProcessorMetaData metaData) throws DeploymentUnitProcessingException {
+    protected void deploy(DeploymentPhaseContext phaseContext, final MessageProcessorMetaData metaData, final AbstractDestinationMetaData destinationMetaData) throws DeploymentUnitProcessingException {
+
+        if (destinationMetaData == null) {
+            log.warn("Destination metadata couldn't be found, most likely something is wrong");
+        }
+
+        MessageProcessorGroup service;
+
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        ServiceName baseServiceName = MessagingServices.messageProcessor( unit, metaData.getName() );
 
-        final String name = metaData.getName();
+        log.debugf("Installing a message processor for destination '%s'", metaData.getDestinationName());
 
-        ServiceName baseServiceName = MessagingServices.messageProcessor( unit, name );
-        MessageProcessorGroup service = new MessageProcessorGroup( phaseContext.getServiceRegistry(), baseServiceName, metaData.getDestinationName() );
+        if (destinationMetaData != null && destinationMetaData.isRemote()) {
+            log.debug("Destination is located on a remote host");
+            service = new RemoteMessageProcessorGroup( phaseContext.getServiceRegistry(), baseServiceName, metaData.getDestinationName(), destinationMetaData.getRemoteHost(), destinationMetaData.getUsername(), destinationMetaData.getPassword() );
+        } else {
+            service = new MessageProcessorGroup( phaseContext.getServiceRegistry(), baseServiceName, metaData.getDestinationName() );
+        }
+
         service.setConcurrency( metaData.getConcurrency() );
         service.setDurable( metaData.isDurable() );
         service.setClientID( metaData.getClientID() );
@@ -89,10 +108,14 @@ public class MessageProcessorInstaller implements DeploymentUnitProcessor {
         service.setSynchronous( metaData.isSynchronous() );
 
         ServiceBuilder<BaseMessageProcessorGroup> builder = phaseContext.getServiceTarget().addService( baseServiceName, service )
-                .addDependency( MessagingServices.messageProcessorComponentResolver( unit, name ), ComponentResolver.class, service.getComponentResolverInjector() )
-                .addDependency( getConnectionFactoryServiceName(), ManagedReferenceFactory.class, service.getConnectionFactoryInjector() )
-                .addDependency( getDestinationServiceName( metaData.getDestinationName() ), ManagedReferenceFactory.class, service.getDestinationInjector() )
+                .addDependency( MessagingServices.messageProcessorComponentResolver( unit, metaData.getName() ), ComponentResolver.class, service.getComponentResolverInjector() )
                 .addDependency( CoreServices.runtimePoolName( unit, "messaging" ), RubyRuntimePool.class, service.getRuntimePoolInjector() );
+
+        if (destinationMetaData == null || !destinationMetaData.isRemote()) {
+            builder
+                    .addDependency( getConnectionFactoryServiceName(), ManagedReferenceFactory.class, service.getConnectionFactoryInjector() )
+                    .addDependency( getDestinationServiceName( metaData.getDestinationName() ), ManagedReferenceFactory.class, service.getDestinationInjector() );
+        }
 
         if (metaData.isSingleton()) {
             builder.addDependency( HASingleton.serviceName( unit ) );
@@ -121,6 +144,28 @@ public class MessageProcessorInstaller implements DeploymentUnitProcessor {
                 .install();
     }
 
+    protected AbstractDestinationMetaData findMetadataForDestination(DeploymentUnit unit, String destination) {
+        List<QueueMetaData> queuesMetaData = unit.getAttachmentList(QueueMetaData.ATTACHMENTS_KEY);
+        List<TopicMetaData> topicsMetaData = unit.getAttachmentList(TopicMetaData.ATTACHMENTS_KEY);
+
+        List<AbstractDestinationMetaData> metadatas = new ArrayList<AbstractDestinationMetaData>();
+
+        if (queuesMetaData != null)
+            metadatas.addAll(queuesMetaData);
+
+        if (topicsMetaData != null)
+            metadatas.addAll(topicsMetaData);
+
+        // Let's find the destination metadata for specific name
+        for (AbstractDestinationMetaData metaData : metadatas) {
+            if (metaData.getName().equals(destination))
+                return metaData;
+        }
+
+        // Shouldn't happen...
+        return null;
+    }
+
     protected ServiceName getConnectionFactoryServiceName() {
         return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "ConnectionFactory" );
     }
@@ -133,5 +178,7 @@ public class MessageProcessorInstaller implements DeploymentUnitProcessor {
     public void undeploy(DeploymentUnit context) {
 
     }
+
+    public static final Logger log = Logger.getLogger( "org.torquebox.messaging" );
 
 }

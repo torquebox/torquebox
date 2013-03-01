@@ -34,8 +34,9 @@ module TorqueBox
                                                 :optional => [
                                                               { :create => [true, false] },
                                                               { :durable => [true, false] },
+                                                              { :exported => [true, false] },
                                                               :processor,
-                                                              :remote_host
+                                                              :remote
                                                              ]
                                               })
         {
@@ -92,6 +93,11 @@ module TorqueBox
                                                                              ]
                                                               }),
           :queue       => destination_entry,
+          :remote      => OptionsEntry.with_settings(:require_parent => [:queue, :topic],
+                                                     :validate => {
+                                                        :required => [:host],
+                                                        :optional => [:username, :password]
+                                                     }),
           :ruby        => OptionsEntry.with_settings(:validate => {
                                                        :optional => [{ :version => ['1.8', '1.9'] },
                                                                      { :compile_mode => [:force, :jit, :off,
