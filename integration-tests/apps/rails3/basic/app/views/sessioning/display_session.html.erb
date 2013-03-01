@@ -17,6 +17,9 @@
     <div id="a_string_java">
       <%= @java_session.getAttribute('a_string') %>
     </div>
+		<div id="a_string_ruby_fetched_with_string_key">
+      <%= session["a_string"] %>
+    </div>
   </div>
   <div id="a_boolean">
     <div id="a_boolean_ruby">
@@ -32,6 +35,9 @@
     </div>
     <div id="a_string_key_java">
       <%= @java_session.getAttribute('a_string_key') %>
+    </div>
+    <div id="a_string_key_ruby_fetched_as_a_symbol">
+      <%= session[:a_string_key] %>
     </div>
   </div>
 </div>

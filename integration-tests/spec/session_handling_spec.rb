@@ -73,10 +73,12 @@ shared_examples_for "session handling" do
     find('#a_fixnum_ruby').text.should == '42'
     find('#a_fixnum_java').text.should == '42'
     find('#a_string_ruby').text.should == 'swordfish'
+    find('#a_string_ruby_fetched_with_string_key').text.should == 'swordfish'
     find('#a_string_java').text.should == 'swordfish'
     find('#a_boolean_ruby').text.should == 'true'
     find('#a_boolean_java').text.should == 'true'
     find('#a_string_key_ruby').text.should == 'tacos'
+    find('#a_string_key_ruby_fetched_as_a_symbol').text.should == 'tacos'
     find('#a_string_key_java').text.should == 'tacos'
   end
 
