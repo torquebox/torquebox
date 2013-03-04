@@ -194,9 +194,9 @@
 
         <para>If the Stomplets are run as part of a larger application which
         involves web components (Rack, Sinatra, Rails, etc), then the user's
-        session will pass between the web and STOMP components. Values
-        set on the session from a web-based controller will be visible within
-        the scope of the Stomplet, and vice-versa.</para>
+        session will pass between the web and STOMP components. Values set on
+        the session from a web-based controller will be visible within the
+        scope of the Stomplet, and vice-versa.</para>
 
         <para>If the Stomplets are deployed without a web component, or using
         different virtual-host configuration, a STOMP-specific session will be
@@ -567,6 +567,9 @@ run app</programlisting></para>
         </informalexample>The URL may be used with the middleware-provided
       Javascript client to conveniently and reliably connect back to the STOMP
       endpoint, regardless of the current port being used.</para>
+
+      <para>Additionally, to fetch the secure endpoint (if provisioned) you
+      may use the key <code>stomp-endpoint-secure</code>.</para>
     </section>
   </section>
 
@@ -580,6 +583,26 @@ run app</programlisting></para>
     transport. The JRuby and Java clients can seamlessly communicate with the
     TorqueBox STOMP server using either TCP/IP, or WebSockets as the
     underlying transport.</para>
+  </section>
+
+  <section>
+    <title>Secure connections (TLS and wss://)</title>
+
+    <para>If the web container is configured to provide an HTTPS/SSL connector
+    (see <ulink url="http://docs.jboss.org/jbossweb/7.0.x/ssl-howto.html">SSL
+    Configuration How-To</ulink>), then a matching secure connector for
+    WebSockets will be provisioned. By default, the secure connector runs on
+    port 8676. WebSocket implementations in browsers do not typically provide
+    a method for accepting untrusted SSL certificates, so it is necessary to
+    first ensure that any self-signed certificate is designated as trusted by
+    the browser before attempting to initiate a secure WebSocket connection.
+    To make a secure connection, clients should use the <code>wss://</code>
+    scheme instead of simply <code>ws://</code> in their connection
+    URLs.</para>
+
+    <para>Additionally, the secure connector can accept pure-STOMP client
+    connections (not using WebSockets), if TLS is enabled on the
+    client.</para>
   </section>
 
   <section>
