@@ -20,7 +20,6 @@ module TorqueBox
     class ServletStore
 
       RAILS_SESSION_KEY = '__current_rails_session'
-      SYMBOL_KEYS       = '__torquebox_symbol_keys'
 
       def initialize(app, options={})
         @app = app
@@ -70,21 +69,10 @@ module TorqueBox
             session_data[key] = session.getAttribute(key)
           end
         end
-        symbolize_keys!(session_data)
         initial_keys = session_data.keys
         session_data[:session_id] = session.getId()
         session_data[:TORQUEBOX_INITIAL_KEYS] = initial_keys
         session_data
-      end
-
-      def self.symbolize_keys!(session_data)
-        symbol_keys = session_data[ SYMBOL_KEYS ] || []
-        keys = session_data.keys
-        keys.each do |key|
-          if ( symbol_keys.include?( key ) )
-            session_data[ key.to_sym ] = session_data.delete( key )
-          end
-        end
       end
 
       def self.store_session_data(session, session_data)
@@ -93,15 +81,11 @@ module TorqueBox
         hash.java_session = nil if hash.respond_to?(:java_session=)
         initial_keys = hash[:TORQUEBOX_INITIAL_KEYS] || []
         removed_keys = initial_keys - hash.keys
-        symbol_keys = []
         hash.delete(:TORQUEBOX_INITIAL_KEYS)
-        hash.delete(:TORQUEBOX_SYMBOL_KEYS)
         hash.delete_if do |key,value|
-          if ( Symbol === key )
+          # I don't think this guard is really necessary
+          if ( Symbol === key or String === key)
             key = key.to_s
-            symbol_keys << key.to_s
-          end
-          if ( String === key )
             case value
               when String, Numeric, true, false, nil
                 session.setAttribute( key, value )
@@ -116,7 +100,6 @@ module TorqueBox
             end
           end
         end
-        session.setAttribute( SYMBOL_KEYS, symbol_keys.to_java )
         unless hash.empty?
           marshalled_string = Marshal.dump(hash)
           marshalled_bytes = marshalled_string.to_java_bytes
@@ -137,6 +120,45 @@ module TorqueBox
 
       def destroy
         @java_session.invalidate if @java_session
+      end
+
+      def update(hash)
+        super(stringify_keys(hash))
+      end
+      alias :merge! :update
+
+      def replace(hash)
+        super(stringify_keys(hash))
+      end
+
+      def [](key)
+        super(key.to_s)
+      end
+      alias :fetch :[]
+
+      def has_key?(key)
+        super(key.to_s)
+      end
+      alias :key? :has_key?
+      alias :include? :has_key?
+
+			def store(key, value)
+				super(key.to_s, value)
+			end
+			alias :[]= :store
+
+      def delete(key)
+        super(key.to_s)
+      end
+
+      private
+
+      def stringify_keys(other)
+        hash = {}
+        other.each do |key, value|
+          hash[key.to_s] = value
+        end
+        hash
       end
     end
 
