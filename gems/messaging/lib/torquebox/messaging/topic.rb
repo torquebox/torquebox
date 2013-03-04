@@ -29,7 +29,7 @@ module TorqueBox
         TorqueBox::ServiceRegistry.lookup("jboss.messaging.default.jms.manager") do |server|
           server.createTopic( false, name, jndi )
         end
-        new( name )
+        new( name, options )
       end
 
       def stop

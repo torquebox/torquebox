@@ -141,7 +141,7 @@ remote_describe "in-container messaging tests" do
     end
   end
 
-  describe "decode" do
+  describe "message encoding" do
     [:marshal, :marshal_base64, :edn, :json, :text].each do |encoding|
       it "should be callable more than once for the #{encoding} encoding" do
         with_queue("/queues/decode") do |q|
@@ -155,9 +155,42 @@ remote_describe "in-container messaging tests" do
         end
       end
     end
-  end
-      
 
+    def assert_encoding_equals(destination, encoding, destination_options, message_options)
+      send("with_#{destination}", "/#{destination}/decode", destination_options) do |d|
+
+        t = Thread.new do
+          msg = d.receive(:timeout => 10_000, :decode => false)
+          TorqueBox::Messaging::Message.new(msg).class::ENCODING.should == encoding
+        end
+
+        sleep(0.1)
+
+        d.publish("something", message_options)
+
+        t.join
+      end
+    end
+
+    [:topic, :queue].each do |destination|
+
+      it "should use the default TorqueBox message encoding for #{destination}" do
+        assert_encoding_equals(destination, TorqueBox::Messaging::Message::DEFAULT_ENCODE_ENCODING, {}, {})
+      end
+
+      it "should use the message encoding provided when publishing a message into #{destination}" do
+        assert_encoding_equals(destination, TorqueBox::Messaging::EdnMessage::ENCODING, {}, {:encoding => :edn})
+      end
+
+      it "should use the default message encoding set for selected #{destination}" do
+        assert_encoding_equals(destination, TorqueBox::Messaging::EdnMessage::ENCODING, {:encoding => :edn}, {})
+      end
+
+      it "should use the message encoding provided when creating the message overriding the #{destination} destination default one" do
+        assert_encoding_equals(destination, TorqueBox::Messaging::TextMessage::ENCODING, {:encoding => :edn}, {:encoding => :text})
+      end
+    end
+  end
 
   context "message selectors" do
     {
@@ -625,16 +658,15 @@ remote_describe "messaging processor tests" do
   end
 end
 
-def with_queue(name)
-  queue = TorqueBox::Messaging::Queue.start name
+def with_queue(name, opts = {})
+  queue = TorqueBox::Messaging::Queue.start name, opts
   yield queue
 ensure
   queue.stop if queue
 end
 
 def with_topic(name, opts = {})
-  TorqueBox::Messaging::Topic.start name
-  topic = TorqueBox::Messaging::Topic.new name, opts
+  topic = TorqueBox::Messaging::Topic.start name, opts
   yield topic
 ensure
   topic.stop if topic
