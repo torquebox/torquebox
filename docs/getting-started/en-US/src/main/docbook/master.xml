@@ -508,7 +508,7 @@ Deployed: rails_example-knob.yml
           TorqueBox, you'll want to ensure this gem is in the Gemfile
           for every application as well. If it's not you'll receive
           errors trying to use the <command>torquebox</command>
-          because bundler will be unable to find the
+          command because bundler will be unable to find the
           <varname>torquebox-server</varname> gem.
 
           <example>
