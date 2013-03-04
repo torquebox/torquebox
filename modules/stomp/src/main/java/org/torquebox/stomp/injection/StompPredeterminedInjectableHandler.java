@@ -33,6 +33,7 @@ public class StompPredeterminedInjectableHandler extends PredeterminedInjectable
         super( "stomp" );
         setRecognitionPriority( 600 * 1000 );
         addInjectable( "stomp-endpoint", StompEndpointBindingInjectable.INSTANCE );
+        addInjectable( "stomp-endpoint-secure", StompEndpointBindingInjectable.SECURE_INSTANCE );
     }
 
 }

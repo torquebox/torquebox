@@ -29,10 +29,12 @@ import org.torquebox.stomp.as.StompServices;
 
 public class StompEndpointBindingInjectable extends SimpleNamedInjectable {
     
-    public static final StompEndpointBindingInjectable INSTANCE = new StompEndpointBindingInjectable();
+    public static final StompEndpointBindingInjectable INSTANCE = new StompEndpointBindingInjectable(false);
+    public static final StompEndpointBindingInjectable SECURE_INSTANCE = new StompEndpointBindingInjectable(true);
 
-    public StompEndpointBindingInjectable() {
+    public StompEndpointBindingInjectable(boolean secure) {
         super( "stomp-endpoint", "stomp-endpoint", false, true );
+        this.secure = secure;
     }
 
     @Override
@@ -43,7 +45,9 @@ public class StompEndpointBindingInjectable extends SimpleNamedInjectable {
             return null;
         }
         
-        return StompServices.endpointBinding( unit );
+        return StompServices.endpointBinding( unit, secure );
     }
+    
+    private boolean secure;
 
 }
