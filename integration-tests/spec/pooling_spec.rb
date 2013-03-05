@@ -18,7 +18,7 @@ describe "shared runtime pooling" do
   deploy <<-END.gsub(/^ {4}/,'')
 
     application:
-      root: #{File.dirname(__FILE__)}/../apps/rack/pooling
+      root: #{File.dirname(__FILE__)}/../apps/rack/pooling/default
       env: development
     web:
       context: /pooling-shared
@@ -42,7 +42,7 @@ describe "bounded runtime pooling" do
   deploy <<-END.gsub(/^ {4}/,'')
 
     application:
-      root: #{File.dirname(__FILE__)}/../apps/rack/pooling
+      root: #{File.dirname(__FILE__)}/../apps/rack/pooling/default
       env: development
     web:
       context: /pooling-bounded
@@ -166,6 +166,26 @@ describe 'eager runtime pooling' do
 
   before(:each) do
     @app_prefix = 'eager'
+    @web_lazy = false
+    @messaging_lazy = false
+  end
+
+  it_should_behave_like 'lazy_pool'
+end
+
+describe 'dsl eager runtime pooling' do
+  deploy <<-END.gsub(/^ {4}/,'')
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/rack/pooling/dsl_runtime_pooling
+      env: development
+    web:
+      context: /lazy-pooling
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
+
+  before(:each) do
+    @app_prefix = 'dsl_eager'
     @web_lazy = false
     @messaging_lazy = false
   end
