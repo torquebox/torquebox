@@ -192,7 +192,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
       it_should_behave_like 'a thing with options'
 
       it_should_not_allow_invalid_options {send(method, 'a-name', :foo => :bar) }
-      it_should_allow_valid_options { send(method, 'a-name', :create => false, :durable => true, :remote_host => '') }
+      it_should_allow_valid_options { send(method, 'a-name', :create => false, :durable => true, :remote => {:host => 'somehost:2323', :username => 'test', :password => 'test1'}) }
 
       it_should_not_allow_invalid_option_values { send(method, 'a-name', :create => :yep) }
       it_should_allow_valid_option_values { send(method, 'a-name', :create => true) }
@@ -242,6 +242,35 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
     it_should_allow_valid_options  do
       topic 'a-topic' do
         processor 'AClass', :concurrency => 1, :config => '', :selector => '', :name => '', :durable => true, :client_id => 'client-id', :singleton=>true, :xa => true
+      end
+    end
+
+  end
+
+  describe "#messaging" do
+    context "remote destinations" do
+      it "should require host when using remote destination" do
+        lambda {
+          TorqueBox.configure do
+            queue "/queue/remotequeue" do
+              remote
+            end
+          end
+        }.should raise_error(TorqueBox::Configuration::ConfigurationError, "Required option :host is missing on 'remote'")
+      end
+
+      it "should allow to specify username and password" do
+        lambda {
+          TorqueBox.configure do
+            queue "/queue/remotequeue" do
+              remote do
+                host "somehost:4444"
+                username "username"
+                password "password"
+              end
+            end
+          end
+        }.should_not raise_error(TorqueBox::Configuration::ConfigurationError)
       end
     end
 

@@ -14,6 +14,16 @@ queues:
     durable: false
   /queue/synchronous_with_selectors:
     durable: false
+  /queue/remotesync:
+    remote:
+      host: "localhost:4447"
+  /queue/remotesync:
+    durable: false
+    exported: true
+
+topics:
+  /topic/remotesync:
+    exported: true
 
 messaging:
   /queue/synchronous:
@@ -30,3 +40,7 @@ messaging:
       concurrency: 10
       config:
         response_queue: /queue/echo_backchannel
+  /queue/remotesync:
+    SynchronousProcessor:
+      concurrency: 2
+      synchronous: true

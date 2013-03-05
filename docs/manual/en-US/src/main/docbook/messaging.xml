@@ -1762,6 +1762,121 @@ end</programlisting></para>
         </section>
     </section>
 
+    <section id="remote-message-processors">
+      <title>Remote Message Processors</title>
+
+      <para>
+        It is possible to attach a message processor to a remote destination.
+        Such message processors will behave just as a regular message processors
+        with the difference that the queue (or topic) is deployed on a remote host.
+        No changes are required to the message processors itself, but we need to
+        configure the destination and specify where it is located and how to connect to it.
+        Attaching message processors to remote destinations is done in the same way
+        as with local destinations.
+      </para>
+
+      <example>
+        <title>Remote destination configuration</title>
+        <para>Using the DSL:<programlisting>TorqueBox.configure do
+  queue "/queue/remotequeue" do
+    remote do
+      host "somehost:4444"
+      username "username"
+      password "password"
+    end
+
+    processor SimpleProcessor do
+      concurrency 2
+    end
+  end
+end</programlisting></para>
+
+        <para>Using YAML:<programlisting>queues:
+  /queue/remotequeue:
+    remote:
+      host: "somehost:4444"
+      username: "username"
+      password: "password
+
+messaging:
+  /queue/remotequeue:
+    SimpleProcessor:
+      concurrency: 2
+</programlisting></para></example>
+
+      <note>
+        <title>Accessing JNDI on remote host</title>
+        <para>
+          Please note that by default destinations deployed on a host are not visible
+          remotely. To make them visible, you need to export them in a special
+          <code>jboss/exported</code> JNDI naming context. You can read more about it in the
+          <ulink url="https://docs.jboss.org/author/display/AS71/JNDI+Reference">JBoss AS JNDI Reference</ulink>.
+        </para>
+      </note>
+
+      <para>
+        TorqueBox makes it easy to add the destination to the exported context.
+        The only thing you need to do is to set the <code>exported</code> parameter
+        for selected destination, like this:
+      </para>
+
+      <example>
+        <title>Exporting destinations</title>
+        <para>Using the DSL:<programlisting>TorqueBox.configure do
+  queue "/queue/exported" do
+    exported true
+  end
+end</programlisting></para>
+
+        <para>Using YAML:<programlisting>queue:
+  /queue/remotequeue:
+    exported: true
+</programlisting></para></example>
+
+      <para>
+        This simple configuration will make the selected queue visible
+        for both remote and local JNDI lookups.
+      </para>
+
+      <para>
+        By default security configuration of JBoss AS does not allow to connect to
+        the host and lookup objects in the JNDI tree remotely. You can make it possible
+        by creating a user and setting a password for it. You can use the convenient
+        <filename>$JBOSS_HOME/bin/add-user.sh</filename> script and add an
+        Application User, like this:
+      </para>
+
+                 <screen><prompt>$</prompt> <command>add-user.sh</command>
+
+What type of user do you wish to add?
+ a) Management User (mgmt-users.properties)
+ b) Application User (application-users.properties)
+(a): <command>b</command>
+
+Enter the details of the new user to add.
+Realm (ApplicationRealm) :
+Username : <command>remoteuser</command>
+Password :
+Re-enter Password :
+What roles do you want this user to belong to? (Please enter a comma separated list, or leave blank for none)[  ]: <command>remote</command>
+About to add user 'remoteuser' for realm 'ApplicationRealm'
+Is this correct yes/no? <command>yes</command>
+Added user 'remoteuser' to file '/work/torquebox/jboss/standalone/configuration/application-users.properties'
+Added user 'remoteuser' to file '/work/torquebox/jboss/domain/configuration/application-users.properties'
+Added user 'remoteuser' with roles remote to file '/work/torquebox/jboss/standalone/configuration/application-roles.properties'
+Added user 'remoteuser' with roles remote to file '/work/torquebox/jboss/domain/configuration/application-roles.properties'
+Is this new user going to be used for one AS process to connect to another AS process?
+e.g. for a slave host controller connecting to the master or for a Remoting connection for server to server EJB calls.
+yes/no? <command>yes</command>
+To represent the user add the following to the server-identities definition &lt;secret value="OBNEMSIzIUA=" /&gt;</screen>
+
+      <para>
+        Now you can put the credentials into the deployment descriptor
+        as shown above.
+      </para>
+
+    </section>
+
     <section id="backgroundable">
       <title><classname>Backgroundable</classname> Methods</title>
 
