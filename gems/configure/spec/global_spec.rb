@@ -528,7 +528,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
     end
 
     it "should properly set pooling" do
-      @metadata['pooling']['web'].should == 'shared'
+      @metadata['pooling']['web']['type'].should == :shared
       foo = @metadata['pooling']['foo']
       foo.should_not be_nil
       foo['min'].should == 1

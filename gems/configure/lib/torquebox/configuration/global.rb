@@ -167,12 +167,7 @@ module TorqueBox
 
           when 'pool' # => pooling:
             entry_data.each do |name, data|
-              pool_type = data.delete( :type )
-              if pool_type.to_s == 'shared'
-                metadata['pooling'][name] = 'shared'
-              else
-                metadata['pooling'][name] = data
-              end
+              metadata['pooling'][name] = data
             end
 
           when 'queue', 'topic' # => queues:/topics: & messaging:
