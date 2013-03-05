@@ -105,6 +105,14 @@ public class WebYamlParsingProcessorTest extends AbstractDeploymentProcessorTest
     }
 
     @Test
+    public void testValidContextPathWithSlashes() throws Exception {
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "context-path-slashes.yml" );
+        RackMetaData rackMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
+        assertNotNull( rackMetaData );
+        assertEquals( "/tacos/and/bacon", rackMetaData.getContextPath() );
+    }
+
+    @Test
     public void testRootless() throws Exception {
         try {
             clearDeployers();
