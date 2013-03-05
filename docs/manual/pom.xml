@@ -95,27 +95,10 @@
           </cssResource>
           <formats>
             <format>
-              <formatName>man</formatName>
-              <stylesheetResource>classpath:/epub/docbook.xsl</stylesheetResource>
-              <finalName>${pom.artifactId}.epub-out</finalName>
-            </format>
-            <format>
-              <formatName>pdf</formatName>
-              <stylesheetResource>file:${project.parent.parent.basedir}/src/main/xsl/pdf-style.xsl</stylesheetResource>
-              <finalName>${pom.artifactId}.pdf</finalName>
-            </format>
-            <format>
               <formatName>xhtml</formatName>
               <stylesheetResource>file:${project.parent.parent.basedir}/src/main/xsl/xhtml-style.xsl</stylesheetResource>
               <finalName>index.html</finalName>
             </format>
-<!--
-            <format>
-              <formatName>html_single</formatName>
-              <stylesheetResource>classpath:/xslt/org/jboss/xhtml-single.xsl</stylesheetResource>
-              <finalName>${pom.artifactId}.html</finalName>
-            </format>
--->
           </formats>
           <options>
             <xincludeSupported>true</xincludeSupported>
@@ -138,7 +121,46 @@
       </plugin>
     </plugins>
   </build>
-  
+
+  <profiles>
+    <profile>
+      <id>full</id>
+      <activation>
+        <property>
+          <name>!fast</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jboss.maven.plugins</groupId>
+            <artifactId>maven-jdocbook-plugin</artifactId>
+            <configuration>
+              <formats combine.children="append">
+                <format>
+                  <formatName>man</formatName>
+                  <stylesheetResource>classpath:/epub/docbook.xsl</stylesheetResource>
+                  <finalName>${pom.artifactId}.epub-out</finalName>
+                </format>
+                <format>
+                  <formatName>pdf</formatName>
+                  <stylesheetResource>file:${project.parent.parent.basedir}/src/main/xsl/pdf-style.xsl</stylesheetResource>
+                  <finalName>${pom.artifactId}.pdf</finalName>
+                </format>
+<!--
+            <format>
+              <formatName>html_single</formatName>
+              <stylesheetResource>classpath:/xslt/org/jboss/xhtml-single.xsl</stylesheetResource>
+              <finalName>${pom.artifactId}.html</finalName>
+            </format>
+-->
+              </formats>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <modules>
     <module>en-US</module>
