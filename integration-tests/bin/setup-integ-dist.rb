@@ -36,7 +36,7 @@ Dir.chdir( assembly_dir ) do
     puts `#{cmd}`
   end
 
-  categories = ["org.torquebox", "TorqueBox", "org.jboss.security"]
+  categories = ["org.torquebox", "TorqueBox", "org.jboss.security" ]
   standalone_xml = "#{output_dir}/jboss/standalone/configuration/standalone.xml"
 
   puts "Adding trace log level for #{categories.join(", ")} categories to #{standalone_xml} file"

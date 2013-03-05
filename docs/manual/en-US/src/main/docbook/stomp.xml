@@ -176,6 +176,12 @@
               <para><code>session</code> Access to the STOMP session (see
               below).</para>
             </listitem>
+
+            <listitem>
+              <para>hash-like syntax (using
+              <code>subscriber[paramName]</code>) to access named parameters
+              from matched routes.</para>
+            </listitem>
           </itemizedlist></para>
       </section>
 
@@ -325,6 +331,11 @@ end</programlisting></para>
     routing, but matches against STOMP destinations instead of web URLs.
     Additionally, it specifies the class of the implementation, along with
     optional configuration in the form of name/value pairs of strings.</para>
+
+    <para>Parameters from flexible routes may be accessed within the
+    <methodname>on_subscribe()</methodname> and
+    <methodname>on_unsubscribe()</methodname> methods using a hash-like
+    syntax: <code>subscriber[paramName]</code>.</para>
 
     <para>STOMP supports the notion of virtuals, just as with web container.
     By default, if your application specifies a virtual host for the web

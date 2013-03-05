@@ -62,6 +62,7 @@ public class DirectStompletComponent implements Stomplet {
 
     @Override
     public void onSubscribe(Subscriber subscriber) throws StompException {
+        System.err.println( "ON_SUBSCRIBE: " + subscriber );
         loadSessionData( subscriber.getSession() );
         try {
             this.component._callRubyMethodIfDefined( "on_subscribe", subscriber );

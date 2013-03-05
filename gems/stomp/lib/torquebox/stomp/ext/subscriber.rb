@@ -1,3 +1,4 @@
+
 # Copyright 2008-2013 Red Hat, Inc, and individual contributors.
 # 
 # This is free software; you can redistribute it and/or modify it
@@ -15,15 +16,10 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'torquebox/stomp/jms_stomplet'
-require 'torquebox/stomp/message'
-require 'torquebox/stomp/rack/stomp_javascript_client_provider'
-begin
-  require 'torquebox/stomp/ext/stomplet_config'
-  require 'torquebox/stomp/ext/stomp_session'
-  require 'torquebox/stomp/ext/http_stomp_session'
-  require 'torquebox/stomp/ext/subscriber'
-rescue NameError
-  # This is expected if torquebox-stomp gets loaded when not running
-  # inside TorqueBox, like in Rake tasks.
+module org.projectodd.stilts.stomplet::Subscriber
+
+  def [](name)
+    self.getParameter( name.to_s )
+  end
+
 end

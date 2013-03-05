@@ -1,0 +1,2 @@
+source "file://#{File.dirname(__FILE__)}/../../../../build/assembly/target/stage/gem-repo"
+gem 'torquebox-stomp'

@@ -19,7 +19,7 @@ do
   $*
   if [ $? != 0 ] 
   then
-    echo "Failure!"   
+    echo "Failure! (in loop $i)"   
     exit
   fi
 done

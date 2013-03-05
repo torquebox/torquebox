@@ -1,3 +1,4 @@
+require 'torquebox-stomp'
 
 class StompletOne
 
@@ -17,7 +18,7 @@ class StompletOne
   end
 
   def on_subscribe(subscriber)
-    puts "unsubscribe to stomplet-one: #{subscriber}"
+    puts "subscriber to stomplet-one: #{subscriber} #{subscriber[:queue_name]}"
     @subscribers[ subscriber.getId() ] = subscriber
   end
 
