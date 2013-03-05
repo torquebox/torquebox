@@ -447,6 +447,90 @@ run app</programlisting></para>
         </tgroup>
       </table>
     </section>
+
+    <section id="rack-sendfile">
+      <title>Sendfile support</title>
+
+      <para>
+        With TorqueBox it is possible to delegate the delivery of the response
+        content from a file to the application server itself, without
+        the need to read the file in the application. This is very useful for
+        static files. The <code>X-Sendfile</code> header is designed for this usage.
+        You can read more about <ulink url="http://rack.rubyforge.org/doc/Rack/Sendfile.html">Rack Sendfile</ulink>.
+        Additionally the TorqueBox implementation allows to use byte-ranges to fetch only
+        part of the file by using the <code>Range</code> header.
+      </para>
+
+      <para>
+        Sendfile support is available in TorqueBox for all Rack-based applications
+        (including Sinatra and Ruby on Rails frameworks).
+      </para>
+
+      <para>
+        It is still possible to use a proxy in front of TorqueBox that handles the
+        <code>X-Sendfile</code> header instead of the application server.
+        TorqueBox will not handle the file if a special <code>X-Sendfile-Type</code>
+        header is set.
+      </para>
+
+      <para>
+        By default the sendfile support is disabled in TorqueBox since it requires
+        native connectors in the JBoss AS web subsystem.
+        To enable the sendfile support in TorqueBox you need to modify the
+        <filename>$JBOSS_HOME/standalone/configuration/standalone.xml</filename>
+        file and change the <code>native</code>
+        attribute to <code>true</code> in the web subsystem, like this:
+
+        <informalexample>
+          <para>
+            <programlisting>&lt;subsystem xmlns="urn:jboss:domain:web:1.4" default-virtual-server="default-host" native="true"&gt;
+  ...
+&lt;/subsystem&gt;</programlisting>
+          </para>
+        </informalexample>
+
+        This will automatically make the sendfile support available.
+      </para>
+
+      <section>
+        <title>Examples</title>
+
+        <para>
+          <example>
+            <title>Application sending content of <filename>thing.txt</filename> file</title>
+
+            <para><programlisting>app = lambda { |env|
+  [200, { 'Content-Type' => 'text/html', 'X-Sendfile' => 'thing.txt' }, "" ]
+}
+run app
+</programlisting>
+            </para>
+          </example>
+
+          <example>
+            <title>Receive bytes from 2 to 5 of the file content</title>
+            <para><programlisting>curl -v -H "Range: bytes=2-5" http://localhost:8080/sendfile/</programlisting></para>
+          </example>
+
+          <example>
+            <title>Receive content of file from beginning up to 10th byte</title>
+            <para><programlisting>curl -v -H "Range: bytes=-10" http://localhost:8080/sendfile/</programlisting></para>
+          </example>
+
+          <example>
+            <title>Receive content of file from 10th byte to the end</title>
+            <para><programlisting>curl -v -H "Range: bytes=10-" http://localhost:8080/sendfile/</programlisting></para>
+          </example>
+
+          <example>
+            <title>Multiple ranges</title>
+            <para><programlisting>curl -v -H "Range: bytes=0-2/10-" http://localhost:8080/sendfile/</programlisting></para>
+          </example>
+        </para>
+      </section>
+
+    </section>
+
   </section>
 
   <section id="rails">
