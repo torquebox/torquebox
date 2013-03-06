@@ -107,6 +107,13 @@ module TorqueBox
 
       def with_session(opts = {})
         transactional = opts.fetch(:tx, true)
+
+        # https://issues.jboss.org/browse/TORQUE-1033
+        # If there is no encoding for the message, set the default one
+        # for the destination. If the encoding for destination isn't set
+        # it won't hurt
+        opts[:encoding] = @connect_options[:encoding] if opts[:encoding].nil?
+
         connection_factory.with_new_connection(connect_options, transactional) do |connection|
           connection.with_session do |session|
             yield session
