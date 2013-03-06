@@ -32,4 +32,4 @@ Please make sure you have the appropriate authentication method enabled too. In 
 
 ## License
 
-[MIT](https://github.com/torquebox/torquebox/blob/2x-dev/examples/poorsmatic/LICENSE)
+[MIT](https://github.com/torquebox/torquebox/blob/master/examples/poorsmatic/LICENSE)

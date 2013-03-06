@@ -1253,7 +1253,7 @@ puts some_queue.receive # [1, 2, 3]</programlisting></para>
         </example>
 
         <para>For additional examples, see the message classes defined in the
-        <ulink url="https://github.com/torquebox/torquebox/tree/2x-dev/gems/messaging/lib/torquebox/messaging">TorqueBox source</ulink>.</para>
+        <ulink url="https://github.com/torquebox/torquebox/tree/master/gems/messaging/lib/torquebox/messaging">TorqueBox source</ulink>.</para>
       </section>
     </section>
 

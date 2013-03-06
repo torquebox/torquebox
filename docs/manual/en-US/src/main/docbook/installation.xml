@@ -135,7 +135,7 @@ export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
 
       <para>For prerelease builds, you will also need to ensure that
       your <command>gem</command> command can find the prerelease
-      TorqueBox gems by adding http://torquebox.org/2x/builds/LATEST/gem-repo/
+      TorqueBox gems by adding http://torquebox.org/builds/LATEST/gem-repo/
       to your <filename>~/.gemrc</filename> file and including the
       <command>--pre</command> flag to <command>gem install</command>. 
         <screen>
@@ -143,7 +143,7 @@ export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
 --- 
 :sources: 
 - http://rubygems.org
-- http://torquebox.org/2x/builds/LATEST/gem-repo/</screen>
+- http://torquebox.org/builds/LATEST/gem-repo/</screen>
       </para>
     </section>
     <section>
