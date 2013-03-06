@@ -44,6 +44,7 @@ import org.jboss.msc.service.DuplicateServiceException;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.service.ServiceTarget;
 import org.projectodd.polyglot.messaging.destinations.HornetQStartupPoolService;
 import org.projectodd.polyglot.messaging.destinations.processors.QueueInstaller;
 import org.projectodd.polyglot.messaging.destinations.processors.TopicInstaller;
@@ -71,20 +72,20 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     @Override
-    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
+    protected void performBoottime(final OperationContext context, ModelNode operation, ModelNode model,
             ServiceVerificationHandler verificationHandler,
             List<ServiceController<?>> newControllers) throws OperationFailedException {
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
-                addDeploymentProcessors( processorTarget );
+                addDeploymentProcessors( processorTarget, context.getServiceTarget() );
             }
         }, OperationContext.Stage.RUNTIME );
 
         addMessagingServices( context, verificationHandler, newControllers );
     }
 
-    protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
+    protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget, ServiceTarget globalTarget) {
 
         processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 10, rootSafe( new BackgroundablePresetsProcessor() ) );
         processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 11, new QueuesYamlParsingProcessor() );
@@ -104,8 +105,8 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 120, rootSafe( new MessageProcessorComponentResolverInstaller() ) );
         processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 220, rootSafe( new MessageProcessorInstaller() ) );
-        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 221, new QueueInstaller() );
-        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 222, new TopicInstaller() );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 221, new QueueInstaller(globalTarget) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 222, new TopicInstaller(globalTarget) );
     }
 
     protected void addMessagingServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
