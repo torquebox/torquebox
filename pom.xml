@@ -635,7 +635,7 @@
 
   <properties>
     <ruby.compat.version>1.8</ruby.compat.version>
-    <version.polyglot>1.x.incremental.14</version.polyglot>
+    <version.polyglot>1.x.incremental.15</version.polyglot>
     <version.jruby-maven-plugins>0.28.4</version.jruby-maven-plugins> 
     <version.junit>4.7</version.junit>
     <version.jmock>2.5.1</version.jmock>
