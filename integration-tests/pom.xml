@@ -429,6 +429,13 @@
       </properties>
     </profile>
     <profile>
+      <id>buildhive</id>
+      <properties>
+        <driver.type>headless</driver.type>
+        <rspec.max.heap>512m</rspec.max.heap>
+        <jboss.max.heap>896m</jboss.max.heap>
+      </properties>
+    <profile>
       <id>browser</id>
       <properties>
         <driver.type>browser</driver.type>
