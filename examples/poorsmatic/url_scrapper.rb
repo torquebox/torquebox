@@ -27,7 +27,7 @@ class UrlScrapper < TorqueBox::Messaging::MessageProcessor
 
       begin
         Url.new(:url => url, :title => title.strip, :count => count).save!
-      rescue Exception => e
+      rescue => e
         # For example Facebook does some Javascript thingy to redirect, skip these
         @log.warn "Couldn't save link for url #{url}; #{e.message}"
       end
@@ -39,7 +39,7 @@ class UrlScrapper < TorqueBox::Messaging::MessageProcessor
 
     begin
       return RestClient::Request.execute(:method => :get, :url => url, :timeout => 5, :open_timeout => 5)
-    rescue Exception => e
+    rescue => e
       @log.warn "Cannot get #{url}; #{e.message}"
     end
   end
