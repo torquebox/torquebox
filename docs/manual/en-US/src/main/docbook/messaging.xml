@@ -950,7 +950,7 @@ queue.stop</programlisting>
                               <row>
                                   <entry>count_messages</entry>
 
-                                  <entry><parameter>filter</parameter></entry>
+                                  <entry><parameter>filter</parameter>, <parameter>destination</parameter></entry>
 
                                   <entry>
                                       Counts messages in the queue. The optional <parameter>filter</parameter>
@@ -959,6 +959,116 @@ queue.stop</programlisting>
                                       messages will be counted.
                                   </entry>
                               </row>
+
+                              <row>
+                                  <entry>move_messages</entry>
+
+                                  <entry><parameter>queue_name</parameter>, <parameter>filter</parameter>, <parameter>reject_duplicates</parameter></entry>
+
+                                  <entry>
+                                      Moves messages from the queue to another queue. The optional <parameter>filter</parameter>
+                                      parameter allows to count only selected messages by filtering them
+                                      by the properties with a SQL92-like syntax. If no filter is set, all
+                                      messages will be moved. If <parameter>reject_duplicates</parameter> parameter
+                                      is set to true it'll reject all duplicates while moving to the other queue.
+                                  </entry>
+                              </row>
+
+                              <row>
+                                  <entry>move_message</entry>
+
+                                  <entry><parameter>queue_name</parameter>, <parameter>id</parameter>, <parameter>reject_duplicates</parameter></entry>
+
+                                  <entry>
+                                      Moves the selected message (you can get the <parameter>id</parameter> like this:
+                                      <literal>message.jms_message.jms_message_id</literal>) from the queue
+                                      to another queue. If <parameter>reject_duplicates</parameter> parameter
+                                      is set to true it'll reject all duplicates while moving to the other queue.
+                                  </entry>
+                              </row>
+
+                            <row>
+                              <entry>expire_messages</entry>
+
+                              <entry><parameter>filter</parameter></entry>
+
+                              <entry>
+                                Expires messages from the queue and moves them to the expire address (by default
+                                <varname>jms.queue.ExpiryQueue</varname> queue). You can set custom expiry address by
+                                using the <methodname>expiry_address=</methodname> method. The optional <parameter>filter</parameter>
+                                parameter allows to expire only selected messages by filtering them
+                                by the properties with a SQL92-like syntax. If no filter is set, all
+                                messages will be moved.
+                              </entry>
+                            </row>
+
+                            <row>
+                              <entry>expire_message</entry>
+
+                              <entry><parameter>id</parameter></entry>
+
+                              <entry>
+                                Expires the selected message (you can get the <parameter>id</parameter> like this:
+                                <literal>message.jms_message.jms_message_id</literal>) and moves it to the
+                                expire address (by default <varname>jms.queue.ExpiryQueue</varname> queue).
+                                You can set custom expiry address by using the <methodname>expiry_address=</methodname> method.
+                              </entry>
+                            </row>
+
+                            <row>
+                              <entry>send_messages_to_dead_letter_address</entry>
+
+                              <entry><parameter>filter</parameter></entry>
+
+                              <entry>
+                                Sends messages from the queue to the dead letter address (by default
+                                <varname>jms.queue.DLQ</varname> queue). You can set custom dead letter address by
+                                using the <methodname>dead_letter_address=</methodname> method. The optional <parameter>filter</parameter>
+                                parameter allows to send only selected messages by filtering them
+                                by the properties with a SQL92-like syntax. If no filter is set, all
+                                messages will be moved.
+                              </entry>
+                            </row>
+
+                            <row>
+                              <entry>send_message_to_dead_letter_address</entry>
+
+                              <entry><parameter>id</parameter></entry>
+
+                              <entry>
+                                Expires the selected message (you can get the <parameter>id</parameter> like this:
+                                <literal>message.jms_message.jms_message_id</literal>) and moves it to the
+                                dead letter address (by default <varname>jms.queue.DLQ</varname> queue).
+                                You can set custom dead letter address by using the <methodname>dead_letter_address=</methodname> method.
+                              </entry>
+                            </row>
+
+                            <row>
+                              <entry>expiry_address</entry>
+
+                              <entry></entry>
+
+                              <entry>
+                                Using this method you can get or set the expiry address for
+                                the current queue. By default it's set to <varname>jms.queue.ExpiryQueue</varname> queue.
+                                Make sure you prefix your destination name with <varname>jms.queue.</varname> or
+                                <varname>jms.topic.</varname> depending on the type.
+                              </entry>
+                            </row>
+
+                            <row>
+                              <entry>dead_letter_address</entry>
+
+                              <entry></entry>
+
+                              <entry>
+                                Using this method you can get or set the dead letter address for
+                                the current queue. By default it's set to <varname>jms.queue.DLQ</varname> queue.
+                                Make sure you prefix your destination name with <varname>jms.queue.</varname> or
+                                <varname>jms.topic.</varname> depending on the type.
+                              </entry>
+                            </row>
+
                           </tbody>
                       </tgroup>
                   </table>
