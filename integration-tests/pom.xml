@@ -435,6 +435,7 @@
         <rspec.max.heap>512m</rspec.max.heap>
         <jboss.max.heap>896m</jboss.max.heap>
       </properties>
+    </profile>
     <profile>
       <id>browser</id>
       <properties>
