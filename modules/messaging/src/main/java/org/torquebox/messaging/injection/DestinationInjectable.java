@@ -22,7 +22,6 @@ package org.torquebox.messaging.injection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
-import org.jboss.as.messaging.jms.JMSServices;
 import org.jboss.as.naming.deployment.ContextNames;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
@@ -58,7 +57,7 @@ public class DestinationInjectable extends JNDIInjectable {
         serviceTarget.addService( liveDestinationServiceName, liveDestinationService )
                 .addDependency( connectionFactoryServiceName, ConnectionFactory.class, liveDestinationService.getConnectionFactoryInjector() )
                 .addDependency( destinationServiceName, Destination.class, liveDestinationService.getDestinationInjector() )
-                .addDependency( getCoreDestinationServiceName() )
+                .addDependency( DestinationUtils.destinationPointerName(unit, getName()) )
                 .install();
         return liveDestinationServiceName;
     }
@@ -69,20 +68,6 @@ public class DestinationInjectable extends JNDIInjectable {
 
     protected ServiceName getConnectionFactoryServiceName() {
         return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "ConnectionFactory" );
-    }
-
-    protected ServiceName getCoreDestinationServiceName() {
-
-        ServiceName hornetQ = ServiceName.JBOSS.append( "messaging" ).append( "default" );
-
-        if (getType().equals( "queue" )) {
-            // return JMSServices.JMS_QUEUE_BASE.append( getName() );
-            return JMSServices.getJmsQueueBaseServiceName( hornetQ ).append( getName() );
-        }
-
-        //return JMSServices.JMS_TOPIC_BASE.append( getName() );
-        return JMSServices.getJmsTopicBaseServiceName( hornetQ ).append( getName() );
-
     }
 
 }
