@@ -558,6 +558,247 @@ remote_describe "in-container messaging tests" do
       end
     end
   end
+
+  describe "queue management tasks" do
+    it "should allow to pause and unpause the queue" do
+      with_queue("/queues/management") do |queue|
+        queue.paused?.should == false
+        queue.pause
+        queue.paused?.should == true
+        queue.resume
+        queue.paused?.should == false
+      end
+    end
+
+    context "removing messages" do
+      it "should remove all messages" do
+        with_queue("/queues/management") do |queue|
+          queue.publish("one")
+          queue.publish("two")
+
+          queue.count_messages.should == 2
+          queue.remove_messages.should == 2
+          queue.count_messages.should == 0
+        end
+      end
+
+      it "should remove messages by filter" do
+        with_queue("/queues/management") do |queue|
+          queue.publish("tomatoe", :properties => { :type => 'vegetable' })
+          queue.publish("chicken", :properties => { :type => 'meat' })
+
+          queue.count_messages.should == 2
+          queue.remove_messages("type = 'vegetable'").should == 1
+          queue.count_messages.should == 1
+          queue.receive.should == "chicken"
+          queue.count_messages.should == 0
+        end
+      end
+
+      it "should remove message by id" do
+        with_queue("/queues/management") do |queue|
+          queue.publish("tomatoe", :properties => { :type => 'vegetable' })
+          queue.publish("chicken", :properties => { :type => 'meat' })
+
+          ids = []
+
+          queue.each { |message| ids << message.jms_message.jms_message_id }
+
+          queue.count_messages.should == 2
+          queue.remove_message(ids.first).should == true
+          queue.count_messages.should == 1
+          queue.receive.should == "chicken"
+          queue.count_messages.should == 0
+        end
+      end
+    end
+
+    context "expiring messages" do
+      before(:each) do
+        @expire_queue = TorqueBox::Messaging::Queue.start("/queues/customexpire")
+      end
+
+      after(:each) do
+        @expire_queue.stop if @expire_queue
+      end
+
+      it "should return the default expiry address" do
+        with_queue("/queues/management") do |queue|
+          queue.expiry_address.should == "jms.queue.ExpiryQueue"
+        end
+      end
+
+      it "should change the expiry address" do
+        with_queue("/queues/management") do |queue|
+          queue.expiry_address = "jms.queue.#{@expire_queue.name}"
+          queue.expiry_address.should == "jms.queue./queues/customexpire"
+        end
+      end
+
+      it "should expire all messages" do
+        with_queue("/queues/management") do |queue|
+          queue.publish("one")
+          queue.publish("two")
+
+          queue.expiry_address = "jms.queue.#{@expire_queue.name}"
+
+          queue.count_messages.should == 2
+          queue.expire_messages.should == 2
+
+          @expire_queue.count_messages.should == 2
+        end
+      end
+
+      it "should expire messages by filter" do
+        with_queue("/queues/management") do |queue|
+          queue.publish("tomatoe", :properties => { :type => 'vegetable' })
+          queue.publish("chicken", :properties => { :type => 'meat' })
+
+          queue.expiry_address = "jms.queue.#{@expire_queue.name}"
+
+          queue.count_messages.should == 2
+          @expire_queue.count_messages.should == 0
+          queue.expire_messages("type = 'vegetable'").should == 1
+          queue.count_messages.should == 1
+          @expire_queue.count_messages.should == 1
+          @expire_queue.receive.should == "tomatoe"
+          @expire_queue.count_messages.should == 0
+          queue.receive.should == "chicken"
+          queue.count_messages.should == 0
+        end
+      end
+
+      it "should expire message by id" do
+        with_queue("/queues/management") do |queue|
+          queue.publish("tomatoe", :properties => { :type => 'vegetable' })
+          queue.publish("chicken", :properties => { :type => 'meat' })
+
+          queue.expiry_address = "jms.queue.#{@expire_queue.name}"
+
+          ids = []
+
+          queue.each { |message| ids << message.jms_message.jms_message_id }
+
+          queue.count_messages.should == 2
+          queue.expire_message(ids.first).should == true
+          queue.count_messages.should == 1
+          @expire_queue.count_messages.should == 1
+          @expire_queue.receive.should == "tomatoe"
+          @expire_queue.count_messages.should == 0
+          queue.receive.should == "chicken"
+          queue.count_messages.should == 0
+        end
+      end
+
+      it "should report correct consumer count" do
+        with_queue("/queues/management") do |queue|
+          queue.consumer_count.should == 0
+
+          t = Thread.new do
+            queue.receive
+          end
+
+          sleep(0.5)
+
+          queue.consumer_count.should == 1
+          queue.publish("end")
+
+          t.join
+        end
+      end
+
+      it "should report correct scheduled messages count" do
+        with_queue("/queues/management") do |queue|
+          queue.scheduled_messages_count.should == 0
+          queue.publish Time.now, :scheduled => Time.now + 2
+          queue.scheduled_messages_count.should == 1
+        end
+      end
+    end
+
+    context "dead letter messages" do
+      before(:each) do
+        @dead_queue = TorqueBox::Messaging::Queue.start("/queues/customdead")
+      end
+
+      after(:each) do
+        @dead_queue.stop if @dead_queue
+      end
+
+      it "should return the default dead letter address" do
+        with_queue("/queues/management") do |queue|
+          queue.dead_letter_address.should == "jms.queue.DLQ"
+        end
+      end
+
+      it "should change the dead letter address" do
+        with_queue("/queues/management") do |queue|
+          queue.dead_letter_address = "jms.queue.#{@dead_queue.name}"
+          queue.dead_letter_address.should == "jms.queue./queues/customdead"
+        end
+      end
+
+      it "should send all messages to the dead letter address" do
+        with_queue("/queues/management") do |queue|
+          queue.publish("one")
+          queue.publish("two")
+
+          queue.dead_letter_address = "jms.queue.#{@dead_queue.name}"
+
+          queue.count_messages.should == 2
+          @dead_queue.count_messages.should == 0
+
+          # Send all messages to dead queue
+          queue.send_messages_to_dead_letter_address.should == 2
+
+          queue.count_messages.should == 0
+          @dead_queue.count_messages.should == 2
+        end
+      end
+    end
+
+    context "moving messages" do
+      before(:each) do
+        @second_queue = TorqueBox::Messaging::Queue.start("/queues/second")
+      end
+
+      after(:each) do
+        @second_queue.stop if @second_queue
+      end
+
+      it "should move all messages" do
+        with_queue("/queues/management") do |queue|
+          queue.publish("one")
+          queue.publish("two")
+
+          queue.count_messages.should == 2
+          @second_queue.count_messages.should == 0
+          queue.move_messages(@second_queue.name)
+          queue.count_messages.should == 0
+          @second_queue.count_messages.should == 2
+        end
+      end
+
+      it "should move messages by filter" do
+        with_queue("/queues/management") do |queue|
+          queue.publish("tomatoe", :properties => { :type => 'vegetable' })
+          queue.publish("chicken", :properties => { :type => 'meat' })
+
+          queue.count_messages.should == 2
+          @second_queue.count_messages.should == 0
+          queue.move_messages(@second_queue.name, "type = 'vegetable'")
+          queue.count_messages.should == 1
+          @second_queue.count_messages.should == 1
+
+          @second_queue.receive.should == "tomatoe"
+          @second_queue.count_messages.should == 0
+          queue.receive.should == "chicken"
+          queue.count_messages.should == 0
+        end
+      end
+    end
+
+  end
 end
 
 remote_describe "messaging processor tests" do
