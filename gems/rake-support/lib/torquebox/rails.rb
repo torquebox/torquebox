@@ -34,7 +34,7 @@ module TorqueBox
       end
       ARGV << [ "-m", TorqueBox::Rails.template ]
       ARGV.flatten!
-      if using_rails3?
+      if using_rails3_or_greater?
         ::Rails::Generators::AppGenerator.start
       else
         ::Rails::Generator::Base.use_application_sources!
@@ -45,7 +45,7 @@ module TorqueBox
     def self.apply_template( root )
       print_rails_not_installed_and_exit unless rails_installed?
       require_generators
-      if using_rails3?
+      if using_rails3_or_greater?
         generator = ::Rails::Generators::AppGenerator.new( [root], {}, :destination_root => root )
         Dir.chdir(root)
         generator.apply TorqueBox::Rails.template
@@ -68,12 +68,12 @@ module TorqueBox
       exit 1
     end
 
-    def self.using_rails3?
-      ::Rails::VERSION::MAJOR == 3
+    def self.using_rails3_or_greater?
+      ::Rails::VERSION::MAJOR >= 3
     end
 
     def self.require_generators
-      if using_rails3?
+      if using_rails3_or_greater?
         require 'rails/generators'
         require 'rails/generators/rails/app/app_generator'
       else
