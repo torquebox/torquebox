@@ -49,16 +49,18 @@ public class DestinationInjectable extends JNDIInjectable {
             ServiceName destinationServiceName) {
         ServiceName liveDestinationServiceName = destinationServiceName.append( "live" );
 
-        if (serviceIsAlreadyWrapped( unit, liveDestinationServiceName )) {
-            return liveDestinationServiceName;
-        }
+        synchronized(unit.getServiceRegistry()) {
+            if (serviceIsAlreadyWrapped( unit, liveDestinationServiceName )) {
+                return liveDestinationServiceName;
+            }
 
-        LiveDestinationService liveDestinationService = new LiveDestinationService();
-        serviceTarget.addService( liveDestinationServiceName, liveDestinationService )
-                .addDependency( connectionFactoryServiceName, ConnectionFactory.class, liveDestinationService.getConnectionFactoryInjector() )
-                .addDependency( destinationServiceName, Destination.class, liveDestinationService.getDestinationInjector() )
-                .addDependency( DestinationUtils.destinationPointerName(unit, getName()) )
-                .install();
+            LiveDestinationService liveDestinationService = new LiveDestinationService();
+            serviceTarget.addService( liveDestinationServiceName, liveDestinationService )
+            .addDependency( connectionFactoryServiceName, ConnectionFactory.class, liveDestinationService.getConnectionFactoryInjector() )
+            .addDependency( destinationServiceName, Destination.class, liveDestinationService.getDestinationInjector() )
+            .addDependency( DestinationUtils.destinationPointerName(unit, getName()) )
+            .install();
+        }
         return liveDestinationServiceName;
     }
 

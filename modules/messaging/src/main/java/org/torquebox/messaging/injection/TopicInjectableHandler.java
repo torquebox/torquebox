@@ -19,7 +19,6 @@
 
 package org.torquebox.messaging.injection;
 
-import org.jruby.ast.Node;
 import org.torquebox.core.injection.analysis.AbstractInjectableHandler;
 import org.torquebox.core.injection.analysis.Injectable;
 
@@ -39,14 +38,14 @@ public class TopicInjectableHandler extends AbstractInjectableHandler {
     }
 
     @Override
-    public Injectable handle(Node node, boolean generic) {
-        String name = getString( node );
+    public Injectable handle(Object injection, boolean generic) {
+        String name = getString( injection );
         return new DestinationInjectable( "topic", name, generic );
     }
 
     @Override
-    public boolean recognizes(Node argsNode) {
-        String str = getString( argsNode );
+    public boolean recognizes(Object injection) {
+        String str = getString( injection );
         return ( str != null ) && ( str.startsWith( "topic" ) || str.contains( "/topic" ) );
     }
 

@@ -77,25 +77,12 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
         builder.setInitialMode( Mode.ON_DEMAND );
-        addInjections( phaseContext, resolver, getInjectionPathPrefixes( phaseContext ), builder );
         addNamespaceContext( phaseContext, service, builder );
         builder.install();
         
         // Add to our notifier's watch list
         unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, serviceName );
     }
-    
-
-    protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext) {
-        DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
-        
-        List<String> prefixes = defaultInjectionPathPrefixes(phaseContext.getDeploymentUnit());
-        prefixes.add(  rackAppMetaData.getRackUpScriptLocation() );
-        
-        return prefixes;
-    }
-
 
     protected String getCode(String rackUpScript) {
         StringBuilder code = new StringBuilder();

@@ -21,8 +21,6 @@ package org.torquebox.core.injection.analysis;
 
 import java.util.Comparator;
 
-import org.jruby.ast.Node;
-
 /** Handle capable of recognizing and configuring injection for a class of injectable.
  *  
  * @author Bob McWhirter
@@ -57,18 +55,18 @@ public interface InjectableHandler {
     
     /** Determine if this handler recognizes the argument.
      * 
-     * @param argsNode The argument AST.
+     * @param injection The injection object.
      * @return <code>true</code> if this handler recognizes the argument, otherwise <code>false</code>.
      */
-    boolean recognizes(Node argsNode);
+    boolean recognizes(Object injection);
     
     /** Handle injection for an argument.
      * 
-     * @param node The argument AST.
+     * @param node The injection object.
      * @param generic Denotes if this is a generic or explicit injection of this type. (Unused?)
      * @return The resulting injectable.
      */
-    Injectable handle(Node node, boolean generic);
+    Injectable handle(Object injection, boolean generic);
     
     /** The handler's priority for #recognizes. 
      * 

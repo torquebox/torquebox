@@ -19,16 +19,9 @@
 
 package org.torquebox.core.component.processors;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 import org.jboss.as.naming.context.NamespaceContextSelector;
-import org.jboss.as.server.deployment.AttachmentList;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
-import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
@@ -38,9 +31,6 @@ import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.component.ComponentResolverService;
-import org.torquebox.core.injection.InjectionMetaData;
-import org.torquebox.core.injection.analysis.Injectable;
-import org.torquebox.core.injection.analysis.InjectionIndex;
 
 public abstract class BaseRubyComponentInstaller implements DeploymentUnitProcessor {
 
@@ -49,62 +39,6 @@ public abstract class BaseRubyComponentInstaller implements DeploymentUnitProces
 
         ServiceName selectorName = CoreServices.appNamespaceContextSelector( unit );
         builder.addDependency( selectorName, NamespaceContextSelector.class, resolverService.getNamespaceContextSelectorInjector() );
-    }
-
-    protected void addInjections(DeploymentPhaseContext phaseContext, ComponentResolver resolver, List<String> injectionPathPrefixes,
-            ServiceBuilder<ComponentResolver> builder)
-            throws DeploymentUnitProcessingException {
-        addInjections( phaseContext, resolver, injectionPathPrefixes, builder, new String[] {} );
-    }
-
-    protected void addInjections(DeploymentPhaseContext phaseContext, ComponentResolver resolver, List<String> injectionPathPrefixes,
-            ServiceBuilder<ComponentResolver> builder, String... typesToExclude)
-            throws DeploymentUnitProcessingException {
-        DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        InjectionIndex index = unit.getAttachment( InjectionIndex.ATTACHMENT_KEY );
-        List<String> typesToExcludeList = Arrays.asList( typesToExclude );
-
-        if (index != null) {
-            Set<Injectable> injectables = index.getInjectablesFor( injectionPathPrefixes );
-
-            if (!injectables.isEmpty())
-                log.tracef("Adding dependencies to %s unit for %s injectables", phaseContext.getDeploymentUnit().getName(), injectables);
-
-            for (Injectable injectable : injectables) {
-                if (typesToExcludeList.contains( injectable.getType() )) {
-                    continue; // Used by services to prevent circular injection
-                              // dependencies
-                }
-                try {
-                    ServiceName serviceName = injectable.getServiceName( phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit() );
-                    log.tracef("Adding '%s' service dependency", serviceName.getSimpleName());
-                    builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );
-                } catch (Exception e) {
-                    throw new DeploymentUnitProcessingException( e );
-                }
-            }
-        }
-
-        AttachmentList<Injectable> additionalInjectables = unit.getAttachment( ComponentResolver.ADDITIONAL_INJECTABLES );
-
-        if (additionalInjectables != null) {
-
-            log.tracef("Adding additional dependencies to %s unit", phaseContext.getDeploymentUnit().getName());
-
-            for (Injectable injectable : additionalInjectables) {
-                try {
-                    ServiceName serviceName = injectable.getServiceName( phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit() );
-                    if (serviceName != null) {
-                        log.tracef("Adding additional '%s' service dependency", serviceName.getSimpleName());
-                        builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );
-                    } else if (!injectable.isOptional()) {
-                        log.error( "Unable to inject: " + injectable.getName() );
-                    }
-                } catch (Exception e) {
-                    throw new DeploymentUnitProcessingException( e );
-                }
-            }
-        }
     }
 
     protected String searchForSourceFile(VirtualFile root, String requirePath, boolean searchRoot, boolean searchAppDirRoots, String... roots) {
@@ -150,15 +84,6 @@ public abstract class BaseRubyComponentInstaller implements DeploymentUnitProces
         }
 
         return new ComponentResolver( alwaysReload );
-    }
-
-    protected List<String> defaultInjectionPathPrefixes(DeploymentUnit unit) {
-        List<String> defaults = new ArrayList<String>();
-
-        defaults.addAll(InjectionMetaData.injectionPaths(unit));
-        defaults.add(".");
-
-        return defaults;
     }
 
     private static final Logger log = Logger.getLogger( "org.torquebox.core.component.injection" );

@@ -47,12 +47,6 @@ module TorqueBox
           :credential  => ThingsEntry.with_settings(:require_parent => [:authentication],
                                                    :discrete => true),
           :environment => OptionsEntry,
-          :injection   => OptionsEntry.with_settings(:validate => {
-                                                       :optional => [
-                                                                      { :enabled => [true, false] },
-                                                                      :path
-                                                                    ]
-                                                     }),
           :config => OptionsEntry,
           :job         => ThingWithOptionsEntry.with_settings(:discrete => true,
                                                               :validate => {

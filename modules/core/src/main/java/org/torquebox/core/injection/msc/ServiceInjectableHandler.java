@@ -19,7 +19,6 @@
 
 package org.torquebox.core.injection.msc;
 
-import org.jruby.ast.Node;
 import org.torquebox.core.injection.analysis.AbstractInjectableHandler;
 import org.torquebox.core.injection.analysis.Injectable;
 
@@ -39,13 +38,13 @@ public class ServiceInjectableHandler extends AbstractInjectableHandler {
     }
 
     @Override
-    public Injectable handle(Node node, boolean generic) {
-        String name = getString( node );
+    public Injectable handle(Object injection, boolean generic) {
+        String name = getString( injection );
         return new ServiceInjectable( name, generic );
     }
 
     @Override
-    public boolean recognizes(Node argsNode) {
+    public boolean recognizes(Object injection) {
         return true;
     }
 

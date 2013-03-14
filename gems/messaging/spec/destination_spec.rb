@@ -78,6 +78,8 @@ describe TorqueBox::Messaging::Destination do
   end
 
   it "should start and stop a queue" do
+    TorqueBox::Registry.merge!("connection-factory" => Object.new)
+    TorqueBox::Registry.merge!("transaction-manager" => Object.new)
     server = Mockito.mock(JMSServerManagerImpl.java_class)
     TorqueBox::ServiceRegistry.stub!(:lookup).with("jboss.messaging.default.jms.manager").and_yield(server)
 
@@ -93,6 +95,8 @@ describe TorqueBox::Messaging::Destination do
   end
 
   it "should start and stop a topic" do
+    TorqueBox::Registry.merge!("connection-factory" => Object.new)
+    TorqueBox::Registry.merge!("transaction-manager" => Object.new)
     server = Mockito.mock(JMSServerManagerImpl.java_class)
     TorqueBox::ServiceRegistry.stub!(:lookup).with("jboss.messaging.default.jms.manager").and_yield(server)
 
@@ -187,6 +191,8 @@ describe TorqueBox::Messaging::Destination do
         jms_manager = mock('JMSManager')
         @server_control = mock('ServerControl')
 
+        TorqueBox::Registry.merge!("connection-factory" => Object.new)
+        TorqueBox::Registry.merge!("transaction-manager" => Object.new)
         TorqueBox::ServiceRegistry.stub!(:lookup).with("jboss.messaging.default.jms.manager").and_yield(jms_manager)
         Java::org.hornetq.jms.management.impl.JMSServerControlImpl.stub!(:new).with(jms_manager).and_return(@server_control)
       end

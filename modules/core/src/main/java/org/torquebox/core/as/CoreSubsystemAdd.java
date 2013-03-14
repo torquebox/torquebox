@@ -44,10 +44,13 @@ import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.Service;
 import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController;
-import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceController.Mode;
+import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.service.ValueService;
+import org.jboss.msc.value.ImmediateValue;
 import org.jboss.stdio.StdioContext;
 import org.projectodd.polyglot.core.processors.ApplicationExploder;
 import org.projectodd.polyglot.core.processors.ArchiveStructureProcessor;
@@ -69,9 +72,8 @@ import org.torquebox.core.datasource.DataSourceServices;
 import org.torquebox.core.datasource.processors.DatabaseProcessor;
 import org.torquebox.core.datasource.processors.DatabaseYamlParsingProcessor;
 import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
-import org.torquebox.core.injection.analysis.processors.InjectionIndexingProcessor;
+import org.torquebox.core.injection.analysis.RuntimeInjectionAnalyzer;
 import org.torquebox.core.injection.processors.CorePredeterminedInjectableInstaller;
-import org.torquebox.core.injection.processors.InjectionYamlParsingProcessor;
 import org.torquebox.core.injection.processors.PredeterminedInjectableProcessor;
 import org.torquebox.core.pool.processors.PoolingYamlParsingProcessor;
 import org.torquebox.core.processor.LoggingPropertiesWorkaroundProcessor;
@@ -127,7 +129,6 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.PARSE, 30, new EnvironmentYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.PARSE, 35, rootSafe( new PoolingYamlParsingProcessor() ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.PARSE, 36, rootSafe( new RubyYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.PARSE, 37, rootSafe( new InjectionYamlParsingProcessor() ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.PARSE, 40, rootSafe( new RubyApplicationDefaultsProcessor() ) );
         if (DataSourceServices.enabled) {
             processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.PARSE, 42, new DatabaseYamlParsingProcessor() );
@@ -140,7 +141,6 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         // rootSafe( new JdkDependenciesProcessor() ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 1000, rootSafe( new PredeterminedInjectableProcessor( registry ) ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 1001, rootSafe( new CorePredeterminedInjectableInstaller() ) );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 1100, rootSafe( new InjectionIndexingProcessor( registry ) ) );
         processorTarget.addDeploymentProcessor(  CoreExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 1, rootSafe( new LoggingPropertiesWorkaroundProcessor() ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 110, rootSafe( new RubyNamespaceContextSelectorProcessor() ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 5000, rootSafe( new DatabaseProcessor() ) );
@@ -216,6 +216,12 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         newControllers.add( context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY, registry )
                 .addListener( verificationHandler )
                 .setInitialMode( Mode.PASSIVE )
+                .install() );
+
+        RuntimeInjectionAnalyzer runtimeInjectionAnalyzer = new RuntimeInjectionAnalyzer();
+        Service<RuntimeInjectionAnalyzer> runtimeService = new ValueService<RuntimeInjectionAnalyzer>( new ImmediateValue<RuntimeInjectionAnalyzer> ( runtimeInjectionAnalyzer ) );
+        newControllers.add( context.getServiceTarget().addService( CoreServices.RUNTIME_INJECTION_ANALYZER, runtimeService )
+                .addListener( verificationHandler )
                 .install() );
     }
 

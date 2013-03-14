@@ -43,7 +43,7 @@ public class RuntimeInjectionAnalyzerInjectable extends SimpleNamedInjectable {
 
     @Override
     public ServiceName getServiceName(ServiceTarget serviceTarget, DeploymentUnit unit) throws Exception {
-        return CoreServices.runtimeInjectionAnalyzerName( unit );
+        return CoreServices.RUNTIME_INJECTION_ANALYZER;
     }
 
     public static final RuntimeInjectionAnalyzerInjectable INSTANCE = new RuntimeInjectionAnalyzerInjectable();

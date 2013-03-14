@@ -78,7 +78,6 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
         builder.setInitialMode( Mode.PASSIVE );
-        addInjections( phaseContext, resolver, getInjectionPathPrefixes( phaseContext, metaData.getRubyRequirePath() ), builder );
         addNamespaceContext( phaseContext, service, builder );
         builder.install();
 
@@ -86,26 +85,6 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
         unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, serviceName );
         
 
-    }
-
-    protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext, String requirePath) {
-
-        final List<String> prefixes = defaultInjectionPathPrefixes(phaseContext.getDeploymentUnit());
-
-        if (requirePath != null) {
-
-            final DeploymentUnit unit = phaseContext.getDeploymentUnit();
-            final ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
-            final VirtualFile root = resourceRoot.getRoot();
-
-            final String sourcePath = searchForSourceFile( root, requirePath, true, true, "app/tasks", "app/processors", "lib" );
-
-            if (sourcePath != null) {
-                prefixes.add( sourcePath );
-            }
-        }
-
-        return prefixes;
     }
 
     @Override

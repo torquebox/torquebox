@@ -33,7 +33,6 @@
       <include-set>
         <path name="org/jruby"/>
         <path name="org/jruby/**"/>
-        <path name="org/jruby/ast"/>
         <path name="org/jruby/libraries"/>
         <path name="org/yaml"/>
         <path name="org/yaml/**"/>

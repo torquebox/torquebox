@@ -96,6 +96,7 @@ public class ManagedPool<T> implements Pool<T> {
 
     public void stop() throws Exception {
         if (this.started) {
+            this.poolManager.waitForAllReturned();
             this.poolManager.stop();
             this.started = false;
             this.poolManager.waitForEmpty();

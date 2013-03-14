@@ -57,15 +57,16 @@ public class JNDIInjectable extends SimpleNamedInjectable {
     protected ServiceName wrapWithManager(ServiceTarget serviceTarget, DeploymentUnit unit, ServiceName serviceName) {
         ServiceName managementServiceName = unit.getServiceName().append( serviceName ).append( "manager" );
 
-        if (serviceIsAlreadyWrapped( unit, managementServiceName )) {
-            return managementServiceName;
+        synchronized(unit.getServiceRegistry()) {
+            if (serviceIsAlreadyWrapped( unit, managementServiceName )) {
+                return managementServiceName;
+            }
+
+            ManagedReferenceInjectableService managementService = new ManagedReferenceInjectableService();
+            serviceTarget.addService( managementServiceName, managementService )
+            .addDependency( serviceName, ManagedReferenceFactory.class, managementService.getManagedReferenceFactoryInjector() )
+            .install();
         }
-
-        ManagedReferenceInjectableService managementService = new ManagedReferenceInjectableService();
-        serviceTarget.addService( managementServiceName, managementService )
-                .addDependency( serviceName, ManagedReferenceFactory.class, managementService.getManagedReferenceFactoryInjector() )
-                .install();
-
         return managementServiceName;
 
     }

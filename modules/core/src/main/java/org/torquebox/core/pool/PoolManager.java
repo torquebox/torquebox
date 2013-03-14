@@ -197,6 +197,12 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
         }
     }
 
+    public void waitForAllReturned() throws InterruptedException {
+        while (this.pool.borrowedSize() > 0) {
+            Thread.sleep( 50 );
+        }
+    }
+
     public void setNamespaceContextSelector(NamespaceContextSelector nsContextSelector) {
         this.nsContextSelector = nsContextSelector;
     }

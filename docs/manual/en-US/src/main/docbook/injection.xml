@@ -32,47 +32,15 @@
     <para><itemizedlist>
         <listitem>
           <para>Include <classname>TorqueBox::Injectors</classname> in a
-          source file that needs to perform injection. If injection occurs in
-          a super-class, the super class must include
-          <classname>TorqueBox::Injectors</classname>. If injection also
-          occurs in a sub-class, the sub-class must also include
-          <classname>TorqueBox::Injectors</classname>. By including this
-          module, you indicate to the injection analyzer that a given source
-          file should be considered. Inclusion of it does not inherit.</para>
+          source file that needs to perform injection.</para>
         </listitem>
 
         <listitem>
-          <para>To look up a value from the injection registry, use the
-          <methodname>fetch(...)</methodname> method (or a variant) with a
-          literal value. Variable interpolation is not supported within the
-          argument list of <methodname>fetch(...)</methodname>. For
-          convenience, the result of the <methodname>fetch(...)</methodname>
-          call may be assigned to an instance value, but this is not
-          required.</para>
-        </listitem>
-      </itemizedlist></para>
-
-    <para>By default TorqueBox supports injection for source files in the following
-    locations (relative to the root directory of your application):
-    <itemizedlist>
-        <listitem>
-          <para>your app's root directory</para>
-        </listitem>
-
-        <listitem>
-          <para><filename>/app</filename></para>
-        </listitem>
-
-        <listitem>
-          <para><filename>/lib</filename></para>
-        </listitem>
-
-        <listitem>
-          <para><filename>/helpers</filename></para>
-        </listitem>
-
-        <listitem>
-          <para><filename>/models</filename> (for Padrino apps)</para>
+          <para>To look up a value from the injection registry, use
+          the <methodname>fetch(...)</methodname> method (or a
+          variant). For convenience, the result of the
+          <methodname>fetch(...)</methodname> call may be assigned to
+          an instance value, but this is not required.</para>
         </listitem>
       </itemizedlist></para>
 
@@ -93,11 +61,6 @@
 
 end</programlisting>
       </informalexample></para>
-
-    <para>
-      Paths are configurable per-app, see the <link linkend="configuring-the-scanner">configuration section</link>.
-    </para>
-
   </section>
 
   <section id="injectable-resources">
@@ -244,12 +207,13 @@ end</programlisting>
   <section id="variants-of-inject">
     <title>Variants of <methodname>fetch(...)</methodname></title>
 
-    <para>While the <methodname>fetch(...)</methodname> method is overloaded
-    to detect the correct type of resource, there are occasions where it may
-    guess incorrectly. To overcome this, variant are provided that explicitly
-    direct the injection analyzer to look for a specific type of resource. For
-    string-based injections, the previously mentioned matching rules do not
-    apply to the injection method variants.</para>
+    <para>While the <methodname>fetch(...)</methodname> method is
+    overloaded to detect the correct type of resource, there are
+    occasions where it may guess incorrectly. To overcome this,
+    variant are provided that explicitly direct injection to look for
+    a specific type of resource. For string-based injections, the
+    previously mentioned matching rules do not apply to the injection
+    method variants.</para>
 
     <formalpara>
       <title><methodname>fetch_cdi(...)</methodname></title>
@@ -307,75 +271,5 @@ end</programlisting>
     should be converted into a string of
     <literal>"Java::JavaUtil::Set"</literal> when used as an injection look-up
     key.</para>
-  </section>
-
-  <section id="configuring-the-scanner">
-    <title>Configuring the Injection Scanner</title>
-
-    <para>You can change the default values for the injection scanner
-      configuration using the <literal>injection</literal>
-      section in the deployment descriptor.
-    </para>
-
-    <section id="disabling-the-scanner">
-      <title>Disabling the Injection Scanner</title>
-
-      <para>
-        If you're not making use of injection, you can disable the injection
-        scanner on a per-application basis. Simply add:
-      </para>
-
-      <example>
-        <para>Using the DSL:<programlisting>TorqueBox.configure do
-  injection do
-    enabled false
-  end
-end</programlisting></para>
-
-        <para>Using YAML:<programlisting>injection:
-  enabled: false</programlisting></para>
-      </example>
-    </section>
-
-    <section id="configuring-paths-of-the-scanner">
-      <title>Configuring paths of the Injection Scanner</title>
-
-      <para>
-        If you want to change the default path where the Injection Scanner is
-        looking for files to inject to you can use the <literal>paths</literal>
-        attribute.
-      </para>
-
-      <para>
-        Please note that the specified paths will override the default paths.
-        The root directory is always added to the scanner.
-      </para>
-
-      <example>
-        <para>Using the DSL:<programlisting># Single directory
-TorqueBox.configure do
-  injection do
-    path "directory"
-  end
-end
-
-# Multiple directories
-TorqueBox.configure do
-  injection do
-    path ["directory1", "directory2"]
-  end
-end</programlisting></para>
-
-        <para>Using YAML:<programlisting># Single directory
-injection:
-  path: directory
-
-# Multiple directories
-injection:
-  path:
-    - directory1
-    - directory2</programlisting></para>
-      </example>
-    </section>
   </section>
 </chapter>

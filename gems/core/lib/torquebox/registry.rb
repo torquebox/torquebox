@@ -33,7 +33,13 @@ module TorqueBox
         MUTEX.synchronize do
           value = registry[key]
         end
-        return value
+        value
+      end
+
+      def has_key?(key)
+        MUTEX.synchronize do
+          registry.has_key?(key)
+        end
       end
 
       def registry

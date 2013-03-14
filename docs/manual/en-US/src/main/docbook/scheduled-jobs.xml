@@ -397,12 +397,5 @@ end</programlisting>This is the same
     topics and queues, or Java CDI components these should be injected using
     the resource injection facilities provided by TorqueBox (see <xref
     linkend="resource-injection" />).</para>
-
-    <para>In order for resource injection to function with scheduled jobs,
-    they must reside either at the root of your application directory (typical
-    for simple Rack applications), or underneath an
-    <filename>app/jobs/</filename> directory. If you place the job anywhere
-    else, it may still function, but resources injection will not be
-    available.</para>
   </section>
 </chapter>

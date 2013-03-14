@@ -63,27 +63,6 @@ describe "rails3 injection test" do
 
 end
 
-describe "injection disabled in unknown directories" do
-  deploy <<-END.gsub(/^ {4}/,'')
-    ---
-    application:
-      root: #{File.dirname(__FILE__)}/../apps/rack/injection/unprocessed
-
-    web:
-      context: /injection-unprocessed
-
-    ruby:
-      version: #{RUBY_VERSION[0,3]}
-
-  END
-
-  it "should not inject the queue by default in 'stuff' diretory" do
-    visit "/injection-unprocessed"
-    page.should have_content('it worked')
-    find('#queue-injected').text.should eql("no")
-  end
-end
-
 describe "injection enabled in custom directories" do
   deploy <<-END.gsub(/^ {4}/,'')
     ---

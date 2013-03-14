@@ -30,7 +30,6 @@ import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
-import org.jruby.ast.Node;
 
 /** Registry of handlers for the content of inject(...) calls.
  * 
@@ -60,19 +59,18 @@ public class InjectableHandlerRegistry implements Service<InjectableHandlerRegis
      * @param type The type.
      * @return The handler, or <code>null</code> if none match the type.
      */
-    public InjectableHandler getHandler(String type) {
+    public InjectableHandler getHandlerForType(String type) {
         return this.registry.get( type );
     }
 
     /** Retrieve a handler by its compatibility with the argument.
      * 
-     * @param argsNode The argument AST.
+     * @param injection The injection string.
      * @return The handler or <code>null</code> if none are compatible.
      */
-    public InjectableHandler getHandler(Node argsNode) {
-        
+    public InjectableHandler getHandler(Object injection) {
         for ( InjectableHandler each : this.handlersByPriority ) {
-            if ( each.recognizes( argsNode ) ) {
+            if ( each.recognizes( injection ) ) {
                 return each;
             }
         }

@@ -70,7 +70,6 @@ public class ServiceComponentResolverInstaller extends BaseRubyComponentInstalle
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
         builder.setInitialMode( Mode.PASSIVE );
-        addInjections( phaseContext, resolver, getInjectionPathPrefixes( phaseContext, serviceMetaData.getRubyRequirePath() ), builder, ServiceInjectable.TYPE );
         addNamespaceContext( phaseContext, service, builder );
         builder.install();
         
@@ -81,27 +80,6 @@ public class ServiceComponentResolverInstaller extends BaseRubyComponentInstalle
     @Override
     public void undeploy(DeploymentUnit unit) {
 
-    }
-
-
-    protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext, String requirePath) {
-
-        final List<String> prefixes = defaultInjectionPathPrefixes(phaseContext.getDeploymentUnit());
-
-        if (requirePath != null) {
-
-            final DeploymentUnit unit = phaseContext.getDeploymentUnit();
-            final ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
-            final VirtualFile root = resourceRoot.getRoot();
-
-            final String sourcePath = searchForSourceFile( root, requirePath, true, true, "app/processors", "lib" );
-
-            if (sourcePath != null) {
-                prefixes.add( sourcePath );
-            }
-        }
-
-        return prefixes;
     }
     
     @SuppressWarnings("unused")

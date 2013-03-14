@@ -15,19 +15,16 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'torquebox/injectors'
-
 module TorqueBox
   class MSC
     class << self
-      include TorqueBox::Injectors
 
       def service_registry
-        fetch('service-registry')
+        TorqueBox::Registry['service-registry']
       end
 
       def deployment_unit
-        fetch('deployment-unit')
+        TorqueBox::Registry['deployment-unit']
       end
 
       def service_names
@@ -76,6 +73,23 @@ module TorqueBox
         deployment_service_name = org.jboss.msc.service.ServiceName.parse("jboss.web.deployment")
         service_name = deployment_service_name.append(virtual_host).append(context_path)
         get_service(service_name).value
+      end
+
+      # Wait for the given MSC service to start.
+      #
+      # @param [org.jboss.msc.service.Service] MSC service to wait on
+      #
+      # @return String the service state after waiting - one of DOWN,
+      # STARTING, START_FAILED, UP, STOPPING, or REMOVED. This should
+      # be UP unless something went wrong.
+      def wait_for_service_to_start(service)
+        unless service.state.to_s == 'UP'
+          listener = org.torquebox.core.gem.MSCServiceListener.new(service)
+          service.add_listener(listener)
+          service.set_mode(org.jboss.msc.service.ServiceController::Mode::ACTIVE)
+          listener.wait_for_start_or_failure(10, java.util.concurrent.TimeUnit::SECONDS)
+        end
+        service.state.to_s
       end
     end
   end

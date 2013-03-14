@@ -15,21 +15,42 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'torquebox/msc'
 require 'torquebox/registry'
+require 'torquebox/service_registry'
 
 module TorqueBox
   module Injectors
 
-    def self.analyze_and_inject(&block)
-      fetch( 'runtime-injection-analyzer' ).analyze_and_inject( block )
+    class InjectionError < StandardError
     end
 
     def fetch(something)
+      unless TorqueBox::Registry.has_key?(something.to_s)
+        handler_registry = TorqueBox::ServiceRegistry['torquebox.core.injection.injectable-handler-registry']
+        # handler_registry should only be nil when running outside of
+        # TorqueBox so we just return the nil value and skip everything
+        # else to facilitate testing outside the container
+        return nil if handler_registry.nil?
+        handler = handler_registry.get_handler(something)
+        raise InjectionError.new("Invalid injection - #{something}") if handler.nil?
+        injectable = handler.handle(something, true)
+        service_name = injectable.get_service_name(TorqueBox::Registry['service-target'],
+                                                   TorqueBox::Registry['deployment-unit'])
+        service = TorqueBox::ServiceRegistry.registry.getService(service_name)
+        raise InjectionError.new("Service not found for injection - #{something}") if service.nil?
+        state = TorqueBox::MSC.wait_for_service_to_start(service)
+        raise InjectionError.new("Injected service failed to start - #{something}") if state != 'UP'
+        value = service.value
+        raise InjectionError.new("Injected service had no value - #{something}") if value.nil?
+        value = value.convert(JRuby.runtime) if value.respond_to?(:convert)
+        TorqueBox::Registry.merge!(something.to_s => value)
+      end
       TorqueBox::Registry[something.to_s]
     end
     alias_method :inject, :fetch
     alias_method :__inject__, :fetch
-    
+
     %w{ msc service cdi jndi queue topic }.each do |type|
       define_method("inject_#{type}".to_sym) do |key|
         fetch(key)

@@ -21,8 +21,7 @@
   subsystem descriptor sections, please see: <xref linkend="web" />,
   <xref linkend="messaging" />, <xref linkend="stomp" />, 
   <xref linkend="scheduled-jobs" />, <xref linkend="services" />, 
-  <xref linkend="resource-injection" />, <xref linkend="authentication" />, and <xref
-  linkend="pooling" />.</para>
+  <xref linkend="authentication" />, and <xref linkend="pooling" />.</para>
 
   <section id="external-and-internal-descriptors">
     <title>External and Internal descriptors</title>
@@ -59,8 +58,7 @@
     see: <xref linkend="web" />,
     <xref linkend="messaging" />, <xref linkend="stomp" />, 
     <xref linkend="scheduled-jobs" />, <xref linkend="services" />, 
-    <xref linkend="resource-injection" />, <xref linkend="authentication" />, and <xref
-    linkend="pooling" />.</para>
+    <xref linkend="authentication" />, and <xref linkend="pooling" />.</para>
 
     <section id="yaml-descriptor-layout">
       <title>YAML syntax layout</title>

@@ -19,9 +19,7 @@
 
 package org.torquebox.cdi.injection;
 
-import org.jruby.ast.ArrayNode;
-import org.jruby.ast.Node;
-import org.jruby.ast.NodeType;
+import org.jruby.RubyClass;
 import org.torquebox.core.injection.analysis.AbstractInjectableHandler;
 import org.torquebox.core.injection.analysis.Injectable;
 
@@ -35,21 +33,13 @@ public class CDIInjectableHandler extends AbstractInjectableHandler {
     }
 
     @Override
-    public Injectable handle(Node node, boolean generic) {
-        String name = getJavaClassName( node );
+    public Injectable handle(Object injection, boolean generic) {
+        String name = getJavaClassName( injection );
         return new CDIInjectable( name, generic );
     }
 
     @Override
-    public boolean recognizes(Node argsNode) {
-        if (argsNode.getNodeType() == NodeType.ARRAYNODE) {
-            ArrayNode argsArray = (ArrayNode) argsNode;
-            if (argsArray.size() == 1) {
-                Node root = argsArray.get( 0 );
-                return (root.getNodeType() == NodeType.CALLNODE) || (root.getNodeType() == NodeType.VCALLNODE);
-            }
-        }
-
-        return false;
+    public boolean recognizes(Object injection) {
+        return injection instanceof RubyClass && ((RubyClass) injection).respondsTo( "java_class" );
     }
 }

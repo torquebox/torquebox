@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.msc.service.ServiceTarget;
-import org.jruby.ast.Node;
 
 /**
  * Injectable-handler which can provide injectables to all deployments
@@ -68,14 +67,14 @@ public class PredeterminedInjectableHandler extends AbstractInjectableHandler {
     }
 
     @Override
-    public Injectable handle(Node node, boolean generic) {
-        String key = getString( node );
+    public Injectable handle(Object injection, boolean generic) {
+        String key = getString( injection );
         return this.injectables.get( key );
     }
 
     @Override
-    public boolean recognizes(Node argsNode) {
-        String key = getString( argsNode );
+    public boolean recognizes(Object injection) {
+        String key = getString( injection );
         return this.injectables.containsKey( key );
     }
 

@@ -74,18 +74,20 @@ public class CDIInjectable extends SimpleNamedInjectable {
     public ServiceName getServiceName(ServiceTarget serviceTarget, DeploymentUnit unit) throws ClassNotFoundException {
         ServiceName injectionServiceName = unit.getServiceName().append( "cdi-injection" ).append( getName() );
 
-        if (unit.getServiceRegistry().getService( injectionServiceName ) != null) {
-            return injectionServiceName;
+        synchronized(unit.getServiceRegistry()) {
+            if (unit.getServiceRegistry().getService( injectionServiceName ) != null) {
+                return injectionServiceName;
+            }
+
+            Module module = unit.getAttachment( Attachments.MODULE );
+            Class<?> injectionType = module.getClassLoader().loadClass( getName() );
+
+            ServiceName weldServiceName = unit.getServiceName().append( WeldStartService.SERVICE_NAME );
+            CDIInjectableService injectionService = new CDIInjectableService( injectionType );
+            serviceTarget.addService( injectionServiceName, injectionService )
+            .addDependency( weldServiceName, WeldStartService.class, injectionService.getWeldStartServiceInjector() )
+            .install();
         }
-
-        Module module = unit.getAttachment( Attachments.MODULE );
-        Class<?> injectionType = module.getClassLoader().loadClass( getName() );
-
-        ServiceName weldServiceName = unit.getServiceName().append( WeldStartService.SERVICE_NAME );
-        CDIInjectableService injectionService = new CDIInjectableService( injectionType );
-        serviceTarget.addService( injectionServiceName, injectionService )
-                .addDependency( weldServiceName, WeldStartService.class, injectionService.getWeldStartServiceInjector() )
-                .install();
         return injectionServiceName;
     }
 

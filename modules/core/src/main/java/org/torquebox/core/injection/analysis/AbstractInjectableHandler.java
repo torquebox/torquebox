@@ -24,7 +24,6 @@ import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
-import org.jruby.ast.Node;
 
 public abstract class AbstractInjectableHandler implements InjectableHandler, Service<InjectableHandler> {
 
@@ -63,12 +62,12 @@ public abstract class AbstractInjectableHandler implements InjectableHandler, Se
         
     }
 
-    protected String getString(Node node) {
-        return RubyInjectionUtils.getString( node );
+    protected String getString(Object injection) {
+        return RubyInjectionUtils.getString( injection );
     }
 
-    protected String getJavaClassName(Node node) {
-        return RubyInjectionUtils.getJavaClassName( node );
+    protected String getJavaClassName(Object injection) {
+        return RubyInjectionUtils.getJavaClassName( injection );
     }
     
     @SuppressWarnings("unused")

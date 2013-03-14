@@ -21,16 +21,13 @@ package org.torquebox.stomp.component.processors;
 
 import java.util.List;
 
-import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
-import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
-import org.jboss.vfs.VirtualFile;
 import org.torquebox.core.component.ComponentClass;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.component.ComponentResolverService;
@@ -66,29 +63,9 @@ public class StompletComponentResolverInstaller extends BaseRubyComponentInstall
 
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
-        addInjections( phaseContext, resolver, getInjectionPathPrefixes( phaseContext, stompletMetaData.getRubyRequirePath() ), builder );
         addNamespaceContext( phaseContext, service, builder );
         builder.setInitialMode( Mode.ON_DEMAND );
         builder.install();
-    }
-
-    protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext, String requirePath) {
-
-        final List<String> prefixes = defaultInjectionPathPrefixes(phaseContext.getDeploymentUnit());
-
-        if (requirePath != null) {
-            final DeploymentUnit unit = phaseContext.getDeploymentUnit();
-            final ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
-            final VirtualFile root = resourceRoot.getRoot();
-
-            final String sourcePath = searchForSourceFile( root, requirePath, true, true, "app/stomplets", "lib" );
-
-            if (sourcePath != null) {
-                prefixes.add( sourcePath );
-            }
-        }
-
-        return prefixes;
     }
 
     @Override
