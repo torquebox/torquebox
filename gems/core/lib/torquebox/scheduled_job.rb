@@ -20,6 +20,18 @@ module TorqueBox
   class ScheduledJob
     class << self
 
+      def schedule(class_name, cron, options = {})
+        options = {
+            :singleton => false,
+            :name => "default",
+            :timeout => "0s"
+        }.merge(options)
+
+        TorqueBox::ServiceRegistry.lookup(schedulizer_service_name) do |schedulizer|
+          schedulizer.create_job(class_name.to_s, cron, options[:timeout], options[:name], options[:description], options[:config], options[:singleton])
+        end
+      end
+
       # List all scheduled jobs of this application.
       #
       # @return [Array<org.torquebox.jobs.ScheduledJob>] the list of
@@ -27,7 +39,7 @@ module TorqueBox
       #   {TorqueBox::ScheduledJob.lookup} for more details on these
       #   instances
       def list
-        prefix = job_prefix.canonical_name
+        prefix = job_service_name.canonical_name
         service_names = TorqueBox::MSC.service_names.select do |service_name|
           name = service_name.canonical_name
           name.start_with?(prefix) && !name.end_with?('mbean')
@@ -60,16 +72,20 @@ module TorqueBox
       #   job.stop
       #   job.status => 'STOPPED'
       def lookup(name)
-        service_name = job_prefix.append(name)
+        service_name = job_service_name.append(name)
         service = TorqueBox::MSC.get_service(service_name)
         service.nil? ? nil : service.value
       end
 
       private
 
-      def job_prefix
+      def job_service_name
         TorqueBox::MSC.deployment_unit.service_name.append('scheduled_job')
       end
+
+     def schedulizer_service_name
+       TorqueBox::MSC.deployment_unit.service_name.append('job_schedulizer')
+     end
 
     end
   end

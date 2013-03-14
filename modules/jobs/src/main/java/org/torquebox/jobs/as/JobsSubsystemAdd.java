@@ -36,8 +36,8 @@ import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
-import org.torquebox.jobs.component.processors.JobComponentResolverInstaller;
 import org.torquebox.jobs.processors.JobSchedulerInstaller;
+import org.torquebox.jobs.processors.JobSchedulizerInstaller;
 import org.torquebox.jobs.processors.JobsLoadPathProcessor;
 import org.torquebox.jobs.processors.JobsRuntimePoolProcessor;
 import org.torquebox.jobs.processors.JobsYamlParsingProcessor;
@@ -66,9 +66,9 @@ public class JobsSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.PARSE, 30, rootSafe( new JobsYamlParsingProcessor() ) );
         processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 0, rootSafe( new JobsLoadPathProcessor() ) );
         processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 100, rootSafe( new JobsRuntimePoolProcessor() ) );
-        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 120, rootSafe( new JobComponentResolverInstaller() ) );
-        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.INSTALL, 0, rootSafe( new JobSchedulerInstaller() ) );
-        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.INSTALL, 10, rootSafe( new ScheduledJobInstaller() ) );
+        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 20, rootSafe( new JobSchedulerInstaller() ) );
+        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 40, rootSafe(new JobSchedulizerInstaller() ));
+        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.INSTALL, 0, rootSafe( new ScheduledJobInstaller() ) );
     }
 
     static ModelNode createOperation(ModelNode address) {

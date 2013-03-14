@@ -39,7 +39,8 @@ public class ScheduledJob extends BaseScheduledJob implements ScheduledJobMBean 
         super( RubyJobProxy.class, group, name, description, cronExpression, timeout, singleton );
         this.rubyClassName = rubyClassName;
     }
-   
+
+    @Override
     public synchronized void start() throws ParseException, SchedulerException {
         if (!isStarted()) {
             JobScheduler jobScheduler = (JobScheduler)((Value)getJobSchedulerInjector()).getValue();
@@ -55,15 +56,14 @@ public class ScheduledJob extends BaseScheduledJob implements ScheduledJobMBean 
     public Injector<ComponentResolver> getComponentResolverInjector() {
         return this.componentResolverInjector;
     }
-   
+
     public Injector<RubyRuntimePool> getRubyRuntimePoolInjector() {
         return this.rubyRuntimePoolInjector;
     }
-  
+
     private String rubyClassName;
-    
     private InjectedValue<ComponentResolver> componentResolverInjector = new InjectedValue<ComponentResolver>();
     private InjectedValue<RubyRuntimePool> rubyRuntimePoolInjector = new InjectedValue<RubyRuntimePool>();
-   
+
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
 }

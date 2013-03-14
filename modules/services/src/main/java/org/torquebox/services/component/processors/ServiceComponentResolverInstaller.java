@@ -19,70 +19,60 @@
 
 package org.torquebox.services.component.processors;
 
-import java.util.List;
-
-import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
-import org.jboss.as.server.deployment.module.ResourceRoot;
+import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
-import org.jboss.msc.service.ServiceBuilder;
-import org.jboss.msc.service.ServiceController.Mode;
+import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
-import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.core.as.DeploymentNotifier;
-import org.torquebox.core.component.ComponentClass;
-import org.torquebox.core.component.ComponentResolver;
-import org.torquebox.core.component.ComponentResolverService;
-import org.torquebox.core.component.processors.BaseRubyComponentInstaller;
+import org.torquebox.core.component.processors.ComponentResolverHelper;
 import org.torquebox.services.ServiceMetaData;
 import org.torquebox.services.as.ServicesServices;
 import org.torquebox.services.component.ServiceComponent;
 import org.torquebox.services.injection.ServiceInjectable;
 
-public class ServiceComponentResolverInstaller extends BaseRubyComponentInstaller {
+import java.util.Arrays;
+import java.util.List;
+
+import static org.jboss.msc.service.ServiceController.*;
+
+public class ServiceComponentResolverInstaller implements DeploymentUnitProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        List<ServiceMetaData> allServiceMetaData = unit.getAttachmentList( ServiceMetaData.ATTACHMENTS_KEY );
+        List<ServiceMetaData> allServiceMetaData = unit.getAttachmentList(ServiceMetaData.ATTACHMENTS_KEY);
 
         for (ServiceMetaData serviceMetaData : allServiceMetaData) {
-            deploy( phaseContext, serviceMetaData );
+            deploy(phaseContext, serviceMetaData);
         }
     }
 
-    protected void deploy(DeploymentPhaseContext phaseContext, ServiceMetaData serviceMetaData) throws DeploymentUnitProcessingException {
+    protected void deploy(DeploymentPhaseContext phaseContext, ServiceMetaData metaData) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
-        ComponentClass instantiator = new ComponentClass();
-        instantiator.setClassName( serviceMetaData.getClassName() );
-        instantiator.setRequirePath( serviceMetaData.getRubyRequirePath() );
+        ServiceName serviceName = ServicesServices.serviceComponentResolver(unit, metaData.getName());
 
-        ServiceName serviceName = ServicesServices.serviceComponentResolver( unit, serviceMetaData.getName() );
-        ComponentResolver resolver = createComponentResolver( unit );
-        resolver.setComponentInstantiator( instantiator );
-        resolver.setComponentName( serviceName.getCanonicalName() );
-        resolver.setComponentWrapperClass( ServiceComponent.class );
-        resolver.setInitializeParams( serviceMetaData.getParameters() );
+        ComponentResolverHelper helper = new ComponentResolverHelper(phaseContext, serviceName);
 
-        ComponentResolverService service = new ComponentResolverService( resolver );
-        ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
-        builder.setInitialMode( Mode.PASSIVE );
-        addNamespaceContext( phaseContext, service, builder );
-        builder.install();
-        
-        // Add to our notifier's watch list
-        unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, serviceName );
+        try {
+            helper
+                    .initializeInstantiator(metaData.getClassName(), metaData.getRubyRequirePath())
+                    .initializeResolver(ServiceComponent.class, metaData.getParameters(), false)
+                    .installService(Mode.PASSIVE);
+        } catch (Exception e) {
+            throw new DeploymentUnitProcessingException(e);
+        }
     }
 
     @Override
     public void undeploy(DeploymentUnit unit) {
 
     }
-    
+
     @SuppressWarnings("unused")
-    private static final Logger log = Logger.getLogger( "org.torquebox.services.component" );
+    private static final Logger log = Logger.getLogger("org.torquebox.services.component");
 
 }

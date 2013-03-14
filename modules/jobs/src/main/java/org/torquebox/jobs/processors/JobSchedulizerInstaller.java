@@ -19,43 +19,37 @@
 
 package org.torquebox.jobs.processors;
 
-import java.util.List;
-
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.torquebox.core.app.RubyAppMetaData;
-import org.torquebox.core.runtime.PoolMetaData;
-import org.torquebox.jobs.ScheduledJobMetaData;
+import org.jboss.logging.Logger;
+import org.jboss.msc.service.ServiceController.Mode;
+import org.torquebox.jobs.JobSchedulizer;
+import org.torquebox.jobs.as.JobsServices;
 
 /**
- * <pre>
- * Stage: DESCRIBE
- *    In: EnvironmentMetaData, PoolMetaData, ScheduledJobMetaData
- *   Out: PoolMetaData
- * </pre>
- * 
- * Ensures that pool metadata for jobs is available
+ * Creates a JobSchedulizer service
+ *
+ * This service is used to schedule jobs at runtime.
  */
-public class JobsRuntimePoolProcessor implements DeploymentUnitProcessor {
+public class JobSchedulizerInstaller implements DeploymentUnitProcessor {
+    @Override
+    public void deploy(DeploymentPhaseContext context) throws DeploymentUnitProcessingException {
+        DeploymentUnit unit = context.getDeploymentUnit();
 
-	public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
-		DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        JobSchedulizer service = new JobSchedulizer(unit);
 
-        List<PoolMetaData> allMetaData = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
-        PoolMetaData jobsPool = PoolMetaData.extractNamedMetaData( allMetaData, "jobs" );
+        log.debugf("Deploying job schedulizer for deployment unit '%s'", unit.getName());
 
-        if (jobsPool == null) {
-            RubyAppMetaData envMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
-            boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();
-            jobsPool = devMode ? new PoolMetaData( "jobs", 1, 2 ) : new PoolMetaData( "jobs" );
-            unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, jobsPool );
-        }
+        context.getServiceTarget().addService(JobsServices.schedulizer(unit), service)
+                .setInitialMode(Mode.ACTIVE)
+                .install();
     }
-    
-    public void undeploy(DeploymentUnit unit) {
-		
-    }	
 
+    @Override
+    public void undeploy(DeploymentUnit unit) {
+    }
+
+    private static final Logger log = Logger.getLogger("org.torquebox.jobs");
 }

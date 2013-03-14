@@ -20,38 +20,54 @@
 package org.torquebox.jobs;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jboss.logging.Logger;
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.value.InjectedValue;
 import org.projectodd.polyglot.jobs.BaseJobScheduler;
+import org.quartz.Job;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.JobKey;
+import org.quartz.spi.JobFactory;
+import org.quartz.spi.TriggerFiredBundle;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 
-public class JobScheduler extends BaseJobScheduler  {
+public class JobScheduler extends BaseJobScheduler implements JobFactory {
 
     public JobScheduler(String name, int threadCount) {
-        super( name, threadCount );
+        super(name, threadCount);
     }
-	
+
+    @Override
+    public Job newJob(TriggerFiredBundle bundle, Scheduler scheduler) throws SchedulerException {
+        JobDetail jobDetail = bundle.getJobDetail();
+
+        ComponentResolver resolver = this.componentResolvers.get(jobDetail.getKey());
+        RubyJobProxy rubyJob = new RubyJobProxy(this.rubyRuntimePoolInjector.getValue(), resolver, jobDetail);
+
+        return rubyJob;
+    }
+
     public void start() throws IOException, SchedulerException {
-        RubyJobProxyFactory jobFactory = new RubyJobProxyFactory();
-        jobFactory.setRubyRuntimePool( this.rubyRuntimePoolInjector.getValue() );
-        setJobFactory( jobFactory );
+        setJobFactory(this);
         super.start();
     }
 
     public void addComponentResolver(JobKey key, ComponentResolver resolver) {
-    	((RubyJobProxyFactory)getJobFactory()).addComponentResolver( key, resolver );
+        this.componentResolvers.put(key, resolver);
     }
-       
+
     public Injector<RubyRuntimePool> getRubyRuntimePoolInjector() {
         return this.rubyRuntimePoolInjector;
     }
-    
+
     private InjectedValue<RubyRuntimePool> rubyRuntimePoolInjector = new InjectedValue<RubyRuntimePool>();
-    
-    private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
+    private Map<JobKey, ComponentResolver> componentResolvers = new HashMap<JobKey, ComponentResolver>();
+
+    private static final Logger log = Logger.getLogger("org.torquebox.jobs");
 }

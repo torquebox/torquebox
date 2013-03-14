@@ -37,6 +37,10 @@ public class JobsServices {
     public static ServiceName scheduledJob(DeploymentUnit unit, String jobName) {
         return unit.getServiceName().append( "scheduled_job" ).append( jobName );
     }
+
+    public static ServiceName scheduledJobMBean(DeploymentUnit unit, String jobName) {
+        return scheduledJob(unit, jobName).append( "mbean" );
+    }
     
     public static ServiceName jobScheduler(DeploymentUnit unit, boolean singleton) {
         ServiceName name = unit.getServiceName().append( "jobs" );
@@ -44,6 +48,10 @@ public class JobsServices {
         	name = name.append( "singleton" );
         }
         return name;
+    }
+
+    public static ServiceName schedulizer(DeploymentUnit unit) {
+        return unit.getServiceName().append( "job_schedulizer" );
     }
 
 }

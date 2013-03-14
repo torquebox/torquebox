@@ -29,6 +29,7 @@ import java.util.List;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.torquebox.core.runtime.PoolMetaData;
 import org.torquebox.jobs.ScheduledJobMetaData;
@@ -89,6 +90,7 @@ public class JobsRuntimePoolProcessorTest extends AbstractDeploymentProcessorTes
      * define a pool.
      */
     @Test
+    @Ignore("Scheduled jobs - we don't know when we'll require a pool")
     public void testNoPoolRequired() throws Exception {
         DeploymentPhaseContext phaseContext = createPhaseContext();
         DeploymentUnit unit = phaseContext.getDeploymentUnit();

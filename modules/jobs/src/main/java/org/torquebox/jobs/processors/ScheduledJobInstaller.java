@@ -19,35 +19,16 @@
 
 package org.torquebox.jobs.processors;
 
-import java.util.Hashtable;
-import java.util.List;
-
-import javax.management.MBeanServer;
-
-import org.jboss.as.jmx.MBeanRegistrationService;
-import org.jboss.as.jmx.MBeanServerService;
-import org.jboss.as.jmx.ObjectNameFactory;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
-import org.jboss.msc.service.ServiceBuilder;
-import org.jboss.msc.service.ServiceBuilder.DependencyType;
-import org.jboss.msc.service.ServiceController.Mode;
-import org.jboss.msc.service.ServiceName;
-import org.projectodd.polyglot.core.util.ClusterUtil;
-import org.projectodd.polyglot.jobs.BaseJobScheduler;
-import org.projectodd.polyglot.jobs.BaseJob;
-import org.torquebox.core.app.RubyAppMetaData;
-import org.torquebox.core.as.CoreServices;
-import org.torquebox.core.component.ComponentResolver;
-import org.torquebox.core.runtime.RubyRuntimePool;
-import org.torquebox.core.util.StringUtils;
-import org.torquebox.jobs.ScheduledJob;
-import org.torquebox.jobs.ScheduledJobMBean;
+import org.torquebox.jobs.JobSchedulizer;
 import org.torquebox.jobs.ScheduledJobMetaData;
 import org.torquebox.jobs.as.JobsServices;
+
+import java.util.List;
 
 /**
  * <pre>
@@ -55,7 +36,7 @@ import org.torquebox.jobs.as.JobsServices;
  *    In: ScheduledJobMetaData
  *   Out: ScheduledJob
  * </pre>
- * 
+ * <p/>
  * Creates objects from metadata
  */
 public class ScheduledJobInstaller implements DeploymentUnitProcessor {
@@ -66,10 +47,35 @@ public class ScheduledJobInstaller implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        List<ScheduledJobMetaData> allJobMetaData = unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
+        List<ScheduledJobMetaData> allJobMetaData = unit.getAttachmentList(ScheduledJobMetaData.ATTACHMENTS_KEY);
 
-        for (ScheduledJobMetaData metaData : allJobMetaData) {
-            deploy( phaseContext, metaData );
+        if (!allJobMetaData.isEmpty()) {
+
+            JobSchedulizer jobSchedulizer;
+
+            try {
+                jobSchedulizer = (JobSchedulizer) phaseContext.getServiceRegistry().getService(JobsServices.schedulizer(phaseContext.getDeploymentUnit())).getService().getValue();
+            } catch (Exception e) {
+                log.errorf(e, "Could not obtain JobSchedulizer for %s deployment unit. Deploying jobs from deployment descriptors failed", phaseContext.getDeploymentUnit().getName());
+                return;
+            }
+
+            for (ScheduledJobMetaData metaData : allJobMetaData) {
+
+                log.debugf("Deploying '%s' job...", metaData.getName());
+
+                jobSchedulizer.createJob(
+                        metaData.getRubyClassName(),
+                        metaData.getCronExpression(),
+                        metaData.getTimeout(),
+                        metaData.getName(),
+                        metaData.getDescription(),
+                        metaData.getParameters(),
+                        metaData.isSingleton()
+                );
+
+                log.debugf("Job '%s' deployed", metaData.getName());
+            }
         }
     }
 
@@ -78,47 +84,5 @@ public class ScheduledJobInstaller implements DeploymentUnitProcessor {
 
     }
 
-    protected void deploy(DeploymentPhaseContext phaseContext, final ScheduledJobMetaData metaData) throws DeploymentUnitProcessingException {
-        DeploymentUnit unit = phaseContext.getDeploymentUnit();
-
-        ScheduledJob job = new ScheduledJob( 
-                metaData.getGroup(),
-                metaData.getName(),
-                metaData.getDescription(),
-                metaData.getCronExpression(),
-                metaData.getTimeout(),
-                metaData.isSingleton(),
-                metaData.getRubyClassName()
-                );
-
-        ServiceName serviceName = JobsServices.scheduledJob( unit, metaData.getName() );
-
-        ServiceBuilder<BaseJob> builder = phaseContext.getServiceTarget().addService( serviceName, job );
-        builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, job.getRubyRuntimePoolInjector() );
-        builder.addDependency( JobsServices.jobComponentResolver( unit, metaData.getName() ), ComponentResolver.class, job.getComponentResolverInjector() );
-        builder.addDependency( JobsServices.jobScheduler( unit, metaData.isSingleton() && ClusterUtil.isClustered( phaseContext ) ), BaseJobScheduler.class, job.getJobSchedulerInjector() );
-
-        builder.setInitialMode( Mode.PASSIVE );
-        builder.install();
-
-        final RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
-
-        String mbeanName = ObjectNameFactory.create( "torquebox.jobs", new Hashtable<String, String>() {
-            {
-                put( "app", rubyAppMetaData.getApplicationName() );
-                put( "name", StringUtils.underscore( metaData.getName() ) );
-            }
-        } ).toString();
-
-        ServiceName mbeanServiceName = serviceName.append( "mbean" );
-        MBeanRegistrationService<ScheduledJobMBean> mbeanService = new MBeanRegistrationService<ScheduledJobMBean>( mbeanName, mbeanServiceName );
-        phaseContext.getServiceTarget().addService( mbeanServiceName, mbeanService )
-                .addDependency( DependencyType.OPTIONAL, MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
-                .addDependency( serviceName, ScheduledJobMBean.class, mbeanService.getValueInjector() )
-                .setInitialMode( Mode.PASSIVE )
-                .install();
-
-    }
-
-    private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
+    private static final Logger log = Logger.getLogger("org.torquebox.jobs");
 }
