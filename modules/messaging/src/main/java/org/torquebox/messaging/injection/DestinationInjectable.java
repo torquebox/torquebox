@@ -58,7 +58,6 @@ public class DestinationInjectable extends JNDIInjectable {
             serviceTarget.addService( liveDestinationServiceName, liveDestinationService )
             .addDependency( connectionFactoryServiceName, ConnectionFactory.class, liveDestinationService.getConnectionFactoryInjector() )
             .addDependency( destinationServiceName, Destination.class, liveDestinationService.getDestinationInjector() )
-            .addDependency( DestinationUtils.destinationPointerName(unit, getName()) )
             .install();
         }
         return liveDestinationServiceName;
