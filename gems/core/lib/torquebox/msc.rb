@@ -84,12 +84,12 @@ module TorqueBox
       # @return String the service state after waiting - one of DOWN,
       # STARTING, START_FAILED, UP, STOPPING, or REMOVED. This should
       # be UP unless something went wrong.
-      def wait_for_service_to_start(service)
+      def wait_for_service_to_start(service, seconds_to_wait)
         unless service.state.to_s == 'UP'
           listener = org.torquebox.core.gem.MSCServiceListener.new(service)
           service.add_listener(listener)
           service.set_mode(org.jboss.msc.service.ServiceController::Mode::ACTIVE)
-          listener.wait_for_start_or_failure(10, java.util.concurrent::TimeUnit::SECONDS)
+          listener.wait_for_start_or_failure(seconds_to_wait, java.util.concurrent::TimeUnit::SECONDS)
         end
         service.state.to_s
       end
