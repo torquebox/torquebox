@@ -15,6 +15,8 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'java'
+
 module TorqueBox
   class MSC
     class << self
@@ -87,7 +89,7 @@ module TorqueBox
           listener = org.torquebox.core.gem.MSCServiceListener.new(service)
           service.add_listener(listener)
           service.set_mode(org.jboss.msc.service.ServiceController::Mode::ACTIVE)
-          listener.wait_for_start_or_failure(10, java.util.concurrent.TimeUnit::SECONDS)
+          listener.wait_for_start_or_failure(10, java.util.concurrent::TimeUnit::SECONDS)
         end
         service.state.to_s
       end
