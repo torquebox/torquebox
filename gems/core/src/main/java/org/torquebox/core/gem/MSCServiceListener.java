@@ -36,7 +36,6 @@ public class MSCServiceListener extends AbstractServiceListener<Object> {
 
     @Override
     public void transition(ServiceController<? extends Object> controller, Transition transition) {
-        System.err.println( "!!! GOT TRANSITION " + transition + " for " + this );
         if (transition.getAfter() == Substate.UP ||
             (transition.getAfter() != Substate.START_REQUESTED &&
              transition.getAfter() != Substate.START_INITIATING &&
@@ -48,11 +47,6 @@ public class MSCServiceListener extends AbstractServiceListener<Object> {
         }
     }
 
-    @Override
-    public void serviceRemoveRequested(ServiceController<? extends Object> controller) {
-        System.err.println( "!!! SERVICE REMOVE REQUESTED for " + this );
-    }
-
     void notifyAsStartedOrProblem() {
         this.startLatch.countDown();
     }
@@ -61,9 +55,7 @@ public class MSCServiceListener extends AbstractServiceListener<Object> {
         if (isUp()) {
             return true;
         }
-        System.err.println( "!!! WAITING ON START LATCH: " + this );
         boolean started_or_failed = this.startLatch.await(timeout, unit);
-        System.err.println( "!!! GOT START LATCH: " + this );
         if (started_or_failed && isUp()) {
             return true;
         }
