@@ -24,6 +24,7 @@ import javax.jms.Destination;
 
 import org.jboss.as.naming.deployment.ContextNames;
 import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
 import org.projectodd.polyglot.messaging.destinations.DestinationUtils;
@@ -58,6 +59,7 @@ public class DestinationInjectable extends JNDIInjectable {
             serviceTarget.addService( liveDestinationServiceName, liveDestinationService )
             .addDependency( connectionFactoryServiceName, ConnectionFactory.class, liveDestinationService.getConnectionFactoryInjector() )
             .addDependency( destinationServiceName, Destination.class, liveDestinationService.getDestinationInjector() )
+            .addDependency( DependencyType.OPTIONAL, DestinationUtils.destinationPointerName(unit, getName()) )
             .install();
         }
         return liveDestinationServiceName;
