@@ -21,6 +21,7 @@ describe TorqueBox::Infinispan::Cache do
     @manager = org.infinispan.manager.DefaultCacheManager.new
     service = org.projectodd.polyglot.cache.as.CacheService.new
     service.stub!(:cache_container).and_return( @manager )
+    TorqueBox::Registry.merge!("transaction-manager" => nil)
     TorqueBox::ServiceRegistry.stub!(:[]).with(org.projectodd.polyglot.cache.as.CacheService::CACHE).and_return( service )
     @cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache' )
   end
