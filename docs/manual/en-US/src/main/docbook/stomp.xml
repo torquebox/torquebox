@@ -399,7 +399,29 @@ end</programlisting></para>
     WebSockets and STOMP stack. TorqueBox includes the Javascript client
     provided by the Stilts distribution in the
     <filename>share/javascripts/</filename> directory. The client is derived
-    from work by Jeff Mesnil.</para>
+    from work by Jeff Mesnil. The client has several methods of connecting
+    back to the server, transparent to your application:</para>
+
+    <para><orderedlist>
+        <listitem>
+          <para>Pure WebSockets</para>
+        </listitem>
+
+        <listitem>
+          <para>WebSockets over Flash (using the Gimit web-socket-js
+          library)</para>
+        </listitem>
+
+        <listitem>
+          <para>HTTP POST for client-to-server with Server-Sent-Events (SSE)
+          providing server-to-client</para>
+        </listitem>
+
+        <listitem>
+          <para>HTTP POST for client-to-server with lingering HTTP GET (long
+          polling, or Comet) providing server to client</para>
+        </listitem>
+      </orderedlist></para>
 
     <section>
       <title>Using the Javascript client</title>
@@ -412,17 +434,23 @@ end</programlisting></para>
         <title>Instantiating a client</title>
 
         <para>The client is created using the
-        <methodname>client(...)</methodname> method of the Javascript
-        <classname>Stomp</classname> class. This method takes one parameter,
-        being the URL of the server to connect to. Creating the client does
-        not connect it.</para>
-
-        <para>By default, the STOMP server runs on port 8675 and supports
-        virtual hosts. To connect, a URL scheme of <code>ws://</code> should
-        be used.</para>
+        <methodname>Client(...)</methodname> constructor of the Javascript
+        <classname>Stomp</classname> class. This method takes up to three
+        parameters, being the host, port and secure flag of the server to
+        connect to. Creating the client does not connect it. The client is
+        contained in a file named <filename>stomp.js</filename>, which can be
+        served directly from the Stomplet server port, by requesting
+        <filename>/stomp.js</filename>. When the STOMP client is loaded in
+        this fashion into your HTML page, the Client() constructor is
+        pre-configured with the host, port and secure flag for the same
+        server.</para>
 
         <para><informalexample>
-            <programlisting>client = Stomp.client( "ws://localhost:8675" )</programlisting>
+            <programlisting>// To use the preconfigured client provided by the server.
+client = new Stomp.Client(); 
+
+// To specify the host, port and secure flag explicitly
+client = new Stomp.Client( "somehost.com", 8676, true );</programlisting>
           </informalexample></para>
       </section>
 
@@ -430,18 +458,19 @@ end</programlisting></para>
         <title>Connecting the client</title>
 
         <para>To connect the client to the STOMP server, use the connect(...)
-        method, which takes three arguments: username, password and a callback
-        function which will be invoked once the connection has been
+        method, which takes up to three arguments: username, password and a
+        callback function which will be invoked once the connection has been
         established.</para>
 
-        <para>Currently the username and password parameters are ignored.
-        Typical applications will authenticate the user through traditional
-        web-based logins, storing an authorization token in the session, which
-        is then available to each Stomplet to positively identify the
-        connected client.</para>
+        <para>Currently the username and password parameters are ignored and
+        can be skipped, allowing just the specification of the callback
+        function. Typical applications will authenticate the user through
+        traditional web-based logins, storing an authorization token in the
+        session, which is then available to each Stomplet to positively
+        identify the connected client.</para>
 
         <para><informalexample>
-            <programlisting>client.connect( "username", "password", function() {
+            <programlisting>client.connect( function() {
     // executed once successfully connected
 } );</programlisting>
           </informalexample>Once connected, the callback function will be
@@ -567,17 +596,26 @@ run app</programlisting></para>
       STOMP server's endpoint URL, without having to hard-code that into your
       application. Since JBoss AS allows changing ports for services,
       especially when running multiple nodes on the same machine, determining
-      the URL at runtime is helpful.</para>
+      the URL at runtime is helpful. The STOMP endpoint supports many
+      protocols, therefore it is up to the application to construct an
+      appropriate URL involving <uri>stomp://</uri>, <uri>stomp+ssl://</uri>,
+      <uri>ws://</uri>, <uri>wss://</uri>, <uri>http://</uri>, or
+      <uri>https://</uri> URLs. You may use HTTP-centric URLs to load the
+      Javascript client. The Javascript client needs only the host, port and
+      secure flag to connect, figuring which protocols to use as
+      necessary.</para>
 
       <para>You may inject stomp-endpoint into your application code, and it
-      will provide the the URL for connections to the STOMP endpoint on that
-      node.</para>
+      will provide the the details for connections to the STOMP endpoint on
+      that node.</para>
 
       <para><informalexample>
-          <para><programlisting>my_url = fetch( 'stomp-endpoint' )</programlisting></para>
-        </informalexample>The URL may be used with the middleware-provided
-      Javascript client to conveniently and reliably connect back to the STOMP
-      endpoint, regardless of the current port being used.</para>
+          <para><programlisting>endpoint = fetch( 'stomp-endpoint' )
+
+puts endpoint.host
+puts endpoint.port
+puts endpoint.secure?</programlisting></para>
+        </informalexample></para>
 
       <para>Additionally, to fetch the secure endpoint (if provisioned) you
       may use the key <code>stomp-endpoint-secure</code>.</para>

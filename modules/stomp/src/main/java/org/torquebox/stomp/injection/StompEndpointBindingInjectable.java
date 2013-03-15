@@ -28,26 +28,30 @@ import org.torquebox.stomp.RubyStompletMetaData;
 import org.torquebox.stomp.as.StompServices;
 
 public class StompEndpointBindingInjectable extends SimpleNamedInjectable {
-    
-    public static final StompEndpointBindingInjectable INSTANCE = new StompEndpointBindingInjectable(false);
-    public static final StompEndpointBindingInjectable SECURE_INSTANCE = new StompEndpointBindingInjectable(true);
+
+    public static final StompEndpointBindingInjectable INSTANCE = new StompEndpointBindingInjectable( false );
+    public static final StompEndpointBindingInjectable SECURE_INSTANCE = new StompEndpointBindingInjectable( true );
 
     public StompEndpointBindingInjectable(boolean secure) {
-        super( "stomp-endpoint", "stomp-endpoint", false, true );
+        super(
+                (secure ? "stomp-endpoint-secure" : "stomp-endpoint"),
+                (secure ? "stomp-endpoint-secure" : "stomp-endpoint"),
+                false,
+                true );
         this.secure = secure;
     }
 
     @Override
     public ServiceName getServiceName(ServiceTarget serviceTarget, DeploymentUnit unit) throws Exception {
         AttachmentList<RubyStompletMetaData> stomplets = unit.getAttachment( RubyStompletMetaData.ATTACHMENTS_KEY );
-        
-        if ( stomplets == null || stomplets.isEmpty() ) {
+
+        if (stomplets == null || stomplets.isEmpty()) {
             return null;
         }
-        
+
         return StompServices.endpointBinding( unit, secure );
     }
-    
+
     private boolean secure;
 
 }
