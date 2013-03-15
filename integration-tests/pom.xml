@@ -434,6 +434,11 @@
         <driver.type>headless</driver.type>
         <rspec.max.heap>512m</rspec.max.heap>
         <jboss.max.heap>896m</jboss.max.heap>
+        <spec>spec/alacarte_spec.rb spec/backgroundable_spec.rb
+        spec/basic_rack_spec.rb spec/basic_rails3_spec.rb
+        spec/basic_rails3_2_spec.rb spec/basic_sinatra_spec.rb
+        spec/basic_war_spec.rb spec/injection_spec.rb
+        spec/messaging_spec.rb spec/services_spec.rb spec/twitter_spec.rb</spec>
       </properties>
     </profile>
     <profile>
