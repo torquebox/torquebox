@@ -20,7 +20,6 @@
 package org.torquebox.jobs.processors;
 
 import org.jboss.as.clustering.jgroups.subsystem.ChannelFactoryService;
-import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.value.Value;
@@ -69,7 +68,7 @@ public class JobSchedulerInstallerTest extends AbstractDeploymentProcessorTestCa
     public void testNoJobsButSchedulerShouldBeDeployedEitherCase() throws Exception {
         deploy( phaseContext );
 
-        ServiceName schedulerServiceName = JobsServices.jobScheduler( unit, false );
+        ServiceName schedulerServiceName = JobsServices.scheduler(unit, false);
         MockServiceBuilder<?> builder = phaseContext.getMockServiceTarget().getMockServiceBuilder( schedulerServiceName );
         assertNotNull( builder );
         assertEquals( 1, phaseContext.getMockServiceTarget().getMockServiceBuilders().size() );
@@ -83,7 +82,7 @@ public class JobSchedulerInstallerTest extends AbstractDeploymentProcessorTestCa
 
         deploy( phaseContext );
 
-        ServiceName schedulerServiceName = JobsServices.jobScheduler( unit, false );
+        ServiceName schedulerServiceName = JobsServices.scheduler(unit, false);
         MockServiceBuilder<?> builder = phaseContext.getMockServiceTarget().getMockServiceBuilder( schedulerServiceName );
         assertNotNull( builder );
         assertEquals( 2, phaseContext.getMockServiceTarget().getMockServiceBuilders().size() );
@@ -97,7 +96,7 @@ public class JobSchedulerInstallerTest extends AbstractDeploymentProcessorTestCa
         
         deploy( phaseContext );
 
-        ServiceName schedulerServiceName = JobsServices.jobScheduler( unit, false );
+        ServiceName schedulerServiceName = JobsServices.scheduler(unit, false);
         MockServiceBuilder<?> builder = phaseContext.getMockServiceTarget().getMockServiceBuilder( schedulerServiceName );
         assertNotNull( builder );
         
@@ -122,7 +121,7 @@ public class JobSchedulerInstallerTest extends AbstractDeploymentProcessorTestCa
         
         deploy( phaseContext );
 
-        ServiceName schedulerServiceName = JobsServices.jobScheduler( unit, true );
+        ServiceName schedulerServiceName = JobsServices.scheduler(unit, true);
         MockServiceBuilder<?> builder = phaseContext.getMockServiceTarget().getMockServiceBuilder( schedulerServiceName );
         assertNotNull( builder );
         
@@ -143,7 +142,7 @@ public class JobSchedulerInstallerTest extends AbstractDeploymentProcessorTestCa
         
         deploy( phaseContext );
 
-        ServiceName schedulerServiceName = JobsServices.jobScheduler( unit, false );
+        ServiceName schedulerServiceName = JobsServices.scheduler(unit, false);
         MockServiceBuilder<?> builder = phaseContext.getMockServiceTarget().getMockServiceBuilder( schedulerServiceName );
         assertNotNull( builder );
         

@@ -22,36 +22,13 @@ package org.torquebox.jobs.as;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
 
-public class JobsServices {
-    
-    private JobsServices() {
-    }
-    
-    public static final ServiceName TORQUEBOX = ServiceName.of( "torquebox" );
-    public static final ServiceName JOBS = TORQUEBOX.append( "jobs" );
-    
-    public static ServiceName jobComponentResolver(DeploymentUnit unit, String jobName) {
-        return unit.getServiceName().append( "component_resolver" ).append( jobName );
-    }
-    
-    public static ServiceName scheduledJob(DeploymentUnit unit, String jobName) {
-        return unit.getServiceName().append( "scheduled_job" ).append( jobName );
-    }
+public class JobsServices extends org.projectodd.polyglot.jobs.as.JobsServices {
 
-    public static ServiceName scheduledJobMBean(DeploymentUnit unit, String jobName) {
-        return scheduledJob(unit, jobName).append( "mbean" );
-    }
-    
-    public static ServiceName jobScheduler(DeploymentUnit unit, boolean singleton) {
-        ServiceName name = unit.getServiceName().append( "jobs" );
-        if (singleton) {
-        	name = name.append( "singleton" );
-        }
-        return name;
-    }
+    public static final ServiceName TORQUEBOX = ServiceName.of("torquebox");
+    public static final ServiceName JOBS = TORQUEBOX.append("jobs");
 
-    public static ServiceName schedulizer(DeploymentUnit unit) {
-        return unit.getServiceName().append( "job_schedulizer" );
+    public static ServiceName componentResolver(DeploymentUnit unit, String jobName) {
+        return unit.getServiceName().append("component_resolver").append(jobName);
     }
 
 }

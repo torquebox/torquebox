@@ -82,7 +82,7 @@ public class ScheduledJobInstallerTest extends AbstractDeploymentProcessorTestCa
         
         deploy( phaseContext );
 
-        ServiceName jobServiceName = JobsServices.scheduledJob( unit, "job.one" );
+        ServiceName jobServiceName = JobsServices.job(unit, "job.one");
         
         MockServiceBuilder<?> builder = phaseContext.getMockServiceTarget().getMockServiceBuilder( jobServiceName );
         

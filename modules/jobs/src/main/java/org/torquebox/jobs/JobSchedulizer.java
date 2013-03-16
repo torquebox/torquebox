@@ -22,16 +22,12 @@ package org.torquebox.jobs;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
-import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
 import org.projectodd.polyglot.core.AtRuntimeInstaller;
-import org.projectodd.polyglot.core.as.DeploymentNotifier;
 import org.projectodd.polyglot.core.util.ClusterUtil;
 import org.projectodd.polyglot.core.util.TimeInterval;
 import org.projectodd.polyglot.jobs.BaseJobScheduler;
-import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
-import org.torquebox.core.component.ComponentClass;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.component.processors.ComponentResolverHelper;
 import org.torquebox.core.runtime.RubyRuntimePool;
@@ -63,7 +59,7 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
         // We need to remove the '::' since it's not allowed in the service name
         String safeName = name.replaceAll("::", ".");
 
-        ServiceName serviceName = JobsServices.jobComponentResolver(getUnit(), safeName);
+        ServiceName serviceName = JobsServices.componentResolver(getUnit(), safeName);
 
         ComponentResolverHelper helper = new ComponentResolverHelper(getTarget(), getUnit(), serviceName);
 
@@ -84,7 +80,7 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
     }
 
     private void installJob(final ScheduledJob job) {
-        final ServiceName serviceName = JobsServices.scheduledJob(getUnit(), job.getName());
+        final ServiceName serviceName = JobsServices.job(getUnit(), job.getName());
 
         replaceService(serviceName,
                 new Runnable() {
@@ -93,8 +89,8 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
                         ServiceBuilder builder = build(serviceName, job, job.isSingleton());
 
                         builder.addDependency(CoreServices.runtimePoolName(getUnit(), "jobs"), RubyRuntimePool.class, job.getRubyRuntimePoolInjector())
-                                .addDependency(JobsServices.jobComponentResolver(getUnit(), job.getName()), ComponentResolver.class, job.getComponentResolverInjector())
-                                .addDependency(JobsServices.jobScheduler(getUnit(), job.isSingleton() && ClusterUtil.isClustered(getUnit().getServiceRegistry())), BaseJobScheduler.class, job.getJobSchedulerInjector())
+                                .addDependency(JobsServices.componentResolver(getUnit(), job.getName()), ComponentResolver.class, job.getComponentResolverInjector())
+                                .addDependency(JobsServices.scheduler(getUnit(), job.isSingleton() && ClusterUtil.isClustered(getUnit().getServiceRegistry())), BaseJobScheduler.class, job.getJobSchedulerInjector())
                                 .install();
 
                     }

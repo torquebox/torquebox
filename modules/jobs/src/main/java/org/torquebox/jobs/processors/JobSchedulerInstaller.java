@@ -75,7 +75,7 @@ public class JobSchedulerInstaller implements DeploymentUnitProcessor {
 
     private void installScheduler(DeploymentPhaseContext phaseContext, boolean singleton) {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        ServiceName serviceName = JobsServices.jobScheduler(unit, singleton);
+        ServiceName serviceName = JobsServices.scheduler(unit, singleton);
         JobSchedulerMetaData schedulerMetaData = unit.getAttachment(JobSchedulerMetaData.ATTACHMENT_KEY);
 
         if (schedulerMetaData == null) {
