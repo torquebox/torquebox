@@ -23,6 +23,8 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.service.StartContext;
+import org.jboss.msc.service.StartException;
 import org.projectodd.polyglot.core.AtRuntimeInstaller;
 import org.projectodd.polyglot.core.util.ClusterUtil;
 import org.projectodd.polyglot.core.util.TimeInterval;
@@ -35,6 +37,7 @@ import org.torquebox.core.util.StringUtils;
 import org.torquebox.jobs.as.JobsServices;
 import org.torquebox.jobs.component.JobComponent;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -45,6 +48,36 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
 
     public JobSchedulizer(DeploymentUnit unit) {
         super(unit);
+    }
+
+    @Override
+    public void start(StartContext context) throws StartException {
+        super.start(context);
+
+        List<ScheduledJobMetaData> allJobMetaData = getUnit().getAttachmentList(ScheduledJobMetaData.ATTACHMENTS_KEY);
+
+        if (allJobMetaData == null || allJobMetaData.size() == 0) {
+            return;
+        }
+
+        log.debug("Installing jobs listed in deployment descriptors...");
+
+        for (ScheduledJobMetaData metaData : allJobMetaData) {
+
+            log.debugf("Deploying '%s' job...", metaData.getName());
+
+            createJob(
+                    metaData.getRubyClassName(),
+                    metaData.getCronExpression(),
+                    metaData.getTimeout(),
+                    metaData.getName(),
+                    metaData.getDescription(),
+                    metaData.getParameters(),
+                    metaData.isSingleton()
+            );
+
+            log.debugf("Job '%s' deployed", metaData.getName());
+        }
     }
 
     public ScheduledJob createJob(String rubyClassName, String cronExpression, String timeout, String name, String description, Map<String, Object> config, boolean singleton) {

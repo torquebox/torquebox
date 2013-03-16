@@ -36,8 +36,6 @@ import org.torquebox.web.as.WebServices;
 import org.torquebox.web.component.RackApplicationComponent;
 import org.torquebox.web.rack.RackMetaData;
 
-import java.io.IOException;
-
 public class RackApplicationComponentResolverInstaller implements DeploymentUnitProcessor {
 
     @Override

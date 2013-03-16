@@ -30,7 +30,7 @@ import org.torquebox.jobs.as.JobsServices;
 
 /**
  * Creates a JobSchedulizer service
- *
+ * <p/>
  * This service is used to schedule jobs at runtime.
  */
 public class JobSchedulizerInstaller implements DeploymentUnitProcessor {
