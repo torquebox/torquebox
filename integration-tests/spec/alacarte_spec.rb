@@ -75,6 +75,61 @@ describe "jobs alacarte" do
   end
 end
 
+remote_describe "runtime jobs alacarte" do
+  deploy <<-END.gsub(/^ {4}/, '')
+    ---
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/alacarte/runtime_jobs
+      env: development
+
+    ruby:
+      version: #{RUBY_VERSION[0, 3]}
+  END
+
+  it "should deploy the job" do
+    TorqueBox::ScheduledJob.list.count.should == 0
+    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/10 * * * * ?")
+    TorqueBox::ScheduledJob.list.count.should == 1
+
+    job = TorqueBox::ScheduledJob.lookup('default')
+    job.name.should == 'default'
+    job.status.should == 'STARTED'
+  end
+
+  it "should stop the job" do
+    job = TorqueBox::ScheduledJob.lookup('default')
+    job.name.should == 'default'
+    job.status.should == 'STARTED'
+    job.stop
+    job.status.should == 'STOPPED'
+    job.start
+    job.status.should == 'STARTED'
+    job.stop
+  end
+
+  it "should deploy the job with different name" do
+    TorqueBox::ScheduledJob.list.count.should == 1
+    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/10 * * * * ?", :name => "simple.job")
+    TorqueBox::ScheduledJob.list.count.should == 2
+
+    job = TorqueBox::ScheduledJob.lookup('simple.job')
+    job.name.should == 'simple.job'
+    job.status.should == 'STARTED'
+  end
+
+  it "should deploy the job with config" do
+    TorqueBox::ScheduledJob.list.count.should == 2
+    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/10 * * * * ?", :name => "simple.config.job", :config => {:text => "text", :hash => {:a => 2}})
+    TorqueBox::ScheduledJob.list.count.should == 3
+
+    job = TorqueBox::ScheduledJob.lookup('simple.config.job')
+    job.name.should == 'simple.config.job'
+    job.status.should == 'STARTED'
+  end
+
+
+end
+
 describe "modular jobs alacarte" do
   deploy <<-END.gsub(/^ {4}/,'')
     ---
