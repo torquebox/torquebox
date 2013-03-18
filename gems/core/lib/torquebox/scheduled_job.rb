@@ -28,26 +28,83 @@ module TorqueBox
       #             should run
       # @param options Optional parameters (a Hash), including:
       #
-      # * :name [String] The job name unique across the application, by default set to "default"
+      # * :name [String] The job name unique across the application, if not provided set to the class name
       # * :description [String] Job description
       # * :timeout [String] The time after the job execution should be interrupted. By default it'll never interrupt the job execution. Example: '2s', '1m'
       # * :config [Hash] Data that should be injected to the job constructor
       # * :singleton [boolean] Flag to determine if the job should be executed on every node (set to +true+, default) in the cluster or only on one node (set to +false+).
       # * :wait [Long] The time (in miliseconds) to wait for the job scheduling operation completion
       def schedule(class_name, cron, options = {})
+        raise "No job class name provided" if class_name.nil?
+        raise "No cron expression provided" if cron.nil?
+
         options = {
+            :name => class_name.to_s,
             :singleton => true,
             :timeout => "0s",
             :wait => 10_000
         }.merge(options)
 
-        TorqueBox::ServiceRegistry.lookup(schedulizer_service_name) do |schedulizer|
-          # Receive the java.util.concurrent.ExecutorCompletionService object
-          completion_service = schedulizer.create_job(class_name.to_s, cron, options[:timeout], options[:name], options[:description], options[:config], options[:singleton])
-          # Wait for the task completion
-          # There will be always one task, so we're safe here
-          # In case of success - return true, false otherwise
-          completion_service.poll(options[:wait], java.util.concurrent.TimeUnit::MILLISECONDS).nil? ? false : true
+        with_schedulizer(options[:wait]) do |schedulizer|
+          schedulizer.create_job(class_name.to_s, cron, options[:timeout], options[:name], options[:description], options[:config], options[:singleton])
+        end
+      end
+
+      # Creates new 'at' job.
+      #
+      # @param class_name [String] The class name of the scheduled job to be executed
+      # @param options [Hash] A hash containing the at job options:
+      #
+      # * :at [Time] The start time of the job
+      # * :in [Fixnum] Specifies when the job execution should start, in ms
+      # * :repeat [Fixnum] Specifies the number of times to execute the job
+      # * :every [Fixnum] Specifies the delay (in ms) between job executions
+      # * :until [Time] The stop time of job execution
+      # * :name [String] The job name unique across the application, by default set to the job class name
+      # * :description [String] Job description
+      # * :timeout [String] The time after the job execution should be interrupted. By default it'll never interrupt the job execution. Example: '2s', '1m'
+      # * :config [Hash] Data that should be injected to the job constructor
+      # * :singleton [boolean] Flag to determine if the job should be executed on every node (set to +true+) in the cluster or only on one node (set to +false+, default).
+      #
+      # Examples:
+      #
+      # # Every 200 ms for over 5 seconds, from now:
+      # TorqueBox::AtJob.at('SimpleJob', :every => 200, :until => Time.now + 5)
+      #
+      # # Start in 1 second, then every 200 ms for over 4 seconds (5 seconds from now, but start is delayed):
+      # TorqueBox::AtJob.at('SimpleJob', :at => Time.now + 1, :every => 200, :until => Time.now + 5)
+      #
+      # # Start in 1 second, then every 200 ms for over 4 seconds (5 seconds from now, but start is delayed):
+      # TorqueBox::AtJob.at('SimpleJob', :in => 1_000, :every => 200, :until => Time.now + 5)
+      #
+      # # Start in 1 second, then repeat te job 10 times, every 200 ms
+      # TorqueBox::AtJob.at('SimpleJob', :in => 1_000, :repeat => 10, :every => 200)
+      def at(class_name, options = {})
+        raise "No job class name provided" if class_name.nil?
+        raise "Invalid options for scheduling the job" if options.nil? or !options.is_a?(Hash)
+        raise "Invalid type for :in, should be a Fixnum" if !options[:in].nil? and !options[:in].is_a?(Fixnum)
+        raise "You can't specify both :at and :in" if options.has_key?(:at) and options.has_key?(:in)
+        raise "You can't specify :repeat without :every" if options.has_key?(:repeat) and !options.has_key?(:every)
+        raise "You can't specify :until without :every" if options.has_key?(:until) and !options.has_key?(:every)
+
+        options = {
+            :singleton => false,
+            :name => class_name,
+            :timeout => "0s",
+            :repeat => 0,
+            :every => 0,
+            :at => Time.now,
+            :wait => 10_000
+        }.merge(options)
+
+        if options.has_key?(:in)
+          start = Time.now + options[:in] / 1000.0
+        else
+          start = options[:at]
+        end
+
+        with_schedulizer(options[:wait]) do |schedulizer|
+          schedulizer.create_at_job(class_name.to_s, start, options[:until], options[:every], options[:repeat], options[:timeout], options[:name], options[:description], options[:config], options[:singleton])
         end
       end
 
@@ -67,13 +124,8 @@ module TorqueBox
         raise "No job name provided" if name.nil?
         raise "Couldn't find a job with name '#{name}''" if TorqueBox::ScheduledJob.lookup(name).nil?
 
-        TorqueBox::ServiceRegistry.lookup(schedulizer_service_name) do |schedulizer|
-          # Receive the java.util.concurrent.ExecutorCompletionService object
-          completion_service = schedulizer.remove_job(name)
-          # Wait for the task completion
-          # There will be always one task, so we're safe here
-          # In case of success - return true, false otherwise
-          completion_service.poll(options[:wait], java.util.concurrent.TimeUnit::MILLISECONDS).nil? ? false : true
+        with_schedulizer(options[:wait]) do |schedulizer|
+          schedulizer.remove_job(name)
         end
       end
 
@@ -92,7 +144,7 @@ module TorqueBox
         service_names.map do |service_name|
           service = TorqueBox::MSC.get_service(service_name)
           service.nil? ? nil : service.value
-        end.select {|v| !v.nil? }
+        end.select { |v| !v.nil? }
       end
 
       # Lookup a scheduled job of this application by name.
@@ -125,13 +177,24 @@ module TorqueBox
 
       private
 
+      def with_schedulizer(timeout)
+        TorqueBox::ServiceRegistry.lookup(schedulizer_service_name) do |schedulizer|
+          # Receive the java.util.concurrent.ExecutorCompletionService object
+          completion_service = yield schedulizer
+          # Wait for the task completion
+          # There will be always one task, so we're safe here
+          # In case of success - return true, false otherwise
+          completion_service.poll(timeout, java.util.concurrent.TimeUnit::MILLISECONDS).nil? ? false : true
+        end
+      end
+
       def job_service_name
         TorqueBox::MSC.deployment_unit.service_name.append('scheduled_job')
       end
 
-     def schedulizer_service_name
-       TorqueBox::MSC.deployment_unit.service_name.append('job_schedulizer')
-     end
+      def schedulizer_service_name
+        TorqueBox::MSC.deployment_unit.service_name.append('job_schedulizer')
+      end
 
     end
   end
