@@ -318,6 +318,162 @@ end</programlisting></para>
         linkend="pooling" /> for more details.</para>
     </section>
 
+    <section id="scheduling-runtime">
+      <title>Jobs Management at Runtime</title>
+
+      <para>
+        In addition to creating jobs defined in the deployment descriptors you can
+        create and remove them at runtime too.
+      </para>
+
+      <section>
+        <title>Scheduling Jobs at Runtime</title>
+
+        <para>
+          It is possible to create a new job at runtime. You need to use the
+          <methodname>schedule</methodname> method available in the
+          <methodname>TorqueBox::ScheduledJob</methodname> module.
+
+        </para>
+
+        <para>
+          <example>
+            <title>Scheduling a job</title>
+            <para><programlisting>TorqueBox::ScheduledJob.schedule('JobClassName', '*/10 * * * * ?')</programlisting>
+
+              This simple execution will create a new scheduled job implemented
+              in the <methodname>JobClassName</methodname> class and run it every
+              10 seconds.
+
+              <programlisting>TorqueBox::ScheduledJob.schedule('JobClassName', '*/10 * * * * ?',
+      :name => 'simple.job',
+      :description => 'This is a simple job',
+      :timeout => '2s',
+      :config => {"number" => 1, "text" => "bacon"},
+      :singleton => true)</programlisting>
+
+              This example shows all the available options. Please see the table
+              below for explanation.
+            </para>
+          </example>
+        </para>
+
+        <para>
+          The job class name and cron expression is required. Additionally
+          the <methodname>schedule</methodname> method accepts following,
+          optional parameters:
+        </para>
+
+        <table>
+          <title>Job scheduling options</title>
+
+          <tgroup cols="3">
+            <colspec align="left" />
+
+            <thead>
+              <row>
+                <entry>Option</entry>
+
+                <entry>Default</entry>
+
+                <entry>Description</entry>
+              </row>
+            </thead>
+
+            <tbody>
+              <row>
+                <entry><parameter>:name</parameter></entry>
+
+                <entry>"default"</entry>
+
+                <entry>The job name unique across the application.</entry>
+              </row>
+
+              <row>
+                <entry><parameter>:description</parameter></entry>
+
+                <entry></entry>
+
+                <entry>Job description.</entry>
+              </row>
+
+              <row>
+                <entry><parameter>:timeout</parameter></entry>
+
+                <entry>"0s"</entry>
+
+                <entry>The time after the job execution should be interrupted. By default it'll
+                never interrupt the job execution.</entry>
+              </row>
+
+              <row>
+                <entry><parameter>:config</parameter></entry>
+
+                <entry></entry>
+
+                <entry>Data that should be injected to the job constructor.</entry>
+              </row>
+
+              <row>
+                <entry><parameter>:singleton</parameter></entry>
+
+                <entry>false</entry>
+
+                <entry>Flag to determine if the job should be executed on every node
+                in the cluster (default) or only on one node.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+        <para>
+          Every job requires a unique name across the application. By default,
+          if there is no <parameter>:name</parameter> parameter provided the name
+          will be set to "default".
+        </para>
+
+        <para>
+          If you schedule a job with a name of a job already deployed - the old job
+          will be replaced with the new one.
+        </para>
+
+        <para>
+          Note that if you schedule a job at runtime it'll not be
+          persisted and is lost after the server restart.
+        </para>
+      </section>
+
+      <section>
+        <title>Removing Jobs at Runtime</title>
+
+        <para>
+          You can easily remove a scheduled job. To do this use the
+          <methodname>remove</methodname> method available in the
+          <methodname>TorqueBox::ScheduledJob</methodname> module. This method
+          is executed asynchronously and does not return anything. You cannot expect
+          that the job will be undeployed when the method execution finishes.
+          You can use the <methodname>lookup</methodname> to find if the job still
+          exists.
+        </para>
+
+        <para>
+          <example>
+            <title>Removing a job</title>
+            <para><programlisting>TorqueBox::ScheduledJob.remove('simple.job')</programlisting>
+
+              This example will lookup a job with the 'simple.job' name and remove it.
+
+            </para>
+          </example>
+        </para>
+
+        <para>
+          Note that if you remove a job defined in the deployment descriptor, it'll
+          be started again after server restart.
+        </para>
+      </section>
+    </section>
+
   </section>
 
   <section id="clustered-jobs">
