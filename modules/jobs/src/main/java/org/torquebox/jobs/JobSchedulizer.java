@@ -22,7 +22,6 @@ package org.torquebox.jobs;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
-import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
@@ -42,9 +41,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.jboss.msc.service.ServiceController.*;
+import static org.jboss.msc.service.ServiceController.Mode;
 
-
+/**
+ * Service to manage scheduled jobs at runtime.
+ *
+ * @author Marek Goldmann
+ */
 public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
 
     public JobSchedulizer(DeploymentUnit unit) {
@@ -89,11 +92,47 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
         }
     }
 
+    /**
+     * Creates and deploys a new scheduled job or replace existing.
+     * <p/>
+     * If there is a job with the same name, it'll be removed and replaced.
+     * <p/>
+     * Used by the TorqueBox::ScheduledJob.schedule method.
+     *
+     * @param rubyClassName  The Ruby class name of the job implementation
+     * @param cronExpression When the job should be executed, in cron format
+     * @param timeout        After how much time the job should be interrupted,
+     *                       by default it'll never be interrupted. Accepts a
+     *                       String value, example: '5s'
+     * @param name           Job name
+     * @param description    Job description
+     * @param config         Job configuration that should be injected to the job
+     *                       implementation class constructor
+     * @param singleton      Should the job be running only on one node in cluster?
+     * @return The ScheduledJob object.
+     * @see JobSchedulizer#createJob(String, String, org.projectodd.polyglot.core.util.TimeInterval, String, String, java.util.Map, boolean)
+     */
     public ScheduledJob createJob(String rubyClassName, String cronExpression, String timeout, String name, String description, Map<String, Object> config, boolean singleton) {
         TimeInterval timeoutInterval = TimeInterval.parseInterval(timeout, TimeUnit.SECONDS);
         return createJob(rubyClassName, cronExpression, timeoutInterval, name, description, config, singleton);
     }
 
+    /**
+     * Creates and deploys a new scheduled job or replace existing.
+     * <p/>
+     * If there is a job with the same name, it'll be removed and replaced.
+     *
+     * @param rubyClassName  The Ruby class name of the job implementation
+     * @param cronExpression When the job should be executed, in cron format
+     * @param timeout        After how much time the job should be interrupted,
+     *                       by default it'll never be interrupted.
+     * @param name           Job name
+     * @param description    Job description
+     * @param config         Job configuration that should be injected to the job
+     *                       implementation class constructor
+     * @param singleton      Should the job be running only on one node in cluster?
+     * @return The ScheduledJob object.
+     */
     public ScheduledJob createJob(String rubyClassName, String cronExpression, TimeInterval timeout, String name, String description, Map<String, Object> config, boolean singleton) {
         log.debugf("Creating new job '%s'...", name);
 
@@ -125,8 +164,10 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
      * This operation is executed asynchronously. You cannot expect to have
      * the job undeployed just after the method execution is finished.
      * <p/>
+     * Used by the TorqueBox::ScheduledJob.remove method.
      *
      * @param name Name of the scheduled job
+     * @see JobSchedulizer#removeJob(String, Runnable)
      */
     public void removeJob(String name) {
         removeJob(name, null);

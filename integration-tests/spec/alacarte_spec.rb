@@ -157,6 +157,32 @@ remote_describe "runtime jobs alacarte" do
 
     TorqueBox::ScheduledJob.list.count.should == 0
   end
+
+  it "should replace a job" do
+    TorqueBox::ScheduledJob.list.count.should == 0
+    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/10 * * * * ?", :description => "something")
+    TorqueBox::ScheduledJob.list.count.should == 1
+
+    job = TorqueBox::ScheduledJob.lookup('default')
+    job.name.should == 'default'
+    job.description.should == 'something'
+
+    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/5 * * * * ?", :description => "new job")
+
+    sleep 0.5
+
+    TorqueBox::ScheduledJob.list.count.should == 1
+
+    job = TorqueBox::ScheduledJob.lookup('default')
+    job.name.should == 'default'
+    job.description.should == 'new job'
+
+    TorqueBox::ScheduledJob.remove('default')
+
+    sleep 0.5
+
+    TorqueBox::ScheduledJob.list.count.should == 0
+  end
 end
 
 describe "modular jobs alacarte" do
