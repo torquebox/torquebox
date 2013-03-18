@@ -37,7 +37,7 @@ public class RubyServiceStart implements Service<RubyService> {
     public void start(final StartContext context) throws StartException {
         context.asynchronous();
         
-        context.execute(new Runnable() {
+        new Thread(new Runnable() {
             public void run() {
                 try {
                     RubyServiceStart.this.getValue().start();
@@ -46,7 +46,7 @@ public class RubyServiceStart implements Service<RubyService> {
                     context.failed( new StartException( e ) );
                 }
             }
-        });
+        }).start();
 
     }
 

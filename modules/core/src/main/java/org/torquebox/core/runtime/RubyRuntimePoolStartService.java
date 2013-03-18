@@ -40,7 +40,7 @@ public class RubyRuntimePoolStartService implements Service<RubyRuntimePool> {
     @Override
     public void start(final StartContext context) throws StartException {
         context.asynchronous();
-        context.execute( new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -50,7 +50,7 @@ public class RubyRuntimePoolStartService implements Service<RubyRuntimePool> {
                     context.failed( new StartException( e ) );
                 }
             }
-        } );
+        }).start();
     }
 
     @Override
