@@ -20,6 +20,19 @@ module TorqueBox
   class ScheduledJob
     class << self
 
+      # Creates a new scheduled job.
+      #
+      # @param class_name The scheduled job implementation
+      #                   class name
+      # @param cron The cron expression defining when the job
+      #             should run
+      # @param options Optional parameters (a Hash), including:
+      #
+      # * :name [String] The job name unique across the application, by default set to "default"
+      # * :description [String] Job description
+      # * :timeout [String] The time after the job execution should be interrupted. By default it'll never interrupt the job execution. Example: '2s', '1m'
+      # * :config [Hash] Data that should be injected to the job constructor
+      # * :singleton [boolean] Flag to determine if the job should be executed on every node (set to +true+) in the cluster or only on one node (set to +false+, default).
       def schedule(class_name, cron, options = {})
         options = {
             :singleton => false,
@@ -32,6 +45,11 @@ module TorqueBox
         end
       end
 
+      # Removes a scheduled job.
+      #
+      # This method removes the job asynchronously.
+      #
+      # @param [String] The job name.
       def remove(name = "default")
         TorqueBox::ServiceRegistry.lookup(schedulizer_service_name) do |schedulizer|
           schedulizer.remove_job (name)
