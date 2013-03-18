@@ -72,6 +72,22 @@ describe "jobs alacarte" do
       job.status.should == 'STARTED'
       job.should be_started
     end
+
+    it "should not fail if a job is not found" do
+      job = TorqueBox::ScheduledJob.lookup('job.aaa.abc')
+      job.should == nil
+    end
+
+    it "should remove a job by name" do
+      job = TorqueBox::ScheduledJob.lookup('job.one')
+      job.name.should == 'job.one'
+
+      TorqueBox::ScheduledJob.remove('job.one')
+
+      sleep 0.5
+
+      TorqueBox::ScheduledJob.lookup('job.one').should == nil
+    end
   end
 end
 
@@ -87,47 +103,60 @@ remote_describe "runtime jobs alacarte" do
   END
 
   it "should deploy the job" do
+    queue = TorqueBox::Messaging::Queue.new("/queue/runtime_response")
+
     TorqueBox::ScheduledJob.list.count.should == 0
-    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/10 * * * * ?")
+    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/1 * * * * ?", :config => {"queue" => queue.name})
     TorqueBox::ScheduledJob.list.count.should == 1
 
+    5.times do
+      msg = queue.receive(:timeout => 10_000)
+      msg[:state].should == :running
+      msg[:options].should == {"queue" => queue.name}
+    end
+
     job = TorqueBox::ScheduledJob.lookup('default')
     job.name.should == 'default'
-    job.status.should == 'STARTED'
+
+    TorqueBox::ScheduledJob.remove('default')
+
+    sleep 0.5
+
+    TorqueBox::ScheduledJob.list.count.should == 0
   end
 
-  it "should stop the job" do
-    job = TorqueBox::ScheduledJob.lookup('default')
-    job.name.should == 'default'
-    job.status.should == 'STARTED'
-    job.stop
-    job.status.should == 'STOPPED'
-    job.start
-    job.status.should == 'STARTED'
-    job.stop
-  end
 
   it "should deploy the job with different name" do
-    TorqueBox::ScheduledJob.list.count.should == 1
+    TorqueBox::ScheduledJob.list.count.should == 0
     TorqueBox::ScheduledJob.schedule('SimpleJob', "*/10 * * * * ?", :name => "simple.job")
-    TorqueBox::ScheduledJob.list.count.should == 2
+    TorqueBox::ScheduledJob.list.count.should == 1
 
     job = TorqueBox::ScheduledJob.lookup('simple.job')
     job.name.should == 'simple.job'
     job.status.should == 'STARTED'
+
+    TorqueBox::ScheduledJob.remove('simple.job')
+
+    sleep 0.5
+
+    TorqueBox::ScheduledJob.list.count.should == 0
   end
 
   it "should deploy the job with config" do
-    TorqueBox::ScheduledJob.list.count.should == 2
+    TorqueBox::ScheduledJob.list.count.should == 0
     TorqueBox::ScheduledJob.schedule('SimpleJob', "*/10 * * * * ?", :name => "simple.config.job", :config => {:text => "text", :hash => {:a => 2}})
-    TorqueBox::ScheduledJob.list.count.should == 3
+    TorqueBox::ScheduledJob.list.count.should == 1
 
     job = TorqueBox::ScheduledJob.lookup('simple.config.job')
     job.name.should == 'simple.config.job'
     job.status.should == 'STARTED'
+
+    TorqueBox::ScheduledJob.remove('simple.config.job')
+
+    sleep 0.5
+
+    TorqueBox::ScheduledJob.list.count.should == 0
   end
-
-
 end
 
 describe "modular jobs alacarte" do

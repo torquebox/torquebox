@@ -32,6 +32,12 @@ module TorqueBox
         end
       end
 
+      def remove(name = "default")
+        TorqueBox::ServiceRegistry.lookup(schedulizer_service_name) do |schedulizer|
+          schedulizer.remove_job (name)
+        end
+      end
+
       # List all scheduled jobs of this application.
       #
       # @return [Array<org.torquebox.jobs.ScheduledJob>] the list of

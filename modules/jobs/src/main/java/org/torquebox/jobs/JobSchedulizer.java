@@ -22,6 +22,7 @@ package org.torquebox.jobs;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
+import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
@@ -50,6 +51,14 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
         super(unit);
     }
 
+    /**
+     * When the JobSchedulizer service is starting it deploys all the
+     * scheduled jobs defined in deployment descriptors for the current
+     * deployment unit.
+     *
+     * @param context
+     * @throws StartException
+     */
     @Override
     public void start(StartContext context) throws StartException {
         super.start(context);
@@ -88,9 +97,7 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
     public ScheduledJob createJob(String rubyClassName, String cronExpression, TimeInterval timeout, String name, String description, Map<String, Object> config, boolean singleton) {
         log.debugf("Creating new job '%s'...", name);
 
-        // In case of modular job names used in torquebox.rb the job name is in format Module::JobName
-        // We need to remove the '::' since it's not allowed in the service name
-        String safeName = name.replaceAll("::", ".");
+        String safeName = safeJobName(name);
 
         ServiceName serviceName = JobsServices.componentResolver(getUnit(), safeName);
 
@@ -112,7 +119,51 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
         return job;
     }
 
+    /**
+     * Removes the scheduled job by its name.
+     * <p/>
+     * This operation is executed asynchronously. You cannot expect to have
+     * the job undeployed just after the method execution is finished.
+     * <p/>
+     *
+     * @param name Name of the scheduled job
+     */
+    public void removeJob(String name) {
+        removeJob(name, null);
+    }
+
+    /**
+     * Removes the scheduled job by its name.
+     * <p/>
+     * This operation is executed asynchronously. You cannot expect to have
+     * the job undeployed just after the method execution is finished.
+     * <p/>
+     * You can use the actionOnRemove parameter to execute code after removal.
+     *
+     * @param name           Name of the scheduled job
+     * @param actionOnRemove Code that should be executed after the job
+     *                       removal is complete
+     */
+    public void removeJob(final String name, final Runnable actionOnRemove) {
+        log.debugf("Installing job '%s'", name);
+
+        String safeName = safeJobName(name);
+
+        final ServiceName componentResolverServiceName = JobsServices.componentResolver(getUnit(), safeName);
+        final ServiceName jobServiceName = JobsServices.job(getUnit(), safeName);
+
+        replaceService(jobServiceName, new Runnable() {
+            @Override
+            public void run() {
+                replaceService(componentResolverServiceName, actionOnRemove);
+            }
+        });
+    }
+
+
     private void installJob(final ScheduledJob job) {
+        log.debugf("Installing job '%s'", job.getName());
+
         final ServiceName serviceName = JobsServices.job(getUnit(), job.getName());
 
         replaceService(serviceName,
@@ -130,6 +181,18 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
                 });
 
         installMBean(serviceName, "torquebox.jobs", job);
+    }
+
+    /**
+     * In case of modular job names used in <tt>torquebox.rb</tt> the job name is in
+     * format 'Module::JobName'. We need to remove the '::' since it's not
+     * allowed in the service name.
+     *
+     * @param name
+     * @return Job name safe to include in the service name
+     */
+    private String safeJobName(String name) {
+        return name.replaceAll("::", ".");
     }
 
     private static final Logger log = Logger.getLogger("org.torquebox.jobs");
