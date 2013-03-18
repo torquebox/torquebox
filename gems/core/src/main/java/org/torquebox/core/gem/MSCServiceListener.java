@@ -43,7 +43,7 @@ public class MSCServiceListener extends AbstractServiceListener<Object> {
             // we've either started or are not going to start (start
             // failed, shutting down
             notifyAsStartedOrProblem();
-            controller.removeListener( this );
+            controller.removeListener(this);
         }
     }
 
@@ -51,12 +51,12 @@ public class MSCServiceListener extends AbstractServiceListener<Object> {
         this.startLatch.countDown();
     }
 
-    public boolean waitForStartOrFailure(long timeout, TimeUnit unit) throws InterruptedException {
+    public boolean waitForStartOrFailure(long secondsToWait) throws InterruptedException {
         if (isUp()) {
             return true;
         }
-        boolean started_or_failed = this.startLatch.await(timeout, unit);
-        if (started_or_failed && isUp()) {
+        this.startLatch.await(secondsToWait, TimeUnit.SECONDS);
+        if (isUp()) {
             return true;
         }
         return false;

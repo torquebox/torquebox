@@ -89,7 +89,7 @@ module TorqueBox
           listener = org.torquebox.core.gem.MSCServiceListener.new(service)
           service.add_listener(listener)
           service.set_mode(org.jboss.msc.service.ServiceController::Mode::ACTIVE)
-          listener.wait_for_start_or_failure(seconds_to_wait, java.util.concurrent::TimeUnit::SECONDS)
+          listener.wait_for_start_or_failure(seconds_to_wait)
         end
         service.state.to_s
       end
