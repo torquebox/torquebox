@@ -46,7 +46,7 @@ public class RubyServiceCreate implements Service<RubyService> {
         this.service.setComponentResolver( this.componentResolverInjector.getValue() );
         this.service.setRubyRuntimePool( this.rubyRuntimePoolInjector.getValue() );
         
-        context.execute(new Runnable() {
+        new Thread(new Runnable() {
             public void run() {
                 try {
                     RubyServiceCreate.this.service.create();
@@ -55,7 +55,7 @@ public class RubyServiceCreate implements Service<RubyService> {
                     context.failed( new StartException( e ) );
                 }
             }
-        });
+        }).start();
     }
 
     @Override
