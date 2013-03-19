@@ -32,10 +32,10 @@ module TorqueBox
       # * :description [String] Job description
       # * :timeout [String] The time after the job execution should be interrupted. By default it'll never interrupt the job execution. Example: '2s', '1m'
       # * :config [Hash] Data that should be injected to the job constructor
-      # * :singleton [boolean] Flag to determine if the job should be executed on every node (set to +true+) in the cluster or only on one node (set to +false+, default).
+      # * :singleton [boolean] Flag to determine if the job should be executed on every node (set to +true+, default) in the cluster or only on one node (set to +false+).
       def schedule(class_name, cron, options = {})
         options = {
-            :singleton => false,
+            :singleton => true,
             :name => "default",
             :timeout => "0s"
         }.merge(options)

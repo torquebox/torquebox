@@ -117,6 +117,7 @@ remote_describe "runtime jobs alacarte" do
 
     job = TorqueBox::ScheduledJob.lookup('default')
     job.name.should == 'default'
+    job.is_singleton.should == true
 
     TorqueBox::ScheduledJob.remove('default')
 

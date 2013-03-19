@@ -350,7 +350,7 @@ end</programlisting></para>
       :description => 'This is a simple job',
       :timeout => '2s',
       :config => {"number" => 1, "text" => "bacon"},
-      :singleton => true)</programlisting>
+      :singleton => false)</programlisting>
 
               This example shows all the available options. Please see the table
               below for explanation.
@@ -417,10 +417,10 @@ end</programlisting></para>
               <row>
                 <entry><parameter>:singleton</parameter></entry>
 
-                <entry>false</entry>
+                <entry>true</entry>
 
                 <entry>Flag to determine if the job should be executed on every node
-                in the cluster (default) or only on one node.</entry>
+                in the cluster or only on one node (default).</entry>
               </row>
             </tbody>
           </tgroup>
