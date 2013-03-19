@@ -72,6 +72,116 @@ describe "jobs alacarte" do
       job.status.should == 'STARTED'
       job.should be_started
     end
+
+    it "should not fail if a job is not found" do
+      job = TorqueBox::ScheduledJob.lookup('job.aaa.abc')
+      job.should == nil
+    end
+
+    it "should remove a job by name" do
+      job = TorqueBox::ScheduledJob.lookup('job.one')
+      job.name.should == 'job.one'
+
+      TorqueBox::ScheduledJob.remove('job.one')
+
+      sleep 0.5
+
+      TorqueBox::ScheduledJob.lookup('job.one').should == nil
+    end
+  end
+end
+
+remote_describe "runtime jobs alacarte" do
+  deploy <<-END.gsub(/^ {4}/, '')
+    ---
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/alacarte/runtime_jobs
+      env: development
+
+    ruby:
+      version: #{RUBY_VERSION[0, 3]}
+  END
+
+  it "should deploy the job" do
+    queue = TorqueBox::Messaging::Queue.new("/queue/runtime_response")
+
+    TorqueBox::ScheduledJob.list.count.should == 0
+    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/1 * * * * ?", :config => {"queue" => queue.name})
+    TorqueBox::ScheduledJob.list.count.should == 1
+
+    5.times do
+      msg = queue.receive(:timeout => 10_000)
+      msg[:state].should == :running
+      msg[:options].should == {"queue" => queue.name}
+    end
+
+    job = TorqueBox::ScheduledJob.lookup('default')
+    job.name.should == 'default'
+
+    TorqueBox::ScheduledJob.remove('default')
+
+    sleep 0.5
+
+    TorqueBox::ScheduledJob.list.count.should == 0
+  end
+
+
+  it "should deploy the job with different name" do
+    TorqueBox::ScheduledJob.list.count.should == 0
+    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/10 * * * * ?", :name => "simple.job")
+    TorqueBox::ScheduledJob.list.count.should == 1
+
+    job = TorqueBox::ScheduledJob.lookup('simple.job')
+    job.name.should == 'simple.job'
+    job.status.should == 'STARTED'
+
+    TorqueBox::ScheduledJob.remove('simple.job')
+
+    sleep 0.5
+
+    TorqueBox::ScheduledJob.list.count.should == 0
+  end
+
+  it "should deploy the job with config" do
+    TorqueBox::ScheduledJob.list.count.should == 0
+    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/10 * * * * ?", :name => "simple.config.job", :config => {:text => "text", :hash => {:a => 2}})
+    TorqueBox::ScheduledJob.list.count.should == 1
+
+    job = TorqueBox::ScheduledJob.lookup('simple.config.job')
+    job.name.should == 'simple.config.job'
+    job.status.should == 'STARTED'
+
+    TorqueBox::ScheduledJob.remove('simple.config.job')
+
+    sleep 0.5
+
+    TorqueBox::ScheduledJob.list.count.should == 0
+  end
+
+  it "should replace a job" do
+    TorqueBox::ScheduledJob.list.count.should == 0
+    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/10 * * * * ?", :description => "something")
+    TorqueBox::ScheduledJob.list.count.should == 1
+
+    job = TorqueBox::ScheduledJob.lookup('default')
+    job.name.should == 'default'
+    job.description.should == 'something'
+
+    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/5 * * * * ?", :description => "new job")
+
+    sleep 0.5
+
+    TorqueBox::ScheduledJob.list.count.should == 1
+
+    job = TorqueBox::ScheduledJob.lookup('default')
+    job.name.should == 'default'
+    job.description.should == 'new job'
+
+    TorqueBox::ScheduledJob.remove('default')
+
+    sleep 0.5
+
+    TorqueBox::ScheduledJob.list.count.should == 0
   end
 end
 

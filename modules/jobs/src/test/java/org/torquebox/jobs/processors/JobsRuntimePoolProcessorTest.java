@@ -19,13 +19,6 @@
 
 package org.torquebox.jobs.processors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.junit.Before;
@@ -33,6 +26,12 @@ import org.junit.Test;
 import org.torquebox.core.runtime.PoolMetaData;
 import org.torquebox.jobs.ScheduledJobMetaData;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public class JobsRuntimePoolProcessorTest extends AbstractDeploymentProcessorTestCase {
 
@@ -84,27 +83,12 @@ public class JobsRuntimePoolProcessorTest extends AbstractDeploymentProcessorTes
         assertSame( jobsPoolMetaData, allPools.get( 0 )); 
     }
 
-    /**
-     * Ensure a deployment without a defined pool and without jobs does not
-     * define a pool.
-     */
-    @Test
-    public void testNoPoolRequired() throws Exception {
-        DeploymentPhaseContext phaseContext = createPhaseContext();
-        DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        
-        deploy( phaseContext );
-        
-        List<PoolMetaData> allPools = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
-        assertEquals( 0, allPools.size() );
-    }
 
     /**
-     * Ensure a deployment without a defined pool and with jobs does define a
-     * pool.
+     * Ensure a deployment without a defined pool define a pool.
      */
     @Test
-    public void testPoolRequired() throws Exception {
+    public void testDefaultNonClusteredPool() throws Exception {
         DeploymentPhaseContext phaseContext = createPhaseContext();
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         

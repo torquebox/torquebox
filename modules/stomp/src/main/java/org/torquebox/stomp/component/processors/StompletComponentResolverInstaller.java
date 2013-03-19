@@ -19,53 +19,48 @@
 
 package org.torquebox.stomp.component.processors;
 
-import java.util.List;
-
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
-import org.jboss.msc.service.ServiceBuilder;
-import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
-import org.torquebox.core.component.ComponentClass;
-import org.torquebox.core.component.ComponentResolver;
-import org.torquebox.core.component.ComponentResolverService;
-import org.torquebox.core.component.processors.BaseRubyComponentInstaller;
+import org.torquebox.core.component.processors.ComponentResolverHelper;
 import org.torquebox.stomp.RubyStompletMetaData;
 import org.torquebox.stomp.as.StompServices;
 import org.torquebox.stomp.component.XAStompletComponent;
 
-public class StompletComponentResolverInstaller extends BaseRubyComponentInstaller {
+import java.util.List;
+
+import static org.jboss.msc.service.ServiceController.Mode;
+
+public class StompletComponentResolverInstaller implements DeploymentUnitProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        List<RubyStompletMetaData> allMetaData = unit.getAttachmentList( RubyStompletMetaData.ATTACHMENTS_KEY );
+        List<RubyStompletMetaData> allMetaData = unit.getAttachmentList(RubyStompletMetaData.ATTACHMENTS_KEY);
 
         for (RubyStompletMetaData each : allMetaData) {
-            deploy( phaseContext, each );
+            deploy(phaseContext, each);
         }
     }
 
-    protected void deploy(DeploymentPhaseContext phaseContext, RubyStompletMetaData stompletMetaData) throws DeploymentUnitProcessingException {
+    protected void deploy(DeploymentPhaseContext phaseContext, RubyStompletMetaData metaData) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
-        ComponentClass instantiator = new ComponentClass();
-        instantiator.setClassName( stompletMetaData.getRubyClassName() );
-        instantiator.setRequirePath( stompletMetaData.getRubyRequirePath() );
+        ServiceName serviceName = StompServices.stompletComponentResolver(unit, metaData.getName());
 
-        ServiceName serviceName = StompServices.stompletComponentResolver( unit, stompletMetaData.getName() );
-        ComponentResolver resolver = createComponentResolver( unit );
-        resolver.setComponentInstantiator( instantiator );
-        resolver.setComponentName( serviceName.getCanonicalName() );
-        resolver.setComponentWrapperClass( XAStompletComponent.class );
+        ComponentResolverHelper helper = new ComponentResolverHelper(phaseContext, serviceName);
 
-        ComponentResolverService service = new ComponentResolverService( resolver );
-        ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
-        addNamespaceContext( phaseContext, service, builder );
-        builder.setInitialMode( Mode.ON_DEMAND );
-        builder.install();
+        try {
+            helper
+                    .initializeInstantiator(metaData.getRubyClassName(), metaData.getRubyRequirePath())
+                    .initializeResolver(XAStompletComponent.class, null, false)
+                    .installService(Mode.ON_DEMAND);
+        } catch (Exception e) {
+            throw new DeploymentUnitProcessingException(e);
+        }
     }
 
     @Override
@@ -74,6 +69,6 @@ public class StompletComponentResolverInstaller extends BaseRubyComponentInstall
     }
 
     @SuppressWarnings("unused")
-    private static final Logger log = Logger.getLogger( "org.torquebox.jobs.component" );
+    private static final Logger log = Logger.getLogger("org.torquebox.jobs.component");
 
 }

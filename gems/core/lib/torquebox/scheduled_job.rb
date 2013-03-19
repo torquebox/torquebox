@@ -20,6 +20,42 @@ module TorqueBox
   class ScheduledJob
     class << self
 
+      # Creates a new scheduled job.
+      #
+      # @param class_name The scheduled job implementation
+      #                   class name
+      # @param cron The cron expression defining when the job
+      #             should run
+      # @param options Optional parameters (a Hash), including:
+      #
+      # * :name [String] The job name unique across the application, by default set to "default"
+      # * :description [String] Job description
+      # * :timeout [String] The time after the job execution should be interrupted. By default it'll never interrupt the job execution. Example: '2s', '1m'
+      # * :config [Hash] Data that should be injected to the job constructor
+      # * :singleton [boolean] Flag to determine if the job should be executed on every node (set to +true+) in the cluster or only on one node (set to +false+, default).
+      def schedule(class_name, cron, options = {})
+        options = {
+            :singleton => false,
+            :name => "default",
+            :timeout => "0s"
+        }.merge(options)
+
+        TorqueBox::ServiceRegistry.lookup(schedulizer_service_name) do |schedulizer|
+          schedulizer.create_job(class_name.to_s, cron, options[:timeout], options[:name], options[:description], options[:config], options[:singleton])
+        end
+      end
+
+      # Removes a scheduled job.
+      #
+      # This method removes the job asynchronously.
+      #
+      # @param [String] The job name.
+      def remove(name = "default")
+        TorqueBox::ServiceRegistry.lookup(schedulizer_service_name) do |schedulizer|
+          schedulizer.remove_job (name)
+        end
+      end
+
       # List all scheduled jobs of this application.
       #
       # @return [Array<org.torquebox.jobs.ScheduledJob>] the list of
@@ -27,7 +63,7 @@ module TorqueBox
       #   {TorqueBox::ScheduledJob.lookup} for more details on these
       #   instances
       def list
-        prefix = job_prefix.canonical_name
+        prefix = job_service_name.canonical_name
         service_names = TorqueBox::MSC.service_names.select do |service_name|
           name = service_name.canonical_name
           name.start_with?(prefix) && !name.end_with?('mbean')
@@ -60,16 +96,20 @@ module TorqueBox
       #   job.stop
       #   job.status => 'STOPPED'
       def lookup(name)
-        service_name = job_prefix.append(name)
+        service_name = job_service_name.append(name)
         service = TorqueBox::MSC.get_service(service_name)
         service.nil? ? nil : service.value
       end
 
       private
 
-      def job_prefix
+      def job_service_name
         TorqueBox::MSC.deployment_unit.service_name.append('scheduled_job')
       end
+
+     def schedulizer_service_name
+       TorqueBox::MSC.deployment_unit.service_name.append('job_schedulizer')
+     end
 
     end
   end

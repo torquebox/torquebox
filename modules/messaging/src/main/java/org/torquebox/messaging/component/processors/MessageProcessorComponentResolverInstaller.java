@@ -21,70 +21,54 @@ package org.torquebox.messaging.component.processors;
 
 import java.util.List;
 
-import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
-import org.jboss.as.server.deployment.module.ResourceRoot;
+import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
-import org.jboss.msc.service.ServiceBuilder;
-import org.jboss.msc.service.ServiceController.Mode;
+import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
-import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.core.as.DeploymentNotifier;
-import org.torquebox.core.component.ComponentClass;
-import org.torquebox.core.component.ComponentResolver;
-import org.torquebox.core.component.ComponentResolverService;
-import org.torquebox.core.component.processors.BaseRubyComponentInstaller;
+import org.torquebox.core.component.processors.ComponentResolverHelper;
 import org.torquebox.messaging.MessageProcessorMetaData;
 import org.torquebox.messaging.as.MessagingServices;
 import org.torquebox.messaging.component.MessageProcessorComponent;
 
-public class MessageProcessorComponentResolverInstaller extends BaseRubyComponentInstaller {
+import static org.jboss.msc.service.ServiceController.*;
+
+public class MessageProcessorComponentResolverInstaller implements DeploymentUnitProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
 
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        List<MessageProcessorMetaData> allMetaData = unit.getAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY );
+        List<MessageProcessorMetaData> allMetaData = unit.getAttachmentList(MessageProcessorMetaData.ATTACHMENTS_KEY);
 
         if (allMetaData == null || allMetaData.isEmpty()) {
             return;
         }
 
         for (MessageProcessorMetaData each : allMetaData) {
-            deploy( phaseContext, each );
+            deploy(phaseContext, each);
 
         }
     }
 
     protected void deploy(DeploymentPhaseContext phaseContext, final MessageProcessorMetaData metaData) throws DeploymentUnitProcessingException {
-
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
-        ComponentClass instantiator = new ComponentClass();
+        ServiceName serviceName = MessagingServices.messageProcessorComponentResolver(unit, metaData.getName());
 
-        instantiator.setClassName( metaData.getRubyClassName() );
-        instantiator.setRequirePath( metaData.getRubyRequirePath() );
+        ComponentResolverHelper helper = new ComponentResolverHelper(phaseContext, serviceName);
 
-        ServiceName serviceName = MessagingServices.messageProcessorComponentResolver( unit, metaData.getName() );
-        ComponentResolver resolver = createComponentResolver( unit );
-        resolver.setAlwaysNewInstance( true );
-        resolver.setComponentInstantiator( instantiator );
-        resolver.setComponentName( serviceName.getCanonicalName() );
-        resolver.setComponentWrapperClass( MessageProcessorComponent.class );
-        resolver.setInitializeParams( metaData.getRubyConfig() );
-
-        ComponentResolverService service = new ComponentResolverService( resolver );
-        ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
-        builder.setInitialMode( Mode.PASSIVE );
-        addNamespaceContext( phaseContext, service, builder );
-        builder.install();
-
-        // Add to our notifier's watch list
-        unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, serviceName );
-        
-
+        try {
+            helper
+                    .initializeInstantiator(metaData.getRubyClassName(), metaData.getRubyRequirePath())
+                    .initializeResolver(MessageProcessorComponent.class, metaData.getRubyConfig(), true) // Always create new instance
+                    .installService(Mode.PASSIVE);
+        } catch (Exception e) {
+            throw new DeploymentUnitProcessingException(e);
+        }
     }
 
     @Override
@@ -93,5 +77,5 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
     }
 
     @SuppressWarnings("unused")
-    private static final Logger log = Logger.getLogger( "org.torquebox.messaging.component" );
+    private static final Logger log = Logger.getLogger("org.torquebox.messaging.component");
 }

@@ -77,6 +77,10 @@ public class RuntimePoolInstaller implements DeploymentUnitProcessor {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         final RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
 
+        if (rubyAppMetaData == null) {
+            return;
+        }
+
         if (poolMetaData.isShared()) {
             SharedRubyRuntimePool pool = new SharedRubyRuntimePool();
             
