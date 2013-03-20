@@ -49,11 +49,13 @@ public class ComponentClass implements ComponentInstantiator {
     }
 
     public IRubyObject newInstance(Ruby runtime, Object[] initParams) {
-        if (this.requirePath != null) {
-            runtime.getLoadService().load( this.requirePath + ".rb", false );
+        synchronized(("ComponentClassLock" + this.className).intern()) {
+            if (this.requirePath != null) {
+                runtime.getLoadService().load(this.requirePath + ".rb", false);
+            }
+
+            return RuntimeHelper.instantiate(runtime, this.className, initParams);
         }
-        
-        return RuntimeHelper.instantiate( runtime, this.className, initParams );
     }
     
     public String toString() {
