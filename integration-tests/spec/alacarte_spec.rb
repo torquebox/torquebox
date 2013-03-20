@@ -84,7 +84,7 @@ describe "jobs alacarte" do
 
       TorqueBox::ScheduledJob.remove('job.one')
 
-      sleep 0.5
+      sleep 2.5
 
       TorqueBox::ScheduledJob.lookup('job.one').should == nil
     end
@@ -120,7 +120,7 @@ remote_describe "runtime jobs alacarte" do
 
     TorqueBox::ScheduledJob.remove('default')
 
-    sleep 0.5
+    sleep 2.5
 
     TorqueBox::ScheduledJob.list.count.should == 0
   end
@@ -137,7 +137,7 @@ remote_describe "runtime jobs alacarte" do
 
     TorqueBox::ScheduledJob.remove('simple.job')
 
-    sleep 0.5
+    sleep 2.5
 
     TorqueBox::ScheduledJob.list.count.should == 0
   end
@@ -153,7 +153,7 @@ remote_describe "runtime jobs alacarte" do
 
     TorqueBox::ScheduledJob.remove('simple.config.job')
 
-    sleep 0.5
+    sleep 2.5
 
     TorqueBox::ScheduledJob.list.count.should == 0
   end
@@ -169,7 +169,7 @@ remote_describe "runtime jobs alacarte" do
 
     TorqueBox::ScheduledJob.schedule('SimpleJob', "*/5 * * * * ?", :description => "new job")
 
-    sleep 0.5
+    sleep 2.5
 
     TorqueBox::ScheduledJob.list.count.should == 1
 
@@ -179,7 +179,7 @@ remote_describe "runtime jobs alacarte" do
 
     TorqueBox::ScheduledJob.remove('default')
 
-    sleep 0.5
+    sleep 2.5
 
     TorqueBox::ScheduledJob.list.count.should == 0
   end
