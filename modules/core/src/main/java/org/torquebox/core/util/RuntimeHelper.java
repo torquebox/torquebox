@@ -129,15 +129,19 @@ public class RuntimeHelper {
      * and requires it if possible.
      */
     public static void requireTorqueBoxInit(Ruby ruby) {
-      RuntimeHelper.requireIfAvailable( ruby, "config" + File.separator + "torquebox_init");
-      RuntimeHelper.requireIfAvailable( ruby, "torquebox_init" );
+      RuntimeHelper.requireIfAvailable( ruby, "config" + File.separator + "torquebox_init", false );
+      RuntimeHelper.requireIfAvailable( ruby, "torquebox_init", false );
+    }
+
+    public static boolean requireIfAvailable(Ruby ruby, String requirement) {
+        return requireIfAvailable( ruby, requirement, true );
     }
     
     /**
      * Calls "require 'requirement'" in the Ruby provided.
      * @returns boolean If successful, returns true, otherwise false.
      */
-    public static boolean requireIfAvailable(Ruby ruby, String requirement) {
+    public static boolean requireIfAvailable(Ruby ruby, String requirement, boolean logErrors) {
         boolean success = false;
         try {
             StringBuilder script = new StringBuilder();
@@ -148,7 +152,9 @@ public class RuntimeHelper {
             success = true;
         } catch (Throwable t) {
             success = false;
-            log.debugf( t, "Error encountered. Unable to require file: %s", requirement );
+            if (logErrors) {
+                log.debugf( t, "Error encountered. Unable to require file: %s", requirement );
+            }
         }
         return success;
     }
