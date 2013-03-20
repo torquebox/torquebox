@@ -49,7 +49,7 @@ public class JobsRuntimePoolProcessor implements DeploymentUnitProcessor {
         if (jobsPool == null) {
             RubyAppMetaData envMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
             boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();
-            jobsPool = devMode ? new PoolMetaData( "jobs", 1, 2 ) : new PoolMetaData( "jobs" );
+            jobsPool = devMode ? new PoolMetaData( "jobs", 1, 10 ) : new PoolMetaData( "jobs" );
             unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, jobsPool );
         }
     }

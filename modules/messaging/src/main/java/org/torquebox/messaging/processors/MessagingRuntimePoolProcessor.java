@@ -68,7 +68,7 @@ public class MessagingRuntimePoolProcessor implements DeploymentUnitProcessor {
         }
         RubyAppMetaData envMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
         boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();
-        PoolMetaData pool = devMode ? new PoolMetaData( "messaging", 1, 2 ) : new PoolMetaData( "messaging" );
+        PoolMetaData pool = devMode ? new PoolMetaData( "messaging", 1, 10 ) : new PoolMetaData( "messaging" );
         unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, pool );
     }
 
