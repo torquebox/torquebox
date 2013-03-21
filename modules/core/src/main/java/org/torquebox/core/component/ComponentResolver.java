@@ -45,9 +45,8 @@ public class ComponentResolver {
         if (!this.alwaysReload && !this.alwaysNewInstance) {
             rubyComponent = registry.lookup( this.componentName );
         } else if (this.alwaysReload) {
-        	// not yet sure this is needed - reloading is broken with and without the next two lines
-        	RuntimeHelper.evalScriptlet( runtime, "Dispatcher.cleanup_application if defined?(Dispatcher) && Dispatcher.respond_to?(:cleanup_application)" ); // rails2
-        	RuntimeHelper.evalScriptlet( runtime, "ActiveSupport::Dependencies.clear if defined?(ActiveSupport::Dependencies) && ActiveSupport::Dependencies.respond_to?(:clear)" ); // rails3
+            RuntimeHelper.evalScriptlet( runtime, "Dispatcher.cleanup_application if defined?(Dispatcher) && Dispatcher.respond_to?(:cleanup_application)" ); // rails2
+            RuntimeHelper.evalScriptlet( runtime, "ActiveSupport::Dependencies.clear if defined?(ActiveSupport::Dependencies) && ActiveSupport::Dependencies.respond_to?(:clear)" ); // rails3
         }
 
         if (rubyComponent == null) {

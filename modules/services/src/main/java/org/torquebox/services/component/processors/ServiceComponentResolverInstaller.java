@@ -60,7 +60,7 @@ public class ServiceComponentResolverInstaller implements DeploymentUnitProcesso
         try {
             helper
                     .initializeInstantiator(metaData.getClassName(), metaData.getRubyRequirePath())
-                    .initializeResolver(ServiceComponent.class, metaData.getParameters(), false)
+                    .initializeResolver(ServiceComponent.class, metaData.getParameters(), false, false)
                     .installService(Mode.PASSIVE);
         } catch (Exception e) {
             throw new DeploymentUnitProcessingException(e);
