@@ -16,22 +16,22 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 module TorqueBox
-  module Injectors
-    def inject(*args)
-      fetch(*args)
-    end
+  def self.fetch(*args)
+    DummyResource.new
+  end
 
+  module Injectors
     def fetch(*args)
       DummyResource.new
     end
+  end
 
-    class DummyResource
-      def publish(*args)
-        # no-op
-      end
-      def receive(*args)
-        # no-op
-      end
+  class DummyResource
+    def publish(*args)
+      # no-op
+    end
+    def receive(*args)
+      # no-op
     end
   end
 end

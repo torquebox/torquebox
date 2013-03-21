@@ -1,12 +1,11 @@
 class SimpleJob
-  include TorqueBox::Injectors
 
   def initialize(opts = {})
     @options = opts
 
     puts "Job options: #{@options.inspect}"
 
-    @response_queue = fetch(@options["queue"])
+    @response_queue = TorqueBox.fetch(@options["queue"])
   end
 
   def run

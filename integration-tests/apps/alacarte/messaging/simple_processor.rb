@@ -3,8 +3,6 @@ require 'torquebox-messaging'
 
 class SimpleProcessor < TorqueBox::Messaging::MessageProcessor
 
-  include TorqueBox::Injectors
-
   def on_message(body)
     puts "messaging-alacart SimpleProcessor#on_message()"
     puts ENV.inspect
@@ -17,7 +15,7 @@ class SimpleProcessor < TorqueBox::Messaging::MessageProcessor
       f.puts( "#{body[:tstamp]} // #{body[:cheese]}" )
     end
 
-    queue = fetch( '/queue/backchannel' )
+    queue = TorqueBox.fetch( '/queue/backchannel' )
     queue.publish('release')
   end
 

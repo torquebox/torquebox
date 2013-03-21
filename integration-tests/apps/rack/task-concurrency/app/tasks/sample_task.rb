@@ -1,10 +1,9 @@
 require 'torquebox-messaging'
 
 class SampleTask < TorqueBox::Messaging::Task
-  include TorqueBox::Injectors
-  
+
   def foo(index)
-    backchannel = fetch("/queues/backchannel")
+    backchannel = TorqueBox.fetch("/queues/backchannel")
     puts "FOO in SampleTask #{Thread.current.object_id}"
     backchannel.publish Thread.current.object_id
     nil

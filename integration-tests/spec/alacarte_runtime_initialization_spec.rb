@@ -21,17 +21,15 @@ describe "alacarte runtime initialization test" do
   END
 
   remote_describe "torquebox_init" do
-    include TorqueBox::Injectors
     it "should work" do
-      queue = fetch('/queues/tb_init_test')
+      queue = TorqueBox.fetch('/queues/tb_init_test')
       queue.receive.should == "M1M2"
     end
   end
 
   remote_describe "runtime context in a service" do
-    include TorqueBox::Injectors
     it "should set ENV['TORQUEBOX_CONTEXT'] to 'services'" do
-      queue = fetch('/queues/service_context')
+      queue = TorqueBox.fetch('/queues/service_context')
       queue.receive.should == "services"
     end
   end

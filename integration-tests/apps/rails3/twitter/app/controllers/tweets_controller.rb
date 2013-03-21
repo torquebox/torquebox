@@ -1,11 +1,10 @@
 class TweetsController < ApplicationController
-  include TorqueBox::Injectors
 
   # GET /tweets
   # GET /tweets.xml
   def index
-    reader = fetch( Java::pl.goldmann.confitura.beans.TweetReader )
-    
+    reader = TorqueBox.fetch( Java::pl.goldmann.confitura.beans.TweetReader )
+
     @tweets = reader.read
     @total = reader.count
 

@@ -21,7 +21,6 @@ require 'torquebox/messaging/connection'
 module TorqueBox
   module Messaging
     class ConnectionFactory
-      include TorqueBox::Injectors
 
       attr_reader :internal_connection_factory
 
@@ -32,7 +31,7 @@ module TorqueBox
 
       def initialize(internal_connection_factory = nil)
         @internal_connection_factory = internal_connection_factory
-        @tm = fetch('transaction-manager')
+        @tm = TorqueBox.fetch('transaction-manager')
       end
 
       def with_new_connection(options, enlist_tx = true, &block)

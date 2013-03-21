@@ -24,7 +24,6 @@ require 'torquebox/messaging/ext/javax_jms_queue_browser'
 module TorqueBox
   module Messaging
     class Destination
-      include TorqueBox::Injectors
       include Enumerable
 
       attr_reader :connection_factory
@@ -52,7 +51,7 @@ module TorqueBox
         raise ArgumentError, "destination cannot be nil" unless destination
         if connection_factory_or_options.nil? || connection_factory_or_options.is_a?( Hash )
           options = connection_factory_or_options
-          connection_factory = fetch( 'connection-factory' )
+          connection_factory = TorqueBox.fetch( 'connection-factory' )
           unless options.nil?
             # Don't use our internal connection factory if the user
             # has specified a host or port to connect to

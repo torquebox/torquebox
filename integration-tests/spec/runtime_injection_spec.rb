@@ -17,11 +17,9 @@ remote_describe 'runtime injection' do
 
   require 'torquebox-core'
 
-  include TorqueBox::Injectors
-
   it "should work" do
-    fetch( 'service:SimpleService' ).should_not be_nil
-    fetch( '/queue/container_queue' ).should_not be_nil
+    TorqueBox.fetch( 'service:SimpleService' ).should_not be_nil
+    TorqueBox.fetch( '/queue/container_queue' ).should_not be_nil
   end
 
 end

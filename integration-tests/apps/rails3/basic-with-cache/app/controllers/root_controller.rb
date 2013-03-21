@@ -1,8 +1,6 @@
 
 class RootController < ApplicationController
 
-  include TorqueBox::Injectors
-
   def index
   end
 
@@ -95,13 +93,13 @@ class RootController < ApplicationController
 
   def putprocessor
     # causes the processor to write to the cache
-    queue = fetch( '/queue/simple_queue' )
+    queue = TorqueBox.fetch( '/queue/simple_queue' )
     message = { :action => "write", :message => "clustery" } 
     queue.publish( message )
 
     # wait until the processor has spun up and placed the message in
     # the cache
-    queue = fetch( '/queue/backchannel' )
+    queue = TorqueBox.fetch( '/queue/backchannel' )
     queue.receive( :timeout => 30000 )
 
     @cache_value = "success"
@@ -111,11 +109,11 @@ class RootController < ApplicationController
   def getprocessor
     # cause the processor to read from the cache 
     # and publish the value to backchannel
-    queue = fetch( '/queue/simple_queue' )
+    queue = TorqueBox.fetch( '/queue/simple_queue' )
     message = { :action => "read" }
     queue.publish( message )
 
-    queue = fetch( '/queue/backchannel' )
+    queue = TorqueBox.fetch( '/queue/backchannel' )
     @cache_value = queue.receive( :timeout => 30000 )
     render "root/cachey"
   end

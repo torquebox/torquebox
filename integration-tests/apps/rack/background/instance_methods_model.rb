@@ -2,13 +2,12 @@ require 'torquebox-messaging'
 
 class InstanceMethodsModel
   include TorqueBox::Messaging::Backgroundable
-  include TorqueBox::Injectors
-  
+
   always_background :foo
 
   def initialize
-    @foreground = fetch("queue/foreground")
-    @background = fetch("queue/background")
+    @foreground = TorqueBox.fetch("queue/foreground")
+    @background = TorqueBox.fetch("queue/background")
   end
 
   def foo

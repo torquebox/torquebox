@@ -19,10 +19,8 @@ module TorqueBox
   module Stomp
     class JmsStomplet
 
-      include TorqueBox::Injectors
-    
       def initialize()
-        @connection_factory = fetch( 'xa-connection-factory' )
+        @connection_factory = TorqueBox.fetch( 'xa-connection-factory' )
         @subscriptions = {}
       end
     

@@ -118,7 +118,6 @@ describe "an app using a torquebox.rb" do
   end
 
   remote_describe "in container" do
-    include TorqueBox::Injectors
     
     it "should have an authentication domain" do
       require 'torquebox-security'
@@ -154,7 +153,7 @@ describe "an app using a torquebox.rb" do
     end
 
     it "should properly set the session timeout" do
-      context = fetch( 'jboss.web.deployment.default-host./torquebox-rb' )
+      context = TorqueBox.fetch( 'jboss.web.deployment.default-host./torquebox-rb' )
       context.session_timeout.should == 1234
     end
   end

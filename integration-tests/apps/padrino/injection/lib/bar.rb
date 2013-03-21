@@ -1,11 +1,10 @@
 class Bar
-  include TorqueBox::Injectors
 
   def service
-    fetch('service:BarService')
+    TorqueBox.fetch('service:BarService')
   end
 
   def queue
-    fetch('/queue/bar')
+    TorqueBox.fetch('/queue/bar')
   end
 end

@@ -1,10 +1,9 @@
 class EnumerableThing
-  include TorqueBox::Injectors
   include Enumerable
-  
+
   def initialize
     @hash = { :a => :b }
-    queue = fetch('/queues/injection_enumerable')
+    queue = TorqueBox.fetch('/queues/injection_enumerable')
 
     inject('this should not barf') { |_, __| queue.publish('it worked') }
   end

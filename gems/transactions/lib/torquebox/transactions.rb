@@ -56,7 +56,6 @@ module TorqueBox
     # The thread-local Manager encapsulates the interaction with the
     # *real* JBoss TransactionManager
     class Manager
-      include TorqueBox::Injectors
       include Transaction
 
       def self.current()
@@ -64,7 +63,7 @@ module TorqueBox
       end
 
       def initialize()
-        @tm = fetch('transaction-manager')
+        @tm = TorqueBox.fetch('transaction-manager')
         @transactions = []
       end
 

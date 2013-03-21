@@ -3,11 +3,9 @@ require 'torquebox-messaging'
 
 class Processor < TorqueBox::Messaging::MessageProcessor
 
-  include TorqueBox::Injectors
-
   def on_message(msg)
     puts "JC: message is #{message.jms_message}"
-    output = fetch( '/queue/output' )
+    output = TorqueBox.fetch( '/queue/output' )
     response = 'yay!'
 
     if msg =~ /\s+(\d)\s+retries/

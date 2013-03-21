@@ -1,9 +1,8 @@
 class StatelessJob
-  include TorqueBox::Injectors
 
   def initialize
     @already_published = false
-    @response_queue = fetch('/queue/stateless_response')
+    @response_queue = TorqueBox.fetch('/queue/stateless_response')
   end
 
   def run

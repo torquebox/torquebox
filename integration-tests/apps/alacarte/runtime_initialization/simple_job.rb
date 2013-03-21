@@ -1,9 +1,7 @@
 class SimpleJob
 
-  include TorqueBox::Injectors
-
   def initialize()
-    @queue = fetch( '/queues/jobs_context' )
+    @queue = TorqueBox.fetch( '/queues/jobs_context' )
   end
 
   def run()

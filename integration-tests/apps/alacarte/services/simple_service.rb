@@ -4,17 +4,15 @@ puts "required torquebox-messaging"
 
 class SimpleService
 
-  include TorqueBox::Injectors
-
   def initialize(opts={})
     @options = opts
     raise 'not Hash' unless @options.is_a?(Hash)
-    @something  = fetch( org.torquebox.ThingOne )
-    @polish     = fetch( Java::pl.softwaremine.ThingThree )
+    @something  = TorqueBox.fetch( org.torquebox.ThingOne )
+    @polish     = TorqueBox.fetch( Java::pl.softwaremine.ThingThree )
     @logger     = TorqueBox::Logger.new(self.class)
-    @response_queue = fetch( '/queue/response' )
-    @next_response_queue = fetch( '/queue/next_response' )
-    @init_params_queue = fetch( '/queue/init_params' )
+    @response_queue = TorqueBox.fetch( '/queue/response' )
+    @next_response_queue = TorqueBox.fetch( '/queue/next_response' )
+    @init_params_queue = TorqueBox.fetch( '/queue/init_params' )
     @queue = @response_queue
   end
 

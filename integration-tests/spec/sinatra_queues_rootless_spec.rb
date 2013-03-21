@@ -36,9 +36,8 @@ ROOTED
   end
 
   remote_describe "jobs check" do
-    include TorqueBox::Injectors
     it "should be employed" do
-      msg = fetch('/queues/jobs').receive(:timeout => 45000)
+      msg = TorqueBox.fetch('/queues/jobs').receive(:timeout => 45000)
       msg.should == "employment!"
     end
   end

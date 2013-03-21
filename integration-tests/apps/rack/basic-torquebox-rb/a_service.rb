@@ -1,12 +1,11 @@
 class AService
-  include TorqueBox::Injectors
-  
+
   def initialize(opts)
     @options = opts
   end
-  
+
   def start
-    queue = fetch('/queue/a-queue')
+    queue = TorqueBox.fetch('/queue/a-queue')
     queue.publish( @options['foo'] )
   end
 

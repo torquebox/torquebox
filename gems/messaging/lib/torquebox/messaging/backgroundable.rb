@@ -183,8 +183,7 @@ module TorqueBox
       end
 
       module Util
-        extend TorqueBox::Injectors
-        
+
         class << self
           def publish_message(receiver, method, args, options = { })
             queue_name = Task.queue_name( "torquebox_backgroundable" )
@@ -196,7 +195,7 @@ module TorqueBox
                              :future_queue => queue_name,
                              :method => method,
                              :args => args}, options )
-            
+
             future
           rescue javax.jms.InvalidDestinationException => ex
             raise RuntimeError.new("The Backgroundable queue is not available. Did you disable it by setting its concurrency to 0?")

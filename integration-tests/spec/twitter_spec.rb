@@ -70,14 +70,13 @@ describe "end-to-end twitter testing" do
 
   remote_describe "in-container tests" do
     require 'torquebox-core'
-    include TorqueBox::Injectors
 
     # Runs remotely (in-container)
     it "should be running remotely" do
-      fetch('deployment-unit').should_not be_nil
-      fetch('service-registry').should_not be_nil
+      TorqueBox.fetch('deployment-unit').should_not be_nil
+      TorqueBox.fetch('service-registry').should_not be_nil
       TorqueBox::ServiceRegistry.lookup("jboss.messaging.default.jms.manager").should_not be_nil
-      fetch( Java::pl.goldmann.confitura.beans.TweetReader ).should_not be_nil
+      TorqueBox.fetch( Java::pl.goldmann.confitura.beans.TweetReader ).should_not be_nil
     end
   end
 

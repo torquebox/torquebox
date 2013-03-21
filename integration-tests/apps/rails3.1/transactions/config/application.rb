@@ -45,9 +45,8 @@ module Transactions
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
-    include TorqueBox::Injectors
     config.after_initialize do
-      arbitrary_object_common_to_runtimes = fetch('deployment-unit')
+      arbitrary_object_common_to_runtimes = TorqueBox.fetch('deployment-unit')
       unless arbitrary_object_common_to_runtimes.nil?
         arbitrary_object_common_to_runtimes.synchronized do
           puts "JC: migrating :person_database"

@@ -25,7 +25,6 @@ module TorqueBox
 
     # @api private
     class ContainerTransactionManagerLookup
-      include TorqueBox::Injectors
       begin
         include org.infinispan.transaction.lookup.TransactionManagerLookup
       rescue NameError
@@ -33,12 +32,11 @@ module TorqueBox
       end
 
       def getTransactionManager
-        fetch('transaction-manager')
+        TorqueBox.fetch('transaction-manager')
       end
     end
 
     class Cache
-      include TorqueBox::Injectors
 
       SECONDS = java.util.concurrent.TimeUnit::SECONDS
       begin
@@ -187,7 +185,7 @@ module TorqueBox
       def transaction(&block)
         if !transactional?
           yield self
-        elsif fetch('transaction-manager').nil?
+        elsif TorqueBox.fetch('transaction-manager').nil?
           tm = cache.getAdvancedCache.getTransactionManager
           begin
             tm.begin if tm
@@ -294,7 +292,7 @@ module TorqueBox
       end
 
       def transaction_manager_lookup
-        @tm ||= if fetch('transaction-manager')
+        @tm ||= if TorqueBox.fetch('transaction-manager')
                   ContainerTransactionManagerLookup.new 
                 else
                   org.infinispan.transaction.lookup.GenericTransactionManagerLookup.new

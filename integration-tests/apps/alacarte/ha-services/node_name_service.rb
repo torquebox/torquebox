@@ -2,10 +2,9 @@ require 'java'
 require 'torquebox'
 
 class NodeNameService
-  include TorqueBox::Injectors
 
   def initialize(options={})
-    @queue = inject('/queues/node_name')
+    @queue = TorqueBox.fetch('/queues/node_name')
     @done = false
   end
 

@@ -1,16 +1,15 @@
 require 'torquebox-core'
 
 class RackApp
-  include TorqueBox::Injectors
   
   def call(env)
     msg = env['QUERY_STRING']
     destination = if msg.start_with?('topic')
-                    fetch('/topics/test')
+                    TorqueBox.fetch('/topics/test')
                   elsif msg.start_with?('parentless')
-                    fetch('/queues/parentless')
+                    TorqueBox.fetch('/queues/parentless')
                   else
-                    fetch('/queues/test')
+                    TorqueBox.fetch('/queues/test')
                   end
 
     destination.publish(msg, :priority => rand(10))

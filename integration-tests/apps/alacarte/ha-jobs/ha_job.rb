@@ -1,11 +1,9 @@
 require 'torquebox-messaging'
 require 'torquebox-core'
 
-class HaJob 
+class HaJob
 
-  include TorqueBox::Injectors 
-
-  def run() 
+  def run()
     $stderr.puts "Job executing!"
     basedir = ENV['BASEDIR']
     basedir = basedir.gsub( %r(\\:), ':' )
@@ -15,8 +13,8 @@ class HaJob
         f.puts( "Updated #{Time.now}" )
     end
 
-    queue = fetch('/queue/backchannel')
+    queue = TorqueBox.fetch('/queue/backchannel')
     queue.publish(touchfile)
   end
-  
+
 end

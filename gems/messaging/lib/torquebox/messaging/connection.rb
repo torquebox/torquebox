@@ -21,14 +21,13 @@ require 'torquebox/messaging/session'
 module TorqueBox
   module Messaging
     class Connection
-      include TorqueBox::Injectors
 
       attr_accessor :jms_connection
 
       def initialize(jms_connection, connection_factory)
         @jms_connection = jms_connection
         @connection_factory = connection_factory
-        @tm = fetch('transaction-manager')
+        @tm = TorqueBox.fetch('transaction-manager')
       end
 
       def start

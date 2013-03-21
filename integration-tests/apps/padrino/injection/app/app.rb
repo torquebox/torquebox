@@ -1,6 +1,5 @@
 class Myapp < Padrino::Application
 
-  include TorqueBox::Injectors
   register Padrino::Rendering
   register Padrino::Mailer
   register Padrino::Helpers
@@ -60,8 +59,8 @@ class Myapp < Padrino::Application
   #
 
   get '/from-app' do
-    service = fetch('service:AppService')
-    queue = fetch('/queue/app')
+    service = TorqueBox.fetch('service:AppService')
+    queue = TorqueBox.fetch('/queue/app')
     render_injections(service, queue)
   end
 

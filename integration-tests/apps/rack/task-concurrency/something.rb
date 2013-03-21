@@ -2,12 +2,11 @@ require 'torquebox-messaging'
 
 class Something
   include TorqueBox::Messaging::Backgroundable
-  include TorqueBox::Injectors
-  
+
   always_background :foo
 
   def initialize
-    @backchannel = fetch("/queues/backchannel")
+    @backchannel = TorqueBox.fetch("/queues/backchannel")
   end
 
   def foo
