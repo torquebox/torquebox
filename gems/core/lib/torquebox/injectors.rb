@@ -21,6 +21,9 @@ require 'torquebox/service_registry'
 
 module TorqueBox
 
+  class InjectionError < StandardError
+  end
+
   def self.fetch(something)
     unless TorqueBox::Registry.has_key?(something.to_s)
       handler_registry = TorqueBox::ServiceRegistry['torquebox.core.injection.injectable-handler-registry']
@@ -46,9 +49,6 @@ module TorqueBox
   end
 
   module Injectors
-
-    class InjectionError < StandardError
-    end
 
     def fetch(something)
       TorqueBox.fetch(something)
