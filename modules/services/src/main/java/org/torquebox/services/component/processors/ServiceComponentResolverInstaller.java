@@ -61,7 +61,7 @@ public class ServiceComponentResolverInstaller extends BaseRubyComponentInstalle
         instantiator.setRequirePath( serviceMetaData.getRubyRequirePath() );
 
         ServiceName serviceName = ServicesServices.serviceComponentResolver( unit, serviceMetaData.getName() );
-        ComponentResolver resolver = createComponentResolver( unit );
+        ComponentResolver resolver = new ComponentResolver( false );
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );
         resolver.setComponentWrapperClass( ServiceComponent.class );
