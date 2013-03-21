@@ -22,6 +22,7 @@ package org.torquebox.jobs;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
+import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
@@ -39,6 +40,8 @@ import org.torquebox.jobs.component.JobComponent;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static org.jboss.msc.service.ServiceController.Mode;
@@ -49,6 +52,8 @@ import static org.jboss.msc.service.ServiceController.Mode;
  * @author Marek Goldmann
  */
 public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
+
+    private static final Logger log = Logger.getLogger("org.torquebox.jobs");
 
     public JobSchedulizer(DeploymentUnit unit) {
         super(unit);
@@ -112,7 +117,7 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
      * @return The ScheduledJob object.
      * @see JobSchedulizer#createJob(String, String, org.projectodd.polyglot.core.util.TimeInterval, String, String, java.util.Map, boolean)
      */
-    public ScheduledJob createJob(String rubyClassName, String cronExpression, String timeout, String name, String description, Map<String, Object> config, boolean singleton) {
+    public ExecutorCompletionService<ServiceController> createJob(String rubyClassName, String cronExpression, String timeout, String name, String description, Map<String, Object> config, boolean singleton) {
         TimeInterval timeoutInterval = TimeInterval.parseInterval(timeout, TimeUnit.SECONDS);
         return createJob(rubyClassName, cronExpression, timeoutInterval, name, description, config, singleton);
     }
@@ -133,95 +138,107 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
      * @param singleton      Should the job be running only on one node in cluster?
      * @return The ScheduledJob object.
      */
-    public ScheduledJob createJob(String rubyClassName, String cronExpression, TimeInterval timeout, String name, String description, Map<String, Object> config, boolean singleton) {
+    public ExecutorCompletionService<ServiceController> createJob(final String rubyClassName, String cronExpression, TimeInterval timeout, String name, String description, Map<String, Object> config, boolean singleton) {
+        if (name == null)
+            name = safeJobName(rubyClassName);
+        else
+            name = safeJobName(name);
+
         log.debugf("Creating new job '%s'...", name);
 
-        String safeName = safeJobName(name);
+        ScheduledJob job = new ScheduledJob(getUnit().getName(), name, description, cronExpression, timeout, singleton, rubyClassName);
 
-        ServiceName serviceName = JobsServices.componentResolver(getUnit(), safeName);
+        installComponentResolver(job, config);
 
-        ComponentResolverHelper helper = new ComponentResolverHelper(getTarget(), getUnit(), serviceName);
-
-        try {
-            helper
-                    .initializeInstantiator(rubyClassName, StringUtils.underscore(rubyClassName.trim()))
-                    .initializeResolver(JobComponent.class, config, true) // Always create new instance
-                    .installService(Mode.ON_DEMAND);
-        } catch (Exception e) {
-            log.errorf(e, "Couldn't install '%s' job for deployment unit '%s'", name, getUnit());
-        }
-
-        final ScheduledJob job = new ScheduledJob(null, safeName, description, cronExpression, timeout, singleton, rubyClassName);
-
-        installJob(job);
-
-        return job;
+        return installJob(job);
     }
 
     /**
      * Removes the scheduled job by its name.
      * <p/>
-     * This operation is executed asynchronously. You cannot expect to have
-     * the job undeployed just after the method execution is finished.
-     * <p/>
-     * Used by the TorqueBox::ScheduledJob.remove method.
+     * This operation is executed asynchronously. To watch when the removal is finished use the ExecutorCompletionService returned by this method.
      *
      * @param name Name of the scheduled job
-     * @see JobSchedulizer#removeJob(String, Runnable)
+     * @return ExecutorCompletionService A service to watch the task completion
      */
-    public void removeJob(String name) {
-        removeJob(name, null);
-    }
+    @SuppressWarnings("unused")
+    public ExecutorCompletionService<ServiceController> removeJob(String name) {
+        name = safeJobName(name);
 
-    /**
-     * Removes the scheduled job by its name.
-     * <p/>
-     * This operation is executed asynchronously. You cannot expect to have
-     * the job undeployed just after the method execution is finished.
-     * <p/>
-     * You can use the actionOnRemove parameter to execute code after removal.
-     *
-     * @param name           Name of the scheduled job
-     * @param actionOnRemove Code that should be executed after the job
-     *                       removal is complete
-     */
-    public void removeJob(final String name, final Runnable actionOnRemove) {
-        log.debugf("Installing job '%s'", name);
+        log.debugf("Removing job '%s'", name);
 
-        String safeName = safeJobName(name);
+        final ServiceName componentResolverServiceName = JobsServices.componentResolver(getUnit(), name);
+        final ServiceName jobServiceName = JobsServices.job(getUnit(), name);
+        final ExecutorCompletionService<ServiceController> completionService = new ExecutorCompletionService<ServiceController>(Executors.newSingleThreadExecutor());
 
-        final ServiceName componentResolverServiceName = JobsServices.componentResolver(getUnit(), safeName);
-        final ServiceName jobServiceName = JobsServices.job(getUnit(), safeName);
-
+        // Remove the job service
         replaceService(jobServiceName, new Runnable() {
             @Override
             public void run() {
-                replaceService(componentResolverServiceName, actionOnRemove);
+                // Remove the component resolver service once
+                // the job service is removed
+                replaceService(componentResolverServiceName, completionService);
             }
         });
+
+        return completionService;
     }
 
-
-    private void installJob(final ScheduledJob job) {
-        log.debugf("Installing job '%s'", job.getName());
+    /**
+     * Installs the job service
+     *
+     * @param job The job to create the service
+     * @return ExecutorCompletionService A service to watch the task completion
+     */
+    private ExecutorCompletionService<ServiceController> installJob(final ScheduledJob job) {
+        log.debugf("Installing job '%s'...", job.getName());
 
         final ServiceName serviceName = JobsServices.job(getUnit(), job.getName());
 
-        replaceService(serviceName,
-                new Runnable() {
-                    @SuppressWarnings({"unchecked", "rawtypes"})
-                    public void run() {
-                        ServiceBuilder builder = build(serviceName, job, job.isSingleton());
+        ExecutorCompletionService completionService = replaceService(serviceName, new Runnable() {
+            @SuppressWarnings({"unchecked", "rawtypes"})
+            public void run() {
+                ServiceBuilder builder = build(serviceName, job, job.isSingleton());
 
-                        builder.addDependency(CoreServices.runtimePoolName(getUnit(), "jobs"), RubyRuntimePool.class, job.getRubyRuntimePoolInjector())
-                                .addDependency(JobsServices.componentResolver(getUnit(), job.getName()), ComponentResolver.class, job.getComponentResolverInjector())
-                                .addDependency(JobsServices.scheduler(getUnit(), job.isSingleton() && ClusterUtil.isClustered(getUnit().getServiceRegistry())), BaseJobScheduler.class, job.getJobSchedulerInjector())
-                                .install();
-
-                    }
-                });
+                builder.addDependency(CoreServices.runtimePoolName(getUnit(), "jobs"), RubyRuntimePool.class, job.getRubyRuntimePoolInjector())
+                        .addDependency(JobsServices.componentResolver(getUnit(), job.getName()), ComponentResolver.class, job.getComponentResolverInjector())
+                        .addDependency(JobsServices.scheduler(getUnit(), job.isSingleton() && ClusterUtil.isClustered(getUnit().getServiceRegistry())), BaseJobScheduler.class, job.getJobSchedulerInjector())
+                        .install();
+            }
+        });
 
         installMBean(serviceName, "torquebox.jobs", job);
+
+        return completionService;
+    }
+
+    /**
+     * Installs the component resolver service for the job
+     *
+     * @param job    The job to install the component resolver for
+     * @param config The configuration (if any) which should be injected into the job constructor
+     * @return ExecutorCompletionService A service to watch the task completion
+     */
+    private ExecutorCompletionService<ServiceController> installComponentResolver(final ScheduledJob job, final Map<String, Object> config) {
+        log.debugf("Installing component resolver for job '%s'...", job.getName());
+
+        final ServiceName serviceName = JobsServices.componentResolver(getUnit(), job.getName());
+
+        return replaceService(serviceName, new Runnable() {
+            @Override
+            public void run() {
+                ComponentResolverHelper helper = new ComponentResolverHelper(getTarget(), getUnit(), serviceName);
+
+                try {
+                    helper
+                            .initializeInstantiator(job.getRubyClassName(), StringUtils.underscore(job.getRubyClassName().trim()))
+                            .initializeResolver(JobComponent.class, config, true) // Always create new instance
+                            .installService(Mode.ON_DEMAND);
+                } catch (Exception e) {
+                    log.errorf(e, "Couldn't install '%s' job for deployment unit '%s'", job.getName(), getUnit());
+                }
+            }
+        });
     }
 
     /**
@@ -235,6 +252,4 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
     private String safeJobName(String name) {
         return name.replaceAll("::", ".");
     }
-
-    private static final Logger log = Logger.getLogger("org.torquebox.jobs");
 }

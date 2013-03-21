@@ -77,7 +77,7 @@ public class ComponentResolverHelper {
             throw new Exception("Instantiator needs to be initialized before initializing component resolver");
         }
 
-        log.trace("Initializing component resolver...");
+        log.tracef("Initializing component resolver for service '%s'...", serviceName.getSimpleName());
 
         componentResolver = new ComponentResolver(alwaysReload);
 
@@ -105,14 +105,14 @@ public class ComponentResolverHelper {
     }
 
     private void initializeService() throws Exception {
-        log.trace("Initializing component resolver service...");
+        log.tracef("Initializing component resolver service for service '%s'...", serviceName.getSimpleName());
 
         componentResolverService = new ComponentResolverService(componentResolver);
         builder = serviceTarget.addService(serviceName, componentResolverService);
     }
 
     private void addNamespaceContext() {
-        log.trace("Adding namespace context dependency to component resolver service...");
+        log.tracef("Adding namespace context dependency to component resolver service '%s'...", serviceName.getSimpleName());
 
         ServiceName namespaceContextSelectorName = CoreServices.appNamespaceContextSelector(unit);
         builder.addDependency(namespaceContextSelectorName, NamespaceContextSelector.class, componentResolverService.getNamespaceContextSelectorInjector());

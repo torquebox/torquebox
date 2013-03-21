@@ -81,11 +81,7 @@ describe "jobs alacarte" do
     it "should remove a job by name" do
       job = TorqueBox::ScheduledJob.lookup('job.one')
       job.name.should == 'job.one'
-
       TorqueBox::ScheduledJob.remove('job.one')
-
-      sleep 2.5
-
       TorqueBox::ScheduledJob.lookup('job.one').should == nil
     end
   end
@@ -115,14 +111,11 @@ remote_describe "runtime jobs alacarte" do
       msg[:options].should == {"queue" => queue.name}
     end
 
-    job = TorqueBox::ScheduledJob.lookup('default')
-    job.name.should == 'default'
+    job = TorqueBox::ScheduledJob.lookup('SimpleJob')
+    job.name.should == 'SimpleJob'
     job.is_singleton.should == true
 
-    TorqueBox::ScheduledJob.remove('default')
-
-    sleep 2.5
-
+    TorqueBox::ScheduledJob.remove('SimpleJob')
     TorqueBox::ScheduledJob.list.count.should == 0
   end
 
@@ -137,9 +130,6 @@ remote_describe "runtime jobs alacarte" do
     job.status.should == 'STARTED'
 
     TorqueBox::ScheduledJob.remove('simple.job')
-
-    sleep 2.5
-
     TorqueBox::ScheduledJob.list.count.should == 0
   end
 
@@ -153,9 +143,6 @@ remote_describe "runtime jobs alacarte" do
     job.status.should == 'STARTED'
 
     TorqueBox::ScheduledJob.remove('simple.config.job')
-
-    sleep 2.5
-
     TorqueBox::ScheduledJob.list.count.should == 0
   end
 
@@ -164,23 +151,53 @@ remote_describe "runtime jobs alacarte" do
     TorqueBox::ScheduledJob.schedule('SimpleJob', "*/10 * * * * ?", :description => "something")
     TorqueBox::ScheduledJob.list.count.should == 1
 
-    job = TorqueBox::ScheduledJob.lookup('default')
-    job.name.should == 'default'
+    job = TorqueBox::ScheduledJob.lookup('SimpleJob')
+    job.name.should == 'SimpleJob'
     job.description.should == 'something'
 
     TorqueBox::ScheduledJob.schedule('SimpleJob', "*/5 * * * * ?", :description => "new job")
+    TorqueBox::ScheduledJob.list.count.should == 1
 
-    sleep 2.5
+    job = TorqueBox::ScheduledJob.lookup('SimpleJob')
+    job.name.should == 'SimpleJob'
+    job.description.should == 'new job'
+
+    TorqueBox::ScheduledJob.remove('SimpleJob')
+    TorqueBox::ScheduledJob.list.count.should == 0
+  end
+
+  it "should not fail when the job class name includes module" do
+    TorqueBox::ScheduledJob.schedule('SomeModule::AnotherSimpleJob', "*/5 * * * * ?")
 
     TorqueBox::ScheduledJob.list.count.should == 1
 
-    job = TorqueBox::ScheduledJob.lookup('default')
-    job.name.should == 'default'
-    job.description.should == 'new job'
+    job = TorqueBox::ScheduledJob.lookup('SomeModule.AnotherSimpleJob')
+    job.name.should == 'SomeModule.AnotherSimpleJob'
 
-    TorqueBox::ScheduledJob.remove('default')
+    TorqueBox::ScheduledJob.remove('SomeModule.AnotherSimpleJob')
 
-    sleep 2.5
+    TorqueBox::ScheduledJob.list.count.should == 0
+  end
+
+  it "should not replace a job when the class differ" do
+    TorqueBox::ScheduledJob.list.count.should == 0
+    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/10 * * * * ?", :description => "something")
+    TorqueBox::ScheduledJob.list.count.should == 1
+
+    job = TorqueBox::ScheduledJob.lookup('SimpleJob')
+    job.name.should == 'SimpleJob'
+    job.description.should == 'something'
+
+    TorqueBox::ScheduledJob.schedule('SomeModule::AnotherSimpleJob', "*/5 * * * * ?", :description => "another something")
+
+    TorqueBox::ScheduledJob.list.count.should == 2
+
+    job = TorqueBox::ScheduledJob.lookup('SomeModule.AnotherSimpleJob')
+    job.name.should == 'SomeModule.AnotherSimpleJob'
+    job.description.should == 'another something'
+
+    TorqueBox::ScheduledJob.remove('SimpleJob')
+    TorqueBox::ScheduledJob.remove('SomeModule.AnotherSimpleJob')
 
     TorqueBox::ScheduledJob.list.count.should == 0
   end

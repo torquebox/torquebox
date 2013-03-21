@@ -33,15 +33,20 @@ module TorqueBox
       # * :timeout [String] The time after the job execution should be interrupted. By default it'll never interrupt the job execution. Example: '2s', '1m'
       # * :config [Hash] Data that should be injected to the job constructor
       # * :singleton [boolean] Flag to determine if the job should be executed on every node (set to +true+, default) in the cluster or only on one node (set to +false+).
+      # * :wait [Long] The time (in miliseconds) to wait for the job scheduling operation completion
       def schedule(class_name, cron, options = {})
         options = {
             :singleton => true,
-            :name => "default",
-            :timeout => "0s"
+            :timeout => "0s",
+            :wait => 10_000
         }.merge(options)
 
         TorqueBox::ServiceRegistry.lookup(schedulizer_service_name) do |schedulizer|
-          schedulizer.create_job(class_name.to_s, cron, options[:timeout], options[:name], options[:description], options[:config], options[:singleton])
+          # Receive the java.util.concurrent.ExecutorCompletionService object
+          completion_service = schedulizer.create_job(class_name.to_s, cron, options[:timeout], options[:name], options[:description], options[:config], options[:singleton])
+          # Wait for the task completion
+          # There will be always one task, so we're safe here
+          completion_service.poll(options[:wait], java.util.concurrent.TimeUnit::MILLISECONDS)
         end
       end
 
@@ -49,10 +54,24 @@ module TorqueBox
       #
       # This method removes the job asynchronously.
       #
-      # @param [String] The job name.
-      def remove(name = "default")
+      # @param name [String] The job name.
+      # @param options Optional parameters (a Hash), including:
+      #
+      # * :wait [Long] The time (in miliseconds) to wait for the job removal operation completion
+      def remove(name, options = {})
+        options = {
+            :wait => 10_000
+        }.merge(options)
+
+        raise "No job name provided" if name.nil?
+        raise "Couldn't find a job with name '#{name}''" if TorqueBox::ScheduledJob.lookup(name).nil?
+
         TorqueBox::ServiceRegistry.lookup(schedulizer_service_name) do |schedulizer|
-          schedulizer.remove_job (name)
+          # Receive the java.util.concurrent.ExecutorCompletionService object
+          completion_service = schedulizer.remove_job(name)
+          # Wait for the task completion
+          # There will be always one task, so we're safe here
+          completion_service.poll(options[:wait], java.util.concurrent.TimeUnit::MILLISECONDS)
         end
       end
 
@@ -69,8 +88,9 @@ module TorqueBox
           name.start_with?(prefix) && !name.end_with?('mbean')
         end
         service_names.map do |service_name|
-          TorqueBox::MSC.get_service(service_name).value
-        end
+          service = TorqueBox::MSC.get_service(service_name)
+          service.nil? ? nil : service.value
+        end.select {|v| !v.nil? }
       end
 
       # Lookup a scheduled job of this application by name.
