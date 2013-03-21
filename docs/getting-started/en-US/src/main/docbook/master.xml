@@ -677,7 +677,7 @@ end</programlisting>
 
         <screen><prompt>$</prompt> <command>cd ~/torquebox_examples/rails_example</command>
 <prompt>$</prompt> <command>torquebox rails</command>
-       apply  /Users/someone/torquebox-${project.version}/share/rails/template.rb
+       apply  .../torquebox-${project.version}/share/rails/template.rb
      gemfile    torquebox (${project.version})
       remove    config/initializers/session_store.rb
  initializer    session_store.rb

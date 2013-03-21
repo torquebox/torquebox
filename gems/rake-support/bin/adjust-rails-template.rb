@@ -14,7 +14,7 @@ class RailsTemplateAdjuster
     @version.gsub!(/\-SNAPSHOT$/, '')
 
   end
-   
+
   def adjust
     original = template_path
     modified = original + '.modified'
@@ -29,7 +29,7 @@ class RailsTemplateAdjuster
     FileUtils.rm original
     FileUtils.mv( modified, original )
   end
-   
+
   private
 
   def local_build?
@@ -43,8 +43,8 @@ class RailsTemplateAdjuster
       output.puts line unless line =~ /^add_source \"http\:\/\/torquebox.org\/.+?\/builds\/[0-9]+\/gem-repo\"$/
     end
   end
-  
-  def generate_source 
+
+  def generate_source
     if local_build?
       "# Local build - no source needed"
     elsif @incremental
@@ -53,9 +53,9 @@ class RailsTemplateAdjuster
       ""
     end
   end
-   
+
   def template_path
-    File.dirname( __FILE__ ) + '/../target/stage/torquebox/share/rails/template.rb'
+    File.dirname( __FILE__ ) + '/../target/torquebox-rake-support/share/rails/template.rb'
   end
 
 end

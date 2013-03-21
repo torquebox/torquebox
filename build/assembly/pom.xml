@@ -77,32 +77,6 @@
 
   <profiles>
     <profile>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>de.saumya.mojo</groupId>
-            <artifactId>jruby-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>adjust-rails-template</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>jruby</goal>
-                </goals>
-                <configuration>
-                  <file>bin/adjust-rails-template.rb</file>
-                  <args>${project.version} ${env.BUILD_NUMBER}</args>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
       <id>wfk</id>
       <activation>
         <activeByDefault>false</activeByDefault>

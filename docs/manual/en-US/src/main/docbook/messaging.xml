@@ -1816,7 +1816,7 @@ end
 
         <para>If your appplication uses Rails and you use the rails template
         that ships with TorqueBox to create or update your application
-        (<filename>$TORQUEBOX_HOME/share/rails/template.rb</filename>), you
+        (<command>torquebox rails my_app</command>), you
         should have an initializer
         (<filename>RAILS_ROOT/config/initializers/active_record_backgroundable.rb</filename>)
         that already includes <classname>Backgroundable</classname> into

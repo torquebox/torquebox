@@ -56,7 +56,8 @@ module TorqueBox
 
 
     def self.template
-      "#{ENV['TORQUEBOX_HOME']}/share/rails/template.rb"
+      File.join(File.expand_path(File.dirname(__FILE__)), '..', '..', 'share',
+                'rails', 'template.rb')
     end
 
     def self.rails_installed?

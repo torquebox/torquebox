@@ -38,6 +38,36 @@
           <execution>
             <id>install-gem</id>
           </execution>
+          <execution>
+            <id>copy-rails-template</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>jruby</goal>
+            </goals>
+            <configuration>
+              <script>
+                require 'fileutils'
+                def cp( src, dest )
+                  puts %Q(copying #{src} to #{dest})
+                  FileUtils.mkdir_p( dest )
+                  FileUtils.cp_r( src, dest )
+                end
+                cp( %Q(${basedir}/share),
+                    %Q(${basedir}/target/torquebox-rake-support) )
+              </script>
+            </configuration>
+          </execution>
+          <execution>
+            <id>adjust-rails-template</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>jruby</goal>
+            </goals>
+            <configuration>
+              <file>bin/adjust-rails-template.rb</file>
+              <args>${project.version} ${env.BUILD_NUMBER}</args>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -48,6 +78,13 @@
             <id>run-specs</id>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <configuration>
+          <extraFiles>share/rails/template.rb</extraFiles>
+        </configuration>
       </plugin>
     </plugins>
   </build>
