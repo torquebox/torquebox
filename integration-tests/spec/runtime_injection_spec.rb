@@ -17,9 +17,15 @@ remote_describe 'runtime injection' do
 
   require 'torquebox-core'
 
-  it "should work" do
-    TorqueBox.fetch( 'service:SimpleService' ).should_not be_nil
-    TorqueBox.fetch( '/queue/container_queue' ).should_not be_nil
+  it 'should work for valid injections' do
+    TorqueBox.fetch('service:SimpleService').should_not be_nil
+    TorqueBox.fetch('/queue/container_queue').should_not be_nil
+  end
+
+  it 'should raise InjectionError for invalid injection' do
+    lambda {
+      TorqueBox.fetch('something_not_valid')
+    }.should raise_error(TorqueBox::InjectionError)
   end
 
 end
