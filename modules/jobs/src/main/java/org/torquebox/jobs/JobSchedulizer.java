@@ -222,6 +222,8 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
                                 .addDependency(JobsServices.componentResolver(getUnit(), job.getName()), ComponentResolver.class, job.getComponentResolverInjector())
                                 .addDependency(JobsServices.scheduler(getUnit(), job.isSingleton() && ClusterUtil.isClustered(getUnit().getServiceRegistry())), BaseJobScheduler.class, job.getJobSchedulerInjector())
                                 .install();
+
+                        installMBean(jobServiceName, "torquebox.jobs", job);
                     }
                 }, completionService);
             }
