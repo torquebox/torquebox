@@ -204,7 +204,10 @@ remote_describe "runtime jobs alacarte" do
 
   it "should timeout" do
     TorqueBox::ScheduledJob.list.count.should == 0
-    # Nope, even the best machine will not install two services in 1ms, hopefully
+    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/5 * * * * ?").should == true
+    TorqueBox::ScheduledJob.list.count.should == 1
+    # Hopefully even the best machine will not remove the existing job
+    # and install two new services in 1ms
     TorqueBox::ScheduledJob.schedule('SimpleJob', "*/10 * * * * ?", :wait => 1).should == false
   end
 end
