@@ -332,8 +332,13 @@ end</programlisting></para>
         <para>
           It is possible to create a new job at runtime. You need to use the
           <methodname>schedule</methodname> method available in the
-          <methodname>TorqueBox::ScheduledJob</methodname> module.
-
+          <methodname>TorqueBox::ScheduledJob</methodname> module. This method
+          returns <literal>true</literal> if the task is completed or
+          <literal>false</literal> otherwise. There is a default
+          timeout set to 10 seconds meaning that if the job will not be scheduled in the
+          mentioned time the method will finish immediately returning <literal>false</literal>.
+          You can change the timeout by setting the <literal>:wait</literal> option and
+          specifying the time to wait in miliseconds.
         </para>
 
         <para>
@@ -350,7 +355,8 @@ end</programlisting></para>
       :description => 'This is a simple job',
       :timeout => '2s',
       :config => {"number" => 1, "text" => "bacon"},
-      :singleton => false)</programlisting>
+      :singleton => false,
+      :wait => 5000)</programlisting>
 
               This example shows all the available options. Please see the table
               below for explanation.
@@ -422,6 +428,14 @@ end</programlisting></para>
                 <entry>Flag to determine if the job should be executed on every node
                 in the cluster or only on one node (default).</entry>
               </row>
+
+              <row>
+                <entry><parameter>:wait</parameter></entry>
+
+                <entry>10000</entry>
+
+                <entry>Time to wait for the job scheduling taks to complete.</entry>
+              </row>
             </tbody>
           </tgroup>
         </table>
@@ -429,7 +443,9 @@ end</programlisting></para>
         <para>
           Every job requires a unique name across the application. By default,
           if there is no <parameter>:name</parameter> parameter provided the name
-          will be set to "default".
+          will be set to the class name. In case the job class name includes module
+          name, like this: <classname>Module::ClassName</classname>, the job name will
+          be set to <classname>Module.ClassName</classname>.
         </para>
 
         <para>
@@ -450,16 +466,18 @@ end</programlisting></para>
           You can easily remove a scheduled job. To do this use the
           <methodname>remove</methodname> method available in the
           <methodname>TorqueBox::ScheduledJob</methodname> module. This method
-          is executed asynchronously and does not return anything. You cannot expect
-          that the job will be undeployed when the method execution finishes.
-          You can use the <methodname>lookup</methodname> to find if the job still
-          exists.
+          returns <literal>true</literal> if the task is completed or
+          <literal>false</literal> otherwise. There is a default
+          timeout set to 10 seconds meaning that if the job will not be removed in the
+          mentioned time the method will finish immediately returning <literal>false</literal>.
+          You can change the timeout by setting the <literal>:wait</literal> option and
+          specifying the time to wait in miliseconds.
         </para>
 
         <para>
           <example>
             <title>Removing a job</title>
-            <para><programlisting>TorqueBox::ScheduledJob.remove('simple.job')</programlisting>
+            <para><programlisting>TorqueBox::ScheduledJob.remove('simple.job', :wait => 5000)</programlisting>
 
               This example will lookup a job with the 'simple.job' name and remove it.
 

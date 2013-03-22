@@ -46,7 +46,8 @@ module TorqueBox
           completion_service = schedulizer.create_job(class_name.to_s, cron, options[:timeout], options[:name], options[:description], options[:config], options[:singleton])
           # Wait for the task completion
           # There will be always one task, so we're safe here
-          completion_service.poll(options[:wait], java.util.concurrent.TimeUnit::MILLISECONDS)
+          # In case of success - return true, false otherwise
+          completion_service.poll(options[:wait], java.util.concurrent.TimeUnit::MILLISECONDS).nil? ? false : true
         end
       end
 
@@ -71,7 +72,8 @@ module TorqueBox
           completion_service = schedulizer.remove_job(name)
           # Wait for the task completion
           # There will be always one task, so we're safe here
-          completion_service.poll(options[:wait], java.util.concurrent.TimeUnit::MILLISECONDS)
+          # In case of success - return true, false otherwise
+          completion_service.poll(options[:wait], java.util.concurrent.TimeUnit::MILLISECONDS).nil? ? false : true
         end
       end
 

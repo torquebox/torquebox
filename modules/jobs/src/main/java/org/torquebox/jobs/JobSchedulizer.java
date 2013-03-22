@@ -148,9 +148,7 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
 
         ScheduledJob job = new ScheduledJob(getUnit().getName(), name, description, cronExpression, timeout, singleton, rubyClassName);
 
-        installComponentResolver(job, config);
-
-        return installJob(job);
+        return installJob(job, config);
     }
 
     /**
@@ -185,49 +183,24 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
     }
 
     /**
-     * Installs the job service
-     *
-     * @param job The job to create the service
-     * @return ExecutorCompletionService A service to watch the task completion
-     */
-    private ExecutorCompletionService<ServiceController> installJob(final ScheduledJob job) {
-        log.debugf("Installing job '%s'...", job.getName());
-
-        final ServiceName serviceName = JobsServices.job(getUnit(), job.getName());
-
-        ExecutorCompletionService completionService = replaceService(serviceName, new Runnable() {
-            @SuppressWarnings({"unchecked", "rawtypes"})
-            public void run() {
-                ServiceBuilder builder = build(serviceName, job, job.isSingleton());
-
-                builder.addDependency(CoreServices.runtimePoolName(getUnit(), "jobs"), RubyRuntimePool.class, job.getRubyRuntimePoolInjector())
-                        .addDependency(JobsServices.componentResolver(getUnit(), job.getName()), ComponentResolver.class, job.getComponentResolverInjector())
-                        .addDependency(JobsServices.scheduler(getUnit(), job.isSingleton() && ClusterUtil.isClustered(getUnit().getServiceRegistry())), BaseJobScheduler.class, job.getJobSchedulerInjector())
-                        .install();
-            }
-        });
-
-        installMBean(serviceName, "torquebox.jobs", job);
-
-        return completionService;
-    }
-
-    /**
-     * Installs the component resolver service for the job
+     * Installs the component resolver service and the job service for provided job
      *
      * @param job    The job to install the component resolver for
      * @param config The configuration (if any) which should be injected into the job constructor
      * @return ExecutorCompletionService A service to watch the task completion
      */
-    private ExecutorCompletionService<ServiceController> installComponentResolver(final ScheduledJob job, final Map<String, Object> config) {
-        log.debugf("Installing component resolver for job '%s'...", job.getName());
+    private ExecutorCompletionService<ServiceController> installJob(final ScheduledJob job, final Map<String, Object> config) {
+        final ServiceName componentResolverServiceName = JobsServices.componentResolver(getUnit(), job.getName());
+        final ServiceName jobServiceName = JobsServices.job(getUnit(), job.getName());
 
-        final ServiceName serviceName = JobsServices.componentResolver(getUnit(), job.getName());
+        final ExecutorCompletionService<ServiceController> completionService = new ExecutorCompletionService<ServiceController>(Executors.newSingleThreadExecutor());
 
-        return replaceService(serviceName, new Runnable() {
+        replaceService(componentResolverServiceName, new Runnable() {
             @Override
             public void run() {
-                ComponentResolverHelper helper = new ComponentResolverHelper(getTarget(), getUnit(), serviceName);
+                log.debugf("Installing component resolver for job '%s'...", job.getName());
+
+                ComponentResolverHelper helper = new ComponentResolverHelper(getTarget(), getUnit(), componentResolverServiceName);
 
                 try {
                     helper
@@ -235,10 +208,26 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
                             .initializeResolver(JobComponent.class, config, true) // Always create new instance
                             .installService(Mode.ON_DEMAND);
                 } catch (Exception e) {
-                    log.errorf(e, "Couldn't install '%s' job for deployment unit '%s'", job.getName(), getUnit());
+                    log.errorf(e, "Couldn't install component resolver for job '%s' for deployment unit '%s'", job.getName(), getUnit());
                 }
+
+                replaceService(jobServiceName, new Runnable() {
+                    @SuppressWarnings({"unchecked", "rawtypes"})
+                    public void run() {
+                        log.debugf("Installing job '%s'...", job.getName());
+
+                        ServiceBuilder builder = build(jobServiceName, job, job.isSingleton());
+
+                        builder.addDependency(CoreServices.runtimePoolName(getUnit(), "jobs"), RubyRuntimePool.class, job.getRubyRuntimePoolInjector())
+                                .addDependency(JobsServices.componentResolver(getUnit(), job.getName()), ComponentResolver.class, job.getComponentResolverInjector())
+                                .addDependency(JobsServices.scheduler(getUnit(), job.isSingleton() && ClusterUtil.isClustered(getUnit().getServiceRegistry())), BaseJobScheduler.class, job.getJobSchedulerInjector())
+                                .install();
+                    }
+                }, completionService);
             }
         });
+
+        return completionService;
     }
 
     /**
