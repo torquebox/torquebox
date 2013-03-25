@@ -24,7 +24,7 @@ remote_describe "at jobs" do
     end
 
     # 5 seconds, every 220 ms
-    count.should == 23
+    count.should be_within(1).of(23)
 
     TorqueBox::ScheduledJob.remove('SimpleJob').should == true
   end
@@ -42,7 +42,7 @@ remote_describe "at jobs" do
     end
 
     # 4 seconds, every 220 ms
-    count.should == 19
+    count.should be_within(1).of(19)
 
     TorqueBox::ScheduledJob.remove('SimpleJob').should == true
   end
@@ -60,7 +60,7 @@ remote_describe "at jobs" do
     end
 
     # 4 seconds, every 220 ms
-    count.should == 19
+    count.should be_within(1).of(19)
 
     TorqueBox::ScheduledJob.remove('SimpleJob').should == true
   end
@@ -78,7 +78,7 @@ remote_describe "at jobs" do
     end
 
     # 11, because the first execution is not counted
-    count.should == 11
+    count.should be_within(1).of(11)
 
     TorqueBox::ScheduledJob.remove('SimpleJob').should == true
   end
