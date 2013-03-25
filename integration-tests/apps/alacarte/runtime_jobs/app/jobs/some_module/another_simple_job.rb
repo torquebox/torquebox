@@ -1,10 +1,8 @@
 module SomeModule
   class AnotherSimpleJob
-    include TorqueBox::Injectors
-
     def initialize(opts = {})
       @options = opts
-      @response_queue = fetch(@options["queue"])
+      @response_queue = TorqueBox.fetch(@options["queue"])
     end
 
     def run
