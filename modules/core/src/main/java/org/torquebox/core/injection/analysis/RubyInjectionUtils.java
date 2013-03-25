@@ -32,6 +32,9 @@ public class RubyInjectionUtils {
      * @return The string, if possible, otherwise <code>null</code>.
      */
     protected static String getString(Object injection) {
+        if (injection == null) {
+            return null;
+        }
         // regular .toString doesn't handle RubyClass instances
         if (injection instanceof RubyClass) {
             return ((RubyClass) injection).getName();
