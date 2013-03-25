@@ -434,7 +434,7 @@ end</programlisting></para>
 
                 <entry>10000</entry>
 
-                <entry>Time to wait for the job scheduling taks to complete.</entry>
+                <entry>Time to wait for the job scheduling task to complete.</entry>
               </row>
             </tbody>
           </tgroup>
@@ -491,6 +491,155 @@ end</programlisting></para>
         </para>
       </section>
     </section>
+
+  </section>
+
+  <section id="at-jobs">
+    <title>'At' Jobs</title>
+
+    <para>
+      'At' jobs are jobs that use different scheduling mechanism compared
+      to regular scheduled jobs where you define the execution time with cron
+      expressions. In case of 'at' jobs you have more control over the execution
+      of the job.
+    </para>
+
+    <para><example>
+      <title>Examples of scheduling 'at' jobs</title>
+
+      <para><programlisting># The job will be executed every 200 ms, from now, for the next 10 seconds
+TorqueBox::ScheduledJob.at('SimpleJob', :every => 200, :until => Time.now + 10)
+
+# The job will be executed for the first time in 10 seconds (current time + 10 seconds), then every
+# 500 ms, for the next 10 seconds (current time + 20 seconds)
+TorqueBox::ScheduledJob.at('SimpleJob', :at => Time.now + 10, :every => 500, :until => Time.now + 20)
+
+# The job will be executed for the first time in 5s and repeated 3 times
+# The time between executions is set to 1.5s
+TorqueBox::ScheduledJob.at('SimpleJob', :in => 5000, :repeat => 3, :every => 1500)
+</programlisting></para>
+      </example></para>
+
+      <para>
+        The first parameter of the <methodname>at</methodname> method is the class
+        name of the job implmentation to execute. The second parameter
+        allows to specify when the job should be executed.
+        Below you can find valid options.
+      </para>
+
+      <table>
+        <title>'At' job scheduling options</title>
+
+        <tgroup cols="3">
+          <colspec align="left" />
+
+          <thead>
+            <row>
+              <entry>Option</entry>
+
+              <entry>Default</entry>
+
+              <entry>Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><parameter>:at</parameter></entry>
+
+              <entry>Time.now</entry>
+
+              <entry>
+                Specifies when the at job should start firing. Must be a
+                <classname>Time</classname> class. Can't be specified with
+                <parameter>:in</parameter>.
+              </entry>
+            </row>
+
+            <row>
+              <entry><parameter>:in</parameter></entry>
+
+              <entry></entry>
+
+              <entry>Specifies when the at job should start firing, in ms from now. Can't be specified with <parameter>:at</parameter>.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:every</parameter></entry>
+
+              <entry></entry>
+
+              <entry>Specifies the delay interval between at job firings, in ms. If specified without a <parameter>:repeat</parameter> or <parameter>:until</parameter>, the job will fire indefinitely.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:repeat</parameter></entry>
+
+              <entry></entry>
+
+              <entry>Specifies the number of times an at job should repeat beyond its initial firing. Requires <parameter>:every</parameter> to be provided.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:until</parameter></entry>
+
+              <entry></entry>
+
+              <entry>Specifies when the at job should stop firing. Must be a <classname>Time</classname> class.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:name</parameter></entry>
+
+              <entry>job class name</entry>
+
+              <entry>The job name unique across the application.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:description</parameter></entry>
+
+              <entry></entry>
+
+              <entry>Job description.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:timeout</parameter></entry>
+
+              <entry>"0s"</entry>
+
+              <entry>The time after the job execution should be interrupted. By default it'll
+              never interrupt the job execution.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:config</parameter></entry>
+
+              <entry></entry>
+
+              <entry>Data that should be injected to the job constructor.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:singleton</parameter></entry>
+
+              <entry>true</entry>
+
+              <entry>Flag to determine if the job should be executed on every node
+              in the cluster or only on one node (default).</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:wait</parameter></entry>
+
+              <entry>10000</entry>
+
+              <entry>Time to wait for the job scheduling task to complete.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
 
   </section>
 

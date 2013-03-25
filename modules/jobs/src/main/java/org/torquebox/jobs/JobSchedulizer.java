@@ -21,6 +21,7 @@ package org.torquebox.jobs;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
+import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
@@ -29,6 +30,7 @@ import org.jboss.msc.service.StartException;
 import org.projectodd.polyglot.core.AtRuntimeInstaller;
 import org.projectodd.polyglot.core.util.ClusterUtil;
 import org.projectodd.polyglot.core.util.TimeInterval;
+import org.projectodd.polyglot.jobs.BaseJob;
 import org.projectodd.polyglot.jobs.BaseJobScheduler;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
@@ -38,6 +40,7 @@ import org.torquebox.core.util.StringUtils;
 import org.torquebox.jobs.as.JobsServices;
 import org.torquebox.jobs.component.JobComponent;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorCompletionService;
@@ -148,7 +151,31 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
 
         ScheduledJob job = new ScheduledJob(getUnit().getName(), name, description, cronExpression, timeout, singleton, rubyClassName);
 
-        return installJob(job, config);
+        return installJob(job, rubyClassName, job.getComponentResolverInjector(), job.getRubyRuntimePoolInjector(), config);
+    }
+
+    @SuppressWarnings("unused")
+    public ExecutorCompletionService<ServiceController> createAtJob(String rubyClassName, Date startAt, Date endAt, long interval, int repeat, String timeout, String name, String description, Map<String, Object> config, boolean singleton) {
+        TimeInterval timeoutInterval = TimeInterval.parseInterval(timeout, TimeUnit.SECONDS);
+        return createAtJob(rubyClassName, startAt, endAt, interval, repeat, timeoutInterval, name, description, config, singleton);
+    }
+
+    public ExecutorCompletionService<ServiceController> createAtJob(String rubyClassName, Date startAt, Date endAt, long interval, int repeat, TimeInterval timeout, String name, String description, Map<String, Object> config, boolean singleton) {
+        if (name == null)
+            name = safeJobName(rubyClassName);
+        else
+            name = safeJobName(name);
+
+        log.debugf("Creating new 'at' job '%s'...", name);
+
+        AtJob atJob = new AtJob(getUnit().getName(), timeout, name, description, singleton);
+
+        atJob.setStartAt(startAt);
+        atJob.setEndAt(endAt);
+        atJob.setInterval(interval);
+        atJob.setRepeat(repeat);
+
+        return installJob(atJob, rubyClassName, atJob.getComponentResolverInjector(), atJob.getRubyRuntimePoolInjector(), config);
     }
 
     /**
@@ -185,14 +212,21 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
     /**
      * Installs the component resolver service and the job service for provided job
      *
-     * @param job    The job to install the component resolver for
-     * @param config The configuration (if any) which should be injected into the job constructor
-     * @return ExecutorCompletionService A service to watch the task completion
+     * @param job                       The job to install the component resolver for
+     * @param componentResolverInjector
+     * @param rubyRuntimePoolInjector
+     * @param config                    The configuration (if any) which should be injected into the job constructor  @return ExecutorCompletionService A service to watch the task completion
      */
-    private ExecutorCompletionService<ServiceController> installJob(final ScheduledJob job, final Map<String, Object> config) {
+    private ExecutorCompletionService<ServiceController> installJob(final BaseJob job,
+                                                                    final String rubyClassName,
+                                                                    final Injector<ComponentResolver> componentResolverInjector,
+                                                                    final Injector<RubyRuntimePool> rubyRuntimePoolInjector,
+                                                                    final Map<String, Object> config) {
+
         final ServiceName componentResolverServiceName = JobsServices.componentResolver(getUnit(), job.getName());
         final ServiceName jobServiceName = JobsServices.job(getUnit(), job.getName());
 
+        // The ExecutorCompletionService used to determine if the *latest* task in the chain is finished
         final ExecutorCompletionService<ServiceController> completionService = new ExecutorCompletionService<ServiceController>(Executors.newSingleThreadExecutor());
 
         replaceService(componentResolverServiceName, new Runnable() {
@@ -204,7 +238,7 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
 
                 try {
                     helper
-                            .initializeInstantiator(job.getRubyClassName(), StringUtils.underscore(job.getRubyClassName().trim()))
+                            .initializeInstantiator(rubyClassName, StringUtils.underscore(rubyClassName.trim()))
                             .initializeResolver(JobComponent.class, config, true) // Always create new instance
                             .installService(Mode.ON_DEMAND);
                 } catch (Exception e) {
@@ -218,8 +252,8 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
 
                         ServiceBuilder builder = build(jobServiceName, job, job.isSingleton());
 
-                        builder.addDependency(CoreServices.runtimePoolName(getUnit(), "jobs"), RubyRuntimePool.class, job.getRubyRuntimePoolInjector())
-                                .addDependency(JobsServices.componentResolver(getUnit(), job.getName()), ComponentResolver.class, job.getComponentResolverInjector())
+                        builder.addDependency(CoreServices.runtimePoolName(getUnit(), "jobs"), RubyRuntimePool.class, rubyRuntimePoolInjector)
+                                .addDependency(JobsServices.componentResolver(getUnit(), job.getName()), ComponentResolver.class, componentResolverInjector)
                                 .addDependency(JobsServices.scheduler(getUnit(), job.isSingleton() && ClusterUtil.isClustered(getUnit().getServiceRegistry())), BaseJobScheduler.class, job.getJobSchedulerInjector())
                                 .install();
 
