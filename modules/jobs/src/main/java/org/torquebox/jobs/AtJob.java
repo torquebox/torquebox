@@ -24,6 +24,7 @@ import org.jboss.msc.value.InjectedValue;
 import org.jboss.msc.value.Value;
 import org.projectodd.polyglot.core.util.TimeInterval;
 import org.projectodd.polyglot.jobs.BaseAtJob;
+import org.quartz.JobKey;
 import org.quartz.SchedulerException;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
@@ -37,9 +38,9 @@ public class AtJob extends BaseAtJob implements AtJobMBean {
 
     @Override
     public synchronized void start() throws ParseException, SchedulerException {
-        super.start();
         JobScheduler jobScheduler = (JobScheduler) ((Value) getJobSchedulerInjector()).getValue();
-        jobScheduler.addComponentResolver(getKey(), this.componentResolverInjector.getValue());
+        jobScheduler.addComponentResolver(new JobKey(getName(), getGroup()), this.componentResolverInjector.getValue());
+        super.start();
     }
 
     public Injector<ComponentResolver> getComponentResolverInjector() {
