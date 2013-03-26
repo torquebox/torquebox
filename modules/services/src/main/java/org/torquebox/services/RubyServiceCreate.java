@@ -20,15 +20,14 @@
 package org.torquebox.services;
 
 import org.jboss.msc.inject.Injector;
-import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
-import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
+import org.torquebox.core.as.AsyncService;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 
-public class RubyServiceCreate implements Service<RubyService> {
+public class RubyServiceCreate extends AsyncService<RubyService> {
     
     public RubyServiceCreate(RubyService service) {
         this.service = service;
@@ -40,22 +39,10 @@ public class RubyServiceCreate implements Service<RubyService> {
     }
 
     @Override
-    public void start(final StartContext context) throws StartException {
-        context.asynchronous();
-        
+    public void startAsync(final StartContext context) throws Exception {
         this.service.setComponentResolver( this.componentResolverInjector.getValue() );
         this.service.setRubyRuntimePool( this.rubyRuntimePoolInjector.getValue() );
-        
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    RubyServiceCreate.this.service.create();
-                    context.complete();
-                } catch (Exception e) {
-                    context.failed( new StartException( e ) );
-                }
-            }
-        }).start();
+        this.service.create();
     }
 
     @Override

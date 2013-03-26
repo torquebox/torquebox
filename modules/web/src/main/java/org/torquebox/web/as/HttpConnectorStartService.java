@@ -21,14 +21,13 @@ package org.torquebox.web.as;
 
 import org.jboss.as.web.WebSubsystemServices;
 import org.jboss.msc.inject.Injector;
-import org.jboss.msc.service.Service;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceRegistry;
 import org.jboss.msc.service.StartContext;
-import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
+import org.torquebox.core.as.AsyncService;
 
 /**
  * The entire purpose of this service is to ensure the HTTP web connector
@@ -39,7 +38,7 @@ import org.jboss.msc.value.InjectedValue;
  * @author bbrowning
  *
  */
-public class HttpConnectorStartService implements Service<HttpConnectorStartService> {
+public class HttpConnectorStartService extends AsyncService<HttpConnectorStartService> {
 
     @Override
     public HttpConnectorStartService getValue() throws IllegalStateException, IllegalArgumentException {
@@ -47,19 +46,12 @@ public class HttpConnectorStartService implements Service<HttpConnectorStartServ
     }
 
     @Override
-    public void start(final StartContext context) throws StartException {
-        context.asynchronous();
-        context.execute( new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep( 200 );
-                } catch (InterruptedException ignored) {}
-                ServiceName serviceName = WebSubsystemServices.JBOSS_WEB_CONNECTOR.append( "http" );
-                injectedServiceRegistry.getValue().getRequiredService( serviceName ).setMode( Mode.ACTIVE );
-                context.complete();
-            }
-        } );
+    public void startAsync(final StartContext context) throws Exception {
+        try {
+            Thread.sleep( 200 );
+        } catch (InterruptedException ignored) {}
+        ServiceName serviceName = WebSubsystemServices.JBOSS_WEB_CONNECTOR.append("http");
+        injectedServiceRegistry.getValue().getRequiredService(serviceName).setMode(Mode.ACTIVE);
     }
 
     @Override

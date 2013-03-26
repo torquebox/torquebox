@@ -25,17 +25,16 @@ import org.jboss.as.connector.services.driver.InstalledDriver;
 import org.jboss.as.connector.services.driver.registry.DriverRegistry;
 import org.jboss.logging.Logger;
 import org.jboss.msc.inject.Injector;
-import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
-import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.jruby.Ruby;
+import org.torquebox.core.as.AsyncService;
 import org.torquebox.core.datasource.db.Adapter;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
 import org.torquebox.core.util.RuntimeHelper;
 
-public class DriverService implements Service<Driver> {
+public class DriverService extends AsyncService<Driver> {
 
     public DriverService(String applicationDirectory, Adapter adapter) {
         this.applicationDirectory = applicationDirectory;
@@ -43,25 +42,13 @@ public class DriverService implements Service<Driver> {
     }
 
     @Override
-    public void start(final StartContext context) throws StartException {
-        context.asynchronous();
-        context.execute( new Runnable() {
-            public void run() {
-                try {
-                    DriverService.this.driver = instantiateDriver();
-                    log.debug( "driver: " + DriverService.this.driver );
-                    DriverService.this.installedDriver = createInstalledDriver();
+    public void startAsync(final StartContext context) throws Exception {
+        this.driver = instantiateDriver();
+        log.debug( "driver: " + this.driver );
+        this.installedDriver = createInstalledDriver();
 
-                    DriverRegistry registry = DriverService.this.driverRegistryInjector.getValue();
-                    registry.registerInstalledDriver( installedDriver );
-                    
-                    context.complete();
-                } catch (Exception e) {
-                    context.failed( new StartException( e ) );
-                }
-            }
-        } );
-
+        DriverRegistry registry = this.driverRegistryInjector.getValue();
+        registry.registerInstalledDriver( installedDriver );
     }
 
     @Override
