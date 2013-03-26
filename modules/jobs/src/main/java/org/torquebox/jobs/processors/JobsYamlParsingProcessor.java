@@ -64,6 +64,7 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
                 String job = (String) jobSpec.get( "job" );
                 String cron = (String) jobSpec.get( "cron" );
                 Object singleton = jobSpec.get("singleton");
+                Object stopped = jobSpec.get("stopped");
                 Map<String, Object> params = (Map<String, Object>)jobSpec.get( "config" );
 
                 if (job == null) {
@@ -78,6 +79,10 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
                     throw new DeploymentUnitProcessingException(" Attribute 'singleton' must be either true or false." );
                 }
 
+                if (stopped != null && !(stopped instanceof Boolean)) {
+                    throw new DeploymentUnitProcessingException(" Attribute 'stopped' must be either true or false." );
+                }
+
                 ScheduledJobMetaData jobMetaData = new ScheduledJobMetaData();
 
                 jobMetaData.setName( jobName.toString() );
@@ -90,6 +95,10 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
                 jobMetaData.setParameters( params );
                 jobMetaData.setRubyRequirePath( StringUtils.underscore( job.trim() ) );
                 jobMetaData.setSingleton( singleton == null ? true : (Boolean) singleton );
+
+                if (stopped != null) {
+                    jobMetaData.setStopped( (Boolean) stopped );
+                }
 
                 unit.addToAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY, jobMetaData );
 

@@ -81,6 +81,7 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertEquals( "bar", jobOne.getParameters().get( "foo" ) );
         assertTrue( jobOne.isSingleton() );
         assertNotNull( jobOne.getGroup() );
+        assertFalse( jobOne.isStopped() );
 
         ScheduledJobMetaData jobTwo = getJobMetaData( allJobMetaData, "job.two" );
         assertNotNull( jobTwo );
@@ -90,6 +91,7 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertEquals( "MyOtherJobClass", jobTwo.getRubyClassName() );
         assertTrue( jobTwo.isSingleton() );
         assertNotNull( jobTwo.getGroup() );
+        assertFalse( jobTwo.isStopped() );
 
         ScheduledJobMetaData jobThree = getJobMetaData( allJobMetaData, "job.three" );
         assertNotNull( jobThree );
@@ -98,7 +100,8 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertEquals( "01 01 01 15 * ?", jobThree.getCronExpression() );
         assertEquals( "NonSingletonJobClass", jobThree.getRubyClassName() );
         assertFalse( jobThree.isSingleton() );
-        assertNotNull( jobTwo.getGroup() );
+        assertNotNull( jobThree.getGroup() );
+        assertFalse( jobThree.isStopped() );
 
         ScheduledJobMetaData jobFour = getJobMetaData( allJobMetaData, "job.four" );
         assertNotNull( jobFour );
@@ -109,6 +112,7 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertEquals( new TimeInterval( 5000, TimeUnit.MILLISECONDS ), jobFour.getTimeout() );
         assertTrue( jobFour.isSingleton() );
         assertNotNull( jobFour.getGroup() );
+        assertTrue( jobFour.isStopped() );
 
         assertEquals( jobOne.getGroup(), jobTwo.getGroup() );
         assertEquals( jobOne.getGroup(), jobThree.getGroup() );

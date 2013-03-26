@@ -112,7 +112,15 @@ public class ScheduledJobMetaData {
     public void setTimeout(TimeInterval timeout) {
         this.timeout = timeout;
     }
-    
+
+    public boolean isStopped() {
+        return stopped;
+    }
+
+    public void setStopped(boolean stopped) {
+        this.stopped = stopped;
+    }
+
     private String group;
     private String name;
     private String description;
@@ -124,5 +132,6 @@ public class ScheduledJobMetaData {
     
     private String rubySchedulerName;
     private boolean singleton = true;
+    private boolean stopped = false;
 
 }
