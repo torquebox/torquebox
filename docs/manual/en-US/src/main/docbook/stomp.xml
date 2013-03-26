@@ -610,7 +610,7 @@ run app</programlisting></para>
       that node.</para>
 
       <para><informalexample>
-          <para><programlisting>endpoint = fetch( 'stomp-endpoint' )
+          <para><programlisting>endpoint = TorqueBox.fetch('stomp-endpoint')
 
 puts endpoint.host
 puts endpoint.port

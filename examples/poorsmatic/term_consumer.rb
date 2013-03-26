@@ -1,8 +1,7 @@
 class TermConsumer < TorqueBox::Messaging::MessageProcessor
-  include TorqueBox::Injectors
 
   def initialize
-    @twitter_service = fetch('service:twitter-service')
+    @twitter_service = TorqueBox.fetch('service:twitter-service')
   end
 
   def on_message(terms)

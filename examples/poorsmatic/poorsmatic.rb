@@ -7,7 +7,6 @@ require 'models/url'
 require 'models/term'
 
 class Poorsmatic < Sinatra::Base
-  include TorqueBox::Injectors
 
   configure do
     use TorqueBox::Session::ServletStore
@@ -27,7 +26,7 @@ class Poorsmatic < Sinatra::Base
       Term.all.each {|t| terms << t.term}
 
       # Fetch the terms topic
-      topic = fetch('/topics/terms')
+      topic = TorqueBox.fetch('/topics/terms')
 
       # Send the message (an array of terms) to the topic
       # even if this is an empty list

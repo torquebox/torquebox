@@ -2,8 +2,6 @@ require 'twitter4j4r'
 require 'twitter-text'
 
 class TwitterService
-  # This will let us fetch the queue and topic later
-  include TorqueBox::Injectors
   # We'll use it to extract the URLs from the tweet
   include Twitter::Extractor
 
@@ -60,7 +58,7 @@ class TwitterService
 
       unless urls.empty?
         # Fetch the anchor to the queue
-        queue = fetch('/queues/urls')
+        queue = TorqueBox.fetch('/queues/urls')
 
         # Publish the message (the URL in this case) to the queue
         urls.each do |url|

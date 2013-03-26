@@ -1322,10 +1322,9 @@ end]]></programlisting>
             <example>
               <title><filename>term_consumer.rb</filename></title>
               <programlisting><![CDATA[class TermConsumer < TorqueBox::Messaging::MessageProcessor
-  include TorqueBox::Injectors
 
   def initialize
-    @twitter_service = fetch('service:twitter-service')
+    @twitter_service = TorqueBox.fetch('service:twitter-service')
   end
 
   def on_message(terms)
@@ -1428,14 +1427,13 @@ end]]></programlisting>
               <programlisting><![CDATA[require 'twitter-text'
 
 class TwitterService
-  include TorqueBox::Injectors
   ...
   def start
     @client.track(*@terms) do |status, client|
       urls = extract_urls(status.text)
 
       unless urls.empty?
-        queue = fetch('/queues/urls')
+        queue = TorqueBox.fetch('/queues/urls')
 
         urls.each do |url|
           queue.publish(url)

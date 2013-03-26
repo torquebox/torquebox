@@ -25,38 +25,22 @@
   <section id="basics-of-resource-injection">
     <title>Basics of Resource Injection</title>
 
-    <para>TorqueBox supports injection within the context of jobs, services,
-    messaging-handlers, Stomplets and web applications. The two key components
-    of using the injection capabilities are:</para>
-
-    <para><itemizedlist>
-        <listitem>
-          <para>Include <classname>TorqueBox::Injectors</classname> in a
-          source file that needs to perform injection.</para>
-        </listitem>
-
-        <listitem>
-          <para>To look up a value from the injection registry, use
-          the <methodname>fetch(...)</methodname> method (or a
-          variant). For convenience, the result of the
-          <methodname>fetch(...)</methodname> call may be assigned to
-          an instance value, but this is not required.</para>
-        </listitem>
-      </itemizedlist></para>
+    <para>TorqueBox supports injection within the context of jobs,
+    services, messaging-handlers, Stomplets and web applications. To
+    look up a value from the injection registry, use the
+    <methodname>TorqueBox.fetch(...)</methodname> method.</para>
 
     <para>For instance:</para>
 
     <para><informalexample>
         <programlisting>class MyService 
 
-  include TorqueBox::Injectors
-
   def initialize()
-    @queue = fetch( '/queues/new-accounts' )
+    @queue = TorqueBox.fetch('/queues/new-accounts')
   end
 
   def that_thing()
-    fetch( com.foo.ThatThing )
+    TorqueBox.fetch(com.foo.ThatThing)
   end
 
 end</programlisting>
@@ -67,7 +51,7 @@ end</programlisting>
     <title>Injectable Resources</title>
 
     <para>A variety of resources may easily be injected with the
-    <methodname>fetch(...)</methodname> method.</para>
+    <methodname>TorqueBox.fetch(...)</methodname> method.</para>
 
     <formalpara>
       <title>CDI Resources</title>
@@ -75,7 +59,7 @@ end</programlisting>
       <para>The Java Context and Depedency Injection (CDI) spec defines a
       method for managing relationships between components. CDI-enabled
       components may be injected by providing a fully-qualified Java class
-      name to the <methodname>fetch(...)</methodname> method. Typically CDI
+      name to the <methodname>TorqueBox.fetch(...)</methodname> method. Typically CDI
       components should be packaged in a JAR archive, and placed in your
       application's <filename>lib/</filename> or
       <filename>vendor/jars/</filename> directory.</para>
@@ -88,10 +72,8 @@ end</programlisting>
     <para><informalexample>
         <programlisting>class MyService
 
-  include TorqueBox::Injectors
-
   def initialize()
-    @java_service = fetch( com.mycorp.MyJavaService )
+    @java_service = TorqueBox.fetch(com.mycorp.MyJavaService)
   end
 
 end</programlisting>
@@ -106,7 +88,7 @@ end</programlisting>
     class through the <classname>Java</classname> ruby package.</para>
 
     <para><informalexample>
-        <para><programlisting>fetch( Java::pl.softwaremine.PolishingService )</programlisting></para>
+        <para><programlisting>TorqueBox.fetch(Java::pl.softwaremine.PolishingService)</programlisting></para>
       </informalexample></para>
 
     <formalpara id="injectable-destinations">
@@ -114,7 +96,7 @@ end</programlisting>
 
       <para>Message destinations, such as queues and topics, may be injected
       into your components. If the argument to
-      <methodname>fetch(...)</methodname> includes the string fragment
+      <methodname>TorqueBox.fetch(...)</methodname> includes the string fragment
       <literal>"/queue"</literal> or <literal>"/topic"</literal>, TorqueBox
       will look up the relevant
       <classname>TorqueBox::Messaging::Queue</classname> or
@@ -129,10 +111,8 @@ end</programlisting>
     <para><informalexample>
         <programlisting>class MyController &lt; ApplicationController
 
-  include TorqueBox::Injectors
-
   def create
-    notify_topic = fetch( '/topics/new-accounts' )
+    notify_topic = TorqueBox.fetch('/topics/new-accounts')
   end
 
 end</programlisting>
@@ -142,17 +122,15 @@ end</programlisting>
       <title>Naming &amp; Directory Entries</title>
 
       <para>Arbitrary items within the application's naming environment may be
-      injected if the argument to <methodname>fetch(...)</methodname> begins
+      injected if the argument to <methodname>TorqueBox.fetch(...)</methodname> begins
       with <literal>"java:comp/env"</literal>.</para>
     </formalpara>
 
     <para><informalexample>
         <programlisting>class MyController &lt; ApplicationController
 
-  include TorqueBox::Injectors
-
   def create
-    jndi_item = fetch( 'java:comp/env/that_thing' )
+    jndi_item = TorqueBox.fetch('java:comp/env/that_thing')
   end
 
 end</programlisting>
@@ -164,16 +142,14 @@ end</programlisting>
       <para>JBoss Modular Service Container is the container that drives the
       entire TorqueBox AS. Many components are accessible as MSC Services.
       These may be injected by passing the ServiceName as a string to
-      <methodname>fetch(...)</methodname>.</para>
+      <methodname>TorqueBox.fetch(...)</methodname>.</para>
     </formalpara>
 
     <para><informalexample>
         <programlisting>class MyController &lt; ApplicationController
 
-  include TorqueBox::Injectors
-
   def create
-    the_actual_webserver = fetch( 'jboss.web' )
+    the_actual_webserver = TorqueBox.fetch('jboss.web')
   end
 
 end</programlisting>
@@ -183,7 +159,7 @@ end</programlisting>
       <title>Services</title>
 
       <para>TorqueBox Services may be injected into your components if the
-      argument to <methodname>fetch(...)</methodname> begins with
+      argument to <methodname>TorqueBox.fetch(...)</methodname> begins with
       <literal>"service:"</literal> followed by the key used to configure the
       service in <filename>torquebox.yml</filename>.</para>
     </formalpara>
@@ -191,71 +167,21 @@ end</programlisting>
     <para><informalexample>
         <programlisting>class MyController &lt; ApplicationController
 
-  include TorqueBox::Injectors
-
   def stop
     # Service defined with a unique name in torquebox.yml
-    the_torque_service = fetch( 'service:my_torque_service' )
+    the_torque_service = TorqueBox.fetch('service:my_torque_service')
     # Service defined with service class in torquebox.yml
-    another_service = fetch( 'service:AnotherSerice' )
+    another_service = TorqueBox.fetch('service:AnotherSerice')
   end
 
 end</programlisting>
       </informalexample></para>
   </section>
 
-  <section id="variants-of-inject">
-    <title>Variants of <methodname>fetch(...)</methodname></title>
-
-    <para>While the <methodname>fetch(...)</methodname> method is
-    overloaded to detect the correct type of resource, there are
-    occasions where it may guess incorrectly. To overcome this,
-    variant are provided that explicitly direct injection to look for
-    a specific type of resource. For string-based injections, the
-    previously mentioned matching rules do not apply to the injection
-    method variants.</para>
-
-    <formalpara>
-      <title><methodname>fetch_cdi(...)</methodname></title>
-
-      <para>Injects CDI resources by literal class name.</para>
-    </formalpara>
-
-    <formalpara>
-      <title><methodname>fetch_queue(...)</methodname></title>
-
-      <para>Injects a messaging queue by literal name.</para>
-    </formalpara>
-
-    <formalpara>
-      <title><methodname>fetch_topic(...)</methodname></title>
-
-      <para>Injects a messaging topic by literal name.</para>
-    </formalpara>
-
-    <formalpara>
-      <title><methodname>fetch_jndi(...)</methodname></title>
-
-      <para>Injects JNDI resources by literal name.</para>
-    </formalpara>
-
-    <formalpara>
-      <title><methodname>fetch_msc(...)</methodname></title>
-
-      <para>Injects MSC services by literal name.</para>
-    </formalpara>
-
-    <formalpara>
-      <title><methodname>fetch_service(...)</methodname></title>
-
-      <para>Injects a TorqueBox application service component</para>
-    </formalpara>
-  </section>
-
   <section id="injection-internals-and-testing">
     <title>Internals and Testing</title>
 
-    <para>At runtime, each <classname>fetch(...)</classname> method looks up
+    <para>At runtime, each <methodname>TorqueBox.fetch(...)</methodname> method looks up
     the injected resource through the
     <classname>TorqueBox::Registry</classname> singleton. In test
     environments, you may desire to populate this registry, using the
@@ -263,7 +189,7 @@ end</programlisting>
     <classname>Hash</classname>.</para>
 
     <para>The key for each entry should match either the string argument used
-    with <methodname>fetch(...)</methodname>, or the Ruby version of the Java
+    with <methodname>TorqueBox.fetch(...)</methodname>, or the Ruby version of the Java
     class name, if performing CDI injection. The value should be an
     appropriate object.</para>
 
