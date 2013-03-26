@@ -20,13 +20,12 @@
 package org.torquebox.core.runtime;
 
 import org.jboss.msc.inject.Injector;
-import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
-import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
+import org.torquebox.core.as.AsyncService;
 
-public class RubyRuntimePoolStartService implements Service<RubyRuntimePool> {
+public class RubyRuntimePoolStartService extends AsyncService<RubyRuntimePool> {
 
     public RubyRuntimePoolStartService(RubyRuntimePool pool) {
         this.pool = pool;
@@ -38,19 +37,8 @@ public class RubyRuntimePoolStartService implements Service<RubyRuntimePool> {
     }
 
     @Override
-    public void start(final StartContext context) throws StartException {
-        context.asynchronous();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    RubyRuntimePoolStartService.this.pool.start();
-                    context.complete();
-                } catch (Exception e) {
-                    context.failed( new StartException( e ) );
-                }
-            }
-        }).start();
+    public void startAsync(final StartContext context) throws Exception {
+        this.pool.start();
     }
 
     @Override

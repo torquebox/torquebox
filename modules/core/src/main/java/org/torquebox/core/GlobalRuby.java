@@ -19,14 +19,13 @@
 
 package org.torquebox.core;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
-import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
-import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jruby.Ruby;
+import org.torquebox.core.as.AsyncService;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
 import org.torquebox.core.util.RuntimeHelper;
 
@@ -42,7 +41,7 @@ import org.torquebox.core.util.RuntimeHelper;
  * @author Bob McWhirter
  * 
  */
-public class GlobalRuby implements GlobalRubyMBean, Service<GlobalRuby> {
+public class GlobalRuby extends AsyncService<GlobalRuby> implements GlobalRubyMBean  {
 
     @Override
     public GlobalRuby getValue() throws IllegalStateException, IllegalArgumentException {
@@ -50,22 +49,12 @@ public class GlobalRuby implements GlobalRubyMBean, Service<GlobalRuby> {
     }
 
     @Override
-    public void start(final StartContext context) throws StartException {
-        context.asynchronous();
-        context.execute( new Runnable() {
-            public void run() {
-                GlobalRuby.this.factory = new RubyRuntimeFactory();
-                GlobalRuby.this.factory.setClassLoader( getClass().getClassLoader() );
-                GlobalRuby.this.factory.create();
-                try {
-                    GlobalRuby.this.runtime = GlobalRuby.this.factory.createInstance( "global" );
-                    GlobalRuby.this.runtime.useAsGlobalRuntime();
-                    context.complete();
-                } catch (Exception e) {
-                    context.failed( new StartException( e ) );
-                }
-            }
-        } );
+    public void startAsync(final StartContext context) throws Exception {
+        this.factory = new RubyRuntimeFactory();
+        this.factory.setClassLoader( getClass().getClassLoader() );
+        this.factory.create();
+        this.runtime = this.factory.createInstance( "global" );
+        this.runtime.useAsGlobalRuntime();
     }
 
     @Override

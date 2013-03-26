@@ -20,13 +20,12 @@
 package org.torquebox.services;
 
 import org.jboss.msc.inject.Injector;
-import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
-import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
+import org.torquebox.core.as.AsyncService;
 
-public class RubyServiceStart implements Service<RubyService> {
+public class RubyServiceStart extends AsyncService<RubyService> {
 
     @Override
     public RubyService getValue() throws IllegalStateException, IllegalArgumentException {
@@ -34,20 +33,8 @@ public class RubyServiceStart implements Service<RubyService> {
     }
 
     @Override
-    public void start(final StartContext context) throws StartException {
-        context.asynchronous();
-        
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    RubyServiceStart.this.getValue().start();
-                    context.complete();
-                } catch (Exception e) {
-                    context.failed( new StartException( e ) );
-                }
-            }
-        }).start();
-
+    public void startAsync(final StartContext context) throws Exception {
+        this.getValue().start();
     }
 
     @Override
