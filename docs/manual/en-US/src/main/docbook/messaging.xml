@@ -1607,11 +1607,13 @@ end</programlisting></para>
 
                   <entry><parameter>false</parameter></entry>
 
-                  <entry>By default, message processor are started immediately
-                    with the application. You can change this behavior and set
-                    the parameter to <literal>true</literal> and use later the
+                  <entry>By default, message processors are started
+                  immediately with the application. You can change
+                  this behavior and set the parameter to
+                  <literal>true</literal> then later use the
                   management methods of message processors like
-                  <methodname>start</methodname> or <methodname>stop</methodname>.
+                  <methodname>start</methodname> or
+                  <methodname>stop</methodname>.
                   </entry>
                 </row>
               </tbody>
