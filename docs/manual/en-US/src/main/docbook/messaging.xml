@@ -1601,6 +1601,19 @@ end</programlisting></para>
                   your consumer's constructor,
                   <function>initialize(Hash)</function>.</entry>
                 </row>
+
+                <row>
+                  <entry><parameter>stopped</parameter></entry>
+
+                  <entry><parameter>false</parameter></entry>
+
+                  <entry>By default, message processor are started immediately
+                    with the application. You can change this behavior and set
+                    the parameter to <literal>true</literal> and use later the
+                  management methods of message processors like
+                  <methodname>start</methodname> or <methodname>stop</methodname>.
+                  </entry>
+                </row>
               </tbody>
             </tgroup>
           </table>
@@ -1624,7 +1637,8 @@ messaging:
     MyBarHandler:
       durable: true
       xa: true
-      client_id: my-awesome-client</programlisting></para>
+      client_id: my-awesome-client
+      stopped: true</programlisting></para>
 
             <para>And via the DSL:<programlisting>TorqueBox.configure do
   ...
@@ -1641,7 +1655,7 @@ messaging:
   end
 
   topic '/topics/bar' do
-    processor MyBarHandler, :durable =&gt; true, :client_id =&gt; 'my-awesome-client', :xa =&gt; true
+    processor MyBarHandler, :durable =&gt; true, :client_id =&gt; 'my-awesome-client', :xa =&gt; true, :stopped =&gt; true
   end
 end</programlisting></para>
           </example>
@@ -1746,7 +1760,8 @@ end</programlisting></para>
                 Both methods return instances of <classname>TorqueBox::Messaging::MessageProcessorProxy</classname>
                 class which is a proxy for accessing the particular message processor service
                 configuration. The class exposes many methods, like:
-                <methodname>concurrency</methodname>, <methodname>name</methodname>.
+                <methodname>concurrency</methodname>, <methodname>name</methodname>,
+                <methodname>start</methodname>, <methodname>stop</methodname>.
                 For more information please refer to RDocs for messaging gem.
             </para>
 
@@ -1768,6 +1783,10 @@ end</programlisting></para>
     processor.class_name # => "SimpleProcessor"
     # Change the message processor concurrency to 3
     processor.concurrency = 3 # => 3
+    # Stop the processor
+    processor.stop
+    # Start the processor
+    processor.start
 end</programlisting>
                     </para>
                 </example>

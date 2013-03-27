@@ -41,12 +41,13 @@ module TorqueBox
         options = {
             :name => class_name.to_s,
             :singleton => true,
+            :stopped => false,
             :timeout => "0s",
             :wait => 10_000
         }.merge(options)
 
         with_schedulizer(options[:wait]) do |schedulizer|
-          schedulizer.create_job(class_name.to_s, cron, options[:timeout], options[:name], options[:description], options[:config], options[:singleton])
+          schedulizer.create_job(class_name.to_s, cron, options[:timeout], options[:name], options[:description], options[:config], options[:singleton], options[:stopped])
         end
       end
 

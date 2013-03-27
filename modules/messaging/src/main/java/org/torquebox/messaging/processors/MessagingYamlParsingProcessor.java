@@ -140,6 +140,9 @@ public class MessagingYamlParsingProcessor extends AbstractSplitYamlParsingProce
             if (options.containsKey("singleton")) {
                 result.setSingleton( (Boolean) options.get( "singleton" ) );
             }
+            if (options.containsKey("stopped")) {
+                result.setStopped( (Boolean) options.get( "stopped" ) );
+            }
             if (options.containsKey( "xa" )) {
                 result.setXAEnabled( (Boolean ) options.get( "xa" ) );
             }

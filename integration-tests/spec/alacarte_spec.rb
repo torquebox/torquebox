@@ -58,8 +58,8 @@ describe "jobs alacarte" do
   remote_describe "TorqueBox::ScheduledJob" do
     it "should list jobs" do
       jobs = TorqueBox::ScheduledJob.list
-      jobs.count.should == 3
-      jobs.map { |j| j.name }.should =~ [ 'job.one', 'job.two', 'job.three' ]
+      jobs.count.should == 4
+      jobs.map { |j| j.name }.should =~ [ 'job.one', 'job.two', 'job.three', 'job.four' ]
     end
 
     it "should lookup a job by name" do
@@ -83,6 +83,15 @@ describe "jobs alacarte" do
       job.name.should == 'job.one'
       TorqueBox::ScheduledJob.remove('job.one')
       TorqueBox::ScheduledJob.lookup('job.one').should == nil
+    end
+
+    it "should not fail with lookup of a stopped job" do
+      job = TorqueBox::ScheduledJob.lookup('job.four')
+      job.name.should == 'job.four'
+      job.status.should == 'STOPPED'
+      job.start
+      job.status.should == 'STARTED'
+      job.should be_started
     end
   end
 end
@@ -200,6 +209,20 @@ remote_describe "runtime jobs alacarte" do
     TorqueBox::ScheduledJob.remove('SomeModule.AnotherSimpleJob').should == true
 
     TorqueBox::ScheduledJob.list.count.should == 0
+  end
+
+  it "should deploy the job stopped" do
+    TorqueBox::ScheduledJob.list.count.should == 0
+    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/5 * * * * ?", :stopped => true).should == true
+    TorqueBox::ScheduledJob.list.count.should == 1
+
+    job = TorqueBox::ScheduledJob.lookup('SimpleJob')
+    job.name.should == 'SimpleJob'
+    job.status.should == 'STOPPED'
+    job.start
+    job.status.should == 'STARTED'
+
+    TorqueBox::ScheduledJob.remove('SimpleJob').should == true
   end
 
   it "should timeout" do
