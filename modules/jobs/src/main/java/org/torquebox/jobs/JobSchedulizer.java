@@ -93,7 +93,8 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
                     metaData.getName(),
                     metaData.getDescription(),
                     metaData.getParameters(),
-                    metaData.isSingleton()
+                    metaData.isSingleton(),
+                    metaData.isStopped()
             );
 
             log.debugf("Job '%s' deployed", metaData.getName());
@@ -118,11 +119,12 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
      *                       implementation class constructor
      * @param singleton      Should the job be running only on one node in cluster?
      * @return The ScheduledJob object.
-     * @see JobSchedulizer#createJob(String, String, org.projectodd.polyglot.core.util.TimeInterval, String, String, java.util.Map, boolean)
+     * @see JobSchedulizer#createJob(String, String, org.projectodd.polyglot.core.util.TimeInterval, String, String, java.util.Map, boolean, boolean)
      */
-    public ExecutorCompletionService<ServiceController> createJob(String rubyClassName, String cronExpression, String timeout, String name, String description, Map<String, Object> config, boolean singleton) {
+    @SuppressWarnings("unused")
+    public ExecutorCompletionService<ServiceController> createJob(String rubyClassName, String cronExpression, String timeout, String name, String description, Map<String, Object> config, boolean singleton, boolean stopped) {
         TimeInterval timeoutInterval = TimeInterval.parseInterval(timeout, TimeUnit.SECONDS);
-        return createJob(rubyClassName, cronExpression, timeoutInterval, name, description, config, singleton);
+        return createJob(rubyClassName, cronExpression, timeoutInterval, name, description, config, singleton, stopped);
     }
 
     /**
@@ -139,9 +141,10 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
      * @param config         Job configuration that should be injected to the job
      *                       implementation class constructor
      * @param singleton      Should the job be running only on one node in cluster?
+     * @param stopped        Defines if the job should not be started after scheduling
      * @return The ScheduledJob object.
      */
-    public ExecutorCompletionService<ServiceController> createJob(final String rubyClassName, String cronExpression, TimeInterval timeout, String name, String description, Map<String, Object> config, boolean singleton) {
+    public ExecutorCompletionService<ServiceController> createJob(final String rubyClassName, String cronExpression, TimeInterval timeout, String name, String description, Map<String, Object> config, boolean singleton, boolean stopped) {
         if (name == null)
             name = safeJobName(rubyClassName);
         else
@@ -149,7 +152,7 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
 
         log.debugf("Creating new job '%s'...", name);
 
-        ScheduledJob job = new ScheduledJob(getUnit().getName(), name, description, cronExpression, timeout, singleton, rubyClassName);
+        ScheduledJob job = new ScheduledJob(getUnit().getName(), name, description, cronExpression, timeout, singleton, stopped, rubyClassName);
 
         return installJob(job, rubyClassName, job.getComponentResolverInjector(), job.getRubyRuntimePoolInjector(), config);
     }

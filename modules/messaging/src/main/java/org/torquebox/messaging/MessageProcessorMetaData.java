@@ -130,7 +130,15 @@ public class MessageProcessorMetaData {
     public boolean isXAEnabled() {
         return this.xaEnabled;
     }
-    
+
+    public boolean isStopped() {
+        return stopped;
+    }
+
+    public void setStopped(boolean stopped) {
+        this.stopped = stopped;
+    }
+
     private String rubyClassName;
     private String rubyRequirePath;
     private String destinationName;
@@ -141,7 +149,7 @@ public class MessageProcessorMetaData {
     private String clientID;         //only has meaning for Topic processors
     private boolean singleton = false;
     private boolean xaEnabled = false;
-
+    private boolean stopped = false;
     private Map<String, Object> rubyConfig;
 
 }

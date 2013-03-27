@@ -181,6 +181,26 @@ module TorqueBox
         @group.synchronous
       end
 
+      # Returns true if the message processor is started,
+      # false otherwise
+      #
+      # @return Boolean
+      def started?
+        @group.status.eql?("STARTED")
+      end
+
+      # Starts the message processor
+      #
+      def start
+        @group.start
+      end
+
+      # Stops the message processor
+      #
+      def stop
+        @group.stop
+      end
+
       def to_s
         "[MessageProcessorProxy: #{name}]"
       end

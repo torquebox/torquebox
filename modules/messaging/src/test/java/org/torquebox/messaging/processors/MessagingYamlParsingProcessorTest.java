@@ -103,6 +103,7 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
         assertEquals( "mySelector", metaData.getMessageSelector() );
         assertEquals( "toast", metaData.getRubyConfig().get( "a" ) );
         assertEquals( new Integer( 2 ), metaData.getConcurrency() );
+        assertFalse( metaData.isStopped() );
     }
 
     @Test
@@ -163,6 +164,13 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
         List<MessageProcessorMetaData> allMetaData = getMetaData( "messaging.yml" );
         MessageProcessorMetaData metadata = find( allMetaData, "/hash", "A" );
         assertEquals( new Integer( 1 ), metadata.getConcurrency() );
+    }
+
+    @Test
+    public void testStopped() throws Exception {
+        List<MessageProcessorMetaData> allMetaData = getMetaData( "messaging-stopped.yml" );
+        MessageProcessorMetaData metadata = find( allMetaData, "/topics/foo", "MyClass" );
+        assertTrue( metadata.isStopped() );
     }
 
     private List<MessageProcessorMetaData> getMetaData(String filename) throws Exception {

@@ -56,7 +56,8 @@ module TorqueBox
                                                                               :name,
                                                                               :description,
                                                                               :timeout,
-                                                                              { :singleton => [true, false] }
+                                                                              { :singleton => [true, false] },
+                                                                              { :stopped => [true, false] }
                                                                              ]
                                                               }),
           :options_for => ThingWithOptionsEntry.with_settings(:validate => {
@@ -79,6 +80,7 @@ module TorqueBox
                                                                               { :singleton => [true, false] },
                                                                               { :durable => [true, false] },
                                                                               { :synchronous => [true, false] },
+                                                                              { :stopped => [true, false] },
                                                                               { :xa => [true, false] },
                                                                               :client_id,
                                                                               :config,

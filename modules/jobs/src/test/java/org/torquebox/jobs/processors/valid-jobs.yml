@@ -24,4 +24,5 @@ jobs:
     description: My long running job has timeout
     cron: 01 01 01 15 * ?
     timeout: 5000 ms
+    stopped: true
 

@@ -27,6 +27,7 @@
       cron: string
       -description: string
       -singleton: boolean
+      -stopped: boolean
       -config:
         type: map
         arbitrary: true
@@ -51,6 +52,7 @@
           -selector: string
           -durable: boolean
           -synchronous: boolean
+          -stopped: boolean
           -config:
             type: map
             arbitrary: true
