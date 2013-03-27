@@ -20,6 +20,8 @@ queues:
   /queue/remotesync:
     durable: false
     exported: true
+  /queue/stopped:
+    durable: false
 
 topics:
   /topic/remotesync:
@@ -44,3 +46,7 @@ messaging:
     SynchronousProcessor:
       concurrency: 2
       synchronous: true
+  /queue/stopped:
+    SimpleProcessor:
+      concurrency: 2
+      stopped: true

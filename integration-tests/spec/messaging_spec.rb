@@ -817,7 +817,7 @@ remote_describe "messaging processor tests" do
       it "should list all available message processors" do
         processors = TorqueBox::Messaging::MessageProcessor.list
 
-        processors.size.should == 7
+        processors.size.should == 8
 
         processors.map { |p| p.name }.sort.should == [
             "/queue/simple_queue.SimpleProcessor",
@@ -826,7 +826,8 @@ remote_describe "messaging processor tests" do
             "/queue/echo_queue.Torquebox::Messaging::EchoProcessor",
             "/queue/synchronous.SynchronousProcessor",
             "/queue/synchronous_with_selectors.SynchronousProcessor",
-            "/queue/remotesync.SynchronousProcessor"
+            "/queue/remotesync.SynchronousProcessor",
+            "/queue/stopped.SimpleProcessor"
         ].sort
       end
     end
@@ -929,6 +930,21 @@ remote_describe "messaging processor tests" do
           context['topic/remotesync'].should_not be_nil
         end
       end
+    end
+  end
+
+  context "stopped message processors" do
+    before(:each) do
+      @queue = TorqueBox::Messaging::Queue.new('/queue/stopped')
+    end
+
+    it "should not start the message processor after deployment" do
+      processor = TorqueBox::Messaging::MessageProcessor.lookup("/queue/stopped", "SimpleProcessor")
+      processor.started?.should == false
+      @queue.consumer_count.should == 0
+      processor.start
+      @queue.consumer_count.should == 2
+      processor.stop
     end
   end
 end

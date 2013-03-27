@@ -21,6 +21,10 @@ jobs:
         - one
         - two
       raise_error: true
+  job.four:
+    job: StatelessJob
+    cron: '*/1 * * * * ?'
+    stopped: true
 
 queues:
   /queue/response:
