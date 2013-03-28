@@ -23,7 +23,6 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.ServiceBuilder;
-import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
@@ -43,8 +42,7 @@ import org.torquebox.jobs.component.JobComponent;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.jboss.msc.service.ServiceController.Mode;
@@ -94,7 +92,8 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
                     metaData.getDescription(),
                     metaData.getParameters(),
                     metaData.isSingleton(),
-                    metaData.isStopped()
+                    metaData.isStopped(),
+                    true
             );
 
             log.debugf("Job '%s' deployed", metaData.getName());
@@ -119,12 +118,12 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
      *                       implementation class constructor
      * @param singleton      Should the job be running only on one node in cluster?
      * @return The ScheduledJob object.
-     * @see JobSchedulizer#createJob(String, String, org.projectodd.polyglot.core.util.TimeInterval, String, String, java.util.Map, boolean, boolean)
+     * @see JobSchedulizer#createJob(String, String, org.projectodd.polyglot.core.util.TimeInterval, String, String, java.util.Map, boolean, boolean, boolean)
      */
     @SuppressWarnings("unused")
-    public ExecutorCompletionService<ServiceController> createJob(String rubyClassName, String cronExpression, String timeout, String name, String description, Map<String, Object> config, boolean singleton, boolean stopped) {
+    public boolean createJob(String rubyClassName, String cronExpression, String timeout, String name, String description, Map<String, Object> config, boolean singleton, boolean stopped) {
         TimeInterval timeoutInterval = TimeInterval.parseInterval(timeout, TimeUnit.SECONDS);
-        return createJob(rubyClassName, cronExpression, timeoutInterval, name, description, config, singleton, stopped);
+        return createJob(rubyClassName, cronExpression, timeoutInterval, name, description, config, singleton, stopped, false);
     }
 
     /**
@@ -144,7 +143,7 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
      * @param stopped        Defines if the job should not be started after scheduling
      * @return The ScheduledJob object.
      */
-    public ExecutorCompletionService<ServiceController> createJob(final String rubyClassName, String cronExpression, TimeInterval timeout, String name, String description, Map<String, Object> config, boolean singleton, boolean stopped) {
+    public boolean createJob(final String rubyClassName, String cronExpression, TimeInterval timeout, String name, String description, Map<String, Object> config, boolean singleton, boolean stopped, boolean async) {
         if (name == null)
             name = safeJobName(rubyClassName);
         else
@@ -154,16 +153,49 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
 
         ScheduledJob job = new ScheduledJob(getUnit().getName(), name, description, cronExpression, timeout, singleton, stopped, rubyClassName);
 
-        return installJob(job, rubyClassName, job.getComponentResolverInjector(), job.getRubyRuntimePoolInjector(), config);
+        return installJob(job, rubyClassName, job.getComponentResolverInjector(), job.getRubyRuntimePoolInjector(), config, async);
     }
 
+    /**
+     * Creates new 'at' job.
+     *
+     * @param rubyClassName The ruby class name of the job implementation
+     * @param startAt       The start date of the job
+     * @param endAt         The end date of the job
+     * @param interval      Interval between job executions
+     * @param repeat        How many times the job firing should be repeated (first run is not counted)
+     * @param timeout       The job execution timeout
+     * @param name          Name of the job
+     * @param description   Description of the job
+     * @param config        The configuration (if any) which should
+     *                      be injected into the job constructor
+     * @param singleton     If the job should be a singleton
+     * @return true if the task was completed successfully, false otherwise.
+     */
     @SuppressWarnings("unused")
-    public ExecutorCompletionService<ServiceController> createAtJob(String rubyClassName, Date startAt, Date endAt, long interval, int repeat, String timeout, String name, String description, Map<String, Object> config, boolean singleton) {
+    public boolean createAtJob(String rubyClassName, Date startAt, Date endAt, long interval, int repeat, String timeout, String name, String description, Map<String, Object> config, boolean singleton) {
         TimeInterval timeoutInterval = TimeInterval.parseInterval(timeout, TimeUnit.SECONDS);
-        return createAtJob(rubyClassName, startAt, endAt, interval, repeat, timeoutInterval, name, description, config, singleton);
+        return createAtJob(rubyClassName, startAt, endAt, interval, repeat, timeoutInterval, name, description, config, singleton, false);
     }
 
-    public ExecutorCompletionService<ServiceController> createAtJob(String rubyClassName, Date startAt, Date endAt, long interval, int repeat, TimeInterval timeout, String name, String description, Map<String, Object> config, boolean singleton) {
+    /**
+     * Creates new 'at' job.
+     *
+     * @param rubyClassName The ruby class name of the job implementation
+     * @param startAt       The start date of the job
+     * @param endAt         The end date of the job
+     * @param interval      Interval between job executions
+     * @param repeat        How many times the job firing should be repeated (first run is not counted)
+     * @param timeout       The job execution timeout
+     * @param name          Name of the job
+     * @param description   Description of the job
+     * @param config        The configuration (if any) which should
+     *                      be injected into the job constructor
+     * @param singleton     If the job should be a singleton
+     * @param async         If the job installation should be executed asynchronously
+     * @return true if async was set to false and the task completed successfully, false otherwise
+     */
+    public boolean createAtJob(String rubyClassName, Date startAt, Date endAt, long interval, int repeat, TimeInterval timeout, String name, String description, Map<String, Object> config, boolean singleton, boolean async) {
         if (name == null)
             name = safeJobName(rubyClassName);
         else
@@ -178,7 +210,7 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
         atJob.setInterval(interval);
         atJob.setRepeat(repeat);
 
-        return installJob(atJob, rubyClassName, atJob.getComponentResolverInjector(), atJob.getRubyRuntimePoolInjector(), config);
+        return installJob(atJob, rubyClassName, atJob.getComponentResolverInjector(), atJob.getRubyRuntimePoolInjector(), config, async);
     }
 
     /**
@@ -187,17 +219,30 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
      * This operation is executed asynchronously. To watch when the removal is finished use the ExecutorCompletionService returned by this method.
      *
      * @param name Name of the scheduled job
-     * @return ExecutorCompletionService A service to watch the task completion
+     * @return true if the task was completed successfully, false otherwise.
      */
     @SuppressWarnings("unused")
-    public ExecutorCompletionService<ServiceController> removeJob(String name) {
+    public boolean removeJob(String name) {
+        return removeJob(name, false);
+    }
+
+    /**
+     * Removes the scheduled job by its name.
+     * <p/>
+     * This operation is executed asynchronously. To watch when the removal is finished use the ExecutorCompletionService returned by this method.
+     *
+     * @param name  Name of the scheduled job
+     * @param async If the job removal should be executed asynchronously
+     * @return true if async was set to false and the task completed successfully, false otherwise.
+     */
+    public boolean removeJob(String name, boolean async) {
         name = safeJobName(name);
 
         log.debugf("Removing job '%s'", name);
 
         final ServiceName componentResolverServiceName = JobsServices.componentResolver(getUnit(), name);
         final ServiceName jobServiceName = JobsServices.job(getUnit(), name);
-        final ExecutorCompletionService<ServiceController> completionService = new ExecutorCompletionService<ServiceController>(Executors.newSingleThreadExecutor());
+        final CountDownLatch latch = new CountDownLatch(2);
 
         // Remove the job service
         replaceService(jobServiceName, new Runnable() {
@@ -205,11 +250,45 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
             public void run() {
                 // Remove the component resolver service once
                 // the job service is removed
-                replaceService(componentResolverServiceName, completionService);
+                replaceService(componentResolverServiceName, new Runnable() {
+                    @Override
+                    public void run() {
+                        latch.countDown();
+                    }
+                });
+                latch.countDown();
             }
         });
 
-        return completionService;
+        if (async) {
+            // In case of async operation - we're not interested in the outcome, set it to false
+            return false;
+        }
+
+        return waitForLatch(latch);
+    }
+
+
+    /**
+     * Installs the component resolver service and the job service for provided job.
+     * <p/>
+     * This is a synchronous method.
+     *
+     * @param job                       The job to install the component resolver for
+     * @param componentResolverInjector
+     * @param rubyRuntimePoolInjector
+     * @param config                    The configuration (if any) which should
+     *                                  be injected into the job constructor
+     * @return true if the task was completed successfully, false otherwise.
+     */
+    @SuppressWarnings("unused")
+    private void installJob(
+            final BaseJob job,
+            final String rubyClassName,
+            final Injector<ComponentResolver> componentResolverInjector,
+            final Injector<RubyRuntimePool> rubyRuntimePoolInjector,
+            final Map<String, Object> config) {
+        installJob(job, rubyClassName, componentResolverInjector, rubyRuntimePoolInjector, config, false);
     }
 
     /**
@@ -218,55 +297,95 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
      * @param job                       The job to install the component resolver for
      * @param componentResolverInjector
      * @param rubyRuntimePoolInjector
-     * @param config                    The configuration (if any) which should be injected into the job constructor  @return ExecutorCompletionService A service to watch the task completion
+     * @param config                    The configuration (if any) which should
+     *                                  be injected into the job constructor
+     * @param async                     If the job installation should be executed asynchronously
+     * @return true if async was set to false and the task completed successfully, false otherwise.
      */
-    private ExecutorCompletionService<ServiceController> installJob(final BaseJob job,
-                                                                    final String rubyClassName,
-                                                                    final Injector<ComponentResolver> componentResolverInjector,
-                                                                    final Injector<RubyRuntimePool> rubyRuntimePoolInjector,
-                                                                    final Map<String, Object> config) {
+    private boolean installJob(
+            final BaseJob job,
+            final String rubyClassName,
+            final Injector<ComponentResolver> componentResolverInjector,
+            final Injector<RubyRuntimePool> rubyRuntimePoolInjector,
+            final Map<String, Object> config,
+            boolean async) {
 
         final ServiceName componentResolverServiceName = JobsServices.componentResolver(getUnit(), job.getName());
         final ServiceName jobServiceName = JobsServices.job(getUnit(), job.getName());
+        final CountDownLatch latch = new CountDownLatch(3);
 
-        // The ExecutorCompletionService used to determine if the *latest* task in the chain is finished
-        final ExecutorCompletionService<ServiceController> completionService = new ExecutorCompletionService<ServiceController>(Executors.newSingleThreadExecutor());
-
-        replaceService(componentResolverServiceName, new Runnable() {
+        // First of all remove the job service (if any)
+        replaceService(jobServiceName, new Runnable() {
             @Override
             public void run() {
-                log.debugf("Installing component resolver for job '%s'...", job.getName());
-
-                ComponentResolverHelper helper = new ComponentResolverHelper(getTarget(), getUnit(), componentResolverServiceName);
-
-                try {
-                    helper
-                            .initializeInstantiator(rubyClassName, StringUtils.underscore(rubyClassName.trim()))
-                            .initializeResolver(JobComponent.class, config, true) // Always create new instance
-                            .installService(Mode.ON_DEMAND);
-                } catch (Exception e) {
-                    log.errorf(e, "Couldn't install component resolver for job '%s' for deployment unit '%s'", job.getName(), getUnit());
-                }
-
-                replaceService(jobServiceName, new Runnable() {
-                    @SuppressWarnings({"unchecked", "rawtypes"})
+                // Then replace the component resolver
+                replaceService(componentResolverServiceName, new Runnable() {
+                    @Override
                     public void run() {
-                        log.debugf("Installing job '%s'...", job.getName());
+                        log.debugf("Installing component resolver for job '%s'...", job.getName());
 
-                        ServiceBuilder builder = build(jobServiceName, job, job.isSingleton());
+                        ComponentResolverHelper helper = new ComponentResolverHelper(getTarget(), getUnit(), componentResolverServiceName);
 
-                        builder.addDependency(CoreServices.runtimePoolName(getUnit(), "jobs"), RubyRuntimePool.class, rubyRuntimePoolInjector)
-                                .addDependency(JobsServices.componentResolver(getUnit(), job.getName()), ComponentResolver.class, componentResolverInjector)
-                                .addDependency(JobsServices.scheduler(getUnit(), job.isSingleton() && ClusterUtil.isClustered(getUnit().getServiceRegistry())), BaseJobScheduler.class, job.getJobSchedulerInjector())
-                                .install();
+                        try {
+                            helper
+                                    .initializeInstantiator(rubyClassName, StringUtils.underscore(rubyClassName.trim()))
+                                    .initializeResolver(JobComponent.class, config, true) // Always create new instance
+                                    .installService(Mode.ON_DEMAND);
+                        } catch (Exception e) {
+                            log.errorf(e, "Couldn't install component resolver for job '%s' for deployment unit '%s'", job.getName(), getUnit());
+                        }
 
-                        installMBean(jobServiceName, "torquebox.jobs", job);
+                        // And install the correct service
+                        replaceService(jobServiceName, new Runnable() {
+                            @SuppressWarnings({"unchecked", "rawtypes"})
+                            public void run() {
+                                log.debugf("Installing job '%s'...", job.getName());
+
+                                ServiceBuilder builder = build(jobServiceName, job, job.isSingleton());
+
+                                builder.addDependency(CoreServices.runtimePoolName(getUnit(), "jobs"), RubyRuntimePool.class, rubyRuntimePoolInjector)
+                                        .addDependency(JobsServices.componentResolver(getUnit(), job.getName()), ComponentResolver.class, componentResolverInjector)
+                                        .addDependency(JobsServices.scheduler(getUnit(), job.isSingleton() && ClusterUtil.isClustered(getUnit().getServiceRegistry())), BaseJobScheduler.class, job.getJobSchedulerInjector())
+                                        .install();
+
+                                latch.countDown();
+
+                                installMBean(jobServiceName, "torquebox.jobs", job);
+                            }
+                        });
+                        latch.countDown();
                     }
-                }, completionService);
+                });
+                latch.countDown();
             }
         });
 
-        return completionService;
+        if (async) {
+            // In case of async operation - we're not interested in the outcome, set it to false
+            return false;
+        }
+
+        return waitForLatch(latch);
+    }
+
+    /**
+     * Waits for the CountDownLatch to complete.
+     *
+     * @param latch The latch to wait on
+     * @return true if the latch completes in less than 30s, false otherwise
+     */
+    private boolean waitForLatch(CountDownLatch latch) {
+        try {
+            if (latch.await(30, TimeUnit.SECONDS)) {
+                return true;
+            } else {
+                log.error("Failed to wait for the task to finish");
+                return false;
+            }
+        } catch (InterruptedException e) {
+            log.error("Interruption while waiting for the task completion", e);
+            return false;
+        }
     }
 
     /**

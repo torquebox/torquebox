@@ -224,15 +224,6 @@ remote_describe "runtime jobs alacarte" do
 
     TorqueBox::ScheduledJob.remove('SimpleJob').should == true
   end
-
-  it "should timeout" do
-    TorqueBox::ScheduledJob.list.count.should == 0
-    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/5 * * * * ?").should == true
-    TorqueBox::ScheduledJob.list.count.should == 1
-    # Hopefully even the best machine will not remove the existing job
-    # and install two new services in 1ms
-    TorqueBox::ScheduledJob.schedule('SimpleJob', "*/10 * * * * ?", :wait => 1).should == false
-  end
 end
 
 describe "modular jobs alacarte" do

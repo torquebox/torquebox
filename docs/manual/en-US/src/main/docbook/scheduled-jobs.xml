@@ -335,10 +335,8 @@ end</programlisting></para>
           <methodname>TorqueBox::ScheduledJob</methodname> module. This method
           returns <literal>true</literal> if the task is completed or
           <literal>false</literal> otherwise. There is a default
-          timeout set to 10 seconds meaning that if the job will not be scheduled in the
+          timeout set to 30 seconds meaning that if the job will not be scheduled in the
           mentioned time the method will finish immediately returning <literal>false</literal>.
-          You can change the timeout by setting the <literal>:wait</literal> option and
-          specifying the time to wait in miliseconds.
         </para>
 
         <para>
@@ -355,8 +353,7 @@ end</programlisting></para>
       :description => 'This is a simple job',
       :timeout => '2s',
       :config => {"number" => 1, "text" => "bacon"},
-      :singleton => false,
-      :wait => 5000)</programlisting>
+      :singleton => false)</programlisting>
 
               This example shows all the available options. Please see the table
               below for explanation.
@@ -428,14 +425,6 @@ end</programlisting></para>
                 <entry>Flag to determine if the job should be executed on every node
                 in the cluster or only on one node (default).</entry>
               </row>
-
-              <row>
-                <entry><parameter>:wait</parameter></entry>
-
-                <entry>10000</entry>
-
-                <entry>Time to wait for the job scheduling task to complete.</entry>
-              </row>
             </tbody>
           </tgroup>
         </table>
@@ -468,16 +457,14 @@ end</programlisting></para>
           <methodname>TorqueBox::ScheduledJob</methodname> module. This method
           returns <literal>true</literal> if the task is completed or
           <literal>false</literal> otherwise. There is a default
-          timeout set to 10 seconds meaning that if the job will not be removed in the
+          timeout set to 30 seconds meaning that if the job will not be removed in the
           mentioned time the method will finish immediately returning <literal>false</literal>.
-          You can change the timeout by setting the <literal>:wait</literal> option and
-          specifying the time to wait in miliseconds.
         </para>
 
         <para>
           <example>
             <title>Removing a job</title>
-            <para><programlisting>TorqueBox::ScheduledJob.remove('simple.job', :wait => 5000)</programlisting>
+            <para><programlisting>TorqueBox::ScheduledJob.remove('simple.job')</programlisting>
 
               This example will lookup a job with the 'simple.job' name and remove it.
 
@@ -628,14 +615,6 @@ TorqueBox::ScheduledJob.at('SimpleJob', :in => 5000, :repeat => 3, :every => 150
 
               <entry>Flag to determine if the job should be executed on every node
               in the cluster or only on one node (default).</entry>
-            </row>
-
-            <row>
-              <entry><parameter>:wait</parameter></entry>
-
-              <entry>10000</entry>
-
-              <entry>Time to wait for the job scheduling task to complete.</entry>
             </row>
           </tbody>
         </tgroup>
