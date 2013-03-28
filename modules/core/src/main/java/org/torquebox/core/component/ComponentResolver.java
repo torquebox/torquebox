@@ -46,12 +46,17 @@ public class ComponentResolver {
             rubyComponent = registry.lookup( this.componentName );
         } else if (this.alwaysReload) {
             RuntimeHelper.evalScriptlet( runtime, "Dispatcher.cleanup_application if defined?(Dispatcher) && Dispatcher.respond_to?(:cleanup_application)" ); // rails2
+            RuntimeHelper.evalScriptlet( runtime, "ActiveSupport::DescendantsTracker.clear if defined?(ActiveSupport::DescendantsTracker) && ActiveSupport::DescendantsTracker.respond_to?(:clear)" ); // rails3
             RuntimeHelper.evalScriptlet( runtime, "ActiveSupport::Dependencies.clear if defined?(ActiveSupport::Dependencies) && ActiveSupport::Dependencies.respond_to?(:clear)" ); // rails3
         }
 
         if (rubyComponent == null) {
             rubyComponent = createComponent( runtime );
-            registry.register( this.componentName, rubyComponent );
+            // Don't bother storing things in the component registry if we're
+            // never going to use them again
+            if (!this.alwaysReload && !this.alwaysNewInstance) {
+                registry.register( this.componentName, rubyComponent );
+            }
         }
 
         if (rubyComponent == null) {
