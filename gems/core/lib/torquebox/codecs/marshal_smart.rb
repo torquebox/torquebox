@@ -21,7 +21,7 @@ module TorqueBox
     module MarshalSmart
       class << self
 
-        MARSHAL_MARKER = "_|marshalled|_"
+        MARSHAL_MARKER = Marshal.dump("_|marshalled|_")
 
         def encode(object)
           case object
