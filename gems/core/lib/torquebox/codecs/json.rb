@@ -36,6 +36,9 @@ module TorqueBox
         def encode(data)
           require_json
           begin
+            if ( data.respond_to?( :as_json ) )
+              data = data.as_json
+            end
             ::JSON.fast_generate( data ) unless data.nil?
           rescue ::JSON::GeneratorError
             ::JSON.dump(data)
