@@ -202,7 +202,7 @@ module TorqueBox
       end
 
       def to_s
-        "[MessageProcessorProxy: #{name}]"
+        "<MessageProcessorProxy: #{name}>"
       end
     end
   end
