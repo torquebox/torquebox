@@ -19,10 +19,17 @@
 
 package org.torquebox.jobs;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.ServiceBuilder;
+import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
@@ -38,14 +45,6 @@ import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.core.util.StringUtils;
 import org.torquebox.jobs.as.JobsServices;
 import org.torquebox.jobs.component.JobComponent;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import static org.jboss.msc.service.ServiceController.Mode;
 
 /**
  * Service to manage scheduled jobs at runtime.
@@ -330,7 +329,7 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
                             helper
                                     .initializeInstantiator(rubyClassName, StringUtils.underscore(rubyClassName.trim()))
                                     .initializeResolver(JobComponent.class, config, true) // Always create new instance
-                                    .installService(Mode.ON_DEMAND);
+                                    .installService(Mode.PASSIVE);
                         } catch (Exception e) {
                             log.errorf(e, "Couldn't install component resolver for job '%s' for deployment unit '%s'", job.getName(), getUnit());
                         }

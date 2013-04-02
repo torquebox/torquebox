@@ -37,22 +37,27 @@ Dir.chdir( assembly_dir ) do
   end
 
   categories = ["org.torquebox", "TorqueBox", "org.jboss.security", "org.projectodd"]
-  standalone_xml = "#{output_dir}/jboss/standalone/configuration/standalone.xml"
+  config_files = ["#{output_dir}/jboss/standalone/configuration/standalone.xml",
+                  "#{output_dir}/jboss/domain/configuration/domain.xml"]
 
-  puts "Adding trace log level for #{categories.join(", ")} categories to #{standalone_xml} file"
-
-  doc = REXML::Document.new(File.read(standalone_xml))
-
-  profiles = doc.root.get_elements("//profile")
-  profiles.each do |profile|
-    logging_subsystem = profile.get_elements("subsystem[contains(@xmlns, 'urn:jboss:domain:logging:')]").first
-
-    categories.each do |category|
-      logger = logging_subsystem.add_element("logger", "category" => category)
-      logger.add_element("level", "name" => "TRACE")
+  config_files.each do |config_file|
+    puts "Adding trace log level for #{categories.join(", ")} categories to #{config_file} file"
+    doc = REXML::Document.new(File.read(config_file))
+    profiles = doc.root.get_elements("//profile")
+    profiles.each do |profile|
+      logging_subsystem = profile.get_elements("subsystem[contains(@xmlns, 'urn:jboss:domain:logging:')]").first
+      categories.each do |category|
+        logger = logging_subsystem.add_element("logger", "category" => category)
+        logger.add_element("level", "name" => "TRACE")
+      end
+    end
+    open(config_file, 'w') do |file|
+      doc.write(file, 4)
     end
   end
 
+  standalone_xml = "#{output_dir}/jboss/standalone/configuration/standalone.xml"
+  doc = REXML::Document.new(File.read(standalone_xml))
   # Configure a test JAAS login module
   puts "Adding test security domain to #{standalone_xml}"
   domain_set = doc.root.get_elements("//security-domains").first
