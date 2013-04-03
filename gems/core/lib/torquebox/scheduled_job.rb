@@ -133,7 +133,7 @@ module TorqueBox
       #   {TorqueBox::ScheduledJob.lookup} for more details on these
       #   instances
       def list
-        prefix = job_service_name_prefix.canonical_name
+        prefix = job_service_name.canonical_name
         service_names = TorqueBox::MSC.service_names.select do |service_name|
           name = service_name.canonical_name
           name.start_with?(prefix) && !name.end_with?('mbean')
@@ -167,7 +167,7 @@ module TorqueBox
       #   job.stop
       #   job.status => 'STOPPED'
       def lookup(name)
-        service_name = job_service_name_prefix.append(name)
+        service_name = job_service_name.append(name)
         service = TorqueBox::MSC.get_service(service_name)
         service.nil? ? nil : service.value
       end
@@ -175,13 +175,13 @@ module TorqueBox
       private
 
       # @api private
-      def job_service_name_prefix
-        TorqueBox::MSC.deployment_unit.service_name.append('torquebox').append('jobs').append('scheduled_job')
+      def job_service_name
+        TorqueBox::MSC.deployment_unit.service_name.append('scheduled_job')
       end
 
       # @api private
       def schedulizer_service_name
-        TorqueBox::MSC.deployment_unit.service_name.append('torquebox').append('jobs').append('job_schedulizer')
+        TorqueBox::MSC.deployment_unit.service_name.append('job_schedulizer')
       end
 
     end

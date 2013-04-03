@@ -27,19 +27,8 @@ public class JobsServices extends org.projectodd.polyglot.jobs.as.JobsServices {
     public static final ServiceName TORQUEBOX = ServiceName.of("torquebox");
     public static final ServiceName JOBS = TORQUEBOX.append("jobs");
 
-    public static ServiceName jobsServices(DeploymentUnit unit) {
-        return unit.getServiceName().append(JOBS);
-    }
-
     public static ServiceName componentResolver(DeploymentUnit unit, String jobName) {
-        return jobsServices(unit).append("component_resolver").append(jobName);
+        return unit.getServiceName().append("component_resolver").append(jobName);
     }
 
-    public static ServiceName job(DeploymentUnit unit, String name) {
-        return jobsServices(unit).append("scheduled_job").append(name);
-    }
-
-    public static ServiceName schedulizer(DeploymentUnit unit) {
-        return jobsServices(unit).append("job_schedulizer");
-    }
 }
