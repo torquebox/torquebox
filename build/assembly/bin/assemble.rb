@@ -102,7 +102,7 @@ class Assembler
   end
 
   def polyglot_modules
-    @polyglot_modules ||= ( polyglot_extensions + [ 'core', 'web' ] )
+    @polyglot_modules ||= ( polyglot_extensions + [ 'core', 'web', 'jobs', 'messaging' ] )
   end
   
   def install_modules

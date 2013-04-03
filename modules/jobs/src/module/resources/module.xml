@@ -26,8 +26,6 @@
 
     <resources>
         <resource-root path="${project.artifactId}.jar"/>
-        <resource-root path="polyglot-jobs.jar"/>
-        <resource-root path="quartz.jar"/>
     </resources>
 
     <dependencies>
@@ -44,9 +42,10 @@
         <module name="org.jboss.msc"/>
         <module name="org.jboss.logging"/>
         <module name="org.jboss.vfs"/>
-        <module name="org.torquebox.core"/>
         <module name="org.projectodd.polyglot.core"/>
         <module name="org.projectodd.polyglot.hasingleton"/>
+        <module name="org.projectodd.polyglot.jobs"/>
+        <module name="org.torquebox.core"/>
     </dependencies>
 </module>
 

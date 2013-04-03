@@ -26,7 +26,6 @@
 
     <resources>
         <resource-root path="${project.artifactId}.jar"/>
-        <resource-root path="polyglot-messaging.jar"/>
     </resources>
 
     <dependencies>
@@ -47,8 +46,9 @@
         <module name="org.jboss.remote-naming"/>
         <module name="org.jboss.vfs"/>
         <module name="org.projectodd.polyglot.core"/>
-        <module name="org.torquebox.core"/>
         <module name="org.projectodd.polyglot.hasingleton"/>
+        <module name="org.projectodd.polyglot.messaging"/>
+        <module name="org.torquebox.core"/>
     </dependencies>
 </module>
 

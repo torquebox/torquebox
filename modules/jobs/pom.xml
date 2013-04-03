@@ -30,7 +30,7 @@
       <groupId>org.projectodd</groupId>
       <artifactId>polyglot-jobs</artifactId>
       <version>${version.polyglot}</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jruby</groupId>
