@@ -90,9 +90,7 @@ module TorqueBox
           content = stomp_message
         end
 
-        encoding = options[:encoding] || :json
-
-        encoded_message = TorqueBox::Messaging::Message.new( @session.jms_session, content, encoding )
+        encoded_message = TorqueBox::Messaging::Message.new( @session.jms_session, content, options[:encoding] )
         jms_message = encoded_message.jms_message
 
         if ( stomp_message.is_a?( org.projectodd.stilts.stomp::StompMessage ) )
@@ -116,12 +114,12 @@ module TorqueBox
     
         def initialize(subscriber, options={})
           @subscriber = subscriber
-          @encoding = options[:encoding] || :json
+          @encoding = options[:encoding] 
         end
     
         def onMessage(jms_message)
           content = TorqueBox::Messaging::Message.new( jms_message ).decode 
-          content = TorqueBox::Codecs.encode( content, @encoding )
+          ( content = TorqueBox::Codecs.encode( content, @encoding ) ) if @encoding
           stomp_message = TorqueBox::Stomp::Message.new( content )
           jms_message.property_names.each do |name|
             value = jms_message.getObjectProperty( name ).to_s
