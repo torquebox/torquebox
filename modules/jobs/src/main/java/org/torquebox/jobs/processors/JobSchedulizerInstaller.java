@@ -25,7 +25,7 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController.Mode;
-import org.torquebox.core.TorqueBoxMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.jobs.JobSchedulizer;
 import org.torquebox.jobs.as.JobsServices;
 
@@ -39,7 +39,7 @@ public class JobSchedulizerInstaller implements DeploymentUnitProcessor {
     public void deploy(DeploymentPhaseContext context) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = context.getDeploymentUnit();
 
-        if (!unit.hasAttachment(TorqueBoxMetaData.ATTACHMENT_KEY)) {
+        if (!unit.hasAttachment(RubyAppMetaData.ATTACHMENT_KEY)) {
             return;
         }
 
