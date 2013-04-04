@@ -69,7 +69,7 @@ public class GlobalRuby extends AsyncService<GlobalRuby> implements GlobalRubyMB
      * @param script The script to evaluate
      * @return The result of evaluating the script, in its native form.
      */
-    public Object evaluate(String script) throws Exception {
+    public synchronized Object evaluate(String script) throws Exception {
         while (this.runtime == null) {
             Thread.sleep( 50 );
         }
