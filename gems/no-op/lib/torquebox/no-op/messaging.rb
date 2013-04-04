@@ -30,6 +30,10 @@ module TorqueBox
         def always_background(*methods)
           # no-op
         end
+        
+        def background(options = {})
+          self
+        end
       end
     end
 
