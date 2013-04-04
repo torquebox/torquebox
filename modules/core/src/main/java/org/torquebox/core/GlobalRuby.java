@@ -69,7 +69,7 @@ public class GlobalRuby extends AsyncService<GlobalRuby> implements GlobalRubyMB
      * @param script The script to evaluate
      * @return The result of evaluating the script, in its native form.
      */
-    public synchronized Object evaluate(String script) throws Exception {
+    public Object evaluate(String script) throws Exception {
         while (this.runtime == null) {
             Thread.sleep( 50 );
         }
@@ -109,7 +109,7 @@ public class GlobalRuby extends AsyncService<GlobalRuby> implements GlobalRubyMB
         for (String key : data.keySet()) {
             Object value = data.get( key );
             if (value instanceof String) {
-                resolved.put(key, evaluateToString( "ERB.new( %q{" + value + "}).result"));
+                resolved.put(key, evaluateToString( "ERB.new( %q{" + value + "}).result(Proc.new {}.binding)"));
             } else if (value instanceof Map) {
                 resolved.put(key, resolveErbAttributes((Map<String,Object>) value));
             } else {
