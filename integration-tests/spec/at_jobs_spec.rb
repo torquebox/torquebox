@@ -14,17 +14,18 @@ remote_describe "at jobs" do
   it "should deploy the :every, :until at job" do
     queue = TorqueBox::Messaging::Queue.new('/queue/response')
 
-    # Every 200 ms for over 5 seconds, from now
-    TorqueBox::ScheduledJob.at('SimpleJob', :every => 220, :until => Time.now + 5)
+    # Every 440 ms for over 5 seconds, from now
+    TorqueBox::ScheduledJob.at('SimpleJob', :every => 440, :until => Time.now + 5)
 
-    count = 0
+    # First run of first spec takes the longest while job runtimes spin up
+    count = queue.receive(:timeout => 15_000).nil? ? 0 : 1
 
-    while (queue.receive(:timeout => 2_000))
+    while (queue.receive(:timeout => 1_000))
       count += 1
     end
 
-    # 5 seconds, every 220 ms
-    count.should == 23
+    # 5 seconds, every 440 ms
+    count.should == 12
 
     TorqueBox::ScheduledJob.remove('SimpleJob').should == true
   end
@@ -32,17 +33,18 @@ remote_describe "at jobs" do
   it "should deploy the :at, :every, :until at job" do
     queue = TorqueBox::Messaging::Queue.new('/queue/response')
 
-    # Start in 1 second, then every 220 ms for over 4 seconds (5 seconds from now, but start is delayed)
-    TorqueBox::ScheduledJob.at('SimpleJob', :at => Time.now + 1, :every => 220, :until => Time.now + 5)
+    # Start in 1 second, then every 460 ms for over 4 seconds (5 seconds from now, but start is delayed)
+    TorqueBox::ScheduledJob.at('SimpleJob', :at => Time.now + 1, :every => 460, :until => Time.now + 5)
 
-    count = 0
+    # First run takes the longest while job installs
+    count = queue.receive(:timeout => 5_000).nil? ? 0 : 1
 
-    while (queue.receive(:timeout => 2_000))
+    while (queue.receive(:timeout => 1_000))
       count += 1
     end
 
-    # 4 seconds, every 220 ms
-    count.should == 19
+    # 4 seconds, every 460 ms
+    count.should == 9
 
     TorqueBox::ScheduledJob.remove('SimpleJob').should == true
   end
@@ -50,17 +52,18 @@ remote_describe "at jobs" do
   it "should deploy the :in, :repeat, :until at job" do
     queue = TorqueBox::Messaging::Queue.new('/queue/response')
 
-    # Start in 1 second, then every 220 ms for over 4 seconds (5 seconds from now, but start is delayed)
-    TorqueBox::ScheduledJob.at('SimpleJob', :in => 1_000, :every => 220, :until => Time.now + 5)
+    # Start in 1 second, then every 460 ms for over 4 seconds (5 seconds from now, but start is delayed)
+    TorqueBox::ScheduledJob.at('SimpleJob', :in => 1_000, :every => 460, :until => Time.now + 5)
 
-    count = 0
+    # First run takes the longest while job installs
+    count = queue.receive(:timeout => 5_000).nil? ? 0 : 1
 
-    while (queue.receive(:timeout => 2_000))
+    while (queue.receive(:timeout => 1_000))
       count += 1
     end
 
     # 4 seconds, every 220 ms
-    count.should == 19
+    count.should == 9
 
     TorqueBox::ScheduledJob.remove('SimpleJob').should == true
   end
@@ -71,9 +74,10 @@ remote_describe "at jobs" do
     # Start in 1 second, then repeat te job 10 times, every 150 ms
     TorqueBox::ScheduledJob.at('SimpleJob', :in => 1_000, :repeat => 10, :every => 150)
 
-    count = 0
+    # First run takes the longest while job installs
+    count = queue.receive(:timeout => 5_000).nil? ? 0 : 1
 
-    while (queue.receive(:timeout => 2_000))
+    while (queue.receive(:timeout => 1_000))
       count += 1
     end
 
