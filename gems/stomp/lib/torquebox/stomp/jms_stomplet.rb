@@ -24,9 +24,9 @@ module TorqueBox
         @subscriptions = {}
       end
     
-      def xa_resources
-        @xa_resources 
-      end
+      #def xa_resources
+      #  @xa_resources 
+      #end
     
       def configure(stomplet_config)
         @connection = @connection_factory.create_xa_connection
@@ -125,6 +125,7 @@ module TorqueBox
             value = jms_message.getObjectProperty( name ).to_s
             stomp_message.headers.put( name.to_s.to_java( java.lang.String ), value.to_java( java.lang.String) ) if value
           end
+          stomp_message.headers.put( "content-type", "text/plain" )
           @subscriber.send( stomp_message )
         end
     
