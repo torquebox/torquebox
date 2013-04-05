@@ -136,6 +136,9 @@ remote_describe "runtime jobs alacarte" do
 
     job = TorqueBox::ScheduledJob.lookup('simple.job')
     job.name.should == 'simple.job'
+    wait_for_condition(30, 0.5, lambda { |status| status == 'STARTED' }) do
+      job.status
+    end
     job.status.should == 'STARTED'
 
     TorqueBox::ScheduledJob.remove('simple.job').should == true
