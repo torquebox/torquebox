@@ -142,7 +142,6 @@ module Capistrano
                 when :upstart
                   puts "Restarting TorqueBox AS"
                   run "#{sudo} service torquebox restart"
-
               end
             end
 
