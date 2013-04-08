@@ -79,7 +79,6 @@ class Publisher
   end
 
   def publish_all()
-    dav_mkdir_p( major_version_url )
     dav_mkdir_p( build_base_url )
     publish_distribution()
     publish_documentation()
