@@ -161,7 +161,7 @@ class Publisher
   end
 end
 
-Publisher.new( ARGV[0], ARGV[1], ARGV[2] ).publish_all
+Publisher.new( ARGV[0], ARGV[1] ).publish_all
 
 
 
