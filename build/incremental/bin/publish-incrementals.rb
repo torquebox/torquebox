@@ -13,24 +13,18 @@ class Publisher
 
   attr_accessor :build_number
 
-  def initialize(credentials_path, build_number, version)
+  def initialize(credentials_path, build_number)
     @build_number = build_number
-    @version      = version
     @dav          = DAV.new( credentials_path )
     @published_artifacts = []
   end
 
-  def major_version_url
-    major_version = @version.sub(/^(.+?)\..*/, '\1').to_i
-    major_version > 2 ? BASE_URL + "/#{major_version}.x" : BASE_URL
-  end
-
   def build_base_url
-    major_version_url + "/#{build_number}"
+    BASE_URL + "/#{build_number}"
   end
 
   def latest_base_url
-    major_version_url + "/LATEST"
+    BASE_URL + "/LATEST"
   end
 
   def build_gem_repo_url

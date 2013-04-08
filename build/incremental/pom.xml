@@ -80,7 +80,7 @@
                 </goals>
                 <configuration>
                   <file>bin/publish-incrementals.rb</file>
-                  <args>/private/projectodd/private-settings.xml ${env.BUILD_NUMBER} ${project.version}</args>
+                  <args>/private/projectodd/private-settings.xml ${env.BUILD_NUMBER}</args>
                 </configuration>
               </execution>
             </executions>
