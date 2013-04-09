@@ -66,7 +66,7 @@ module TorqueBox
       end
 
       def persisted?
-        !options[:persist].nil?
+        !!options[:persist]
       end
 
       def replicated?
@@ -264,17 +264,23 @@ module TorqueBox
       def reconfigure(mode=clustering_mode)
         existing_cache  = manager.get_cache(name)
         base_config = existing_cache.cache_configuration
-        unless base_config.clustering.cache_mode == mode
-          log( "Reconfiguring Infinispan cache #{name} from #{base_config.cache_mode} to #{mode}" )
+        new_config = configuration(mode)
+        unless same_config?(base_config, new_config)
+          log("Reconfiguring Infinispan cache #{name}")
           existing_cache.stop
-          configure(mode)
+          manager.define_configuration(name, new_config )
           existing_cache.start
         end
         return existing_cache
       end
 
       def configure(mode=clustering_mode)
-        log( "Configuring Infinispan cache #{name} as #{mode}" )
+        log( "Configuring Infinispan cache #{name}" )
+        manager.define_configuration(name, configuration(mode) )
+        manager.get_cache(name)
+      end
+
+      def configuration(mode=clustering_mode)
         config = ConfigurationBuilder.new.read( manager.default_cache_configuration )
         config.clustering.cacheMode( mode )
         config.transaction.transactionMode( transaction_mode )
@@ -287,10 +293,16 @@ module TorqueBox
           store.purgeOnStartup( false )
           store.location(options[:persist]) if File.exist?( options[:persist].to_s )
         end
-        manager.define_configuration(name, config.build )
-        manager.get_cache(name)
+        config.build
       end
 
+      def same_config?(c1, c2)
+        c1.clustering == c2.clustering &&
+          c1.loaders == c2.loaders &&
+          c1.transaction.transactionMode == c2.transaction.transactionMode &&
+          c1.transaction.lockingMode == c2.transaction.lockingMode
+      end
+      
       def transaction_manager_lookup
         @tm ||= if TorqueBox.fetch('transaction-manager')
                   ContainerTransactionManagerLookup.new 
@@ -298,7 +310,6 @@ module TorqueBox
                   org.infinispan.transaction.lookup.GenericTransactionManagerLookup.new
                 end
       end
-
 
       def nothing
         result = Object.new
