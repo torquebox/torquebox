@@ -297,8 +297,10 @@ module TorqueBox
       end
 
       def same_config?(c1, c2)
-        c1.clustering == c2.clustering &&
-          c1.loaders == c2.loaders &&
+        c1.clustering.cacheMode == c2.clustering.cacheMode &&
+          (c1.loaders == c2.loaders ||
+           (c1.loaders.cacheLoaders.size == c2.loaders.cacheLoaders.size &&
+            c1.loaders.cacheLoaders.first.location == c2.loaders.cacheLoaders.first.location)) &&
           c1.transaction.transactionMode == c2.transaction.transactionMode &&
           c1.transaction.lockingMode == c2.transaction.lockingMode
       end
