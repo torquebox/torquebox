@@ -125,7 +125,13 @@ module TorqueBox
             value = jms_message.getObjectProperty( name ).to_s
             stomp_message.headers.put( name.to_s.to_java( java.lang.String ), value.to_java( java.lang.String) ) if value
           end
-          stomp_message.headers.put( "content-type", "text/plain" )
+          if ( stomp_message.headers[ 'content-type' ] == nil )
+            if ( @encoding == :json )
+              stomp_message.headers.put( "content-type", "application/json" )
+            else
+              stomp_message.headers.put( "content-type", "text/plain" )
+            end
+          end
           @subscriber.send( stomp_message )
         end
     
