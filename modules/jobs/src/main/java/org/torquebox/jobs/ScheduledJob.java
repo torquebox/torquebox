@@ -42,10 +42,27 @@ public class ScheduledJob extends BaseScheduledJob implements ScheduledJobMBean 
 
     @Override
     public synchronized void start() throws ParseException, SchedulerException {
+        waitForMSCServiceToStart();
         if (!isStarted()) {
             JobScheduler jobScheduler = (JobScheduler)((Value)getJobSchedulerInjector()).getValue();
             jobScheduler.addComponentResolver(new JobKey(getName(), getGroup()), this.componentResolverInjector.getValue());
             super.start();
+        }
+    }
+
+    /**
+     * Ensure this ScheduledJob's MSC service has started (signalled by the
+     * presence of all injected values) before returning
+     */
+    protected void waitForMSCServiceToStart() {
+        while (((InjectedValue)this.getJobSchedulerInjector()).getOptionalValue() == null ||
+                this.componentResolverInjector.getOptionalValue() == null ||
+                this.rubyRuntimePoolInjector.getOptionalValue() == null) {
+            try {
+                Thread.sleep( 10 );
+            } catch (InterruptedException ex) {
+                break;
+            }
         }
     }
 
