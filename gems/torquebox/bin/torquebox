@@ -175,6 +175,24 @@ class TorqueBoxCommand < Thor
     end
   end
 
+  map "exec" => "tb_exec"
+  desc "exec [KNOB_FILE] [COMMAND]", "Execute a command within the context of a TorqueBox application"
+  method_option :no_bundle, :aliases => '-nb', :type => :boolean, :desc => "Run without `bundle exec`"
+  def tb_exec(knob_file, command)
+    TorqueBox::Server.setup_environment
+    jruby_path = File.join(ENV['JRUBY_HOME'], "bin")
+    knob_path = File.expand_path(knob_file)
+    bundle_exec = options.no_bundler_exec ? "" : "bundle exec"
+    rb_version = RUBY_VERSION =~ /^1\.9\./ ? "1.9" : "1.8"
+    ENV['PATH'] = "#{ENV['PATH']}:#{jruby_path}"
+    Dir.mktmpdir do |tmpdir|
+      commands = ["cd #{tmpdir}", "jar -xf #{knob_path}"]
+      commands << "chmod +x vendor/bundle/jruby/#{rb_version}/bin/*"
+      commands << "jruby -S #{bundle_exec} #{command}"
+      exec(commands.join(" && "))
+    end
+  end
+
 end
 
 TorqueBoxCommand.start

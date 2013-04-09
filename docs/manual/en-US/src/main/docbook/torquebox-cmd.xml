@@ -9,17 +9,18 @@
     start and stop the server, and more. Running <command>torquebox</command>
     without any arguments displays the help screen.
     <screen>
-$ torquebox 
+$ torquebox
 Tasks:
-  torquebox deploy ROOT        # Deploy an application to TorqueBox
-  torquebox undeploy ROOT      # Undeploy an application from TorqueBox
-  torquebox run                # Run TorqueBox (binds to localhost, use -b to ov...
-  torquebox rails ROOT         # Create a Rails application at ROOT using the...
-  torquebox archive ROOT       # Create a nice self-contained application arc...
-  torquebox cli                # Run the JBoss AS7 CLI
-  torquebox env [VARIABLE]     # Display TorqueBox environment variables
-  torquebox help [TASK]        # Describe available tasks or one specific task
-  torquebox list               # List applications deployed to TorqueBox and ...  </screen>
+  torquebox archive ROOT           # Create a nice self-contained application...
+  torquebox cli                    # Run the JBoss AS7 CLI
+  torquebox deploy ROOT            # Deploy an application to TorqueBox
+  torquebox env [VARIABLE]         # Display TorqueBox environment variables
+  torquebox exec [KNOB] [COMMAND]  # Execute a command within the context of ...
+  torquebox help [TASK]            # Describe available tasks or one specific...
+  torquebox list                   # List applications deployed to TorqueBox ...
+  torquebox rails ROOT             # Create a Rails application at ROOT using...
+  torquebox run                    # Run TorqueBox (binds to localhost, use -...
+  torquebox undeploy ROOT          # Undeploy an application from TorqueBox</screen>
   </para>
 
   <section id="torquebox-cmd-deploy">
@@ -209,6 +210,18 @@ $ torquebox rails # Create a new Rails application in the current directory </sc
               <entry><parameter>--deploy</parameter></entry>
               <entry>Deploys the resulting archive to TORQUEBOX_HOME</entry>
             </row>
+            <row>
+              <entry><parameter>--package_gems</parameter></entry>
+              <entry>Include all Bundler gem dependencies in the archive.</entry>
+            </row>
+            <row>
+              <entry><parameter>--package_without=GROUPS</parameter></entry>
+              <entry>Package without these Bundler groups.</entry>
+            </row>
+            <row>
+              <entry><parameter>--precompile_assets</parameter></entry>
+              <entry>Precompile all assets (Rails-specific).</entry>
+            </row>
           </tbody>
         </tgroup>
       </table>
@@ -271,6 +284,44 @@ cachetest
 myapp
   Descriptor: /opt/torquebox/jboss/standalone/deployments/myapp-knob.yml
   Status: awaiting deployment </screen>
+    </para>
+  </section>
+
+
+  <section id="torquebox-cmd-exec">
+    <title>torquebox exec</title>
+
+    <para>
+      The <command>torquebox exec [KNOB] [COMMAND]</command> command executes the
+      given command within the context of a TorqueBox application, given as the path to a Knob file.
+      A common example might be:
+      <screen>
+$ torquebox exec /path/to/myapp.knob 'rake db:migrate RAILS_ENV=production'</screen>
+      This can also be run from the non-gem installation of TorqueBox in this form:
+      <screen>
+$ $TORQUEBOX_HOME/jruby/bin/jruby -S torquebox exec myapp.knob 'rake -T'</screen>
+      In both cases, this command assumes that the Knob file has been built with the <parameter>--package_gems</parameter>
+      option, or that the necessary gems are available to the JRuby runtime in some other way.
+      <table>
+        <title>torquebox exec options</title>
+        <tgroup cols="2">
+          <colspec align="left" />
+
+          <thead>
+            <row>
+              <entry>Option</entry>
+              <entry>Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><parameter>--no_bundle</parameter></entry>
+              <entry>Run the given command without <command>bundle exec</command></entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
     </para>
   </section>
 
