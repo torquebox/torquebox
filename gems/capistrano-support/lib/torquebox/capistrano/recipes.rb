@@ -80,6 +80,7 @@ module Capistrano
         set( :jboss_control_style, :initd ) unless exists?( :jboss_control_style )
         set( :jboss_init_script,   '/etc/init.d/jboss-as-standalone' ) unless exists?( :jboss_init_script )
         set( :jboss_runit_script,  '/etc/service/torquebox/run' ) unless exists?( :jboss_runit_script)
+        set( :jboss_upstart_script,  '/etc/init/torquebox.conf' ) unless exists?( :jboss_upstart_script)
         set( :jboss_bind_address,  '0.0.0.0' ) unless exists?( :jboss_bind_address )
 
         set( :bundle_cmd,          lambda{ "#{jruby_bin} -S bundle" } ) unless exists?( :bundle_cmd )
@@ -106,6 +107,8 @@ module Capistrano
                   run "nohup #{jboss_home}/bin/standalone.sh -b #{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
                 when :runit
                   run "#{sudo} sv start torquebox"
+                when :upstart
+                  run "#{sudo} service torquebox start"
               end
             end
         
@@ -119,6 +122,8 @@ module Capistrano
                   run "#{jboss_home}/bin/jboss-cli.sh --connect :shutdown"
                 when :runit
                   run "#{sudo} sv stop torquebox"
+                when :upstart
+                  run "#{sudo} service torquebox stop"
               end
             end
         
@@ -134,6 +139,9 @@ module Capistrano
                 when :runit
                   puts "Restarting TorqueBox AS"
                   run "#{sudo} sv restart torquebox"
+                when :upstart
+                  puts "Restarting TorqueBox AS"
+                  run "#{sudo} service torquebox restart"
               end
             end
 
@@ -151,9 +159,11 @@ module Capistrano
                 run "test -x #{jboss_init_script}",                      :roles=>[ :app ]
               when :runit
                 run "test -x #{jboss_runit_script}",                     :roles=>[ :app ]
+              when :upstart
+                run "test -x #{jboss_upstart_script}",                   :roles=>[ :app ]
               end
               run "test -d #{jboss_home}",                               :roles=>[ :app ]
-              unless ( [ :initd, :binscripts, :runit ].include?( jboss_control_style.to_sym ) )
+              unless ( [ :initd, :binscripts, :runit, :upstart ].include?( jboss_control_style.to_sym ) )
                 fail "invalid jboss_control_style: #{jboss_control_style}"
               end
             end
