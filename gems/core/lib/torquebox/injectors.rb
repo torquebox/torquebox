@@ -39,9 +39,9 @@ module TorqueBox
       service = TorqueBox::ServiceRegistry.registry.getService(service_name)
       raise InjectionError.new("Service not found for injection - #{something}") if service.nil?
       state = TorqueBox::MSC.wait_for_service_to_start(service, 45)
-      raise InjectionError.new("Injected service failed to start - #{something}") if state != 'UP'
+      raise InjectionError.new("Injected service failed to start - #{service_name}") if state != 'UP'
       value = service.value
-      raise InjectionError.new("Injected service had no value - #{something}") if value.nil?
+      raise InjectionError.new("Injected service had no value - #{service_name}") if value.nil?
       value = value.convert(JRuby.runtime) if value.respond_to?(:convert)
       TorqueBox::Registry.merge!(something.to_s => value)
     end

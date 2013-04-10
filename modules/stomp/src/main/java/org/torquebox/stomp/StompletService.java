@@ -22,7 +22,6 @@ package org.torquebox.stomp;
 import java.util.Map;
 
 import org.jboss.msc.inject.Injector;
-import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
@@ -30,11 +29,12 @@ import org.jboss.msc.value.InjectedValue;
 import org.jruby.Ruby;
 import org.projectodd.stilts.stomplet.Stomplet;
 import org.projectodd.stilts.stomplet.container.SimpleStompletContainer;
+import org.torquebox.core.as.AsyncService;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.stomp.component.XAStompletComponent;
 
-public class StompletService implements Service<Stomplet> {
+public class StompletService extends AsyncService<Stomplet> {
 
     public StompletService() {
 
@@ -62,26 +62,20 @@ public class StompletService implements Service<Stomplet> {
     }
 
     @Override
-    public void start(StartContext context) throws StartException {
+    public void startAsync(StartContext context) throws Exception {
+        this.runtime = this.poolInjector.getValue().borrowRuntime( getDestinationPattern() );
 
         try {
-            this.runtime = this.poolInjector.getValue().borrowRuntime( getDestinationPattern() );
+            ComponentResolver componentResolver = this.componentResolverInjector.getValue();
+            XAStompletComponent stomplet = (XAStompletComponent) componentResolver.resolve( runtime );
 
-            try {
-                ComponentResolver componentResolver = this.componentResolverInjector.getValue();
-                XAStompletComponent stomplet = (XAStompletComponent) componentResolver.resolve( runtime );
-
-                SimpleStompletContainer container = containerInjector.getValue();
-                container.addStomplet( this.destinationPattern, stomplet, this.config );
-            } catch (Exception e) {
-                this.poolInjector.getValue().returnRuntime( this.runtime );
-                this.runtime = null;
-                throw e;
-            }
+            SimpleStompletContainer container = containerInjector.getValue();
+            container.addStomplet( this.destinationPattern, stomplet, this.config );
         } catch (Exception e) {
-            throw new StartException( e );
+            this.poolInjector.getValue().returnRuntime( this.runtime );
+            this.runtime = null;
+            throw e;
         }
-
     }
 
     @Override
