@@ -234,13 +234,13 @@ module TorqueBox
         else
           old_config = nil
         end
-        cmd = %w{-S bundle install --local --deployment}
+        cmd = %w{-S bundle --local --deployment}
         unless package_without.empty?
           cmd << '--without'
           cmd << package_without
         end
         Dir.chdir( app_dir ) do
-          jruby_command( '-S bundle package' )
+          jruby_command( '-S bundle package --all' )
           jruby_command( cmd.flatten.join(' ') )
         end
         yield if block_given?
@@ -280,8 +280,8 @@ module TorqueBox
 
       def freeze_gems(app_dir = Dir.pwd)
         Dir.chdir( app_dir ) do
-          jruby_command( '-S bundle package' )
-          jruby_command( '-S bundle install --local --path vendor/bundle' )
+          jruby_command( '-S bundle package --all' )
+          jruby_command( '-S bundle install --local --deployment' )
         end
       end
 
@@ -376,7 +376,7 @@ module TorqueBox
       end
 
       def run_command(cmd)
-        puts `#{cmd} 2>&1`
+        puts `RUBYOPT='' #{cmd} 2>&1`
       end
 
       # Used when we want to effectively replace this process with the
@@ -551,4 +551,3 @@ module TorqueBox
     end
   end
 end
-
