@@ -58,6 +58,11 @@ module TorqueBox
         options[:locking_mode] ||= :optimistic if (transactional? && !options.has_key?( :locking_mode ))
         options[:sync] = true if options[:sync].nil?
         @codec = TorqueBox::Codecs[ options[:encoding] || :marshal_smart ]
+        if @codec == :marshal
+          log( "Encoding of :marshal cannot be used with " +
+               "TorqueBox::Infinispan::Cache - using :marshal_base64 instead")
+          @codec = :marshal_base64
+        end
         cache
       end
 

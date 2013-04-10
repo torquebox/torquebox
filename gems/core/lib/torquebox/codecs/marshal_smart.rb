@@ -15,13 +15,14 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'base64'
 
 module TorqueBox
   module Codecs
     module MarshalSmart
       class << self
 
-        MARSHAL_MARKER = Marshal.dump("_|marshalled|_")
+        MARSHAL_MARKER = "_|marshalled|_"
 
         def encode(object)
           case object
@@ -31,14 +32,14 @@ module TorqueBox
             if object.respond_to?(:java_object)
               object
             else
-              MARSHAL_MARKER + ::Marshal.dump(object)
+              MARSHAL_MARKER + Base64.encode64(::Marshal.dump(object))
             end
           end
         end
 
         def decode(object)
           if object.is_a?(String) && object.start_with?(MARSHAL_MARKER)
-            object = ::Marshal.load(object.sub(MARSHAL_MARKER, ''))
+            object = ::Marshal.load(Base64.decode64(object.sub(MARSHAL_MARKER, '')))
           end
           object
         end

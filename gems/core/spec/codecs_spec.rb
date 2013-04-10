@@ -50,10 +50,15 @@ describe TorqueBox::Codecs do
       TorqueBox::Codecs.decode(TorqueBox::Codecs.encode('abc', :edn), :edn).should eql('abc')
     end
   end
-  
+
   context "marshal" do
     it "should decode what it encodes" do
       TorqueBox::Codecs.decode(TorqueBox::Codecs.encode('abc', :marshal), :marshal).should eql('abc')
+    end
+
+    it "should decode and encode Time objects" do
+      now = Time.now
+      TorqueBox::Codecs.decode(TorqueBox::Codecs.encode(now, :marshal), :marshal).should eql(now)
     end
   end
 
@@ -61,6 +66,22 @@ describe TorqueBox::Codecs do
     it "should decode what it encodes" do
       TorqueBox::Codecs.decode(TorqueBox::Codecs.encode('abc', :marshal_base64), :marshal_base64).should eql('abc')
     end
+
+    it "should decode and encode Time objects" do
+      now = Time.now
+      TorqueBox::Codecs.decode(TorqueBox::Codecs.encode(now, :marshal_base64), :marshal_base64).should eql(now)
+    end
   end
-  
+
+  context "marshal_smart" do
+    it "should decode what it encodes" do
+      TorqueBox::Codecs.decode(TorqueBox::Codecs.encode('abc', :marshal_smart), :marshal_smart).should eql('abc')
+    end
+
+    it "should decode and encode Time objects" do
+      now = Time.now
+      TorqueBox::Codecs.decode(TorqueBox::Codecs.encode(now, :marshal_smart), :marshal_smart).should eql(now)
+    end
+  end
+
 end
