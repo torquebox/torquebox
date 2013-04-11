@@ -167,7 +167,7 @@ remote_describe "in-container messaging tests" do
           TorqueBox::Messaging::Message.new(msg).class::ENCODING.should == encoding
         end
 
-        sleep(0.1)
+        sleep(0.5)
 
         d.publish("something", message_options)
 
