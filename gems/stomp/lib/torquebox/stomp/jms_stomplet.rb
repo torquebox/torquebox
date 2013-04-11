@@ -45,7 +45,7 @@ module TorqueBox
     
       def on_unsubscribe(subscriber)
         subscriptions = @subscriptions.delete( subscriber )
-        subscriptions.each do |subscription|
+        (subscriptions || []).each do |subscription|
           subscription.close
         end
       end
