@@ -31,7 +31,8 @@ public class MessagingServices {
     public static final ServiceName MESSAGING = CoreServices.TORQUEBOX.append( "messaging" );
     public static final ServiceName RUBY_CONNECTION_FACTORY = MESSAGING.append(  "ruby-connection-factory" );
     public static final ServiceName RUBY_XA_CONNECTION_FACTORY = MESSAGING.append(  "ruby-xa-connection-factory" );
-    
+    public static final ServiceName DESTINATIONIZER = MESSAGING.append( "destinationizer" );
+
     public static final ServiceName WEBSOCKETS = MESSAGING.append( "websockets" );
     public static final ServiceName WEBSOCKETS_SERVER = WEBSOCKETS.append( "server" );
 
@@ -45,6 +46,10 @@ public class MessagingServices {
 
     public static ServiceName webSocketProcessor(DeploymentUnit unit) {
         return unit.getServiceName().append( WEBSOCKETS ).append( "processor"  );
+    }
+
+    public static ServiceName destinationizer(DeploymentUnit unit) {
+        return unit.getServiceName().append( DESTINATIONIZER );
     }
 
     public static ServiceName webSocketProcessorComponentResolver(DeploymentUnit unit) {

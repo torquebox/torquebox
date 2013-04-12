@@ -22,22 +22,36 @@ module TorqueBox
   module Messaging
     class Queue < Destination
 
-      def self.start( name, options={} )
-        selector = options.fetch( :selector, "" )
-        durable  = options.fetch( :durable,  true )
-        jndi     = options.fetch( :jndi,     [].to_java(:string) )
-        TorqueBox::ServiceRegistry.lookup("jboss.messaging.default.jms.manager") do |server|
-          server.createQueue( false, name, selector, durable, jndi )
+      class << self
+
+        # Creates the queue, starts and return a Queue object.
+        #
+        # @param name The name of the queue
+        # @param options Optional parameters (a Hash), including:
+        # @option options [String] :selector The selector for the queue
+        # @option options [Boolean] :durable If the queue should be durable
+        # @option options [Boolean] :exported If the queue should be visible in remote JNDI lookups
+        # @return [Queue] if the service is created and started
+        # @return [nil] if the service is not created in the specified time (30 s)
+        def start(name, options={})
+          selector = options.fetch(:selector, "")
+          durable = options.fetch(:durable, true)
+          exported = options.fetch(:exported, false)
+
+          with_destinationizer do |destinationizer|
+            latch = destinationizer.create_queue(name, durable, selector, exported)
+            return nil unless TorqueBox::Messaging::Destination.wait_for_latch(latch)
+          end
+
+          new(name, options)
         end
-        new( name, options )
       end
 
-      def stop
-        TorqueBox::ServiceRegistry.lookup("jboss.messaging.default.jms.manager") do |server|
-          server.destroyQueue( name )
-        end
-      end
-
+      # Publishes a message and waits for the reply
+      #
+      # @param message The message to publish
+      # @param options Optional parameters (a Hash)
+      # @return Replied message
       def publish_and_receive(message, options={})
         result = nil
         with_session do |session|
@@ -47,6 +61,11 @@ module TorqueBox
         result
       end
 
+      # Waits for a message and replies
+      #
+      # @param options Optional parameters (a Hash)
+      # @param block The block to handle the received message. The return value of the block will be send back to the queue.
+      # @return [void]
       def receive_and_publish(options={}, &block)
         with_session do |session|
           session.receive_and_publish(self, normalize_options(options), &block)
@@ -67,6 +86,8 @@ module TorqueBox
       # if there are connected consumers.
       #
       # When executed on a paused queue, nothing happens.
+      #
+      # @return [void]
       def pause
         with_queue_control do |control|
           control.pause
@@ -75,6 +96,8 @@ module TorqueBox
 
       # Resumes a queue after it was paused.
       # When executed on a active queue, nothing happens.
+      #
+      # @return [void]
       def resume
         with_queue_control do |control|
           control.resume
@@ -83,22 +106,13 @@ module TorqueBox
 
       # Removes messages from the queue.
       #
-      # Accepts optional :filter parameter to remove only
-      # selected messages from the queue. By default
-      # *all* messages will be removed.
+      # @param filter [String] Expression in a SQL92-like syntax based on properties set on the messages. If not set all messages will be removed.
       #
-      # The :filter parameter is a String where you define
-      # expressions in a SQL92-like syntax based on properties
-      # set on the messages.
+      # @example Remove messages with type property set
       #
-      # Example:
+      #   @queue.remove_messages("type = 'tomatoe' OR type = 'garlic'")
       #
-      # type = 'tomatoe' OR type = 'garlic'
-      #
-      # This will remove messages with :type property set
-      # to 'tomatoe' or 'garlic'
-      #
-      # This function returns number of removed messages.
+      # @return [Integer] Number of removed messages
       def remove_messages(filter = nil)
         with_queue_control do |control|
           control.remove_messages(filter)
@@ -107,8 +121,8 @@ module TorqueBox
 
       # Removes message from the queue by its id.
       #
-      # Returns +true+ if the message was removed,
-      # +false+ otherwise.
+      # @param id [String] ID of the message
+      # @return [Boolean] true if the message was removed, false otherwise.
       def remove_message(id)
         with_queue_control do |control|
           control.remove_message(id)
@@ -117,20 +131,13 @@ module TorqueBox
 
       # Counts messages in the queue.
       #
-      # Accepts optional :filter parameter to count only
-      # selected messages in the queue. By default
-      # all messages will be counted.
+      # @param filter [String] Expression in a SQL92-like syntax based on properties set on the messages. If not set all messages will be counted.
       #
-      # The :filter parameter is a String where you define
-      # expressions in a SQL92-like syntax based on properties
-      # set on the messages.
+      # @example Count messages with :type property set to 'tomatoe' or 'garlic'
       #
-      # Example:
+      #   @queue.count_messages("type = 'tomatoe' OR type = 'garlic'")
       #
-      # type = 'tomatoe' OR type = 'garlic'
-      #
-      # This will count messages with :type property set
-      # to 'tomatoe' or 'garlic'
+      # @return [Fixnum] The number of counted messages
       def count_messages(filter = nil)
         with_queue_control do |control|
           control.count_messages(filter)
@@ -139,11 +146,9 @@ module TorqueBox
 
       # Expires messages from the queue.
       #
-      # Accepts optional :filter parameter to expire only
-      # selected messages in the queue. By default
-      # all messages will be expired.
+      # @param filter [String] Expression in a SQL92-like syntax based on properties set on the messages. If not set all messages will be expired.
       #
-      # Returns number of expired messaged.
+      # @return [Fixnum] The number of expired messages
       def expire_messages(filter = nil)
         with_queue_control do |control|
           control.expire_messages(filter)
@@ -152,8 +157,7 @@ module TorqueBox
 
       # Expires message from the queue by its id.
       #
-      # Returns +true+ if the message was expired,
-      # +false+ otherwise.
+      # @return [Boolean] Returns true if the message was expired, false otherwise.
       def expire_message(id)
         with_queue_control do |control|
           control.expire_message(id)
@@ -162,8 +166,7 @@ module TorqueBox
 
       # Sends message to dead letter address.
       #
-      # Returns +true+ if the message was sent,
-      # +false+ otherwise.
+      # @return [Boolean] Returns true if the message was sent, false otherwise.
       def send_message_to_dead_letter_address(id)
         with_queue_control do |control|
           control.send_message_to_dead_letter_address(id)
@@ -172,11 +175,9 @@ module TorqueBox
 
       # Sends messages to dead letter address.
       #
-      # Accepts optional :filter parameter to send only
-      # selected messages from the queue. By default
-      # all messages will be send.
+      # @param filter [String] Expression in a SQL92-like syntax based on properties set on the messages. If not set all messages will be send.
       #
-      # Returns number of sent messaged.
+      # @return [Fixnum] The number of sent messages
       def send_messages_to_dead_letter_address(filter = nil)
         with_queue_control do |control|
           control.send_messages_to_dead_letter_address(filter)
@@ -184,6 +185,8 @@ module TorqueBox
       end
 
       # Returns the consumer count connected to the queue.
+      #
+      # @return [Fixnum] The number of consumers
       def consumer_count
         with_queue_control do |control|
           control.consumer_count
@@ -191,6 +194,8 @@ module TorqueBox
       end
 
       # Returns the scheduled messages count for this queue.
+      #
+      # @return [Fixnum] The number of scheduled messages
       def scheduled_messages_count
         with_queue_control do |control|
           control.scheduled_count
@@ -201,22 +206,23 @@ module TorqueBox
       # +queue_name+ parameter. Optional +reject_duplicates+ parameter
       # specifies if the duplicates should be rejected.
       #
-      # The +filter+ parameter makes it possible to limit messages to
-      # move. If provided +nil+ or empty string, *all messages* will be moved.
-      #
-      # Returns number of moved messages.
+      # @param queue_name [String] The name of the queue to move the messages to
+      # @param filter [String] Parameter to limit messages to move. If provided nil or empty string, *all messages* will be moved.
+      # @param reject_duplicates [Boolean] Specifies if the duplicates should be rejected
+      # @return [Fixnum] The number of moved messages
       def move_messages(queue_name, filter = nil, reject_duplicates = false)
         with_queue_control do |control|
           control.move_messages(filter, queue_name, reject_duplicates)
         end
       end
 
-      # Moves message for specific +id+ from the queue to another queue
-      # specified in the +queue_name+ parameter. Optional +reject_duplicates+
-      # parameter specifies if the duplicates should be rejected.
+      # Moves message for specific id from the queue to another queue
+      # specified in the queue_name parameter.
       #
-      # Returns +true+ if the message was moved,
-      # +false+ otherwise.
+      # @param queue_name [String] The name of the queue to move the messages to
+      # @param id [String] Message ID
+      # @param reject_duplicates [Boolean] Specifies if the duplicates should be rejected
+      # @return [Boolean] true if the message was moved,false otherwise
       def move_message(queue_name, id, reject_duplicates = false)
         with_queue_control do |control|
           control.move_message(id, queue_name, reject_duplicates)
@@ -225,7 +231,7 @@ module TorqueBox
 
       # Returns current expiry address.
       #
-      # The destination contains +jms.queue+ or +jms.topic+ prefixes,
+      # @return [String] Current expiry address. Please note that the destination contains 'jms.queue' or 'jms.topic' prefixes.
       def expiry_address
         with_queue_control do |control|
           control.expiry_address
@@ -236,15 +242,17 @@ module TorqueBox
       #
       # Please note that you need to provide the
       # *full address* containing the destination name and
-      # +jms.queue+ or +jms.topic+ prefixes, for example:
+      # jms.queue or jms.topic prefixes, for example:
       #
-      # If you want to set the destination to /queues/customexpire, use
-      # +queue.expiry_address = "jms.queue./queues./customexpire"+
+      # @example Set the destination to /queues/customexpire
       #
-      # If you want to set the destination to /topics/customexpire, use
-      # +queue.expiry_address = "jms.topic./topics./customexpire"+
+      #   @queue.expiry_address = "jms.queue./queues./customexpire"
       #
-      # Returns current expiry address.
+      # @example Set the destination to /topics/customexpire
+      #
+      #   @queue.expiry_address = "jms.topic./topics./customexpire"
+      #
+      # @return [String] Current expiry address
       def expiry_address=(address)
         with_queue_control do |control|
           control.set_expiry_address(address)
@@ -255,7 +263,7 @@ module TorqueBox
 
       # Returns current dead letter address.
       #
-      # The destination contains +jms.queue+ or +jms.topic+ prefixes,
+      # @return [String] Current dead letter address. Please note that the destination contains 'jms.queue' or 'jms.topic' prefixes,
       def dead_letter_address
         with_queue_control do |control|
           control.dead_letter_address
@@ -268,13 +276,15 @@ module TorqueBox
       # *full address* containing the destination name and
       # +jms.queue+ or +jms.topic+ prefixes, for example:
       #
-      # If you want to set the destination to /queues/customdead, use
-      # +queue.dead_letter_address = "jms.queue./queues./customdead"+
+      # @example Set the destination to /queues/customdead
       #
-      # If you want to set the destination to /topics/customdead, use
-      # +queue.dead_letter_address = "jms.topic./topics./customdead"+
+      #   @queue.dead_letter_address = "jms.queue./queues./customdead"
       #
-      # Returns current dead letter address.
+      # @example Set the destination to /topics/customdead
+      #
+      #   @queue.dead_letter_address = "jms.topic./topics./customdead"
+      #
+      # @return [String] Current dead letter address
       def dead_letter_address=(address)
         with_queue_control do |control|
           control.set_dead_letter_address(address)
@@ -283,16 +293,19 @@ module TorqueBox
         dead_letter_address
       end
 
+
+      def to_s
+        "[Queue: #{super}]"
+      end
+
+      # @api private
+      #
       # Retrieves the JMSQueueControl implementation for current
       # queue.
       def with_queue_control
         TorqueBox::ServiceRegistry.lookup("jboss.messaging.default") do |server|
           yield server.management_service.get_resource("jms.queue.#{_dump(nil)}")
         end
-      end
-
-      def to_s
-        "[Queue: #{super}]"
       end
     end
   end

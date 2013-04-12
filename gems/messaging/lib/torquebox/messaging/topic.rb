@@ -23,21 +23,33 @@ module TorqueBox
     class Topic < Destination
 
       DEFAULT_SUBSCRIBER_NAME = 'subscriber-1'
-      
-      def self.start( name, options={} )
-        jndi = options.fetch( :jndi, [].to_java(:string) )
-        TorqueBox::ServiceRegistry.lookup("jboss.messaging.default.jms.manager") do |server|
-          server.createTopic( false, name, jndi )
+
+      class << self
+
+        # Creates the topic, starts and return a Topic object.
+        #
+        # @param name The name of the topic
+        # @param options Optional parameters (a Hash), including:
+        # @option options [Boolean] :exported If the topic should be visible in remote JNDI lookups
+        # @return [Topic] if the service is created and started
+        # @return [nil] if the service is not created in the specified time (30 s)
+        def start(name, options={})
+          exported = options.fetch(:exported, false)
+
+          with_destinationizer do |destinationizer|
+            latch = destinationizer.create_topic(name, exported)
+            return nil unless TorqueBox::Messaging::Destination.wait_for_latch(latch)
+          end
+
+          new(name, options)
         end
-        new( name, options )
       end
 
-      def stop
-        TorqueBox::ServiceRegistry.lookup("jboss.messaging.default.jms.manager") do |server|
-          server.destroyTopic( name )
-        end
-      end
-
+      # Unsubscribes the selected subscriber from the topic
+      #
+      # @param subscriber_name The subscriber name to unsubscribe
+      # @param options Optional parameters (a Hash)
+      # @return [void]
       def unsubscribe(subscriber_name = DEFAULT_SUBSCRIBER_NAME, options = { })
         wait_for_destination(options[:startup_timeout]) do
           with_session do |session|
