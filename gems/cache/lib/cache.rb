@@ -44,6 +44,7 @@ module TorqueBox
         java_import org.infinispan.configuration.cache::ConfigurationBuilder
         java_import org.infinispan.transaction::TransactionMode
         java_import org.infinispan.transaction::LockingMode
+        java_import org.infinispan.eviction::EvictionStrategy
         java_import org.projectodd.polyglot.cache.as::CacheService
         INFINISPAN_AVAILABLE = true
       rescue NameError => e
@@ -121,6 +122,18 @@ module TorqueBox
         transaction_mode == TransactionMode::TRANSACTIONAL
       end
 
+      def eviction_strategy
+        case options[:eviction]
+        when :lirs then EvictionStrategy::LIRS
+        when :lru then EvictionStrategy::LRU
+        when :unordered then EvictionStrategy::UNORDERED
+        end
+      end
+
+      def max_entries
+        options[:max_entries] || -1
+      end
+
       # Clear the entire cache. Be careful with this method since it could
       # affect other processes if shared cache is being used.
       def clear
@@ -130,6 +143,10 @@ module TorqueBox
       # Return the keys in the cache; potentially very expensive depending on configuration
       def keys
         cache.key_set.map{|k| decode(k)}
+      end
+
+      def size
+        cache.size
       end
 
       def all
@@ -299,6 +316,12 @@ module TorqueBox
           store.purgeOnStartup( false )
           store.location(options[:persist]) if File.exist?( options[:persist].to_s )
         end
+        if ( options[:max_entries] ) 
+          config.eviction.max_entries( options[:max_entries] )
+          if ( options[:eviction] )
+            config.eviction.strategy( eviction_strategy )
+          end
+        end
         config.build
       end
 
@@ -308,7 +331,9 @@ module TorqueBox
            (c1.loaders.cacheLoaders.size == c2.loaders.cacheLoaders.size &&
             c1.loaders.cacheLoaders.first.location == c2.loaders.cacheLoaders.first.location)) &&
           c1.transaction.transactionMode == c2.transaction.transactionMode &&
-          c1.transaction.lockingMode == c2.transaction.lockingMode
+          c1.transaction.lockingMode == c2.transaction.lockingMode &&
+          c1.eviction.max_entries == c2.eviction.max_entries &&
+          c1.eviction.strategy == c2.eviction.strategy
       end
       
       def transaction_manager_lookup

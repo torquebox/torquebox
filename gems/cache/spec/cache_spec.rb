@@ -39,6 +39,17 @@ describe TorqueBox::Infinispan::Cache do
     @cache.should respond_to( :clustering_mode )
   end
 
+  it "should respond to eviction_strategy" do
+    @cache.should respond_to( :eviction_strategy )
+  end
+
+  it "should have a size" do
+    @cache.clear
+    @cache.size.should == 0
+    @cache.put('foo', 'bar');
+    @cache.size.should == 1
+  end
+
   it "should accept and return strings" do
     @cache.put('foo', 'bar').should be_nil
     @cache.get('foo').should == 'bar'

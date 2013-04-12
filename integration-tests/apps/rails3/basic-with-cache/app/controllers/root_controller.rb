@@ -42,6 +42,14 @@ class RootController < ApplicationController
     render "root/cachey"
   end
 
+  def eviction
+    evicted_cache.put('a', 'z')
+    evicted_cache.put('b', 'y')
+    evicted_cache.put('c', 'x')
+    @cache_value = evicted_cache.size
+  end
+
+
   # The Rails.cache is using ActiveSupport::Cache::TorqueBoxStore which
   # defaults to invalidation mode. That mode does not replicate or
   # distribute values across nodes. So, we'll use an alacarte cache
@@ -134,4 +142,8 @@ class RootController < ApplicationController
                                                              :name=>"#{mode}_#{sync}_cache_test")
   end
 
+  def evictedcache
+    @evictedcache ||= TorqueBox::Infinispan::Cache.new(:name=>"evicted_test", 
+                                                       :max_entries=>2)
+  end
 end

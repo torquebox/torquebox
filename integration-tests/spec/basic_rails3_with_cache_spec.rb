@@ -44,4 +44,9 @@ describe "basic rails3 with cache test" do
     page.find("#success").should have_content( "soft" )
   end
 
+  it "should evict entries when :max_entries has been reached" do
+    visit "/basic-cache/root/eviction"
+#    page.find("#success").should have_content( "2" )
+  end
+
 end
