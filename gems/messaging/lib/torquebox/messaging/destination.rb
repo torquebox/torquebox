@@ -67,6 +67,32 @@ module TorqueBox
         @enumerable_options  = {}
       end
 
+      # Stops the destination.
+      #
+      # @note This is an asynchronous method.
+      # @return [java.util.concurrent.CountDownLatch] The latch to wait for the task completion
+      # @see http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/CountDownLatch.html
+      def stop
+        TorqueBox::Messaging::Destination.with_destinationizer do |destinationizer|
+          destinationizer.remove_destination(name)
+        end
+      end
+
+      # Stops the destination.
+      #
+      # @note This is a synchronous method.
+      # @return [Boolean] true if the destination was successfully stopped, false otherwise
+      # @see TorqueBox::Messaging::Destination.stop
+      def stop_sync
+        latch = stop
+        TorqueBox::Messaging::Destination.wait_for_latch(latch)
+      end
+
+      # Publishes a message to the destination
+      #
+      # @param message The message to publish
+      # @param options Optional parameters (a Hash)
+      # @return [void]
       def publish(message, options = {})
         wait_for_destination(options[:startup_timeout]) do
           with_session(options) do |session|
@@ -199,6 +225,27 @@ module TorqueBox
         #   The destination instance.
         def lookup(name)
           list.find { |destination| destination.name == name }
+        end
+
+        # @api private
+        def with_destinationizer
+          service_name = TorqueBox::MSC.deployment_unit.service_name.append('torquebox').append('messaging').append('destinationizer')
+
+          TorqueBox::ServiceRegistry.lookup(service_name) do |destinationizer|
+            yield destinationizer
+          end
+        end
+
+        # @api private
+        def wait_for_latch(latch)
+          begin
+            # Wait for the services to come up for up to 30 seconds
+            latch.await(30, java.util.concurrent.TimeUnit::SECONDS)
+          rescue
+            return false
+          end
+
+          true
         end
       end
 

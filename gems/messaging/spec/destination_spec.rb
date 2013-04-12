@@ -77,37 +77,98 @@ describe TorqueBox::Messaging::Destination do
     queue.with_session { }
   end
 
-  it "should start and stop a queue" do
-    TorqueBox::Registry.merge!("connection-factory" => Object.new)
-    TorqueBox::Registry.merge!("transaction-manager" => Object.new)
-    server = Mockito.mock(JMSServerManagerImpl.java_class)
-    TorqueBox::ServiceRegistry.stub!(:lookup).with("jboss.messaging.default.jms.manager").and_yield(server)
+  it "should return nil if the queue start times out" do
+    latch = mock("StartLatch")
+    latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS).and_raise("boom")
 
-    queue = TorqueBox::Messaging::Queue.start( "my_queue" )
+    destinationizer = mock("Destinationizer")
+    destinationizer.should_receive(:create_queue).with ("my_queue", true, "", false).and_return(latch)
+
+    TorqueBox::Messaging::Destination.should_receive(:with_destinationizer).and_yield(destinationizer)
+
+    queue = TorqueBox::Messaging::Queue.start("my_queue")
+    queue.should be_nil
+  end
+
+  it "should return nil if the topic start times out" do
+    latch = mock("StartLatch")
+    latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS).and_raise("boom")
+
+    destinationizer = mock("Destinationizer")
+    destinationizer.should_receive(:create_topic).with ("my_topic", false).and_return(latch)
+
+    TorqueBox::Messaging::Destination.should_receive(:with_destinationizer).and_yield(destinationizer)
+
+    topic = TorqueBox::Messaging::Topic.start( "my_topic" )
+    topic.should be_nil
+  end
+
+  it "should start and stop a queue" do
+    latch = mock("StartLatch")
+    latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS)
+
+    destinationizer = mock("Destinationizer")
+    destinationizer.should_receive(:create_queue).with ("my_queue", true, "", false).and_return(latch)
+    destinationizer.should_receive(:remove_destination).with ("my_queue")
+
+    TorqueBox::Messaging::Destination.should_receive(:with_destinationizer).twice.and_yield(destinationizer)
+
+    queue = TorqueBox::Messaging::Queue.start("my_queue")
+    queue.should_not be_nil
     queue.name.should == "my_queue"
     queue.stop
-
-    Mockito.verify(server).createQueue(Matchers.anyBoolean,
-                                       Matchers.eq("my_queue"),
-                                       Matchers.anyString,
-                                       Matchers.anyBoolean)
-    Mockito.verify(server).destroyQueue("my_queue")
   end
 
   it "should start and stop a topic" do
-    TorqueBox::Registry.merge!("connection-factory" => Object.new)
-    TorqueBox::Registry.merge!("transaction-manager" => Object.new)
-    server = Mockito.mock(JMSServerManagerImpl.java_class)
-    TorqueBox::ServiceRegistry.stub!(:lookup).with("jboss.messaging.default.jms.manager").and_yield(server)
+    latch = mock("StartLatch")
+    latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS)
+
+    destinationizer = mock("Destinationizer")
+    destinationizer.should_receive(:create_topic).with ("my_topic", false).and_return(latch)
+    destinationizer.should_receive(:remove_destination).with ("my_topic")
+
+    TorqueBox::Messaging::Destination.should_receive(:with_destinationizer).twice.and_yield(destinationizer)
 
     topic = TorqueBox::Messaging::Topic.start( "my_topic" )
     topic.name.should == "my_topic"
     topic.stop
+  end
 
-    Mockito.verify(server).createTopic(Matchers.anyBoolean,
-                                       Matchers.eq("my_topic"))
+  it "should start a queue and stop it in an synchronous way" do
+    start_latch = mock("StartLatch")
+    start_latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS)
 
-    Mockito.verify(server).destroyTopic("my_topic")
+    stop_latch = mock("StopLatch")
+    stop_latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS)
+
+    destinationizer = mock("Destinationizer")
+    destinationizer.should_receive(:create_queue).with ("my_queue", true, "", false).and_return(start_latch)
+    destinationizer.should_receive(:remove_destination).with("my_queue").and_return(stop_latch)
+
+    TorqueBox::Messaging::Destination.should_receive(:with_destinationizer).twice.and_yield(destinationizer)
+
+    queue = TorqueBox::Messaging::Queue.start("my_queue")
+    queue.should_not be_nil
+    queue.name.should == "my_queue"
+    queue.stop_sync
+  end
+
+  it "should start a topic and stop it in an synchronous way" do
+    start_latch = mock("StartLatch")
+    start_latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS)
+
+    stop_latch = mock("StopLatch")
+    stop_latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS)
+
+    destinationizer = mock("Destinationizer")
+    destinationizer.should_receive(:create_topic).with ("my_topic", false).and_return(start_latch)
+    destinationizer.should_receive(:remove_destination).with ("my_topic").and_return(stop_latch)
+
+    TorqueBox::Messaging::Destination.should_receive(:with_destinationizer).twice.and_yield(destinationizer)
+
+    topic = TorqueBox::Messaging::Topic.start( "my_topic" )
+    topic.name.should == "my_topic"
+    topic.stop_sync
   end
 
   it "should raise ArgumentError if destination is nil" do

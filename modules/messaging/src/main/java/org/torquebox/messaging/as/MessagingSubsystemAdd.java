@@ -56,6 +56,7 @@ import org.torquebox.messaging.destinations.processors.TopicsYamlParsingProcesso
 import org.torquebox.messaging.injection.RubyConnectionFactoryService;
 import org.torquebox.messaging.injection.RubyXaConnectionFactoryService;
 import org.torquebox.messaging.processors.BackgroundablePresetsProcessor;
+import org.torquebox.messaging.processors.DestinationizerInstaller;
 import org.torquebox.messaging.processors.MessageProcessorInstaller;
 import org.torquebox.messaging.processors.MessagingLoadPathProcessor;
 import org.torquebox.messaging.processors.MessagingRuntimePoolProcessor;
@@ -102,11 +103,10 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 220, rootSafe( new TasksInstaller() ) );
         processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 320, rootSafe( new MessagingRuntimePoolProcessor() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 420, new DestinationizerInstaller(globalTarget) );
 
         processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 120, rootSafe( new MessageProcessorComponentResolverInstaller() ) );
         processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 220, rootSafe( new MessageProcessorInstaller() ) );
-        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 221, new QueueInstaller(globalTarget) );
-        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 222, new TopicInstaller(globalTarget) );
     }
 
     protected void addMessagingServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
