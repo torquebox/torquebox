@@ -22,6 +22,7 @@ module TorqueBox
 
       # Creates a new scheduled job.
       #
+      # @note This is an asynchronous method.
       # @param class_name The scheduled job implementation
       #                   class name
       # @param cron The cron expression defining when the job
@@ -31,9 +32,10 @@ module TorqueBox
       # @option options [String] :description Job description
       # @option options [String] :timeout The time after the job execution should be interrupted. By default it'll never interrupt the job execution. Example: '2s', '1m'
       # @option options [Hash] :config Data that should be injected to the job constructor
-      # @option options [boolean] :stopped If the job should be stopped after installation (default: +false+)
-      # @option options [boolean] :singleton Flag to determine if the job should be executed on every node (set to `true`, default) in the cluster or only on one node (set to `false`).
-      # @return [Boolean] +true+ if the job was successfully created, +false+ otherwise
+      # @option options [Boolean] :stopped If the job should be stopped after installation (default: false)
+      # @option options [Boolean] :singleton Flag to determine if the job should be executed on every node (set to true, default) in the cluster or only on one node (set to false).
+      # @return [java.util.concurrent.CountDownLatch] The latch to wait for the task completion
+      # @see http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/CountDownLatch.html
       #
       # @example A simple job
       #   TorqueBox::ScheduledJob.schedule('SimpleJob', "*/10 * * * * ?")
@@ -57,11 +59,25 @@ module TorqueBox
             :timeout => "0s"
         }.merge(options)
 
-        TorqueBox::ServiceRegistry.lookup(schedulizer_service_name).create_job(class_name.to_s, cron, options[:timeout], options[:name], options[:description], options[:config], options[:singleton], options[:stopped])
+        with_schedulizer do |schedulizer|
+          schedulizer.create_job(class_name.to_s, cron, options[:timeout], options[:name], options[:description], options[:config], options[:singleton], options[:stopped])
+        end
+      end
+
+      # Creates a new scheduled job.
+      #
+      # @note This is a synchronous method.
+      # @note This method accepts the same parameters as available in the schedule method.
+      # @return [Boolean] true if the job was successfully created, false otherwise
+      # @see TorqueBox::ScheduledJob.schedule
+      def schedule_sync(class_name, cron, options = {})
+        latch = schedule(class_name, cron, options)
+        wait_for_latch(latch)
       end
 
       # Creates new 'at' job.
       #
+      # @note This is an asynchronous method.
       # @param class_name [String] The class name of the scheduled job to be executed
       # @param options [Hash] A hash containing the at job options:
       # @option options [Time] :at [Time] The start time of the job
@@ -73,8 +89,9 @@ module TorqueBox
       # @option options [String] :description Job description
       # @option options [String] :timeout The time after the job execution should be interrupted. By default it'll never interrupt the job execution. Example: '2s', '1m'
       # @option options [Hash] :config Data that should be injected to the job constructor
-      # @option options [boolean] :singleton Flag to determine if the job should be executed on every node (set to +true+) in the cluster or only on one node (set to +false+, default).
-      # @return [Boolean] +true+ if the job was successfully created, +false+ otherwise
+      # @option options [Boolean] :singleton Flag to determine if the job should be executed on every node (set to true) in the cluster or only on one node (set to false, default).
+      # @return [java.util.concurrent.CountDownLatch] The latch to wait for the task completion
+      # @see http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/CountDownLatch.html
       #
       # @example Run a job every 200 ms for over 5 seconds, from now
       #   TorqueBox::AtJob.at('SimpleJob', :every => 200, :until => Time.now + 5)
@@ -101,7 +118,8 @@ module TorqueBox
             :timeout => "0s",
             :repeat => 0,
             :every => 0,
-            :at => Time.now
+            :at => Time.now,
+            :async => true
         }.merge(options)
 
         if options.has_key?(:in)
@@ -110,7 +128,20 @@ module TorqueBox
           start = options[:at]
         end
 
-        TorqueBox::ServiceRegistry.lookup(schedulizer_service_name).create_at_job(class_name.to_s, start, options[:until], options[:every], options[:repeat], options[:timeout], options[:name], options[:description], options[:config], options[:singleton])
+        with_schedulizer do |schedulizer|
+          schedulizer.create_at_job(class_name.to_s, start, options[:until], options[:every], options[:repeat], options[:timeout], options[:name], options[:description], options[:config], options[:singleton])
+        end
+      end
+
+      # Creates new 'at' job.
+      #
+      # @note This is a synchronous method.
+      # @note This method accepts the same parameters as available in the at method.
+      # @return [Boolean] true if the job was successfully created, false otherwise
+      # @see TorqueBox::ScheduledJob.at
+      def at_sync(class_name, options = {})
+        latch = at(class_name, options)
+        wait_for_latch(latch)
       end
 
       # Removes a scheduled job.
@@ -118,12 +149,26 @@ module TorqueBox
       # This method removes the job asynchronously.
       #
       # @param name [String] The job name.
-      # @return [Boolean] +true+ if the job was successfully removed, +false+ otherwise
+      # @return [java.util.concurrent.CountDownLatch] The latch to wait for the task completion
+      # @see http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/CountDownLatch.html
       def remove(name)
         raise "No job name provided" if name.nil?
         raise "Couldn't find a job with name '#{name}''" if TorqueBox::ScheduledJob.lookup(name).nil?
 
-        TorqueBox::ServiceRegistry.lookup(schedulizer_service_name).remove_job(name)
+        with_schedulizer do |schedulizer|
+          schedulizer.remove_job(name)
+        end
+      end
+
+      # Removes a scheduled job.
+      #
+      # @note This is a synchronous method.
+      # @note This method accepts the same parameters as available in the remove method.
+      # @return [Boolean] true if the job was successfully removed, false otherwise
+      # @see TorqueBox::ScheduledJob.remove
+      def remove_sync(name)
+        latch = remove(name)
+        wait_for_latch(latch)
       end
 
       # List all scheduled jobs of this application.
@@ -180,10 +225,21 @@ module TorqueBox
       end
 
       # @api private
-      def schedulizer_service_name
-        TorqueBox::MSC.deployment_unit.service_name.append('job_schedulizer')
+      def with_schedulizer
+        yield TorqueBox::ServiceRegistry.lookup(TorqueBox::MSC.deployment_unit.service_name.append('job_schedulizer'))
       end
 
+      # @api private
+      def wait_for_latch(latch)
+        begin
+          # Wait for the services to come up for up to 30 seconds
+          latch.await(30, java.util.concurrent.TimeUnit::SECONDS)
+        rescue
+          return false
+        end
+
+        true
+      end
     end
   end
 end
