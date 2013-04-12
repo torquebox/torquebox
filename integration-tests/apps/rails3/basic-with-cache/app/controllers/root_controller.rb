@@ -43,10 +43,11 @@ class RootController < ApplicationController
   end
 
   def eviction
-    evicted_cache.put('a', 'z')
-    evicted_cache.put('b', 'y')
-    evicted_cache.put('c', 'x')
-    @cache_value = evicted_cache.size
+    evictedcache.put('a', 'z')
+    evictedcache.put('b', 'y')
+    evictedcache.put('c', 'x')
+    @cache_value = evictedcache.size
+    render "root/cachey"
   end
 
 

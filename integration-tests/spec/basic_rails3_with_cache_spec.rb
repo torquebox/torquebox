@@ -46,7 +46,7 @@ describe "basic rails3 with cache test" do
 
   it "should evict entries when :max_entries has been reached" do
     visit "/basic-cache/root/eviction"
-#    page.find("#success").should have_content( "2" )
+    page.find("#success").should have_content( "2" )
   end
 
 end
