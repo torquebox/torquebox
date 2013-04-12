@@ -38,7 +38,7 @@ module TorqueBox
         [ 200,
           { 'Content-Length' => "#{js.size}",
             'Content-Type'   => 'text/plain' },
-          js ]
+          [js] ]
       end
 
     end 
