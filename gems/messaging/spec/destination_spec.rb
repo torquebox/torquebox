@@ -82,7 +82,7 @@ describe TorqueBox::Messaging::Destination do
     latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS).and_raise("boom")
 
     destinationizer = mock("Destinationizer")
-    destinationizer.should_receive(:create_queue).with ("my_queue", true, "", false).and_return(latch)
+    destinationizer.should_receive(:create_queue).with("my_queue", true, "", false).and_return(latch)
 
     TorqueBox::Messaging::Destination.should_receive(:with_destinationizer).and_yield(destinationizer)
 
@@ -95,7 +95,7 @@ describe TorqueBox::Messaging::Destination do
     latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS).and_raise("boom")
 
     destinationizer = mock("Destinationizer")
-    destinationizer.should_receive(:create_topic).with ("my_topic", false).and_return(latch)
+    destinationizer.should_receive(:create_topic).with("my_topic", false).and_return(latch)
 
     TorqueBox::Messaging::Destination.should_receive(:with_destinationizer).and_yield(destinationizer)
 
@@ -108,8 +108,8 @@ describe TorqueBox::Messaging::Destination do
     latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS)
 
     destinationizer = mock("Destinationizer")
-    destinationizer.should_receive(:create_queue).with ("my_queue", true, "", false).and_return(latch)
-    destinationizer.should_receive(:remove_destination).with ("my_queue")
+    destinationizer.should_receive(:create_queue).with("my_queue", true, "", false).and_return(latch)
+    destinationizer.should_receive(:remove_destination).with("my_queue")
 
     TorqueBox::Messaging::Destination.should_receive(:with_destinationizer).twice.and_yield(destinationizer)
 
@@ -124,8 +124,8 @@ describe TorqueBox::Messaging::Destination do
     latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS)
 
     destinationizer = mock("Destinationizer")
-    destinationizer.should_receive(:create_topic).with ("my_topic", false).and_return(latch)
-    destinationizer.should_receive(:remove_destination).with ("my_topic")
+    destinationizer.should_receive(:create_topic).with("my_topic", false).and_return(latch)
+    destinationizer.should_receive(:remove_destination).with("my_topic")
 
     TorqueBox::Messaging::Destination.should_receive(:with_destinationizer).twice.and_yield(destinationizer)
 
@@ -142,7 +142,7 @@ describe TorqueBox::Messaging::Destination do
     stop_latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS)
 
     destinationizer = mock("Destinationizer")
-    destinationizer.should_receive(:create_queue).with ("my_queue", true, "", false).and_return(start_latch)
+    destinationizer.should_receive(:create_queue).with("my_queue", true, "", false).and_return(start_latch)
     destinationizer.should_receive(:remove_destination).with("my_queue").and_return(stop_latch)
 
     TorqueBox::Messaging::Destination.should_receive(:with_destinationizer).twice.and_yield(destinationizer)
@@ -161,8 +161,8 @@ describe TorqueBox::Messaging::Destination do
     stop_latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS)
 
     destinationizer = mock("Destinationizer")
-    destinationizer.should_receive(:create_topic).with ("my_topic", false).and_return(start_latch)
-    destinationizer.should_receive(:remove_destination).with ("my_topic").and_return(stop_latch)
+    destinationizer.should_receive(:create_topic).with("my_topic", false).and_return(start_latch)
+    destinationizer.should_receive(:remove_destination).with("my_topic").and_return(stop_latch)
 
     TorqueBox::Messaging::Destination.should_receive(:with_destinationizer).twice.and_yield(destinationizer)
 
