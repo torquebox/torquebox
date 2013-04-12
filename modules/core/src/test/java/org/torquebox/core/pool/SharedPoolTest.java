@@ -87,11 +87,39 @@ public class SharedPoolTest {
         }
     }
 
+    @Test
+    public void testRestart() throws Exception {
+        String instance = "tacos";
+
+        MockInstanceFactory instanceFactory = new MockInstanceFactory( instance );
+        SharedPool<String> pool = new SharedPool<String>( instanceFactory );
+
+        pool.start();
+
+        for (int i = 0; i < 50; ++i) {
+            assertEquals( instance, pool.borrowInstance( "test" ) );
+        }
+
+        String oldInstance = instance;
+        instance = "burritos";
+        instanceFactory.setInstance( instance );
+        assertEquals( oldInstance, pool.borrowInstance( "test" ) );
+        pool.restart();
+
+        for (int i = 0; i < 50; ++i) {
+            assertEquals( instance, pool.borrowInstance( "test" ) );
+        }
+    }
+
     class MockInstanceFactory implements InstanceFactory<String> {
 
         private String instance;
 
         public MockInstanceFactory(String instance) {
+            this.instance = instance;
+        }
+
+        public void setInstance(String instance) {
             this.instance = instance;
         }
 

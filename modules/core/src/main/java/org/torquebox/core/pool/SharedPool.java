@@ -19,6 +19,10 @@
 
 package org.torquebox.core.pool;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.logging.Logger;
 
@@ -186,14 +190,34 @@ public class SharedPool<T> implements Pool<T> {
         this.factory = null;
     }
 
+    /**
+     * Restart the pool - all new borrowInstance requests get a new runtime
+     * and the old runtime gets destroyed after its release by all users
+     */
+    public synchronized void restart() throws Exception {
+        AtomicInteger currentCount = this.instanceCounts.get( this.instance );
+        if (currentCount == null || currentCount.intValue() == 0) {
+            retireInstance( this.instance );
+        } else {
+            this.previousInstance = this.instance;
+        }
+        this.instance = null;
+        startPool();
+    }
+
     @Override
     public T borrowInstance(String requester) throws Exception {
         return borrowInstance( requester, 0 );
     }
 
     @Override
-    public void releaseInstance(T instance) {
-        // nothing
+    public synchronized void releaseInstance(T instance) {
+        AtomicInteger count = this.instanceCounts.get( instance );
+        int remainingCount = count.decrementAndGet();
+        if (instance.equals( this.previousInstance ) && remainingCount == 0) {
+            retireInstance( instance );
+            this.previousInstance = null;
+        }
     }
 
     @Override
@@ -211,7 +235,13 @@ public class SharedPool<T> implements Pool<T> {
                 break;
             }
         }
-
+        
+        if (instanceCounts.get( this.instance) == null) {
+            instanceCounts.put( this.instance, new AtomicInteger( 1 ) );
+        } else {
+            AtomicInteger count = instanceCounts.get( this.instance );
+            count.incrementAndGet();
+        }
         return this.instance;
     }
     
@@ -223,11 +253,24 @@ public class SharedPool<T> implements Pool<T> {
         return this.nsContextSelector;
     }
 
+    private void retireInstance(T instance) {
+        log.debugf( "Retiring JRuby runtime %s from pool %s", instance, this );
+        this.factory.destroyInstance( instance );
+        if (this.instanceCounts.containsKey( instance )) {
+            this.instanceCounts.remove( instance );
+        }
+    }
+
     /** Name of the pool. */
     private String name = "anonymous-pool";
 
     /** The shared instance. */
     private T instance;
+    
+    /** The previous shared instance. */
+    private T previousInstance;
+    
+    private Map<T, AtomicInteger> instanceCounts = new HashMap<T, AtomicInteger>();
 
     /** Optional factory to create the initial instance. */
     private InstanceFactory<T> factory;

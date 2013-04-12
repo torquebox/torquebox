@@ -24,5 +24,6 @@ public interface SharedRubyRuntimePoolMBean extends BasicRubyRuntimePoolMBean {
 
     boolean isLazy();
     boolean isStarted();
+    void restart() throws Exception;
 
 }

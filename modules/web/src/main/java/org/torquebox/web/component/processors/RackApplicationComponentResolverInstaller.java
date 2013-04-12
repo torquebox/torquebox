@@ -56,8 +56,9 @@ public class RackApplicationComponentResolverInstaller implements DeploymentUnit
         ComponentEval instantiator = new ComponentEval();
 
         try {
-            instantiator.setCode(getCode(rackAppMetaData.getRackUpScript(root.getPhysicalFile())));
-            instantiator.setLocation(rackAppMetaData.getRackUpScriptFile(root.getPhysicalFile()).getAbsolutePath());
+            String rackUpFile = rackAppMetaData.getRackUpScriptFile(root.getPhysicalFile()).getAbsolutePath();
+            instantiator.setCode(getCode(rackUpFile));
+            instantiator.setLocation(rackUpFile);
 
             ComponentResolverHelper helper = new ComponentResolverHelper(phaseContext, serviceName);
 
@@ -71,12 +72,12 @@ public class RackApplicationComponentResolverInstaller implements DeploymentUnit
         }
     }
 
-    protected String getCode(String rackUpScript) {
+    protected String getCode(String rackUpFile) {
         StringBuilder code = new StringBuilder();
         code.append("require %q(rack)\n");
-        code.append("Rack::Builder.new{(\n");
-        code.append(rackUpScript);
-        code.append("\n)}.to_app");
+        code.append("eval(%Q(Rack::Builder.new{(\n");
+        code.append("#{File.read('" + rackUpFile + "')}");
+        code.append("\n)})).to_app");
         return code.toString();
     }
 
