@@ -362,6 +362,15 @@ end</programlisting></para>
         </para>
 
         <para>
+          The <methodname>schedule</methodname> method is executed asynchronously and returns
+          a <classname>java.util.concurrent.CountDownLatch</classname> object which can be used
+          to wait for the task completion. If you want to have a synchronous method
+          use the <methodname>schedule_sync</methodname> method. It will block and return
+          <constant>true</constant> after successful task completion and
+          <constant>false</constant> otherwise.
+        </para>
+
+        <para>
           The job class name and cron expression is required. Additionally
           the <methodname>schedule</methodname> method accepts following,
           optional parameters:
@@ -462,6 +471,15 @@ end</programlisting></para>
         </para>
 
         <para>
+          The <methodname>remove</methodname> method is executed asynchronously and returns
+          a <classname>java.util.concurrent.CountDownLatch</classname> object which can be used
+          to wait for the task completion. If you want to have a synchronous method
+          use the <methodname>remove_sync</methodname> method. It will block and return
+          <constant>true</constant> after successful task completion and
+          <constant>false</constant> otherwise.
+        </para>
+
+        <para>
           <example>
             <title>Removing a job</title>
             <para><programlisting>TorqueBox::ScheduledJob.remove('simple.job')</programlisting>
@@ -508,8 +526,17 @@ TorqueBox::ScheduledJob.at('SimpleJob', :in => 5000, :repeat => 3, :every => 150
       </example></para>
 
       <para>
+        The <methodname>at</methodname> method is executed asynchronously and returns
+        a <classname>java.util.concurrent.CountDownLatch</classname> object which can be used
+        to wait for the task completion. If you want to have a synchronous method
+        use the <methodname>at_sync</methodname> method. It will block and return
+        <constant>true</constant> after successful task completion and
+        <constant>false</constant> otherwise.
+      </para>
+
+      <para>
         The first parameter of the <methodname>at</methodname> method is the class
-        name of the job implmentation to execute. The second parameter
+        name of the job implementation to execute. The second parameter
         allows to specify when the job should be executed.
         Below you can find valid options.
       </para>
