@@ -51,20 +51,7 @@ public class RackMetaData extends WebApplicationMetaData {
         if (this.rackUpScript == null) {
             File file = getRackUpScriptFile( root );
             if (file != null && file.exists()) {
-                StringBuilder script = new StringBuilder();
-                BufferedReader in = null;
-                try {
-                    in = new BufferedReader( new InputStreamReader( new FileInputStream( file ) ) );
-                    String line = null;
-                    while ((line = in.readLine()) != null) {
-                        script.append( line );
-                        script.append( "\n" );
-                    }
-                } finally {
-                    if (in != null)
-                        in.close();
-                }
-                this.rackUpScript = script.toString();
+                this.rackUpScript = "#{File.read('" + file.getAbsolutePath() + "')}";
             }
         }
         return this.rackUpScript;
