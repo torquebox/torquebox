@@ -1,6 +1,6 @@
 require 'rack_app.rb'
 
-use Rack::Reloader, 0.000001
+use Rack::Reloader, 0.000001 if ENV['RACK_ENV'] == 'development'
 # Workaround Rack::Reloader & JRuby 1.6.7.2 bug:
 # https://github.com/rack/rack/issues/391
 module Rack
