@@ -79,7 +79,7 @@ describe TorqueBox::Messaging::Destination do
 
   it "should return nil if the queue start times out" do
     latch = mock("StartLatch")
-    latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS).and_raise("boom")
+    latch.should_receive(:await).with(kind_of(Numeric), java.util.concurrent.TimeUnit::SECONDS).and_raise("boom")
 
     destinationizer = mock("Destinationizer")
     destinationizer.should_receive(:create_queue).with("my_queue", true, "", false).and_return(latch)
@@ -92,7 +92,7 @@ describe TorqueBox::Messaging::Destination do
 
   it "should return nil if the topic start times out" do
     latch = mock("StartLatch")
-    latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS).and_raise("boom")
+    latch.should_receive(:await).with(kind_of(Numeric), java.util.concurrent.TimeUnit::SECONDS).and_raise("boom")
 
     destinationizer = mock("Destinationizer")
     destinationizer.should_receive(:create_topic).with("my_topic", false).and_return(latch)
@@ -105,7 +105,7 @@ describe TorqueBox::Messaging::Destination do
 
   it "should start and stop a queue" do
     latch = mock("StartLatch")
-    latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS)
+    latch.should_receive(:await).with(kind_of(Numeric), java.util.concurrent.TimeUnit::SECONDS)
 
     destinationizer = mock("Destinationizer")
     destinationizer.should_receive(:create_queue).with("my_queue", true, "", false).and_return(latch)
@@ -121,7 +121,7 @@ describe TorqueBox::Messaging::Destination do
 
   it "should start and stop a topic" do
     latch = mock("StartLatch")
-    latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS)
+    latch.should_receive(:await).with(kind_of(Numeric), java.util.concurrent.TimeUnit::SECONDS)
 
     destinationizer = mock("Destinationizer")
     destinationizer.should_receive(:create_topic).with("my_topic", false).and_return(latch)
@@ -136,10 +136,10 @@ describe TorqueBox::Messaging::Destination do
 
   it "should start a queue and stop it in an synchronous way" do
     start_latch = mock("StartLatch")
-    start_latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS)
+    start_latch.should_receive(:await).with(kind_of(Numeric), java.util.concurrent.TimeUnit::SECONDS)
 
     stop_latch = mock("StopLatch")
-    stop_latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS)
+    stop_latch.should_receive(:await).with(kind_of(Numeric), java.util.concurrent.TimeUnit::SECONDS)
 
     destinationizer = mock("Destinationizer")
     destinationizer.should_receive(:create_queue).with("my_queue", true, "", false).and_return(start_latch)
@@ -155,10 +155,10 @@ describe TorqueBox::Messaging::Destination do
 
   it "should start a topic and stop it in an synchronous way" do
     start_latch = mock("StartLatch")
-    start_latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS)
+    start_latch.should_receive(:await).with(kind_of(Numeric), java.util.concurrent.TimeUnit::SECONDS)
 
     stop_latch = mock("StopLatch")
-    stop_latch.should_receive(:await).with(30, java.util.concurrent.TimeUnit::SECONDS)
+    stop_latch.should_receive(:await).with(kind_of(Numeric), java.util.concurrent.TimeUnit::SECONDS)
 
     destinationizer = mock("Destinationizer")
     destinationizer.should_receive(:create_topic).with("my_topic", false).and_return(start_latch)
