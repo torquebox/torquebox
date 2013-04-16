@@ -56,8 +56,9 @@ public class RackApplicationComponentResolverInstaller implements DeploymentUnit
         ComponentEval instantiator = new ComponentEval();
 
         try {
-            instantiator.setCode(getCode(rackAppMetaData.getRackUpScript(root.getPhysicalFile())));
-            instantiator.setLocation(rackAppMetaData.getRackUpScriptFile(root.getPhysicalFile()).getAbsolutePath());
+            String rackUpFile = rackAppMetaData.getRackUpScriptFile(root.getPhysicalFile()).getAbsolutePath();
+            instantiator.setCode(getCode(rackAppMetaData.getRackUpScript(root.getPhysicalFile()), rackUpFile));
+            instantiator.setLocation(rackUpFile);
 
             ComponentResolverHelper helper = new ComponentResolverHelper(phaseContext, serviceName);
 
@@ -71,12 +72,19 @@ public class RackApplicationComponentResolverInstaller implements DeploymentUnit
         }
     }
 
-    protected String getCode(String rackUpScript) {
+    protected String getCode(String rackUpScript, String rackUpFile) {
         StringBuilder code = new StringBuilder();
         code.append("require %q(rack)\n");
-        code.append("eval(%Q(Rack::Builder.new{(\n");
-        code.append(rackUpScript);
-        code.append("\n)})).to_app");
+        if (rackUpScript != null) {
+            code.append("rackUpScript = %q(" + rackUpScript + ")\n");
+        } else {
+            code.append("rackUpScript = File.read(%q(" + rackUpFile + "))\n");
+        }
+        code.append("eval(%Q(Rack::Builder.new{\n");
+        code.append("#{rackUpScript}");
+        code.append("\n}.to_app), TOPLEVEL_BINDING, %q(");
+        code.append(rackUpFile);
+        code.append("), 0)");
         return code.toString();
     }
 

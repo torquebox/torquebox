@@ -48,12 +48,6 @@ public class RackMetaData extends WebApplicationMetaData {
     }
 
     public String getRackUpScript(File root) throws IOException {
-        if (this.rackUpScript == null) {
-            File file = getRackUpScriptFile( root );
-            if (file != null && file.exists()) {
-                this.rackUpScript = "#{File.read('" + file.getAbsolutePath() + "')}";
-            }
-        }
         return this.rackUpScript;
     }
 
