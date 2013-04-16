@@ -28,4 +28,6 @@ public interface BasicRubyRuntimePoolMBean {
     
     Set<String> getAllRuntimeNames();
 
+    void restart() throws Exception;
+
 }

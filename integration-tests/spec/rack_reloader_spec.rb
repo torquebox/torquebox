@@ -19,7 +19,6 @@ describe "rack reloading" do
     visit "/reloader-rack?0"
     element = page.find_by_id("success")
     element.should_not be_nil
-    element.text.should == 'INITIAL'
 
     seen_values = Set.new
     seen_values << element.text

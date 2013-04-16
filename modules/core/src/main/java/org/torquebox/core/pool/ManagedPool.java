@@ -103,6 +103,10 @@ public class ManagedPool<T> implements Pool<T> {
         }
     }
 
+    public void restart() throws Exception {
+        
+    }
+
     @Override
     public T borrowInstance(String requester) throws Exception {
         if (!this.started) {
