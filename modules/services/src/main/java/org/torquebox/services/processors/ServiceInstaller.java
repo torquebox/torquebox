@@ -82,7 +82,7 @@ public class ServiceInstaller implements DeploymentUnitProcessor {
         builderStart.addDependency( serviceCreateName, RubyService.class, serviceStart.getRubyServiceInjector() );
         
         if ( serviceMetaData.isRequiresSingleton() ) {
-            builderStart.addDependency(  HASingleton.serviceName( unit )  );
+            builderStart.addDependency( HASingleton.serviceName( unit, "global" ) );
         }
         
         builderStart.setInitialMode( Mode.PASSIVE );

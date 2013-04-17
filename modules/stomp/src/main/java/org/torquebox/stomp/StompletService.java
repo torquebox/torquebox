@@ -23,13 +23,12 @@ import java.util.Map;
 
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.StartContext;
-import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.jruby.Ruby;
+import org.projectodd.polyglot.core.AsyncService;
 import org.projectodd.stilts.stomplet.Stomplet;
 import org.projectodd.stilts.stomplet.container.SimpleStompletContainer;
-import org.torquebox.core.as.AsyncService;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.stomp.component.XAStompletComponent;

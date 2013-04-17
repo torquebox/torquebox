@@ -99,7 +99,7 @@ public class JobSchedulerInstaller implements DeploymentUnitProcessor {
 
         if (singleton) {
             // A singleton scheduler needs to depend on a HA Singleton
-            builder.addDependency(HASingleton.serviceName(unit));
+            builder.addDependency(HASingleton.serviceName(unit, "global"));
             // Come up only when the deps are satisfied (in this case HA Singleton)
             builder.setInitialMode(Mode.PASSIVE);
         } else {

@@ -23,7 +23,7 @@ import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
-import org.torquebox.core.as.AsyncService;
+import org.projectodd.polyglot.core.AsyncService;
 
 public class RubyServiceStart extends AsyncService<RubyService> {
 

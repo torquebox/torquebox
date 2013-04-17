@@ -27,7 +27,7 @@ import org.jboss.msc.service.ServiceRegistry;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
-import org.torquebox.core.as.AsyncService;
+import org.projectodd.polyglot.core.AsyncService;
 
 /**
  * The entire purpose of this service is to ensure the HTTP web connector

@@ -29,7 +29,7 @@ import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.jruby.Ruby;
-import org.torquebox.core.as.AsyncService;
+import org.projectodd.polyglot.core.AsyncService;
 import org.torquebox.core.datasource.db.Adapter;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
 import org.torquebox.core.util.RuntimeHelper;

@@ -119,7 +119,7 @@ public class MessageProcessorInstaller implements DeploymentUnitProcessor {
         }
 
         if (metaData.isSingleton()) {
-            builder.addDependency( HASingleton.serviceName( unit ) );
+            builder.addDependency( HASingleton.serviceName( unit, "global" ) );
             builder.setInitialMode( Mode.PASSIVE );
         } else {
             builder.setInitialMode( Mode.ACTIVE );

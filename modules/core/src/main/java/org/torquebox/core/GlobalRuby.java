@@ -25,7 +25,7 @@ import java.util.Map;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StopContext;
 import org.jruby.Ruby;
-import org.torquebox.core.as.AsyncService;
+import org.projectodd.polyglot.core.AsyncService;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
 import org.torquebox.core.util.RuntimeHelper;
 
