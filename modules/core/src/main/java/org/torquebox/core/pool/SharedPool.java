@@ -195,6 +195,9 @@ public class SharedPool<T> implements Pool<T> {
      * and the old runtime gets destroyed after its release by all users
      */
     public synchronized void restart() throws Exception {
+        if (this.instance == null) {
+            return;
+        }
         AtomicInteger currentCount = this.instanceCounts.get( this.instance );
         if (currentCount == null || currentCount.intValue() == 0) {
             retireInstance( this.instance );
