@@ -81,7 +81,7 @@ module TorqueBox
           if $1.to_i(16) == $2.bytesize
             $2
           else
-            line
+            chunk
           end
         else
           chunk
