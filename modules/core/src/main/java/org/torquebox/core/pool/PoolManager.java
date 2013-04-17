@@ -143,6 +143,11 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
         }
     }
 
+    @Override
+    public void instanceRetired(T instance) {
+        this.factory.destroyInstance( instance );
+    }
+
     protected void fillInstance() throws Exception {
         if (this.started) { // don't fill an instance if we've stopped
             if (this.nsContextSelector != null) {
@@ -166,7 +171,7 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
         }
     }
 
-    public void start() {
+    public synchronized void start() {
         started = true;
         this.instances = new Semaphore( this.maxInstances - this.minInstances, true );
         if (this.executor == null) {
@@ -178,11 +183,16 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
 
     }
 
-    public void stop() throws Exception {
+    public synchronized void stop() throws Exception {
         started = false;
         while (pool.size() > 0) {
             drainInstance();
         }
+    }
+
+    public synchronized void restart() throws Exception {
+        this.pool.restart();
+        this.start();
     }
 
     public void waitForMinimumFill() throws InterruptedException {

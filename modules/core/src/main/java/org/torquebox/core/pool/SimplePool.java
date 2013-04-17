@@ -33,10 +33,12 @@ public class SimplePool<T> implements ManageablePool<T> {
     private final Set<T> instances = new HashSet<T>();
     private final Set<T> borrowedInstances = new HashSet<T>();
     private final Set<T> availableInstances = new HashSet<T>();
+    private Set<T> previousInstances = new HashSet<T>();
 
     private final PoolListeners<T> listeners = new PoolListeners<T>();
 
-    private final Semaphore instancesSemaphore = new Semaphore( 0, true );
+    private Semaphore instancesSemaphore = new Semaphore( 0, true );
+    private final Object borrowLock = new Object();
     
     public void setName(String name) {
         this.name = name;
@@ -63,25 +65,27 @@ public class SimplePool<T> implements ManageablePool<T> {
         log.debug(  "Borrow runtime requested by " + requester );
         long start = System.currentTimeMillis();
 
-        boolean acquired = this.instancesSemaphore.tryAcquire();
-        if (!acquired) {
-            requestInstance();
+        synchronized( this.borrowLock ) {
+            boolean acquired = this.instancesSemaphore.tryAcquire();
+            if (!acquired) {
+                requestInstance();
 
-            if (timeout > 0) {
-                acquired = this.instancesSemaphore.tryAcquire( timeout, TimeUnit.MILLISECONDS );
-            } else {
-                this.instancesSemaphore.acquire();
-                acquired = true;
+                if (timeout > 0) {
+                    acquired = this.instancesSemaphore.tryAcquire( timeout, TimeUnit.MILLISECONDS );
+                } else {
+                    this.instancesSemaphore.acquire();
+                    acquired = true;
+                }
             }
-        }
 
-        if (!acquired) {
-            return null;
-        }
+            if (!acquired) {
+                return null;
+            }
 
-        long elapsed = System.currentTimeMillis() - start;
-        log.debug(  "Borrowed runtime by " + requester + " fullfilled in " + elapsed + "ms" );
-        return borrowedInstance();
+            long elapsed = System.currentTimeMillis() - start;
+            log.debug(  "Borrowed runtime by " + requester + " fullfilled in " + elapsed + "ms" );
+            return borrowedInstance();
+        }
     }
 
     protected synchronized void requestInstance() {
@@ -99,11 +103,15 @@ public class SimplePool<T> implements ManageablePool<T> {
 
     @Override
     public synchronized void releaseInstance(T instance) {
-        this.borrowedInstances.remove( instance );
-        this.availableInstances.add( instance );
-        this.instancesSemaphore.release();
-        this.listeners.instanceReleased( instance, instances.size(), availableInstances.size() );
-        notifyAll();
+        if (this.previousInstances.remove( instance )) {
+            this.listeners.instanceRetired( instance );
+        } else {
+            this.borrowedInstances.remove( instance );
+            this.availableInstances.add( instance );
+            this.instancesSemaphore.release();
+            this.listeners.instanceReleased( instance, instances.size(), availableInstances.size() );
+            notifyAll();
+        }
     }
 
     public synchronized void fillInstance(T instance) {
@@ -122,6 +130,22 @@ public class SimplePool<T> implements ManageablePool<T> {
         this.borrowedInstances.remove( instance );
         this.instances.remove( instance );
         return instance;
+    }
+
+    public synchronized void restart() {
+        synchronized( this.borrowLock ) {
+            this.previousInstances.addAll( this.instances );
+            Iterator<T> iter = this.availableInstances.iterator();
+            while(this.instancesSemaphore.tryAcquire()) {
+                T instance = iter.next();
+                iter.remove();
+                releaseInstance( instance );
+            }
+            this.instances.clear();
+            this.borrowedInstances.clear();
+            this.availableInstances.clear();
+            instancesSemaphore = new Semaphore( 0, true );
+        }
     }
     
     Set<T> getAllInstances() {

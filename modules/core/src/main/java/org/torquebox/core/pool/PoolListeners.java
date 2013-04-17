@@ -52,7 +52,6 @@ class PoolListeners<T> implements PoolListener<T> {
         for (PoolListener<T> each : this.listeners) {
             each.instanceReleased( instance, totalInstances, availableNow );
         }
-
     }
 
     @Override
@@ -67,7 +66,13 @@ class PoolListeners<T> implements PoolListener<T> {
         for (PoolListener<T> each : this.listeners) {
             each.instanceFilled( instance, totalInstances, availableNow );
         }
+    }
 
+    @Override
+    public void instanceRetired(T instance) {
+        for (PoolListener<T> each : this.listeners) {
+            each.instanceRetired( instance );
+        }
     }
 
 }

@@ -86,7 +86,7 @@ public class ManagedPool<T> implements Pool<T> {
         }
     }
 
-    public void start() throws InterruptedException {
+    public synchronized void start() throws InterruptedException {
         if (this.deferUntilRequested) {
             log.info( "Deferring start for " + getName() + " runtime pool." );
         } else {
@@ -94,7 +94,7 @@ public class ManagedPool<T> implements Pool<T> {
         }
     }
 
-    public void stop() throws Exception {
+    public synchronized void stop() throws Exception {
         if (this.started) {
             this.poolManager.waitForAllReturned();
             this.poolManager.stop();
@@ -103,8 +103,9 @@ public class ManagedPool<T> implements Pool<T> {
         }
     }
 
-    public void restart() throws Exception {
-        
+    public synchronized void restart() throws Exception {
+        this.poolManager.restart();
+        this.poolManager.waitForMinimumFill();
     }
 
     @Override

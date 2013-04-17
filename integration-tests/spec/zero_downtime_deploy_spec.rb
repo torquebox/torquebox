@@ -103,6 +103,6 @@ describe 'bounded runtime' do
       version: #{RUBY_VERSION[0,3]}
   END
 
-  # it_should_behave_like 'zero downtime deploy', 'bounded'
+  it_should_behave_like 'zero downtime deploy', 'bounded'
 
 end
