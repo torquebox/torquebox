@@ -622,7 +622,7 @@ remote_describe "in-container messaging tests" do
       end
 
       after(:each) do
-        @expire_queue.stop if @expire_queue
+        @expire_queue.stop_sync if @expire_queue
       end
 
       it "should return the default expiry address" do
@@ -725,7 +725,7 @@ remote_describe "in-container messaging tests" do
       end
 
       after(:each) do
-        @dead_queue.stop if @dead_queue
+        @dead_queue.stop_sync if @dead_queue
       end
 
       it "should return the default dead letter address" do
