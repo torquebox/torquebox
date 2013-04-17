@@ -115,7 +115,7 @@ remote_describe "runtime jobs alacarte" do
     TorqueBox::ScheduledJob.list.count.should == 1
 
     5.times do
-      msg = queue.receive(:timeout => 10_000)
+      msg = queue.receive(:timeout => 30_000)
       msg[:state].should == :running
       msg[:options].should == {"queue" => queue.name}
     end
