@@ -487,10 +487,10 @@ remote_describe "in-container messaging tests" do
       end
 
       after(:each) do
-        @queue1.stop
-        @queue2.stop
-        @topic1.stop
-        @topic2.stop
+        @queue1.stop_sync
+        @queue2.stop_sync
+        @topic1.stop_sync
+        @topic2.stop_sync
       end
 
       it "should list queues" do
@@ -956,12 +956,12 @@ def with_queue(name, opts = {})
   queue = TorqueBox::Messaging::Queue.start name, opts
   yield queue
 ensure
-  queue.stop if queue
+  queue.stop_sync if queue
 end
 
 def with_topic(name, opts = {})
   topic = TorqueBox::Messaging::Topic.start name, opts
   yield topic
 ensure
-  topic.stop if topic
+  topic.stop_sync if topic
 end
