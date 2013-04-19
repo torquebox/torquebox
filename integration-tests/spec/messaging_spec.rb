@@ -24,14 +24,15 @@ describe "messaging rack test" do
   it "should receive a topic ham biscuit" do
     latch = java.util.concurrent.CountDownLatch.new(1)
     receive_thread = Thread.new {
+      topic = TorqueBox::Messaging::Topic.new('/topics/test', :client_id => 'topic ham biscuit')
+      topic.receive(:timeout => 5, :durable => true)
       latch.count_down
-      result = TorqueBox::Messaging::Topic.new('/topics/test').receive(:timeout => 30_000)
+      result = topic.receive(:timeout => 30_000, :durable => true)
       result.should == "topic-ham-biscuit"
       result = TorqueBox::Messaging::Queue.new('/queues/results').receive(:timeout => 30_000)
       result.should == "TestTopicConsumer=topic-ham-biscuit"
     }
     latch.await(30, java.util.concurrent.TimeUnit::SECONDS)
-    sleep(0.3) # ensure thread is blocking on receive from topic
     visit "/messaging-rack/?topic-ham-biscuit"
     receive_thread.join
     ensure_no_xa_error
