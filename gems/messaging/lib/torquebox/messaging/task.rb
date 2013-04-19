@@ -40,7 +40,8 @@ module TorqueBox
           :method => method,
           :payload => payload,
           :future_id => future.correlation_id,
-          :future_queue => queue_name
+          :future_queue => queue_name,
+          :future_ttl => options[:future_ttl]
         }
         options[:encoding] = :marshal
         queue.publish( message, options )
@@ -52,7 +53,7 @@ module TorqueBox
 
       def process!(message)
         hash = message.decode
-        FutureResponder.new( Queue.new( hash[:future_queue] ), hash[:future_id] ).respond do
+        FutureResponder.new( Queue.new( hash[:future_queue] ), hash[:future_id], hash[:future_ttl] ).respond do
           self.send hash[:method].to_sym, hash[:payload]
         end
       end
