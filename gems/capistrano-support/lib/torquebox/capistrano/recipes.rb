@@ -179,8 +179,19 @@ module Capistrano
               cmd += " && echo '' >> #{dd_file}"
               run cmd
             end
-          end
 
+            task :rollback_deployment_descriptor do
+              puts "rolling back deployment descriptor"
+              dd_str = YAML.dump_stream( create_deployment_descriptor(previous_release) )
+              dd_file = "#{jboss_home}/standalone/deployments/#{application}-knob.yml"
+              cmd =  "cat /dev/null > #{dd_file}"
+              dd_str.each_line do |line|
+                cmd += " && echo \"#{line}\" >> #{dd_file}"
+              end
+              cmd += " && echo '' >> #{dd_file}"
+              run cmd
+            end
+          end
 
           desc "Dump the deployment descriptor"
           task :dump, :except => { :no_release => true } do
@@ -192,8 +203,9 @@ module Capistrano
 
         end
 
-        before 'deploy:check',          'deploy:torquebox:check'
-        after  'deploy:create_symlink', 'deploy:torquebox:deployment_descriptor'
+        before 'deploy:check',             'deploy:torquebox:check'
+        after  'deploy:create_symlink',    'deploy:torquebox:deployment_descriptor'
+        after  'deploy:rollback:revision', 'deploy:torquebox:rollback_deployment_descriptor'
       end
     end
   end
