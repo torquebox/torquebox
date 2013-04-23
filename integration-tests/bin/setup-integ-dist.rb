@@ -80,6 +80,11 @@ Dir.chdir( assembly_dir ) do
   end
 end
 
+# Remove stale Gemfile.lock files
+puts "Removing Gemfile.lock files..."
+FileUtils.rm_rf( Dir["#{File.dirname(__FILE__)}/../apps/**/Gemfile.lock"] )
+
+puts "Removing old log files..."
 FileUtils.rm_rf( Dir["#{output_dir}/jboss/standalone/log/*"] )
 FileUtils.rm_rf( Dir["#{output_dir}/jboss/standalone/deployments/*"] )
 FileUtils.rm_rf( Dir["#{output_dir}/jboss/domain/servers/server-01/log/*"] )
