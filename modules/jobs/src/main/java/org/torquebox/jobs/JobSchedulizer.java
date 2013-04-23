@@ -103,7 +103,7 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
      * <p/>
      * If there is a job with the same name, it'll be removed and replaced.
      * <p/>
-     * Used by the TorqueBox::ScheduledJob.schedule method.
+     * Used by the TorqueBox::Jobs::ScheduledJob.schedule method.
      *
      * @param rubyClassName  The Ruby class name of the job implementation
      * @param cronExpression When the job should be executed, in cron format
@@ -159,7 +159,7 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
     /**
      * Creates new 'at' job.
      * <p/>
-     * Used by the TorqueBox::ScheduledJob.at method.
+     * Used by the TorqueBox::Jobs::ScheduledJob.at method.
      *
      * @param rubyClassName The ruby class name of the job implementation
      * @param startAt       The start date of the job

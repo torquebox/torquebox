@@ -15,8 +15,10 @@ gem_order = %w{
     torquebox-capistrano-support
     torquebox-rake-support
     torquebox-configure
+    torquebox-jobs
     torquebox-naming
     torquebox-security
+    torquebox-services
     torquebox-transactions
     torquebox-cache
     torquebox-messaging

@@ -15,14 +15,4 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-module TorqueBox
-end
-
-#require 'torquebox/kernel'
-require 'torquebox/service_registry'
-require 'torquebox/component_manager'
-require 'torquebox/injectors'
-require 'torquebox/logger'
-require 'torquebox/msc'
-
-
+require 'torquebox/jobs/scheduled_job'

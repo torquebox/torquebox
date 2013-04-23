@@ -205,6 +205,22 @@
 
     <dependency>
       <groupId>rubygems</groupId>
+      <artifactId>torquebox-services</artifactId>
+      <type>gem</type>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-jobs</artifactId>
+      <type>gem</type>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
       <artifactId>torquebox-naming</artifactId>
       <type>gem</type>
       <version>${project.version}</version>

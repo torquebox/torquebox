@@ -16,6 +16,7 @@
 
   <modules>
     <module>core</module>
+    <module>jobs</module>
     <module>naming</module>
     <module>transactions</module>
     <module>messaging</module>
@@ -30,6 +31,7 @@
     <module>capistrano-support</module>
 
     <module>no-op</module>
+    <module>services</module>
     <module>torquebox</module>
   </modules>
 

@@ -35,6 +35,12 @@
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
+      <artifactId>torquebox-jobs</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
       <artifactId>torquebox-messaging</artifactId>
       <version>${project.version}</version>
       <type>gem</type>
@@ -54,6 +60,12 @@
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>torquebox-security</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-services</artifactId>
       <version>${project.version}</version>
       <type>gem</type>
     </dependency>

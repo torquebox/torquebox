@@ -1,5 +1,7 @@
 require 'spec_helper'
 require 'torquebox-messaging'
+require 'torquebox-services'
+require 'torquebox-jobs'
 
 shared_examples_for "alacarte" do
 
@@ -55,15 +57,15 @@ describe "jobs alacarte" do
     end
   end
 
-  remote_describe "TorqueBox::ScheduledJob" do
+  remote_describe "TorqueBox::Jobs::ScheduledJob" do
     it "should list jobs" do
-      jobs = TorqueBox::ScheduledJob.list
+      jobs = TorqueBox::Jobs::ScheduledJob.list
       jobs.count.should == 4
       jobs.map { |j| j.name }.should =~ [ 'job.one', 'job.two', 'job.three', 'job.four' ]
     end
 
     it "should lookup a job by name" do
-      job = TorqueBox::ScheduledJob.lookup( 'job.one' )
+      job = TorqueBox::Jobs::ScheduledJob.lookup( 'job.one' )
       job.name.should == 'job.one'
       job.status.should == 'STARTED'
       job.stop
@@ -74,19 +76,19 @@ describe "jobs alacarte" do
     end
 
     it "should not fail if a job is not found" do
-      job = TorqueBox::ScheduledJob.lookup('job.aaa.abc')
+      job = TorqueBox::Jobs::ScheduledJob.lookup('job.aaa.abc')
       job.should == nil
     end
 
     it "should remove a job by name" do
-      job = TorqueBox::ScheduledJob.lookup('job.one')
+      job = TorqueBox::Jobs::ScheduledJob.lookup('job.one')
       job.name.should == 'job.one'
-      TorqueBox::ScheduledJob.remove_sync('job.one')
-      TorqueBox::ScheduledJob.lookup('job.one').should == nil
+      TorqueBox::Jobs::ScheduledJob.remove_sync('job.one')
+      TorqueBox::Jobs::ScheduledJob.lookup('job.one').should == nil
     end
 
     it "should not fail with lookup of a stopped job" do
-      job = TorqueBox::ScheduledJob.lookup('job.four')
+      job = TorqueBox::Jobs::ScheduledJob.lookup('job.four')
       job.name.should == 'job.four'
       job.status.should == 'STOPPED'
       job.start
@@ -110,9 +112,9 @@ remote_describe "runtime jobs alacarte" do
   it "should deploy the job" do
     queue = TorqueBox::Messaging::Queue.new("/queue/runtime_response")
 
-    TorqueBox::ScheduledJob.list.count.should == 0
-    TorqueBox::ScheduledJob.schedule_sync('SimpleJob', "*/1 * * * * ?", :config => {"queue" => queue.name}).should == true
-    TorqueBox::ScheduledJob.list.count.should == 1
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 0
+    TorqueBox::Jobs::ScheduledJob.schedule_sync('SimpleJob', "*/1 * * * * ?", :config => {"queue" => queue.name}).should == true
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 1
 
     5.times do
       msg = queue.receive(:timeout => 30_000)
@@ -120,115 +122,115 @@ remote_describe "runtime jobs alacarte" do
       msg[:options].should == {"queue" => queue.name}
     end
 
-    job = TorqueBox::ScheduledJob.lookup('SimpleJob')
+    job = TorqueBox::Jobs::ScheduledJob.lookup('SimpleJob')
     job.name.should == 'SimpleJob'
     job.is_singleton.should == true
 
-    TorqueBox::ScheduledJob.remove_sync('SimpleJob').should == true
-    TorqueBox::ScheduledJob.list.count.should == 0
+    TorqueBox::Jobs::ScheduledJob.remove_sync('SimpleJob').should == true
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 0
   end
 
 
   it "should deploy the job with different name" do
-    TorqueBox::ScheduledJob.list.count.should == 0
-    TorqueBox::ScheduledJob.schedule_sync('SimpleJob', "*/10 * * * * ?", :name => "simple.job").should == true
-    TorqueBox::ScheduledJob.list.count.should == 1
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 0
+    TorqueBox::Jobs::ScheduledJob.schedule_sync('SimpleJob', "*/10 * * * * ?", :name => "simple.job").should == true
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 1
 
-    job = TorqueBox::ScheduledJob.lookup('simple.job')
+    job = TorqueBox::Jobs::ScheduledJob.lookup('simple.job')
     job.name.should == 'simple.job'
     wait_for_condition(30, 0.5, lambda { |status| status == 'STARTED' }) do
       job.status
     end
     job.status.should == 'STARTED'
 
-    TorqueBox::ScheduledJob.remove_sync('simple.job').should == true
-    TorqueBox::ScheduledJob.list.count.should == 0
+    TorqueBox::Jobs::ScheduledJob.remove_sync('simple.job').should == true
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 0
   end
 
   it "should deploy the job with config" do
-    TorqueBox::ScheduledJob.list.count.should == 0
-    TorqueBox::ScheduledJob.schedule_sync('SimpleJob', "*/10 * * * * ?", :name => "simple.config.job", :config => {:text => "text", :hash => {:a => 2}}).should == true
-    TorqueBox::ScheduledJob.list.count.should == 1
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 0
+    TorqueBox::Jobs::ScheduledJob.schedule_sync('SimpleJob', "*/10 * * * * ?", :name => "simple.config.job", :config => {:text => "text", :hash => {:a => 2}}).should == true
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 1
 
-    job = TorqueBox::ScheduledJob.lookup('simple.config.job')
+    job = TorqueBox::Jobs::ScheduledJob.lookup('simple.config.job')
     job.name.should == 'simple.config.job'
     wait_for_condition(30, 0.5, lambda { |status| status == 'STARTED' }) do
       job.status
     end
     job.status.should == 'STARTED'
 
-    TorqueBox::ScheduledJob.remove_sync('simple.config.job').should == true
-    TorqueBox::ScheduledJob.list.count.should == 0
+    TorqueBox::Jobs::ScheduledJob.remove_sync('simple.config.job').should == true
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 0
   end
 
   it "should replace a job" do
-    TorqueBox::ScheduledJob.list.count.should == 0
-    TorqueBox::ScheduledJob.schedule_sync('SimpleJob', "*/10 * * * * ?", :description => "something").should == true
-    TorqueBox::ScheduledJob.list.count.should == 1
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 0
+    TorqueBox::Jobs::ScheduledJob.schedule_sync('SimpleJob', "*/10 * * * * ?", :description => "something").should == true
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 1
 
-    job = TorqueBox::ScheduledJob.lookup('SimpleJob')
+    job = TorqueBox::Jobs::ScheduledJob.lookup('SimpleJob')
     job.name.should == 'SimpleJob'
     job.description.should == 'something'
 
-    TorqueBox::ScheduledJob.schedule_sync('SimpleJob', "*/5 * * * * ?", :description => "new job").should == true
-    TorqueBox::ScheduledJob.list.count.should == 1
+    TorqueBox::Jobs::ScheduledJob.schedule_sync('SimpleJob', "*/5 * * * * ?", :description => "new job").should == true
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 1
 
-    job = TorqueBox::ScheduledJob.lookup('SimpleJob')
+    job = TorqueBox::Jobs::ScheduledJob.lookup('SimpleJob')
     job.name.should == 'SimpleJob'
     job.description.should == 'new job'
 
-    TorqueBox::ScheduledJob.remove_sync('SimpleJob').should == true
-    TorqueBox::ScheduledJob.list.count.should == 0
+    TorqueBox::Jobs::ScheduledJob.remove_sync('SimpleJob').should == true
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 0
   end
 
   it "should not fail when the job class name includes module" do
-    TorqueBox::ScheduledJob.schedule_sync('SomeModule::AnotherSimpleJob', "*/5 * * * * ?").should == true
+    TorqueBox::Jobs::ScheduledJob.schedule_sync('SomeModule::AnotherSimpleJob', "*/5 * * * * ?").should == true
 
-    TorqueBox::ScheduledJob.list.count.should == 1
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 1
 
-    job = TorqueBox::ScheduledJob.lookup('SomeModule.AnotherSimpleJob')
+    job = TorqueBox::Jobs::ScheduledJob.lookup('SomeModule.AnotherSimpleJob')
     job.name.should == 'SomeModule.AnotherSimpleJob'
 
-    TorqueBox::ScheduledJob.remove_sync('SomeModule.AnotherSimpleJob').should == true
+    TorqueBox::Jobs::ScheduledJob.remove_sync('SomeModule.AnotherSimpleJob').should == true
 
-    TorqueBox::ScheduledJob.list.count.should == 0
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 0
   end
 
   it "should not replace a job when the class differ" do
-    TorqueBox::ScheduledJob.list.count.should == 0
-    TorqueBox::ScheduledJob.schedule_sync('SimpleJob', "*/10 * * * * ?", :description => "something").should == true
-    TorqueBox::ScheduledJob.list.count.should == 1
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 0
+    TorqueBox::Jobs::ScheduledJob.schedule_sync('SimpleJob', "*/10 * * * * ?", :description => "something").should == true
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 1
 
-    job = TorqueBox::ScheduledJob.lookup('SimpleJob')
+    job = TorqueBox::Jobs::ScheduledJob.lookup('SimpleJob')
     job.name.should == 'SimpleJob'
     job.description.should == 'something'
 
-    TorqueBox::ScheduledJob.schedule_sync('SomeModule::AnotherSimpleJob', "*/5 * * * * ?", :description => "another something").should == true
+    TorqueBox::Jobs::ScheduledJob.schedule_sync('SomeModule::AnotherSimpleJob', "*/5 * * * * ?", :description => "another something").should == true
 
-    TorqueBox::ScheduledJob.list.count.should == 2
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 2
 
-    job = TorqueBox::ScheduledJob.lookup('SomeModule.AnotherSimpleJob')
+    job = TorqueBox::Jobs::ScheduledJob.lookup('SomeModule.AnotherSimpleJob')
     job.name.should == 'SomeModule.AnotherSimpleJob'
     job.description.should == 'another something'
 
-    TorqueBox::ScheduledJob.remove_sync('SimpleJob').should == true
-    TorqueBox::ScheduledJob.remove_sync('SomeModule.AnotherSimpleJob').should == true
+    TorqueBox::Jobs::ScheduledJob.remove_sync('SimpleJob').should == true
+    TorqueBox::Jobs::ScheduledJob.remove_sync('SomeModule.AnotherSimpleJob').should == true
 
-    TorqueBox::ScheduledJob.list.count.should == 0
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 0
   end
 
   it "should deploy the job stopped" do
-    TorqueBox::ScheduledJob.list.count.should == 0
-    TorqueBox::ScheduledJob.schedule_sync('SimpleJob', "*/5 * * * * ?", :stopped => true).should == true
-    TorqueBox::ScheduledJob.list.count.should == 1
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 0
+    TorqueBox::Jobs::ScheduledJob.schedule_sync('SimpleJob', "*/5 * * * * ?", :stopped => true).should == true
+    TorqueBox::Jobs::ScheduledJob.list.count.should == 1
 
-    job = TorqueBox::ScheduledJob.lookup('SimpleJob')
+    job = TorqueBox::Jobs::ScheduledJob.lookup('SimpleJob')
     job.name.should == 'SimpleJob'
     job.status.should == 'STOPPED'
     job.start
     job.status.should == 'STARTED'
 
-    TorqueBox::ScheduledJob.remove_sync('SimpleJob').should == true
+    TorqueBox::Jobs::ScheduledJob.remove_sync('SimpleJob').should == true
   end
 end
 
@@ -282,15 +284,17 @@ describe "services alacarte" do
 
   it_should_behave_like "alacarte"
 
-  remote_describe "TorqueBox::Service" do
+  remote_describe "TorqueBox::Services::Service" do
     it "should list services" do
-      services = TorqueBox::Service.list
+      services = TorqueBox::Services::Service.list
       services.count.should == 2
       services.map { |s| s.name }.should =~ [ 'SimpleService', 'TorqueSpec::Daemon' ]
+      services[0].inspect.should == "[RubyService: name=SimpleService; status=STARTED]"
+      services[1].inspect.should == "[RubyService: name=TorqueSpec::Daemon; status=STARTED]"
     end
 
     it "should lookup a service by name" do
-      service = TorqueBox::Service.lookup( 'SimpleService' )
+      service = TorqueBox::Services::Service.lookup( 'SimpleService' )
       service.name.should == 'SimpleService'
       service.status.should == 'STARTED'
       service.stop
