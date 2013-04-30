@@ -41,8 +41,11 @@ module TorqueSpec
   module AS7
     def start_command
       ENV['APPEND_JAVA_OPTS'] = "#{TorqueSpec.jvm_args} -Djboss.home.dir=\"#{TorqueSpec.jboss_home}\""
-      boot_script = TESTING_ON_WINDOWS ? "standalone.bat" : "standalone.sh"
-      "\"#{TorqueSpec.jboss_home}/bin/#{boot_script}\""
+      if TESTING_ON_WINDOWS
+        "\"#{TorqueSpec.jboss_home}/bin/standalone.bat\""
+      else
+        "sh \"#{TorqueSpec.jboss_home}/bin/standalone.sh\""
+      end
     end
   end
 end
