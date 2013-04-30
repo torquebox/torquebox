@@ -262,7 +262,7 @@
       <properties>
         <version.jbossas>7.2.0.Final-redhat-5</version.jbossas>
         <version.org.infinispan>5.2.5.Final-redhat-1</version.org.infinispan>
-        <version.polyglot>1.12.1-SNAPSHOT</version.polyglot>
+        <version.polyglot>1.12.1-redhat-1</version.polyglot>
         <version.org.jboss.jboss-msc>1.0.4.GA-redhat-1</version.org.jboss.jboss-msc>
       </properties>
     </profile>
