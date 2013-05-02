@@ -30,7 +30,7 @@ module TorqueBox
       end
 
       def on_message(hash)
-        FutureResponder.new( Queue.new( hash[:future_queue] ), hash[:future_id] ).respond do
+        FutureResponder.new( Queue.new( hash[:future_queue] ), hash[:future_id], hash[:future_ttl] ).respond do
           klass = hash[:receiver].class
           if klass.respond_to?( :__enable_backgroundable_newrelic_tracing )
             klass.__enable_backgroundable_newrelic_tracing( hash[:method] )

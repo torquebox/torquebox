@@ -3,7 +3,7 @@ require 'torquebox-messaging'
 class InstanceMethodsModel
   include TorqueBox::Messaging::Backgroundable
 
-  always_background :foo
+  always_background :foo, :future_ttl => 100_000
 
   def initialize
     @foreground = TorqueBox.fetch("queue/foreground")

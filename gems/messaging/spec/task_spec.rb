@@ -29,10 +29,17 @@ describe TorqueBox::Messaging::Task do
     end
 
     it "should send payload correctly" do
-      expectation = [{:method => :payload=, :payload => {:foo => 'bar'}, :future_id => '1234', :future_queue => MyTestTask.queue_name('my_test')}, anything]
+      expectation = [{:method => :payload=, :payload => {:foo => 'bar'}, :future_id => '1234', :future_queue => MyTestTask.queue_name('my_test'), :future_ttl => nil}, anything]
       @send_queue.should_receive(:publish).with(*expectation)
       
       MyTestTask.async(:payload=, :foo => 'bar')
+    end
+
+    it "should send payload correctly with custom future ttl" do
+      expectation = [{:method => :payload=, :payload => {:foo => 'bar'}, :future_id => '1234', :future_queue => MyTestTask.queue_name('my_test'), :future_ttl => 10_000}, anything]
+      @send_queue.should_receive(:publish).with(*expectation)
+
+      MyTestTask.async(:payload=, {:foo => 'bar'}, {:future_ttl => 10_000})
     end
 
     it "should handle nil payload as empty hash" do

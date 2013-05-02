@@ -2244,6 +2244,13 @@ Widget.background(:ttl =&gt; 1000, :persistent =&gt; false).monetize
           invocation.</para>
         </example>
 
+      <para>
+        Additionally you can define the <varname>future_ttl</varname> option
+        which sets the time (in miliseconds) to wait before moving the
+        not received future to the expiry queue. By default it's set to
+        600000 (10 minutes).
+      </para>
+
       </section>
 
       <section id="backgroundable-message-processor-options">

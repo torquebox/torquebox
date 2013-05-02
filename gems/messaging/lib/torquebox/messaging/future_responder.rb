@@ -28,10 +28,10 @@ module TorqueBox
       # @param [Integer] message_ttl The time-to-live used on messages
       #   to prevent them from staying in the queue indefinately if
       #   the result is never accessed.
-      def initialize(response_queue, correlation_id, message_ttl = 600_000)
+      def initialize(response_queue, correlation_id, message_ttl = nil)
         @queue = response_queue
         @correlation_id = correlation_id
-        @message_ttl = message_ttl
+        @message_ttl = message_ttl || 600_000
       end
 
       # Signal that processing has started.

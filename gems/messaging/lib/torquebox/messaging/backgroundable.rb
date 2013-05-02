@@ -193,6 +193,7 @@ module TorqueBox
             queue.publish( {:receiver => receiver,
                              :future_id => future.correlation_id,
                              :future_queue => queue_name,
+                             :future_ttl => options[:future_ttl],
                              :method => method,
                              :args => args}, options )
 

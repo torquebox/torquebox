@@ -176,6 +176,7 @@ describe TorqueBox::Messaging::Backgroundable do
                                              :future_id => '1234',
                                              :future_queue => "/queues/torquebox//tasks/torquebox_backgroundable",
                                              :method => '__sync_an_async_action',
+                                             :future_ttl => nil,
                                              :args => [:a, :b]
                                            },
                                            anything)
@@ -219,6 +220,16 @@ describe TorqueBox::Messaging::Backgroundable do
       it "should queue the args" do
         @queue.should_receive(:publish).with(hash_including(:args => [1,2]), anything)
         @object.background.foo(1,2)
+      end
+
+      it "should use default future ttl" do
+        @queue.should_receive(:publish).with(hash_including(:future_ttl => nil), anything)
+        @object.background.foo
+      end
+
+      it "should use custom future ttl" do
+        @queue.should_receive(:publish).with(hash_including(:future_ttl => 100_000), anything)
+        @object.background(:future_ttl => 100_000).foo
       end
 
       it "should raise when given a block" do
@@ -268,6 +279,16 @@ describe TorqueBox::Messaging::Backgroundable do
       it "should queue the args" do
         @queue.should_receive(:publish).with(hash_including(:args => [1,2]), anything)
         @object.background.foo(1,2)
+      end
+
+      it "should use default future ttl" do
+        @queue.should_receive(:publish).with(hash_including(:future_ttl => nil), anything)
+        @object.background.foo
+      end
+
+      it "should use custom future ttl" do
+        @queue.should_receive(:publish).with(hash_including(:future_ttl => 100_000), anything)
+        @object.background(:future_ttl => 100_000).foo
       end
 
       it "should raise when given a block" do
