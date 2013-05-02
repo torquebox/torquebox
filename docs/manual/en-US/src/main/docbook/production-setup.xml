@@ -300,6 +300,7 @@ Listen 127.0.0.1:6666
     ...
     &lt;socket-binding name="jgroups-tcp" port="7600"/&gt;
     &lt;socket-binding name="jgroups-tcp-fd" port="57600"/&gt;
+    &lt;socket-binding name="jgroups-diagnostics" port="7500"/&gt;
     ...
   &lt;/socket-binding-group&gt;
 &lt;/server&gt;</programlisting>
