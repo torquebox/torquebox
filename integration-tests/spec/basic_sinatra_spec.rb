@@ -48,7 +48,7 @@ describe "basic sinatra test" do
     find('#success').should have_content("you posted something")
   end
 
-  
+
   it "should allow headers through (JRUBY-5839, TORQUE-430)", :browser_not_supported=>true do
     visit "/basic-sinatra"
     page.response_headers['Biscuit'].should == 'Gravy'
@@ -63,7 +63,7 @@ describe "basic sinatra test" do
     response['access-control-allow-methods'].should == 'POST'
 
   end
-  
+
   it "should test Sir Postalot" do
     500.times do |i|
       print '.' if (i % 10 == 0)
@@ -87,5 +87,10 @@ describe "basic sinatra test" do
     visit "/basic-sinatra/torque-984"
     page.find('body').text.should eql("FIXED")
   end
-  
+
+  it "should deploy servlets defined in WEB-INF/web.xml" do
+    visit "/basic-sinatra/default/public/some_page.html"
+    page.find('#success')[:class].should == 'default'
+  end
+
 end
