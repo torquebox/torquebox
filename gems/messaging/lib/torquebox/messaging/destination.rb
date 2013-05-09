@@ -40,7 +40,7 @@ module TorqueBox
       }
 
       def _dump(level)
-        to_s
+        name
       end
 
       def self._load(str)
