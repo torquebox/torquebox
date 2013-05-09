@@ -28,6 +28,7 @@ module TorqueBox
 
       attr_reader :connection_factory
       attr_reader :name
+      attr_reader :java_destination
       attr_accessor :enumerable_options
       attr_accessor :connect_options
 
@@ -38,9 +39,8 @@ module TorqueBox
         :critical => 9
       }
 
-      def _dump(depth)
-        return self.name.queue_name if self.name.respond_to?( :queue_name )
-        self.name.to_s
+      def _dump(level)
+        to_s
       end
 
       def self._load(str)
@@ -63,7 +63,21 @@ module TorqueBox
           @connection_factory  = ConnectionFactory.new( connection_factory_or_options )
           @connect_options = {}
         end
-        @name                = destination
+
+
+        if destination.is_a?(javax.jms.Destination )
+          if destination.is_a?(javax.jms.Queue)
+            @name = destination.queue_name
+          else
+            @name = destination.topic_name
+          end
+
+          @java_destination = destination
+        else
+          @name = destination
+        end
+
+
         @enumerable_options  = {}
       end
 

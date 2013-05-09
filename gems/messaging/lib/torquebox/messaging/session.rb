@@ -150,14 +150,9 @@ module TorqueBox
       end
       
       def java_destination(destination)
-        java_destination = destination.name
-        
-        unless java_destination.is_a?( javax.jms.Destination )
-          meth = destination.is_a?( Queue ) ? :create_queue : :create_topic
-          java_destination = @jms_session.send( meth, java_destination )
-        end
-        
-        java_destination
+        return destination.java_destination unless destination.java_destination.nil?
+        meth = destination.is_a?( Queue ) ? :create_queue : :create_topic
+        @jms_session.send( meth, destination.name )
       end
       
       def self.canonical_ack_mode(ack_mode)
