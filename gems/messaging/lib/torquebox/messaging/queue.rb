@@ -304,7 +304,7 @@ module TorqueBox
       # queue.
       def with_queue_control
         TorqueBox::ServiceRegistry.lookup("jboss.messaging.default") do |server|
-          yield server.management_service.get_resource("jms.queue.#{_dump(nil)}")
+          yield server.management_service.get_resource("jms.queue.#{@name}")
         end
       end
     end
