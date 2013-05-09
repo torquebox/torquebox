@@ -80,7 +80,7 @@ class Myapp < Padrino::Application
     %Q{
 <pre>
     service is #{service.class}
-    queue is #{queue.name.queue_name}
+    queue is #{queue.name}
 </pre>
 }
   end
