@@ -31,7 +31,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.core.ApplicationFilterChain;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceRegistry;
@@ -42,7 +41,6 @@ import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.web.component.RackApplicationComponent;
 import org.torquebox.web.rack.RackEnvironment;
-import org.torquebox.web.rack.processors.RackWebApplicationInstaller;
 
 public class RackFilter implements Filter {
 
@@ -87,29 +85,23 @@ public class RackFilter implements Filter {
             response.sendRedirect( redirectUri );
             return;
         }
-
-        String servletName = ((ApplicationFilterChain) chain).getServlet().getServletConfig().getServletName();
-        if (servletName == RackWebApplicationInstaller.FIVE_HUNDRED_SERVLET_NAME ||
-                servletName == RackWebApplicationInstaller.STATIC_RESROUCE_SERVLET_NAME) {
-            // Only hand off requests to Rack if they're handled by one of the
-            // TorqueBox servlets
-            HttpServletResponseCapture responseCapture = new HttpServletResponseCapture( response );
-            try {
-                chain.doFilter( request, responseCapture );
-                if (responseCapture.isError()) {
-                    response.reset();
-                } else if (!request.getMethod().equals( "OPTIONS" )) {
-                    // Pass HTTP OPTIONS requests through to the Rack application
-                    return;
-                }
-            } catch (ServletException e) {
-                log.error( "Error performing request", e );
+        HttpServletResponseCapture responseCapture = new HttpServletResponseCapture( response );
+        try {
+            chain.doFilter( request, responseCapture );
+        } catch (ServletException e) {
+            log.error( "Error performing request", e );
+        }
+        // Only hand off requests to Rack if they're handled by one of the
+        // TorqueBox servlets
+        if ((Boolean) request.getAttribute( "polyglot.servlet" )) {
+            request.removeAttribute( "polyglot.servlet" );
+            if (responseCapture.isError()) {
+                response.reset();
+            } else if (!request.getMethod().equals( "OPTIONS" )) {
+                // Pass HTTP OPTIONS requests through to the Rack application
+                return;
             }
             doRack( request, response );
-        } else {
-            // Bypass our Rack stack entirely for any servlets defined in a
-            // user's WEB-INF/web.xml
-            chain.doFilter( request, response );
         }
     }
 

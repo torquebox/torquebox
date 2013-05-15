@@ -19,7 +19,7 @@
 
 package org.torquebox.web.as;
 
-import org.jboss.as.web.WebSubsystemServices;
+//import org.jboss.as.web.WebSubsystemServices;
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
@@ -50,8 +50,8 @@ public class HttpConnectorStartService extends AsyncService<HttpConnectorStartSe
         try {
             Thread.sleep( 200 );
         } catch (InterruptedException ignored) {}
-        ServiceName serviceName = WebSubsystemServices.JBOSS_WEB_CONNECTOR.append("http");
-        injectedServiceRegistry.getValue().getRequiredService(serviceName).setMode(Mode.ACTIVE);
+        //ServiceName serviceName = WebSubsystemServices.JBOSS_WEB_CONNECTOR.append("http");
+        //injectedServiceRegistry.getValue().getRequiredService(serviceName).setMode(Mode.ACTIVE);
     }
 
     @Override

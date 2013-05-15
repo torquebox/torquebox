@@ -38,7 +38,7 @@ class Assembler
     @m2_repo   = @tool.m2_repo
 
     puts "Maven repo: #{@m2_repo}"
-    @jboss_zip = @m2_repo + "/org/jboss/as/jboss-as-dist/#{@jboss_version}/jboss-as-dist-#{@jboss_version}.zip"
+    @jboss_zip = @m2_repo + "/org/wildfly/wildfly-dist/#{@jboss_version}/wildfly-dist-#{@jboss_version}.zip"
     @jruby_zip = @m2_repo + "/org/jruby/jruby-dist/#{@jruby_version}/jruby-dist-#{@jruby_version}-bin.zip"
 
     @config_stash = File.dirname(__FILE__) + '/../target'
@@ -78,7 +78,7 @@ class Assembler
       puts "Laying down JBoss"
       Dir.chdir( File.dirname( tool.jboss_dir ) ) do
         tool.unzip( jboss_zip )
-        original_dir= File.expand_path( Dir[ 'jboss-*' ].first )
+        original_dir= File.expand_path( Dir[ 'wildfly-*' ].first )
         FileUtils.mv original_dir, tool.jboss_dir
       end
     end

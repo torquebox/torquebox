@@ -65,20 +65,20 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-jmx</artifactId>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-jmx</artifactId>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-ee</artifactId>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-ee</artifactId>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-messaging</artifactId>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-messaging</artifactId>
       <scope>provided</scope>
     </dependency>
 

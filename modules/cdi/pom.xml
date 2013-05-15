@@ -38,8 +38,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-weld</artifactId>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-weld</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>

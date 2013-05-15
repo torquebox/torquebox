@@ -30,8 +30,8 @@
       <artifactId>junit</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-server</artifactId>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-server</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>

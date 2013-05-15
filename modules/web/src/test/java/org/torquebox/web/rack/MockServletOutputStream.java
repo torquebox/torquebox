@@ -22,6 +22,7 @@ package org.torquebox.web.rack;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.servlet.WriteListener;
 import javax.servlet.ServletOutputStream;
 
 public class MockServletOutputStream extends ServletOutputStream {
@@ -35,6 +36,15 @@ public class MockServletOutputStream extends ServletOutputStream {
     @Override
     public void write(int b) throws IOException {
         out.write( b );
+    }
+
+    @Override
+    public void setWriteListener(WriteListener writeListener) {
+    }
+
+    @Override
+    public boolean isReady() {
+        return true;
     }
 
 }

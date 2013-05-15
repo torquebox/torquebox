@@ -37,7 +37,7 @@ import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
-import org.jboss.as.web.WebSubsystemServices;
+//import org.jboss.as.web.WebSubsystemServices;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
@@ -126,11 +126,11 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
             String connectorName, int maxThreads) throws Exception {
         WebConnectorConfigService service = new WebConnectorConfigService();
         service.setMaxThreads( maxThreads );
-        newControllers.add( context.getServiceTarget().addService( WebServices.WEB_CONNECTOR_CONFIG.append( connectorName ), service )
-                .addDependency( WebSubsystemServices.JBOSS_WEB_CONNECTOR.append( connectorName ), Connector.class, service.getConnectorInjector() )
-                .addListener( verificationHandler )
-                .setInitialMode( Mode.ACTIVE )
-                .install() );
+//        newControllers.add( context.getServiceTarget().addService( WebServices.WEB_CONNECTOR_CONFIG.append( connectorName ), service )
+//                .addDependency( WebSubsystemServices.JBOSS_WEB_CONNECTOR.append( connectorName ), Connector.class, service.getConnectorInjector() )
+//                .addListener( verificationHandler )
+//                .setInitialMode( Mode.ACTIVE )
+//                .install() );
     }
 
     static ModelNode createOperation(ModelNode address) {

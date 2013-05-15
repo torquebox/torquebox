@@ -32,8 +32,8 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.module.ResourceRoot;
-import org.jboss.as.web.deployment.ServletContextAttribute;
-import org.jboss.as.web.deployment.WarMetaData;
+import org.jboss.as.web.common.ServletContextAttribute;
+import org.jboss.as.web.common.WarMetaData;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.javaee.spec.EmptyMetaData;
 import org.jboss.metadata.javaee.spec.ParamValueMetaData;
@@ -131,7 +131,7 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
 
         setUpSessionConfig( jbossWebMetaData, rackAppMetaData );
 
-        setUpSendfileFilter( webMetaData );
+        // setUpSendfileFilter( webMetaData );
         setUpRackFilter( unit, rackAppMetaData, webMetaData );
         setUpStaticResourceServlet( rackAppMetaData, webMetaData, railsAppMetaData != null );
         ensureSomeServlet( rackAppMetaData, webMetaData );
@@ -197,7 +197,7 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
 
         FilterMappingMetaData filterMapping = new FilterMappingMetaData();
         filterMapping.setFilterName( RACK_FILTER_NAME );
-        filterMapping.setUrlPatterns( Collections.singletonList( "*" ) );
+        filterMapping.setUrlPatterns( Collections.singletonList( "/*" ) );
 
         List<FilterMappingMetaData> filterMappings = webMetaData.getFilterMappings();
 
@@ -224,7 +224,7 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
 
         FilterMappingMetaData filterMapping = new FilterMappingMetaData();
         filterMapping.setFilterName(SENDFILE_FILTER_NAME);
-        filterMapping.setUrlPatterns(Collections.singletonList("*"));
+        filterMapping.setUrlPatterns(Collections.singletonList("/*"));
 
         List<FilterMappingMetaData> filterMappings = webMetaData.getFilterMappings();
         if (filterMappings == null) {

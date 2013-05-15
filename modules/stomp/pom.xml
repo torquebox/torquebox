@@ -50,13 +50,13 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-web</artifactId>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-web</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-transactions</artifactId>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-transactions</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

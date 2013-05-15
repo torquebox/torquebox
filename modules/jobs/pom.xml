@@ -50,8 +50,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-jmx</artifactId>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-jmx</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -67,8 +67,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-clustering-jgroups</artifactId>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-clustering-jgroups</artifactId>
       <scope>test</scope>
     </dependency>
 

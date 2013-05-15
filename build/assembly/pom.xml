@@ -21,8 +21,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-dist</artifactId>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-dist</artifactId>
       <version>${version.jbossas}</version>
       <type>zip</type>
       <scope>provided</scope>

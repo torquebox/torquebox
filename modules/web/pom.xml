@@ -46,18 +46,23 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.web</groupId>
-      <artifactId>jbossweb</artifactId>
+      <groupId>io.undertow</groupId>
+      <artifactId>undertow-servlet</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-web</artifactId>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-undertow</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-threads</artifactId>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-web-common</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-threads</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
