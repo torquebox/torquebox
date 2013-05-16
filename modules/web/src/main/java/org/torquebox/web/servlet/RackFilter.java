@@ -93,7 +93,7 @@ public class RackFilter implements Filter {
         }
         // Only hand off requests to Rack if they're handled by one of the
         // TorqueBox servlets
-        if ((Boolean) request.getAttribute( "polyglot.servlet" )) {
+        if (request.getAttribute( "polyglot.servlet" ) != null) {
             request.removeAttribute( "polyglot.servlet" );
             if (responseCapture.isError()) {
                 response.reset();

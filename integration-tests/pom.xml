@@ -281,7 +281,7 @@
 
     <dependency>
       <groupId>org.jboss.spec.javax.jms</groupId>
-      <artifactId>jboss-jms-api_1.1_spec</artifactId>
+      <artifactId>jboss-jms-api_2.0_spec</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -312,7 +312,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.remoting3</groupId>
+      <groupId>org.jboss.remoting</groupId>
       <artifactId>jboss-remoting</artifactId>
       <scope>test</scope>
     </dependency>

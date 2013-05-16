@@ -89,8 +89,8 @@ describe "basic sinatra test" do
   end
 
   it "should deploy servlets defined in WEB-INF/web.xml" do
-    visit "/basic-sinatra/default/public/some_page.html"
-    page.find('#success')[:class].should == 'default'
+    visit "/basic-sinatra/hello/"
+    page.find('body').text.should eql("Hello World")
   end
 
 end

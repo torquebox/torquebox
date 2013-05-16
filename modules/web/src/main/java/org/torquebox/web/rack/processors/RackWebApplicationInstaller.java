@@ -133,7 +133,7 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
 
         // setUpSendfileFilter( webMetaData );
         setUpRackFilter( unit, rackAppMetaData, webMetaData );
-        setUpStaticResourceServlet( rackAppMetaData, webMetaData, railsAppMetaData != null );
+        setUpStaticResourceServlet( resourceRoot, rackAppMetaData, webMetaData, railsAppMetaData != null );
         ensureSomeServlet( rackAppMetaData, webMetaData );
         try {
             jbossWebMetaData.setContextRoot( rackAppMetaData.getContextPath() );
@@ -234,7 +234,7 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
         filterMappings.add(filterMapping);
     }
 
-    protected void setUpStaticResourceServlet(RackMetaData rackAppMetaData, WebMetaData webMetaData, boolean enablePageCache) {
+    protected void setUpStaticResourceServlet(ResourceRoot resourceRoot, RackMetaData rackAppMetaData, WebMetaData webMetaData, boolean enablePageCache) {
         ServletsMetaData servlets = webMetaData.getServlets();
         if (servlets == null) {
             servlets = new ServletsMetaData();
@@ -256,7 +256,7 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
             List<ParamValueMetaData> paramsList = new ArrayList<ParamValueMetaData>();
             ParamValueMetaData resourceRootParam = new ParamValueMetaData();
             resourceRootParam.setParamName( "resource.root" );
-            resourceRootParam.setParamValue( rackAppMetaData.getStaticPathPrefix() );
+            resourceRootParam.setParamValue( resourceRoot.getRoot().getChild( rackAppMetaData.getStaticPathPrefix() ).getPathName() );
             paramsList.add( resourceRootParam );
 
             if (enablePageCache) {

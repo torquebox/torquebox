@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
         http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
   <servlet>
-    <servlet-name>defaultServlet</servlet-name>
-    <servlet-class>org.apache.catalina.servlets.DefaultServlet</servlet-class>
+    <servlet-name>helloWorldServlet</servlet-name>
+    <servlet-class>HelloWorldServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>defaultServlet</servlet-name>
-    <url-pattern>/default/*</url-pattern>
+    <servlet-name>helloWorldServlet</servlet-name>
+    <url-pattern>/hello/*</url-pattern>
   </servlet-mapping>
 </web-app>
