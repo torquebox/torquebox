@@ -7,8 +7,10 @@ class SimpleService
   def initialize(opts={})
     @options = opts
     raise 'not Hash' unless @options.is_a?(Hash)
-    @something  = TorqueBox.fetch( org.torquebox.ThingOne )
-    @polish     = TorqueBox.fetch( Java::pl.softwaremine.ThingThree )
+    unless java.lang.System.getProperty('org.torquebox.slim_distro')
+      @something  = TorqueBox.fetch( org.torquebox.ThingOne )
+      @polish     = TorqueBox.fetch( Java::pl.softwaremine.ThingThree )
+    end
     @logger     = TorqueBox::Logger.new(self.class)
     @response_queue = TorqueBox.fetch( '/queue/response' )
     @next_response_queue = TorqueBox.fetch( '/queue/next_response' )
@@ -29,7 +31,7 @@ class SimpleService
   end
 
   def loop_once
-    if ( @something && @polish )
+    if (java.lang.System.getProperty('org.torquebox.slim_distro') || (@something && @polish))
       @logger.info "Looping once"
       @logger.info "Sending notice to queue #{@queue}"
       @queue.publish( 'done' )

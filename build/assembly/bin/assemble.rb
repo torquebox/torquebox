@@ -97,6 +97,11 @@ class Assembler
     end
   end
 
+  def copy_resources
+    puts "Copying resources to JBoss directory"
+    FileUtils.cp_r( tool.base_dir + '/src/main/resources/.', tool.jboss_dir )
+  end
+
   def polyglot_extensions
     @polyglot_extensions ||= ['hasingleton', 'cache', 'stomp']
   end
@@ -224,7 +229,8 @@ class Assembler
     #clean
     prepare
     lay_down_jruby if @include_jruby
-    lay_down_jboss 
+    lay_down_jboss
+    copy_resources
     install_modules
     install_gems
     install_share

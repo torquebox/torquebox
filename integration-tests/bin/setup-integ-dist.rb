@@ -37,8 +37,8 @@ Dir.chdir( assembly_dir ) do
   end
 
   categories = ["org.torquebox", "TorqueBox", "org.jboss.security", "org.projectodd"]
-  config_files = ["#{output_dir}/jboss/standalone/configuration/standalone.xml",
-                  "#{output_dir}/jboss/domain/configuration/domain.xml"]
+  config_files = ["#{output_dir}/jboss/standalone/configuration/torquebox-slim.xml",
+                  "#{output_dir}/jboss/domain/configuration/torquebox-slim.xml"]
 
   config_files.each do |config_file|
     puts "Adding trace log level for #{categories.join(", ")} categories to #{config_file} file"
@@ -56,7 +56,7 @@ Dir.chdir( assembly_dir ) do
     end
   end
 
-  standalone_xml = "#{output_dir}/jboss/standalone/configuration/standalone.xml"
+  standalone_xml = "#{output_dir}/jboss/standalone/configuration/torquebox-slim.xml"
   doc = REXML::Document.new(File.read(standalone_xml))
   # Configure a test JAAS login module
   puts "Adding test security domain to #{standalone_xml}"

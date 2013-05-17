@@ -1,12 +1,12 @@
 
-require 'weird/uuid-3.2.jar'
+require 'weird/java-uuid-generator-3.1.3.jar'
 
-java_import 'com.eaio.uuid.UUID' 
+java_import 'com.fasterxml.uuid.Generators'
 
 class RootController < ApplicationController
 
   def index
-    @uuid = UUID.new 
+    @uuid = Generators.random_based_generator.generate
   end
 
 end

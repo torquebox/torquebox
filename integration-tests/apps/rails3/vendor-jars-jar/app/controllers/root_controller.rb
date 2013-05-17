@@ -1,10 +1,10 @@
 
-java_import 'com.eaio.uuid.UUID' 
+java_import 'com.fasterxml.uuid.Generators'
 
 class RootController < ApplicationController
 
   def index
-    @uuid = UUID.new 
+    @uuid = Generators.random_based_generator.generate
   end
 
 end

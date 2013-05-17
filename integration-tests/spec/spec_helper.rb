@@ -19,7 +19,7 @@ TorqueSpec.local {
 
 TorqueSpec.configure do |config|
   config.jboss_home = jboss_home
-  config.jvm_args = "-Xms256m -Xmx1024m -XX:MaxPermSize=512m -XX:NewRatio=8 -XX:+UseParallelGC -XX:+UseParallelOldGC -XX:SoftRefLRUPolicyMSPerMB=100 -Djruby.home=#{config.jruby_home} -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:#{File.join( jboss_log_dir, 'gc.log' )}"
+  config.jvm_args = "-Xms256m -Xmx1024m -XX:MaxPermSize=512m -XX:NewRatio=8 -XX:+UseParallelGC -XX:+UseParallelOldGC -XX:SoftRefLRUPolicyMSPerMB=100 -Djruby.home=#{config.jruby_home} -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:#{File.join( jboss_log_dir, 'gc.log' )} -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=$JBOSS_MODULES_SYSTEM_PKGS -Djava.awt.headless=true"
   config.max_heap = java.lang::System.getProperty( 'max.heap' )
   config.lazy = java.lang::System.getProperty( 'jboss.lazy' ) == "true"
   config.jvm_args += " -Dgem.path=default"
@@ -36,13 +36,26 @@ FileUtils.mkdir_p( jboss_log_dir ) unless File.exist?( jboss_log_dir )
 
 MUTABLE_APP_BASE_PATH  = File.join( File.dirname( __FILE__ ), '..', 'target', 'apps' )
 TESTING_ON_WINDOWS = ( java.lang::System.getProperty( "os.name" ) =~ /windows/i )
+SLIM_DISTRO = true
 
 module TorqueSpec
   module AS7
     def start_command
       ENV['APPEND_JAVA_OPTS'] = "#{TorqueSpec.jvm_args} -Djboss.home.dir=\"#{TorqueSpec.jboss_home}\""
-      boot_script = TESTING_ON_WINDOWS ? "standalone.bat" : "standalone.sh"
-      "\"#{TorqueSpec.jboss_home}/bin/#{boot_script}\""
+      script_suffix = TESTING_ON_WINDOWS ? "bat" : "sh"
+      boot_script = "standalone.#{script_suffix}"
+      server_config = SLIM_DISTRO ? "torquebox-slim.xml" : "torquebox-full.xml"
+      "\"#{TorqueSpec.jboss_home}/bin/#{boot_script}\" --server-config=#{server_config}"
+    end
+  end
+
+  module Domain
+    def start_command
+      ENV['JAVA_OPTS'] = "#{TorqueSpec.jvm_args} -Djboss.home.dir=\"#{TorqueSpec.jboss_home}\""
+      script_suffix = TESTING_ON_WINDOWS ? "bat" : "sh"
+      boot_script = "domain.#{script_suffix}"
+      server_config = SLIM_DISTRO ? "torquebox-slim.xml" : "torquebox-full.xml"
+      "\"#{TorqueSpec.jboss_home}/bin/#{boot_script}\" --domain-config=#{server_config}"
     end
   end
 end

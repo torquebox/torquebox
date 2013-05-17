@@ -71,11 +71,11 @@ module TorqueBox
       end
 
       def standalone_config_file
-        eap? ? "standalone-full.xml" : "standalone.xml"
+        eap? ? "torquebox-full.xml" : "torquebox-slim.xml"
       end
 
       def cluster_config_file
-        eap? ? "standalone-full-ha.xml" : "standalone-ha.xml"
+        eap? ? "torquebox-full-ha.xml" : "torquebox-slim-ha.xml"
       end
 
       def eap?
@@ -100,7 +100,7 @@ module TorqueBox
       end
 
       def torquebox_modules_dir
-        File.join( modules_dir, 'org', 'torquebox' )
+        File.join( modules_dir, 'system', 'layers', 'torquebox', 'org', 'torquebox' )
       end
 
       def archive_name(root = Dir.pwd)

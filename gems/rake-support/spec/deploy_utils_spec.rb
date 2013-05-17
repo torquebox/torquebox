@@ -204,7 +204,7 @@ describe TorqueBox::DeployUtils do
     end
 
     it 'should be where I expect it to be' do
-      @util.torquebox_modules_dir.downcase.should == "#{absolute_prefix}/torquebox/jboss/modules/org/torquebox".downcase
+      @util.torquebox_modules_dir.downcase.should == "#{absolute_prefix}/torquebox/jboss/modules/system/layers/torquebox/org/torquebox".downcase
     end
 
   end

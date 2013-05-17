@@ -16,9 +16,11 @@ shared_examples_for "basic rails3 test" do
     find("#name").should have_content("my-name")
   end
 
-  it "should support injection" do
-    visit "/basic-rails/root/injectiontest"
-    find('#success').text.should == 'taco'
+  unless SLIM_DISTRO
+    it "should support injection" do
+      visit "/basic-rails/root/injectiontest"
+      find('#success').text.should == 'taco'
+    end
   end
 
   it "should default to development environment" do

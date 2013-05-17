@@ -1,28 +1,28 @@
 
-include Java 
+include Java
 
-java_import 'com.eaio.uuid.UUID' 
+java_import 'com.fasterxml.uuid.Generators'
 
-require 'torquebox-messaging' 
-  
-class RackApp 
-  def initialize 
+require 'torquebox-messaging'
+
+class RackApp
+  def initialize
     @log = TorqueBox::Logger.new( 'adapters.producer.rack_app' )
-    @topic = TorqueBox::Messaging::Topic.new('/topics/producer/local') 
+    @topic = TorqueBox::Messaging::Topic.new('/topics/producer/local')
 
-    # rfc-4122 GUID 
-    @uuid = UUID.new 
-  end 
-  
-  def call(env) 
-    request = Rack::Request.new(env) 
+    # rfc-4122 GUID
+    @uuid = Generators.random_based_generator.generate
+  end
 
-    h = {:adapter => 'RackApp', 
+  def call(env)
+    request = Rack::Request.new(env)
+
+    h = {:adapter => 'RackApp',
          :uuid => @uuid }
 
-    @log.info "Sending JMS message:" 
-    @topic.publish(h) 
+    @log.info "Sending JMS message:"
+    @topic.publish(h)
 
     [200, {'Content-Type' => 'text/html'}, @uuid.to_s ]
-  end 
-end 
+  end
+end

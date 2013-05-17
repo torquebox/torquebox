@@ -4,7 +4,9 @@ class SimpleJob
 
   def initialize(opts)
     @options = opts
-    @polish     = fetch( Java::pl.softwaremine.ThingThree )
+    unless java.lang.System.getProperty('org.torquebox.slim_distro')
+      @polish     = fetch( Java::pl.softwaremine.ThingThree )
+    end
     @response_queue = fetch( '/queue/response' )
     @init_params_queue = fetch( '/queue/init_params' )
     @init_params_queue.publish( @options )
@@ -13,8 +15,9 @@ class SimpleJob
 
   def run()
     raise if @options['raise_error']
-    $stderr.puts "Job executing! queue is #{@response_queue} and polish is #{@polish}"
-    @response_queue.publish( 'done' ) if @polish
+    if java.lang.System.getProperty('org.torquebox.slim_distro') || @polish
+      @response_queue.publish( 'done' )
+    end
   end
 
   def on_error(error)

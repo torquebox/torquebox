@@ -20,9 +20,11 @@ describe "basic rails3.1 test" do
     page.find("#success")[:class].should == 'basic-rails'
   end
 
-  it "should support injection" do
-    visit "/basic-rails31/root/injectiontest"
-    find('#success').text.should == 'taco'
+  unless SLIM_DISTRO
+    it "should support injection" do
+      visit "/basic-rails31/root/injectiontest"
+      find('#success').text.should == 'taco'
+    end
   end
 
   if RUBY_VERSION[0,3] == '1.9'

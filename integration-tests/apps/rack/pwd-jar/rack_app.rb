@@ -1,9 +1,9 @@
 
 include Java 
 
-require 'weird/uuid-3.2.jar' 
+require 'weird/java-uuid-generator-3.1.3.jar'
 
-java_import 'com.eaio.uuid.UUID' 
+java_import 'com.fasterxml.uuid.Generators'
 
 require 'torquebox-messaging' 
   
@@ -13,7 +13,7 @@ class RackApp
     @topic = TorqueBox::Messaging::Topic.new('/topics/producer/local') 
 
     # rfc-4122 GUID 
-    @uuid = UUID.new 
+    @uuid = Generators.random_based_generator.generate
   end 
   
   def call(env) 

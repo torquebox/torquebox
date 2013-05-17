@@ -21,7 +21,8 @@
     <module>messaging</module>
     <module>jobs</module>
 
-    <module>cdi</module>
+    <!-- TODO: Enable cdi module under full distro, disable under slim -->
+    <!-- <module>cdi</module> -->
     <module>security</module>
     <module>stomp</module>
   </modules>

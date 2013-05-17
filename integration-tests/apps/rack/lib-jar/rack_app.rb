@@ -1,7 +1,7 @@
 
 include Java 
 
-java_import 'com.eaio.uuid.UUID' 
+java_import 'com.fasterxml.uuid.Generators'
 
 require 'torquebox-messaging' 
   
@@ -11,7 +11,7 @@ class RackApp
     @topic = TorqueBox::Messaging::Topic.new('/topics/producer/local') 
 
     # rfc-4122 GUID 
-    @uuid = UUID.new 
+    @uuid = Generators.random_based_generator.generate
   end 
   
   def call(env) 

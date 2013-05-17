@@ -175,9 +175,9 @@ class AssemblyTool
  
   def install_module(name, path, dest_suffix = nil, remember = true)
     puts "Installing #{name} from #{path}"
-    dest_suffix ||= "/modules/org/torquebox/#{name}/main"
+    dest_suffix ||= "/modules/system/layers/torquebox/org/torquebox/#{name}/main"
     FileUtils.mkdir_p( @jboss_dir )
-    Dir.chdir( @jboss_dir ) do 
+    Dir.chdir( @jboss_dir ) do
       dest_dir = Dir.pwd + dest_suffix
       FileUtils.rm_rf dest_dir
       FileUtils.mkdir_p File.dirname( dest_dir )
@@ -192,7 +192,7 @@ class AssemblyTool
     Dir.chdir( artifact_dir ) do
       unzip( artifact_path )
     end
-    install_module( name, artifact_dir, "/modules/org/projectodd/polyglot/#{name}/main", false )
+    install_module( name, artifact_dir, "/modules/system/layers/polyglot/org/projectodd/polyglot/#{name}/main", false )
   end
 
   def increase_deployment_timeout(doc)
@@ -279,7 +279,7 @@ class AssemblyTool
   def find_subsystem_file(module_name, file)
     group, name = module_name.split('-')
     [
-     "#{base_dir}/target/stage/torquebox/jboss/modules/org/projectodd/#{group}/#{name}/main/subsystem/#{file}",
+     "#{base_dir}/target/stage/torquebox/jboss/modules/system/layers/polyglot/org/projectodd/#{group}/#{name}/main/subsystem/#{file}",
      "#{base_dir}/../../modules/#{name}/src/subsystem/#{file}"
     ].detect { |f| File.exist?(f) }
   end
@@ -358,13 +358,15 @@ class AssemblyTool
     end
   end
 
-  def tweak_jboss_web_properties(doc)
+  def set_system_properties(doc)
     # Ensure cookie paths don't get quoted
     set_system_property(doc, 'org.apache.tomcat.util.http.ServerCookie.FWD_SLASH_IS_SEPARATOR', false)
     # Wait for an available thread instead of dropping new connections
     # when max-threads is reached
     # FIXME: Temporarily disabled because of performance issues
     set_system_property(doc, 'org.apache.tomcat.util.net.WAIT_FOR_THREAD', false)
+    # Mark this as a slim TorqueBox distribution
+    set_system_property(doc, 'org.torquebox.slim_distro', true)
   end
 
   def set_system_property(doc, name, value)
@@ -523,7 +525,7 @@ class AssemblyTool
       add_subsystems(doc, options[:extra_modules])
       ha ? add_ha_cache(doc) : add_cache(doc) 
       set_welcome_root(doc)
-      tweak_jboss_web_properties(doc)
+      set_system_properties(doc)
       remove_destinations(doc)
       disable_management_security(doc)
 
