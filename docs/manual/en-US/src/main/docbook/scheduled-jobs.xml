@@ -332,7 +332,7 @@ end</programlisting></para>
         <para>
           It is possible to create a new job at runtime. You need to use the
           <methodname>schedule</methodname> method available in the
-          <methodname>TorqueBox::ScheduledJob</methodname> module. This method
+          <methodname>TorqueBox::Jobs::ScheduledJob</methodname> module. This method
           returns <literal>true</literal> if the task is completed or
           <literal>false</literal> otherwise. There is a default
           timeout set to 30 seconds meaning that if the job will not be scheduled in the
@@ -342,13 +342,13 @@ end</programlisting></para>
         <para>
           <example>
             <title>Scheduling a job</title>
-            <para><programlisting>TorqueBox::ScheduledJob.schedule('JobClassName', '*/10 * * * * ?')</programlisting>
+            <para><programlisting>TorqueBox::Jobs::ScheduledJob.schedule('JobClassName', '*/10 * * * * ?')</programlisting>
 
               This simple execution will create a new scheduled job implemented
               in the <methodname>JobClassName</methodname> class and run it every
               10 seconds.
 
-              <programlisting>TorqueBox::ScheduledJob.schedule('JobClassName', '*/10 * * * * ?',
+              <programlisting>TorqueBox::Jobs::ScheduledJob.schedule('JobClassName', '*/10 * * * * ?',
       :name => 'simple.job',
       :description => 'This is a simple job',
       :timeout => '2s',
@@ -463,7 +463,7 @@ end</programlisting></para>
         <para>
           You can easily remove a scheduled job. To do this use the
           <methodname>remove</methodname> method available in the
-          <methodname>TorqueBox::ScheduledJob</methodname> module. This method
+          <methodname>TorqueBox::Jobs::ScheduledJob</methodname> module. This method
           returns <literal>true</literal> if the task is completed or
           <literal>false</literal> otherwise. There is a default
           timeout set to 30 seconds meaning that if the job will not be removed in the
@@ -482,7 +482,7 @@ end</programlisting></para>
         <para>
           <example>
             <title>Removing a job</title>
-            <para><programlisting>TorqueBox::ScheduledJob.remove('simple.job')</programlisting>
+            <para><programlisting>TorqueBox::Jobs::ScheduledJob.remove('simple.job')</programlisting>
 
               This example will lookup a job with the 'simple.job' name and remove it.
 
@@ -513,15 +513,15 @@ end</programlisting></para>
       <title>Examples of scheduling 'at' jobs</title>
 
       <para><programlisting># The job will be executed every 200 ms, from now, for the next 10 seconds
-TorqueBox::ScheduledJob.at('SimpleJob', :every => 200, :until => Time.now + 10)
+TorqueBox::Jobs::ScheduledJob.at('SimpleJob', :every => 200, :until => Time.now + 10)
 
 # The job will be executed for the first time in 10 seconds (current time + 10 seconds), then every
 # 500 ms, for the next 10 seconds (current time + 20 seconds)
-TorqueBox::ScheduledJob.at('SimpleJob', :at => Time.now + 10, :every => 500, :until => Time.now + 20)
+TorqueBox::Jobs::ScheduledJob.at('SimpleJob', :at => Time.now + 10, :every => 500, :until => Time.now + 20)
 
 # The job will be executed for the first time in 5s and repeated 3 times
 # The time between executions is set to 1.5s
-TorqueBox::ScheduledJob.at('SimpleJob', :in => 5000, :repeat => 3, :every => 1500)
+TorqueBox::Jobs::ScheduledJob.at('SimpleJob', :in => 5000, :repeat => 3, :every => 1500)
 </programlisting></para>
       </example></para>
 

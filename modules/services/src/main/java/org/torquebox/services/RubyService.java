@@ -75,7 +75,7 @@ public class RubyService implements RubyServiceMBean {
     }
 
     @Override
-    public String getStatus() throws Exception {
+    public String getStatus() {
         if (isStarted()) {
             return "STARTED";
         }
@@ -92,6 +92,18 @@ public class RubyService implements RubyServiceMBean {
 
     public ServiceComponent getComponent() {
         return this.servicesComponent;
+    }
+
+    @Override
+    public String toString() {
+        return "[RubyService: name=" + this.name +
+                "; status=" + this.getStatus() + "]";
+    }
+
+    // Workaround for TORQUE-1075 - Use service name in :inspect implementation
+    // https://issues.jboss.org/browse/TORQUE-1075
+    public String inspect() {
+        return this.toString();
     }
 
     private String name;
