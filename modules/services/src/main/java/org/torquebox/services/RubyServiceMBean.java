@@ -28,6 +28,6 @@ public interface RubyServiceMBean {
     
     String getName();
     String getRubyClassName();
-    String getStatus() throws Exception;
+    String getStatus();
 
 }
