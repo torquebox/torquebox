@@ -94,16 +94,16 @@ module TorqueBox
       # @see http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/CountDownLatch.html
       #
       # @example Run a job every 200 ms for over 5 seconds, from now
-      #   TorqueBox::AtJob.at('SimpleJob', :every => 200, :until => Time.now + 5)
+      #   TorqueBox::ScheduledJob.at('SimpleJob', :every => 200, :until => Time.now + 5)
       #
       # @example Start in 1 second, then every 200 ms for over 4 seconds (5 seconds from now, but start is delayed):
-      #   TorqueBox::AtJob.at('SimpleJob', :at => Time.now + 1, :every => 200, :until => Time.now + 5)
+      #   TorqueBox::ScheduledJob.at('SimpleJob', :at => Time.now + 1, :every => 200, :until => Time.now + 5)
       #
       # @example Start in 1 second, then every 200 ms for over 4 seconds (5 seconds from now, but start is delayed):
-      #   TorqueBox::AtJob.at('SimpleJob', :in => 1_000, :every => 200, :until => Time.now + 5)
+      #   TorqueBox::ScheduledJob.at('SimpleJob', :in => 1_000, :every => 200, :until => Time.now + 5)
       #
       # @example Start in 1 second, then repeat te job 10 times, every 200 ms
-      #   TorqueBox::AtJob.at('SimpleJob', :in => 1_000, :repeat => 10, :every => 200)
+      #   TorqueBox::ScheduledJob.at('SimpleJob', :in => 1_000, :repeat => 10, :every => 200)
       def at(class_name, options = {})
         raise "No job class name provided" if class_name.nil?
         raise "Invalid options for scheduling the job" if options.nil? or !options.is_a?(Hash)

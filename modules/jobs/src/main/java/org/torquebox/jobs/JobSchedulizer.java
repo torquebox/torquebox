@@ -47,7 +47,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Service to manage scheduled jobs at runtime.
+ * Service to manage scheduled and 'at' jobs at runtime.
  *
  * @author Marek Goldmann
  */
@@ -64,8 +64,9 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
      * scheduled jobs defined in deployment descriptors for the current
      * deployment unit.
      *
-     * @param context
+     * @param context JBoss MSC start context
      * @throws StartException
+     * @see StartContext
      */
     @Override
     public void start(StartContext context) throws StartException {
@@ -258,8 +259,9 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
      * Installs the component resolver service and the job service for provided job
      *
      * @param job                       The job to install the component resolver for
-     * @param componentResolverInjector
-     * @param rubyRuntimePoolInjector
+     * @param rubyClassName             The ruby class name
+     * @param componentResolverInjector Component resolver injector
+     * @param rubyRuntimePoolInjector   Ruby runtime injector
      * @param config                    The configuration (if any) which should
      *                                  be injected into the job constructor
      * @return The latch (CountDownLatch) to wait for the task completion.
@@ -330,8 +332,8 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
      * format 'Module::JobName'. We need to remove the '::' since it's not
      * allowed in the service name.
      *
-     * @param name
-     * @return Job name safe to include in the service name
+     * @param name      The name of the job
+     * @return          Job name safe to include in the service name
      */
     private String safeJobName(String name) {
         return name.replaceAll("::", ".");
