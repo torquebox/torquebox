@@ -272,9 +272,7 @@
     <profile>
       <id>eap</id>
       <activation>
-        <property>
-          <name>eap</name>
-        </property>
+        <activeByDefault>false</activeByDefault>
       </activation>
       <properties>
         <version.jbossas>7.2.0.Alpha1-redhat-4</version.jbossas>

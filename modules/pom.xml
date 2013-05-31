@@ -20,9 +20,6 @@
     <module>web</module>
     <module>messaging</module>
     <module>jobs</module>
-
-    <!-- TODO: Enable cdi module under full distro, disable under slim -->
-    <!-- <module>cdi</module> -->
     <module>security</module>
     <module>stomp</module>
   </modules>
@@ -254,6 +251,12 @@
          </plugins>
         </pluginManagement>
       </build>
+    </profile>
+    <profile>
+      <id>eap</id>
+      <modules>
+        <module>cdi</module>
+      </modules>
     </profile>
   </profiles>
 

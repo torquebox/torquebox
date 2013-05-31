@@ -32,6 +32,7 @@
     <ruby.compat.version>1.8</ruby.compat.version>
     <spec.dir>spec</spec.dir>
     <integ.debug>false</integ.debug>
+    <torquebox.slim>true</torquebox.slim>
   </properties>
 
   <dependencyManagement>
@@ -412,6 +413,12 @@
       </properties>
     </profile>
     <profile>
+      <id>eap</id>
+      <properties>
+        <torquebox.slim>false</torquebox.slim>
+      </properties>
+    </profile>
+    <profile>
       <id>ci</id>
       <properties>
         <driver.type>headless</driver.type>
@@ -609,6 +616,10 @@
                 <property>
                   <name>integ.debug</name>
                   <value>${integ.debug}</value>
+                </property>
+                <property>
+                  <name>torquebox.slim</name>
+                  <value>${torquebox.slim}</value>
                 </property>
               </systemProperties>
             </configuration>

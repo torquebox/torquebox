@@ -36,7 +36,7 @@ FileUtils.mkdir_p( jboss_log_dir ) unless File.exist?( jboss_log_dir )
 
 MUTABLE_APP_BASE_PATH  = File.join( File.dirname( __FILE__ ), '..', 'target', 'apps' )
 TESTING_ON_WINDOWS = ( java.lang::System.getProperty( "os.name" ) =~ /windows/i )
-SLIM_DISTRO = true
+SLIM_DISTRO = java.lang::System.getProperty( "torquebox.slim" ) == "true"
 
 module TorqueSpec
   module AS7
