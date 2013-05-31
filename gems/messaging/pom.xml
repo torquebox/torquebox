@@ -46,6 +46,12 @@
       <groupId>org.hornetq</groupId>
       <artifactId>hornetq-core-client</artifactId>
       <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jgroups</groupId>
+          <artifactId>jgroups</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -57,13 +63,13 @@
     <dependency>
       <groupId>org.hornetq</groupId>
       <artifactId>hornetq-jms-server</artifactId>
-      <scope>runtime</scope>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty</artifactId>
-      <scope>runtime</scope>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
