@@ -46,10 +46,10 @@ module TorqueBox
 
     def self.setup_environment
       ENV['TORQUEBOX_HOME'] ||= torquebox_home
-      ENV['JBOSS_HOME'] ||= "#{ENV['TORQUEBOX_HOME']}/jboss"
+      ENV['JBOSS_HOME'] ||= "#{ENV['TORQUEBOX_HOME']}/jboss" if ENV['TORQUEBOX_HOME']
       ENV['JRUBY_HOME'] ||= jruby_home
       ENV['JBOSS_OPTS'] ||= "-Djruby.home=#{jruby_home}"
-      %w(JBOSS_HOME JRUBY_HOME).each { |key| puts "[ERROR] #{key} is not set. Install torquebox-server gem or manually set #{key}" unless ENV[key] }
+      %w(JBOSS_HOME JRUBY_HOME).each { |key| puts "[ERROR] #{key} is not set. Install torquebox-server gem (and ensure it's in your Gemfile) or manually set #{key}" unless ENV[key] }
     end
 
   end
