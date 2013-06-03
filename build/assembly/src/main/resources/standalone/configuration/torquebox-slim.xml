@@ -96,17 +96,6 @@
                 <level name='ERROR'/>
             </logger>
         </subsystem>
-        <subsystem xmlns='urn:jboss:domain:datasources:1.1'>
-            <datasources>
-                <drivers>
-                    <driver name='h2' module='com.h2database.h2'>
-                        <xa-datasource-class>
-                            org.h2.jdbcx.JdbcDataSource
-                        </xa-datasource-class>
-                    </driver>
-                </drivers>
-            </datasources>
-        </subsystem>
         <subsystem xmlns='urn:jboss:domain:deployment-scanner:1.1'>
             <deployment-scanner path='deployments' relative-to='jboss.server.base.dir' scan-interval='5000' deployment-timeout='1200'/>
         </subsystem>
