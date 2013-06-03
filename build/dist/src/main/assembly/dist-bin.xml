@@ -8,6 +8,9 @@
     <fileSet>
       <directory>${basedir}/../assembly/target/stage/torquebox</directory>
       <outputDirectory>/</outputDirectory>
+      <excludes>
+        <exclude>**/jruby/lib/ruby/gems/*/cache/*.gem</exclude>
+      </excludes>
     </fileSet>
   </fileSets>
   <dependencySets>
