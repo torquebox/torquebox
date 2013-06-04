@@ -73,33 +73,6 @@
                     <level name='ERROR'/>
                 </logger>
             </subsystem>
-            <subsystem xmlns='urn:jboss:domain:datasources:1.1'>
-                <datasources>
-                    <datasource jndi-name='java:jboss/datasources/ExampleDS' pool-name='ExampleDS' enabled='true' use-java-context='true'>
-                        <connection-url>
-                            jdbc:h2:mem:test;DB_CLOSE_DELAY=-1
-                        </connection-url>
-                        <driver>
-                            h2
-                        </driver>
-                        <security>
-                            <user-name>
-                                sa
-                            </user-name>
-                            <password>
-                                sa
-                            </password>
-                        </security>
-                    </datasource>
-                    <drivers>
-                        <driver name='h2' module='com.h2database.h2'>
-                            <xa-datasource-class>
-                                org.h2.jdbcx.JdbcDataSource
-                            </xa-datasource-class>
-                        </driver>
-                    </drivers>
-                </datasources>
-            </subsystem>
             <subsystem xmlns='urn:jboss:domain:ee:1.1'>
                 <spec-descriptor-property-replacement>
                     false
@@ -304,35 +277,19 @@
                         <file-store passivation='false' purge='false'/>
                     </local-cache>
                 </cache-container>
-                <cache-container name='hibernate' default-cache='local-query' module='org.jboss.as.jpa.hibernate:4'>
-                    <local-cache name='entity'>
-                        <transaction mode='NON_XA'/>
-                        <eviction strategy='LRU' max-entries='10000'/>
-                        <expiration max-idle='100000'/>
-                    </local-cache>
-                    <local-cache name='local-query'>
-                        <transaction mode='NONE'/>
-                        <eviction strategy='LRU' max-entries='10000'/>
-                        <expiration max-idle='100000'/>
-                    </local-cache>
-                    <local-cache name='timestamps'>
-                        <transaction mode='NONE'/>
-                        <eviction strategy='NONE'/>
-                    </local-cache>
-                </cache-container>
             </subsystem>
             <subsystem xmlns='urn:jboss:domain:jca:1.1'>
-                <archive-validation enabled='true' fail-on-error='true' fail-on-warn='false'/>
-                <bean-validation enabled='true'/>
+                <archive-validation enabled='false' fail-on-error='true' fail-on-warn='false'/>
+                <bean-validation enabled='false'/>
                 <default-workmanager>
                     <short-running-threads>
-                        <core-threads count='50'/>
+                        <core-threads count='1'/>
                         <queue-length count='50'/>
                         <max-threads count='50'/>
                         <keepalive-time time='10' unit='seconds'/>
                     </short-running-threads>
                     <long-running-threads>
-                        <core-threads count='50'/>
+                        <core-threads count='1'/>
                         <queue-length count='50'/>
                         <max-threads count='50'/>
                         <keepalive-time time='10' unit='seconds'/>
@@ -541,33 +498,6 @@
                     <level name='ERROR'/>
                 </logger>
             </subsystem>
-            <subsystem xmlns='urn:jboss:domain:datasources:1.1'>
-                <datasources>
-                    <datasource jndi-name='java:jboss/datasources/ExampleDS' pool-name='ExampleDS' enabled='true' use-java-context='true'>
-                        <connection-url>
-                            jdbc:h2:mem:test;DB_CLOSE_DELAY=-1
-                        </connection-url>
-                        <driver>
-                            h2
-                        </driver>
-                        <security>
-                            <user-name>
-                                sa
-                            </user-name>
-                            <password>
-                                sa
-                            </password>
-                        </security>
-                    </datasource>
-                    <drivers>
-                        <driver name='h2' module='com.h2database.h2'>
-                            <xa-datasource-class>
-                                org.h2.jdbcx.JdbcDataSource
-                            </xa-datasource-class>
-                        </driver>
-                    </drivers>
-                </datasources>
-            </subsystem>
             <subsystem xmlns='urn:jboss:domain:ee:1.1'>
                 <spec-descriptor-property-replacement>
                     false
@@ -593,52 +523,19 @@
                         <file-store/>
                     </distributed-cache>
                 </cache-container>
-                <cache-container name='ejb' aliases='sfsb sfsb-cache' default-cache='repl' module='org.jboss.as.clustering.ejb3.infinispan'>
-                    <transport lock-timeout='60000'/>
-                    <replicated-cache name='repl' mode='ASYNC' batching='true'>
-                        <eviction strategy='LRU' max-entries='10000'/>
-                        <file-store/>
-                    </replicated-cache>
-                    <!--
-                      ~  Clustered cache used internally by EJB subsytem for managing the client-mapping(s) of
-                      ~                 the socketbinding referenced by the EJB remoting connector 
-                      -->
-                    <replicated-cache name='remote-connector-client-mappings' mode='SYNC' batching='true'/>
-                    <distributed-cache name='dist' mode='ASYNC' batching='true' l1-lifespan='0'>
-                        <eviction strategy='LRU' max-entries='10000'/>
-                        <file-store/>
-                    </distributed-cache>
-                </cache-container>
-                <cache-container name='hibernate' default-cache='local-query' module='org.jboss.as.jpa.hibernate:4'>
-                    <transport lock-timeout='60000'/>
-                    <local-cache name='local-query'>
-                        <transaction mode='NONE'/>
-                        <eviction strategy='LRU' max-entries='10000'/>
-                        <expiration max-idle='100000'/>
-                    </local-cache>
-                    <invalidation-cache name='entity' mode='SYNC'>
-                        <transaction mode='NON_XA'/>
-                        <eviction strategy='LRU' max-entries='10000'/>
-                        <expiration max-idle='100000'/>
-                    </invalidation-cache>
-                    <replicated-cache name='timestamps' mode='ASYNC'>
-                        <transaction mode='NONE'/>
-                        <eviction strategy='NONE'/>
-                    </replicated-cache>
-                </cache-container>
             </subsystem>
             <subsystem xmlns='urn:jboss:domain:jca:1.1'>
-                <archive-validation enabled='true' fail-on-error='true' fail-on-warn='false'/>
-                <bean-validation enabled='true'/>
+                <archive-validation enabled='false' fail-on-error='true' fail-on-warn='false'/>
+                <bean-validation enabled='false'/>
                 <default-workmanager>
                     <short-running-threads>
-                        <core-threads count='50'/>
+                        <core-threads count='1'/>
                         <queue-length count='50'/>
                         <max-threads count='50'/>
                         <keepalive-time time='10' unit='seconds'/>
                     </short-running-threads>
                     <long-running-threads>
-                        <core-threads count='50'/>
+                        <core-threads count='1'/>
                         <queue-length count='50'/>
                         <max-threads count='50'/>
                         <keepalive-time time='10' unit='seconds'/>
