@@ -32,6 +32,7 @@ module TorqueBox
 
       def self.included(base)
         base.extend(ClassMethods)
+        base.extend(FutureStatus)
         base.send(:include, FutureStatus)
       end
 
