@@ -54,6 +54,7 @@ Dir.chdir( assembly_dir ) do
         logger.add_element("level", "name" => "TRACE")
       end
     end
+
     open(config_file, 'w') do |file|
       doc.write(file, 4)
     end
@@ -72,9 +73,24 @@ Dir.chdir( assembly_dir ) do
     login_module.add_element("module-option", "name"=>"usersProperties", "value"=>"${jboss.server.config.dir}/pork-users.properties")
     login_module.add_element("module-option", "name"=>"rolesProperties", "value"=>"${jboss.server.config.dir}/pork-roles.properties")
 
+    puts "Disabling standalone management interface security"
+    # Disable management interface security
+    interfaces = doc.root.get_elements("//management-interfaces/*")
+    interfaces.each { |i| i.attributes.delete( 'security-realm' )}
+
     open(standalone_xml, 'w') do |file|
       doc.write(file, 4)
     end
+  end
+
+  host_xml = "#{output_dir}/jboss/domain/configuration/host.xml"
+  doc = REXML::Document.new(File.read(host_xml))
+  puts "Disabling domain management interface security"
+  # Disable management interface security
+  interfaces = doc.root.get_elements("//management-interfaces/*")
+  interfaces.each { |i| i.attributes.delete( 'security-realm' )}
+  open(host_xml, 'w') do |file|
+    doc.write(file, 4)
   end
 
   # Write the users and roles properties files

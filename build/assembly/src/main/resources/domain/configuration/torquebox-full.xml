@@ -48,6 +48,7 @@
         <property name='java.net.preferIPv4Stack' value='true'/>
         <property name='org.apache.tomcat.util.http.ServerCookie.FWD_SLASH_IS_SEPARATOR' value='false'/>
         <property name='org.apache.tomcat.util.net.WAIT_FOR_THREAD' value='false'/>
+        <property name='org.quartz.scheduler.skipUpdateCheck' value='true'/>
     </system-properties>
     <profiles>
         <profile name='ha'>
@@ -1294,7 +1295,7 @@
         </socket-binding-group>
     </socket-binding-groups>
     <server-groups>
-        <server-group name='default' profile='default'>
+        <server-group name='main-server-group' profile='default'>
             <socket-binding-group ref='standard-sockets'/>
         </server-group>
     </server-groups>

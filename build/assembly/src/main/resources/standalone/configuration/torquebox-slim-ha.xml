@@ -30,6 +30,7 @@
     <system-properties>
         <property name='org.apache.tomcat.util.http.ServerCookie.FWD_SLASH_IS_SEPARATOR' value='false'/>
         <property name='org.apache.tomcat.util.net.WAIT_FOR_THREAD' value='false'/>
+        <property name='org.quartz.scheduler.skipUpdateCheck' value='true'/>
         <property name='org.torquebox.slim_distro' value='true'/>
     </system-properties>
     <management>
@@ -51,10 +52,10 @@
             </security-realm>
         </security-realms>
         <management-interfaces>
-            <native-interface>
+            <native-interface security-realm='ManagementRealm'>
                 <socket-binding native='management-native'/>
             </native-interface>
-            <http-interface console-enabled='false'>
+            <http-interface console-enabled='false' security-realm='ManagementRealm'>
                 <socket-binding http='management-http'/>
             </http-interface>
         </management-interfaces>

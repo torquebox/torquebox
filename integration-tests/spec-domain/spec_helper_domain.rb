@@ -9,12 +9,12 @@ def domain_host_for(server)
 end
 
 def domain_port_for(server, base_port)
-  port_offset = 100
+  port_offset = 150
   server == :server1 ? base_port : base_port + port_offset
 end
 
 def domain_server_config_for(server)
-  server == :server1 ? 'server-01' : 'server-02'
+  server == :server1 ? 'server-one' : 'server-two'
 end
 
 def start_server(server)

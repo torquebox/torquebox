@@ -172,59 +172,6 @@ class Assembler
     FileUtils.cp( stomp_js, File.join( js_dir, 'stilts-stomp.js' ) )
   end
 
-  def stash_stock_configs
-    FileUtils.cp( tool.jboss_dir + '/standalone/configuration/standalone-full.xml',
-                  config_stash + '/standalone-full.xml' ) unless File.exist?( config_stash + '/standalone-full.xml' )
-    FileUtils.cp( tool.jboss_dir + '/standalone/configuration/standalone-full-ha.xml',
-                  config_stash + '/standalone-full-ha.xml' ) unless File.exist?( config_stash + '/standalone-full-ha.xml' )
-    FileUtils.cp( tool.jboss_dir + '/domain/configuration/domain.xml',
-                  config_stash + '/domain.xml' )     unless File.exist?( config_stash + '/domain.xml' )
-  end
-
-  def stash_stock_host_config
-    FileUtils.cp( tool.jboss_dir + '/domain/configuration/host.xml',
-                  config_stash + '/host.xml' ) unless File.exist?( config_stash + '/host.xml' )
-  end
-
-  def trash_stock_host_config
-    FileUtils.rm_f( tool.jboss_dir + '/domain/configuration/host.xml' )
-  end
-
-  def trash_stock_configs
-    FileUtils.rm_f( Dir[ tool.jboss_dir + '/standalone/configuration/standalone*.xml' ] )
-    FileUtils.rm_f( Dir[ tool.jboss_dir + '/domain/configuration/domain*.xml' ] )
-  end
-
-  def transform_configs
-    stash_stock_configs
-    trash_stock_configs
-    polyglot_exts = polyglot_extensions.map { |name| ["projectodd", "polyglot", name]}
-    tool.transform_config(config_stash + '/standalone-full.xml',
-                          'standalone/configuration/standalone-full.xml',
-                          :extra_modules => polyglot_exts)
-    tool.transform_config(config_stash + '/standalone-full-ha.xml',
-                          'standalone/configuration/standalone-full-ha.xml',
-                          :extra_modules => polyglot_exts,
-                          :ha => true )
-    tool.transform_config(config_stash + '/domain.xml',
-                          'domain/configuration/domain.xml',
-                          :extra_modules => polyglot_exts,
-                          :domain => true,
-                          :ha => true )
-  end
-
-  def transform_host_config
-    stash_stock_host_config
-    trash_stock_host_config
-    tool.transform_host_config( config_stash + '/host.xml', 'domain/configuration/host.xml' )
-  end
-
-  def transform_standalone_confs
-    torquebox_java_opts = "-Xss2048k -Djruby.compile.invokedynamic=false -Dorg.quartz.scheduler.skipUpdateCheck=true"
-    tool.transform_standalone_conf( torquebox_java_opts )
-    tool.transform_standalone_conf_bat( torquebox_java_opts )
-  end
-
   def assemble()
     #clean
     prepare
@@ -234,17 +181,10 @@ class Assembler
     install_modules
     install_gems
     install_share
-    transform_configs
-    transform_host_config
-    transform_standalone_confs
-    Dir.chdir( tool.jboss_dir ) do
-      FileUtils.cp( 'standalone/configuration/standalone-full.xml', 'standalone/configuration/standalone.xml' )
-      FileUtils.cp( 'standalone/configuration/standalone-full-ha.xml', 'standalone/configuration/standalone-ha.xml' )
-    end
   end
 end
 
-class CLI 
+class CLI
 
   def self.parse!(args)
     CLI.new.parse! args

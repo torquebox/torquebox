@@ -41,7 +41,7 @@ SLIM_DISTRO = java.lang::System.getProperty( "org.torquebox.slim_distro" ) == "t
 module TorqueSpec
   module AS7
     def start_command
-      ENV['APPEND_JAVA_OPTS'] = "#{TorqueSpec.jvm_args} -Djboss.home.dir=\"#{TorqueSpec.jboss_home}\""
+      ENV['JAVA_OPTS'] = "#{TorqueSpec.jvm_args} -Djboss.home.dir=\"#{TorqueSpec.jboss_home}\""
       script_suffix = TESTING_ON_WINDOWS ? "bat" : "sh"
       boot_script = "standalone.#{script_suffix}"
       server_config = SLIM_DISTRO ? "torquebox-slim.xml" : "torquebox-full.xml"
@@ -56,6 +56,13 @@ module TorqueSpec
       boot_script = "domain.#{script_suffix}"
       server_config = SLIM_DISTRO ? "torquebox-slim.xml" : "torquebox-full.xml"
       "\"#{TorqueSpec.jboss_home}/bin/#{boot_script}\" --domain-config=#{server_config}"
+    end
+
+    def ready?
+      host = host_controller[1]
+      host["server"].size > 1
+    rescue
+      false
     end
   end
 end
