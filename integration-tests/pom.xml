@@ -618,7 +618,7 @@
                   <value>${integ.debug}</value>
                 </property>
                 <property>
-                  <name>torquebox.slim</name>
+                  <name>org.torquebox.slim_distro</name>
                   <value>${torquebox.slim}</value>
                 </property>
               </systemProperties>
