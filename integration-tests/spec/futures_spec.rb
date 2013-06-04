@@ -28,7 +28,7 @@ remote_describe 'in container futures tests' do
         wait_time += 0.1
       end
     end
-    
+
     it "should work" do
       future = @something.foo
       @backchannel.receive( :timeout => 120_000 ).should == 'release'
@@ -49,6 +49,17 @@ remote_describe 'in container futures tests' do
 
     it "should set the status" do
       future = @something.with_status
+      wait_for { future.started? }
+      wait_for { future.status_changed? }
+      ['1', '2', '3', '4'].should include(future.status)
+      @backchannel.publish( 'ack' )
+      wait_for { future.complete? }
+      future.result.should == 'ding'
+      future.status.should == '4'
+    end
+
+    it 'should set the status from class methods' do
+      future = Something.class_with_status
       wait_for { future.started? }
       wait_for { future.status_changed? }
       ['1', '2', '3', '4'].should include(future.status)
