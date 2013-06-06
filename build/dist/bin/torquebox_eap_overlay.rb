@@ -82,11 +82,11 @@ class EapOverlayer
   def add_extensions(doc)
     extensions = doc.root.get_elements('extensions').first
     org_dir = File.join(@torquebox_dir, 'modules', 'org')
-    all_extensions = polyglot_modules.map do |module_name|
-      "org.projectodd.polyglot.#{module_name}"
-    end
-    all_extensions += torquebox_modules.map do |module_name|
+    all_extensions = torquebox_modules.map do |module_name|
       "org.torquebox.#{module_name}"
+    end
+    all_extensions += polyglot_modules.map do |module_name|
+      "org.projectodd.polyglot.#{module_name}"
     end
     all_extensions.each do |name|
       previous_extension = extensions.get_elements("extension[@module='#{name}']")
@@ -100,17 +100,17 @@ class EapOverlayer
   def add_subsystems(doc)
     profiles = doc.root.get_elements('//profile')
     profiles.each do |profile|
-      all_subsystems = polyglot_modules.map do |module_name|
-        "polyglot-#{module_name}"
-      end
-      all_subsystems += torquebox_modules.map do |module_name|
+      all_subsystems = torquebox_modules.map do |module_name|
         "torquebox-#{module_name}"
+      end
+      all_subsystems += polyglot_modules.map do |module_name|
+        "polyglot-#{module_name}"
       end
       all_subsystems.each do |name|
         previous_subsystem = profile.get_elements("subsystem[contains(@xmlns, 'urn:jboss:domain:#{name}:')]")
         if previous_subsystem.empty?
           subsystem = { 'xmlns' => "urn:jboss:domain:#{name}:1.0" }
-          subsystem['socket-binding'] = 'stomp' if name == 'torquebox-stomp'
+          subsystem['socket-binding'] = 'stomp' if name == 'polyglot-stomp'
           profile.add_element('subsystem', subsystem)
         end
       end
@@ -171,7 +171,7 @@ class EapOverlayer
   def polyglot_modules
     org_dir = File.join(@torquebox_dir, 'modules', 'org')
     polyglot_dir = File.join(org_dir, 'projectodd', 'polyglot', '*')
-    Dir[polyglot_dir].map { |dir| File.basename(dir) }
+    modules = Dir[polyglot_dir].map { |dir| File.basename(dir) }
     # polyglot-core and polyglot-web are not extensions / subsystems
     modules.delete('core')
     modules.delete('web')
