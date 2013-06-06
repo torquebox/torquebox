@@ -164,6 +164,10 @@ class EapOverlayer
     org_dir = File.join(@torquebox_dir, 'modules', 'org')
     polyglot_dir = File.join(org_dir, 'projectodd', 'polyglot', '*')
     Dir[polyglot_dir].map { |dir| File.basename(dir) }
+    # polyglot-core and polyglot-web are not extensions / subsystems
+    modules.delete('core')
+    modules.delete('web')
+    modules
   end
 
   def wfk_modules_dir
