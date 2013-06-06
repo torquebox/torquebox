@@ -73,6 +73,7 @@ class EapOverlayer
     add_subsystems(doc)
     add_cache(doc)
     add_socket_bindings(doc)
+    disable_welcome_root(doc)
     open(config_path, 'w') do |file|
       doc.write(file, 4)
     end
@@ -149,6 +150,13 @@ class EapOverlayer
           binding_group.first.add_element('socket-binding', 'name' => 'stomp', 'port' => 8675)
         end
       end
+    end
+  end
+
+  def disable_welcome_root(doc)
+    virtual_servers = doc.root.get_elements('//virtual-server')
+    virtual_servers.each do |server|
+      server.attributes['enable-welcome-root'] = 'false' if server.attributes['name'] == 'default-host'
     end
   end
 
