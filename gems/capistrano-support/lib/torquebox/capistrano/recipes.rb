@@ -124,7 +124,7 @@ module Capistrano
               case ( jboss_control_style )
                 when :initd
                   puts "Restarting TorqueBox AS"
-                  puts "JBOSS_HOME=#{jboss_home} #{jboss_init_script} restart"
+                  run "JBOSS_HOME=#{jboss_home} #{jboss_init_script} restart"
                 when :binscripts
                   run "JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
                   run "nohup #{jboss_home}/bin/standalone.sh -bpublic=#{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
