@@ -254,15 +254,10 @@ Listen 127.0.0.1:6666
     In these cases, it's possible to configure TorqueBox to use a predefined
     set of cluster members.</para>
 
-    <section id="clustering-infinispan-without-multicast">
-      <title>Clustering Infinispan</title>
-
-      <para>Infinispan is used for web session replication and can be used for
-      clustered caching if your application is setup appropriately. See <xref
-      linkend="cache"/> for more details on this setup. Under the hood
-      Infinispan uses a library called JGroups to handle the cluster discovery
-      and transports. An example of configuring Infinispan to cluster without
-      multicast is below.</para>
+    <para>Under the hood TorqueBox uses a library called JGroups to
+    handle the cluster discovery and transports. An example of
+    configuring TorqueBox services to cluster without multicast is
+    below.</para>
 
       <para><example>
           <title>JGroups Configuration
@@ -322,74 +317,6 @@ Listen 127.0.0.1:6666
       </para>
     </section>
 
-    <section id="clustering-hornetq-without-multicast">
-      <title>Clustering HornetQ</title>
-
-      <para>HornetQ is used for all messaging. Right now HornetQ doesn't use
-      JGroups for its cluster configuration so we must configure it separately
-      from Infinispan. An example of configuring HornetQ to cluster without
-      multicast is below.</para>
-
-      <para><example>
-          <title>HornetQ Configuration
-          (<filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>)</title>
-
-          <para><programlisting>&lt;server xmlns="urn:jboss:domain:1.3"&gt;
-  &lt;profile&gt;
-    ...
-    &lt;subsystem xmlns="urn:jboss:domain:messaging:1.2"&gt;
-      &lt;hornetq-server&gt;
-        ...
-        &lt;connectors&gt;
-          &lt;netty-connector name="netty" socket-binding="messaging"/&gt;
-          ...
-          &lt;netty-connector name="server2-connector" socket-binding="messaging-server2"/&gt;
-          &lt;netty-connector name="server3-connector" socket-binding="messaging-server3"/&gt;
-        &lt;/connectors&gt;
-        ...
-        &lt;cluster-connections&gt;
-          &lt;cluster-connection name="my-cluster"&gt;
-            &lt;address&gt;
-              jms
-            &lt;/address&gt;
-            &lt;connector-ref&gt;
-              netty
-            &lt;/connector-ref&gt;
-            &lt;static-connectors&gt;
-              &lt;connector-ref&gt;
-                server2-connector
-              &lt;/connector-ref&gt;
-              &lt;connector-ref&gt;
-                server3-connector
-              &lt;/connector-ref&gt;
-            &lt;/static-connectors&gt;
-          &lt;/cluster-connection&gt;
-        &lt;/cluster-connections&gt;
-        ...
-      &lt;/hornetq-server&gt;
-    &lt;/subsystem&gt;
-    ...
-  &lt;/profile&gt;
-  &lt;socket-binding-group name="standard-sockets" default-interface="public"&gt;
-    ...
-    &lt;socket-binding name="messaging" port="5445"/&gt;
-      ...
-      &lt;outbound-socket-binding name="messaging-server2"&gt;
-        &lt;remote-destination host="10.100.10.2" port="5445"/&gt;
-      &lt;/outbound-socket-binding&gt;
-      &lt;outbound-socket-binding name="messaging-server3"&gt;
-        &lt;remote-destination host="10.100.10.3" port="5445"/&gt;
-      &lt;/outbound-socket-binding&gt;
-  &lt;/socket-binding-group&gt;
-&lt;/server&gt;
-        </programlisting> Change the outbound socket binding hosts and ports
-          to match your environment. The port should match the value of the
-          messaging socket binding configured on each host. Each additional
-          host needs the netty-connector, connector-ref under
-          static-connectors, and outbound-socket-binding elements.</para>
-        </example></para>
-    </section>
-
     <section id="clustering-modcluster-without-multicast">
       <title>Clustering mod_cluster</title>
 
@@ -425,8 +352,6 @@ Listen 127.0.0.1:6666
         linkend="mod-cluster-configuration"/>.</para>
         </example></para>
     </section>
-
-  </section>
 
   <section id="number-http-threads">
     <title>Sizing Number of HTTP Threads to Connection Pool</title>

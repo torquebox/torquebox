@@ -364,25 +364,17 @@
                 </acceptors>
                 <broadcast-groups>
                     <broadcast-group name='bg-group1'>
-                        <socket-binding>
-                            messaging-group
-                        </socket-binding>
-                        <broadcast-period>
-                            5000
-                        </broadcast-period>
-                        <connector-ref>
-                            netty
-                        </connector-ref>
+                        <jgroups-stack>${msg.jgroups.stack:udp}</jgroups-stack>
+                        <jgroups-channel>${msg.jgroups.channel:hq-cluster}</jgroups-channel>
+                        <broadcast-period>5000</broadcast-period>
+                        <connector-ref>netty</connector-ref>
                     </broadcast-group>
                 </broadcast-groups>
                 <discovery-groups>
                     <discovery-group name='dg-group1'>
-                        <socket-binding>
-                            messaging-group
-                        </socket-binding>
-                        <refresh-timeout>
-                            10000
-                        </refresh-timeout>
+                        <jgroups-stack>${msg.jgroups.stack:udp}</jgroups-stack>
+                        <jgroups-channel>${msg.jgroups.channel:hq-cluster}</jgroups-channel>
+                        <refresh-timeout>10000</refresh-timeout>
                     </discovery-group>
                 </discovery-groups>
                 <cluster-connections>
