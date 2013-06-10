@@ -71,6 +71,17 @@ describe 'basic rails3.2 test' do
     third_time.should_not == second_time
   end
 
+  it 'should not served cached pages for POST requests' do
+    visit "/basic-rails32/root/page_caching.json?time=#{Time.now.to_f}"
+    first_time = JSON.parse(page.source)['time']
+    uri = URI.parse(page.driver.send(:url, "/basic-rails32/root/page_caching.json?time=#{Time.now.to_f}"))
+    http = Net::HTTP.new(uri.host, uri.port)
+    request = Net::HTTP::Post.new(uri.request_uri)
+    response = http.request(request)
+    second_time = JSON.parse(response.body)['time']
+    first_time.should_not == second_time
+  end
+
   it 'should return a static page beneath default public dir' do
     visit "/basic-rails32/some_page.html"
     element = page.find('#success')
