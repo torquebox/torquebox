@@ -315,6 +315,79 @@ Listen 127.0.0.1:6666
           different port on those hosts.</para>
         </note>
       </para>
+
+      <section id="clustering-on-amazon">
+        <title>Clustering On Amazon EC2</title>
+        <para>
+          A gossip router is the typical solution when dynamic peer
+          discovery is desired in a non-multicast environment. Another
+          option, if on Amazon EC2, is the <ulink
+          url="http://www.jgroups.org/javadoc/org/jgroups/protocols/S3_PING.html">S3_PING</ulink>
+          JGroups protocol.
+        </para>
+
+        <para>
+          Enabling clustering with dynamic discovery on EC2 amounts to
+          replacing the <code>MPING</code> protocol element of the
+          "tcp" stack configured in
+          <code>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</code>
+          with <code>S3_PING</code>. And be sure to change the
+          <code>default-stack</code> attribute of the
+          <code>subsystem</code> to "tcp".
+        </para>
+
+        <para><example>
+          <title>JGroups Configuration
+          (<filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>)</title>
+
+          <para><programlisting>...
+&lt;subsystem xmlns="urn:jboss:domain:jgroups:1.1" default-stack="tcp"&gt;
+  &lt;stack name="tcp"&gt;
+    &lt;transport type="TCP" socket-binding="jgroups-tcp"/&gt;
+  
+    &lt;protocol type="S3_PING"&gt;
+      &lt;property name="secret_access_key"&gt;YOUR_SECRET_ACCESS_KEY&lt;/property&gt;
+      &lt;property name="access_key"&gt;YOUR_ACCESS_KEY&lt;/property&gt;
+      &lt;property name="location"&gt;SOME_BUCKET_PATH&lt;/property&gt;
+    &lt;/protocol&gt;
+  
+    &lt;protocol type="MERGE2"/&gt;
+    &lt;protocol type="FD_SOCK" socket-binding="jgroups-tcp-fd"/&gt;
+    ...
+  &lt;/stack&gt;
+&lt;/subsystem&gt;</programlisting>
+          </para>
+        </example></para>
+      </section>
+
+      <section id="clustering-hornetq">
+        <title>HornetQ Configuration</title>
+        <para>
+          Without multicast, you must change the HornetQ config to use
+          the JGroups "tcp" stack instead of the default "udp" stack.
+        </para>
+
+        <para>
+          Search for <code>jgroups-stack</code> in
+          <code>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</code>,
+          and you'll see this beneath both the <code>broadcast-group</code> and
+          <code>discovery-group</code> elements:
+        </para>
+
+        <screen>&lt;jgroups-stack&gt;${msg.jgroups.stack:udp}&lt;/jgroups-stack&gt;</screen>
+
+        <para>
+          This <code>${property:default}</code> syntax refers to a
+          Java system property called <code>msg.jgroups.stack</code>.
+          If unset, the value following the colon is used, so you must
+          either set this system property to "tcp" on the command
+          line, e.g. <code>-Dmsg.jgroups.stack=tcp</code>, or replace
+          "udp" with "tcp" in the config file for both the
+          <code>broadcast-group</code> and
+          <code>discovery-group</code> elements.
+        </para>
+      </section>
+
     </section>
 
     <section id="clustering-modcluster-without-multicast">
