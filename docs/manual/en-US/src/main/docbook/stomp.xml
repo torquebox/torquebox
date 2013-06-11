@@ -219,11 +219,9 @@
 class SimpleBroadcastStomplet
 
   def initialize()
-    super
   end
 
   def configure(stomplet_config)
-    super
   end
 
   def on_message(stomp_message, session)
