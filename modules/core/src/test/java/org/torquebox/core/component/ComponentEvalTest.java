@@ -53,7 +53,7 @@ public class ComponentEvalTest {
         eval.setCode(  "42"  );
         eval.setLocation( "right here!" );
         
-        IRubyObject result = eval.newInstance( this.ruby, new Object[] {}  );
+        IRubyObject result = eval.newInstance( this.ruby, new Object[] {}, false  );
         
         Long javaResult = (Long) JavaEmbedUtils.rubyToJava( result );
         
