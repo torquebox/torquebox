@@ -73,7 +73,7 @@ public class ComponentResolver {
         if (initializeParams != null && initializeParams.length == 1 && initializeParams[0] instanceof Map) {
             initializeParams[0] = RuntimeHelper.convertJavaMapToRubyHash( runtime, (Map) initializeParams[0] );
         }
-        IRubyObject rubyComponent = this.componentInstantiator.newInstance( runtime, this.initializeParams );
+        IRubyObject rubyComponent = this.componentInstantiator.newInstance( runtime, this.initializeParams, this.alwaysReload );
         return rubyComponent;
     }
 

@@ -24,6 +24,6 @@ import org.jruby.runtime.builtin.IRubyObject;
 
 public interface ComponentInstantiator {
     
-    IRubyObject newInstance(Ruby runtime, Object[] initParams);
+    IRubyObject newInstance(Ruby runtime, Object[] initParams, boolean alwaysReload);
 
 }

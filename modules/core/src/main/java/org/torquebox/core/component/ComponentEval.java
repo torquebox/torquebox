@@ -48,7 +48,7 @@ public class ComponentEval implements ComponentInstantiator {
         return this.location;
     }
 
-    public IRubyObject newInstance(Ruby runtime, Object[] initParams) {
+    public IRubyObject newInstance(Ruby runtime, Object[] initParams, boolean alwaysReload) {
         return RuntimeHelper.executeScript( runtime, this.code, this.location );
     }
 

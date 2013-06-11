@@ -27,6 +27,7 @@ public class ComponentClass implements ComponentInstantiator {
 
     private String className;
     private String requirePath;
+    private boolean loaded = false;
 
     public ComponentClass() {
 
@@ -48,14 +49,28 @@ public class ComponentClass implements ComponentInstantiator {
         return this.requirePath;
     }
 
-    public IRubyObject newInstance(Ruby runtime, Object[] initParams) {
-        synchronized(("ComponentClassLock" + this.className).intern()) {
-            if (this.requirePath != null) {
-                runtime.getLoadService().load(this.requirePath + ".rb", false);
-            }
+    public IRubyObject newInstance(Ruby runtime, Object[] initParams, boolean alwaysReload) {
+    	if (alwaysReload) {
+    		// if always reloading we synchronize the loading and instantiation so someone
+    		// doesn't reload things while we're in the middle of instantiating from another thread
+    		synchronized(("ComponentClassLock" + this.className).intern()) {
+    			if (this.requirePath != null) {
+    				runtime.getLoadService().load(this.requirePath + ".rb", false);
+    			}
 
-            return RuntimeHelper.instantiate(runtime, this.className, initParams);
-        }
+    			return RuntimeHelper.instantiate(runtime, this.className, initParams);
+    		}
+    	} else {
+    		// if not always reloading we only synchronize the loading and only load
+    		// once
+    		synchronized(("ComponentClassLock" + this.className).intern()) {
+    			if (!this.loaded && this.requirePath != null) {
+    				runtime.getLoadService().load(this.requirePath + ".rb", false);
+    				this.loaded = true;
+    			}
+    		}
+    		return RuntimeHelper.instantiate(runtime, this.className, initParams);
+    	}
     }
     
     public String toString() {
