@@ -140,7 +140,7 @@ module TorqueBox
         if windows?
           cmd = "#{jboss_home.gsub('/', '\\')}\\bin\\standalone.bat"
         else
-          cmd = "/bin/sh bin/standalone.sh"
+          cmd = "#{jboss_home}/bin/standalone.sh"
         end
         puts "#{cmd} #{options}" # Make it clear to the user what is being passed through to JBoss AS
         [cmd, options]
@@ -387,7 +387,8 @@ module TorqueBox
       # This is mainly so CTRL+C, STDIN, STDOUT, and STDERR work as
       # expected across all operating systems.
       def exec_command(cmd)
-        windows? ? exec(cmd) : fake_exec(cmd)
+        exec(cmd)
+        # windows? ? exec(cmd) : fake_exec(cmd)
       end
 
       # Used to run a command as a subprocess
