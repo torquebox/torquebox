@@ -44,7 +44,7 @@ module TorqueSpec
       ENV['JAVA_OPTS'] = "#{TorqueSpec.jvm_args} -Djboss.home.dir=\"#{TorqueSpec.jboss_home}\""
       script_suffix = TESTING_ON_WINDOWS ? "bat" : "sh"
       boot_script = "standalone.#{script_suffix}"
-      server_config = SLIM_DISTRO ? "torquebox-slim.xml" : "torquebox-full.xml"
+      server_config = SLIM_DISTRO ? "standalone.xml" : "torquebox-full.xml"
       "\"#{TorqueSpec.jboss_home}/bin/#{boot_script}\" --server-config=#{server_config}"
     end
   end
@@ -54,7 +54,7 @@ module TorqueSpec
       ENV['JAVA_OPTS'] = "#{TorqueSpec.jvm_args} -Djboss.home.dir=\"#{TorqueSpec.jboss_home}\""
       script_suffix = TESTING_ON_WINDOWS ? "bat" : "sh"
       boot_script = "domain.#{script_suffix}"
-      server_config = SLIM_DISTRO ? "torquebox-slim.xml" : "torquebox-full.xml"
+      server_config = SLIM_DISTRO ? "domain.xml" : "torquebox-full.xml"
       "\"#{TorqueSpec.jboss_home}/bin/#{boot_script}\" --domain-config=#{server_config}"
     end
 

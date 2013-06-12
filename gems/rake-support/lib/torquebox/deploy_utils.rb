@@ -71,11 +71,11 @@ module TorqueBox
       end
 
       def standalone_config_file
-        eap? ? "torquebox-full.xml" : "torquebox-slim.xml"
+        eap? ? "torquebox-full.xml" : "standalone.xml"
       end
 
       def cluster_config_file
-        eap? ? "torquebox-full-ha.xml" : "torquebox-slim-ha.xml"
+        eap? ? "torquebox-full-ha.xml" : "standalone-ha.xml"
       end
 
       def eap?

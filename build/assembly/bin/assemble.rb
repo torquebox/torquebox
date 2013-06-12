@@ -172,6 +172,25 @@ class Assembler
     FileUtils.cp( stomp_js, File.join( js_dir, 'stilts-stomp.js' ) )
   end
 
+  def stash_and_overwrite_stock_configs
+    config_map = {
+      'standalone' => {
+        'standalone.xml' => 'torquebox-slim.xml',
+        'standalone-ha.xml' => 'torquebox-slim-ha.xml'
+      },
+      'domain' => {
+        'domain.xml' => 'torquebox-slim.xml'
+      }
+    }
+    config_map.each_pair do |config_type, config_pairs|
+      config_dir = tool.jboss_dir + "/#{config_type}/configuration/"
+      config_pairs.each_pair do |stock_config, slim_config|
+        FileUtils.cp( config_dir + stock_config, config_dir + 'original-' + stock_config )
+        FileUtils.cp( config_dir + slim_config, config_dir + stock_config )
+      end
+    end
+  end
+
   def assemble()
     #clean
     prepare
@@ -181,6 +200,7 @@ class Assembler
     install_modules
     install_gems
     install_share
+    stash_and_overwrite_stock_configs
   end
 end
 
