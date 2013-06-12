@@ -38,9 +38,9 @@ Dir.chdir( assembly_dir ) do
   end
 
   categories = ["org.torquebox", "TorqueBox", "org.jboss.security", "org.projectodd"]
-  config_files = ["#{output_dir}/jboss/standalone/configuration/torquebox-slim.xml",
+  config_files = ["#{output_dir}/jboss/standalone/configuration/standalone.xml",
                   "#{output_dir}/jboss/standalone/configuration/torquebox-full.xml",
-                  "#{output_dir}/jboss/domain/configuration/torquebox-slim.xml",
+                  "#{output_dir}/jboss/domain/configuration/domain.xml",
                   "#{output_dir}/jboss/domain/configuration/torquebox-full.xml"]
 
   config_files.each do |config_file|
@@ -60,7 +60,7 @@ Dir.chdir( assembly_dir ) do
     end
   end
 
-  standalone_xmls = ["#{output_dir}/jboss/standalone/configuration/torquebox-slim.xml",
+  standalone_xmls = ["#{output_dir}/jboss/standalone/configuration/standalone.xml",
                      "#{output_dir}/jboss/standalone/configuration/torquebox-full.xml"]
   standalone_xmls.each do |standalone_xml|
     doc = REXML::Document.new(File.read(standalone_xml))
