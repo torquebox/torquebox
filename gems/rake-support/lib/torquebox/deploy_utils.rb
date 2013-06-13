@@ -136,6 +136,7 @@ module TorqueBox
         options = "#{options} -Dhttp.port=#{opts[:port]}" if opts[:port]
         options = "#{options} -Djboss.node.name=#{opts[:node_name]}" if opts[:node_name]
         options = "#{options} -Djboss.server.data.dir=#{opts[:data_directory]}" if opts[:data_directory]
+        options = "#{options} -Dfile.encoding=UTF-8" if java.lang.System.getProperty('file.encoding') == 'MacRoman'
         options = "#{options} #{opts[:pass_through]}" if opts[:pass_through]
         if windows?
           cmd = "#{jboss_home.gsub('/', '\\')}\\bin\\standalone.bat"
