@@ -132,6 +132,7 @@ class Publisher
     def publish_distribution()
     [
      '/../../dist/target/torquebox-dist-bin.zip',
+     '/../../dist/target/torquebox-dist-eap-overlay.zip',
      '/../../dist/target/torquebox-dist-modules.zip',
      '/../../dist/target/build-metadata.json',
      '/../../assembly/target/stage/torquebox/jboss/standalone/configuration/standalone.xml'
