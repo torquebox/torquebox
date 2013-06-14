@@ -58,6 +58,18 @@
             </configuration>
           </execution>
           <execution>
+            <id>dist-eap-overlay</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/dist-eap-overlay.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
             <id>dist-modules</id>
             <phase>package</phase> 
             <goals>
@@ -78,18 +90,6 @@
             <configuration>
               <descriptors>
                 <descriptor>src/main/assembly/dist-rubygem-repo.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-          <execution>
-            <id>dist-eap-overlay</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/assembly/dist-eap-overlay.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>

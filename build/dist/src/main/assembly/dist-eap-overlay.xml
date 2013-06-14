@@ -4,10 +4,13 @@
   <formats>
     <format>zip</format>
   </formats>
-  <files>
-    <file>
-      <source>${basedir}/bin/torquebox_eap_overlay.rb</source>
-      <fileMode>0755</fileMode>
-    </file>
-  </files>
+  <fileSets>
+    <fileSet>
+      <directory>${basedir}/../eap-overlay/target/torquebox-eap-overlay</directory>
+      <outputDirectory>/</outputDirectory>
+      <excludes>
+        <exclude>**/jruby/lib/ruby/gems/*/cache/*.gem</exclude>
+      </excludes>
+    </fileSet>
+  </fileSets>
 </assembly>

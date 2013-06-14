@@ -277,19 +277,6 @@
       <properties>
         <version.jbossas>7.2.0.Alpha1-redhat-4</version.jbossas>
       </properties>
-      <repositories>
-        <repository>
-          <id>redhat-earlyaccess</id>
-          <name>Red Hat Early Access Repository</name>
-          <url>http://maven.repository.redhat.com/earlyaccess/all</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-        </repository>
-      </repositories>
     </profile>
     <profile>
       <id>wfk-test</id>
@@ -387,6 +374,17 @@
           <name>projectodd release</name>
           <url>https://repository-projectodd.forge.cloudbees.com/release</url>
           <layout>default</layout>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+        <repository>
+          <id>redhat-earlyaccess</id>
+          <name>Red Hat Early Access Repository</name>
+          <url>http://maven.repository.redhat.com/earlyaccess/all</url>
           <releases>
             <enabled>true</enabled>
           </releases>
