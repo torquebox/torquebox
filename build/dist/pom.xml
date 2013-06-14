@@ -27,6 +27,30 @@
         </dependency>
       </dependencies>
     </profile>
+    <profile>
+      <id>eap</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>dist-eap-overlay</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>src/main/assembly/dist-eap-overlay.xml</descriptor>
+                  </descriptors>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
 
@@ -54,18 +78,6 @@
             <configuration>
               <descriptors>
                 <descriptor>src/main/assembly/dist-bin.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-          <execution>
-            <id>dist-eap-overlay</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/assembly/dist-eap-overlay.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>

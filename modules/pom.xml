@@ -15,7 +15,6 @@
 
   <modules>
     <module>bootstrap</module>
-    <module>cdi</module>
     <module>core</module>
     <module>services</module>
     <module>web</module>
@@ -252,6 +251,12 @@
          </plugins>
         </pluginManagement>
       </build>
+    </profile>
+    <profile>
+      <id>eap</id>
+      <modules>
+        <module>cdi</module>
+      </modules>
     </profile>
   </profiles>
 

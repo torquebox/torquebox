@@ -31,7 +31,6 @@
 
   <modules>
     <module>assembly</module>
-    <module>eap-overlay</module>
   </modules>
 
   <profiles>
@@ -55,6 +54,12 @@
       <id>wfk</id>
       <modules>
         <module>dist</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>eap</id>
+      <modules>
+        <module>eap-overlay</module>
       </modules>
     </profile>
   </profiles>
