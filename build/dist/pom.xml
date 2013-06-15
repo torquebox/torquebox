@@ -29,6 +29,15 @@
     </profile>
     <profile>
       <id>eap</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.torquebox</groupId>
+          <artifactId>torquebox-eap-overlay</artifactId>
+          <version>${project.version}</version>
+          <type>pom</type>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
           <plugin>
