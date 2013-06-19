@@ -1,8 +1,18 @@
 #!/usr/bin/env ruby
 
+SLIM_DISTRO = java.lang::System.getProperty( "org.torquebox.slim_distro" ) == "true"
+def jruby_home
+  if SLIM_DISTRO
+    File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jruby' ) )
+  else
+    File.join( Dir.glob( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss-eap-6*' ) ).first, 'jruby' )
+  end
+end
+
 if JRUBY_VERSION =~ /^1\.7/
-  ENV['GEM_HOME'] = ENV['GEM_HOME'].gsub('gems/1.8', 'gems/shared')
-  ENV['GEM_HOME'] = ENV['GEM_HOME'].gsub('gems\\1.8', 'gems\\shared')
+  ENV['GEM_HOME'] = "#{jruby_home}/lib/ruby/gems/shared"
+else
+  ENV['GEM_HOME'] = "#{jruby_home}/lib/ruby/gems/1.8"
 end
 
 require File.dirname(__FILE__) + '/../lib/gem_installer.rb'

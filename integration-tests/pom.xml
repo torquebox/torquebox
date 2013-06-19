@@ -22,7 +22,9 @@
     <version.dm_core>1.1.0</version.dm_core>
     <version.dm_serializer>1.1.0</version.dm_serializer>
     <version.json>1.4.6</version.json>
+    <version.eap>6.1.0.Alpha</version.eap>
     <assembly.dir>${project.basedir}/../build/assembly/target/stage/torquebox</assembly.dir>
+    <overlay.dir>${project.basedir}/../build/eap-overlay/target/torquebox-eap-overlay</overlay.dir>
     <integ.dist.dir>target/integ-dist</integ.dist.dir>
     <rspec.max.heap>1280m</rspec.max.heap>
     <jboss.max.heap>1024m</jboss.max.heap>
@@ -537,9 +539,12 @@
               <goal>jruby</goal>
             </goals>
             <configuration>
-              <jrubyFork>false</jrubyFork>
               <file>bin/setup-integ-dist.rb</file>
-              <args>${assembly.dir} ${integ.dist.dir}</args>
+              <args>${assembly.dir} ${overlay.dir} ${integ.dist.dir}</args>
+              <jrubyJvmArgs>
+                -Dorg.torquebox.slim_distro=${torquebox.slim}
+                -Dversion.eap=${version.eap}
+              </jrubyJvmArgs>
             </configuration>
           </execution>
         </executions>
@@ -558,6 +563,9 @@
             <configuration>
               <file>bin/install-integ-gems.rb</file>
               <gemHome>./target/integ-dist/jruby/lib/ruby/gems/1.8</gemHome>
+              <jrubyJvmArgs>
+                -Dorg.torquebox.slim_distro=${torquebox.slim}
+              </jrubyJvmArgs>
             </configuration>
           </execution>
         </executions>

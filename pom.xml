@@ -274,9 +274,6 @@
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
-      <properties>
-        <version.jbossas>7.2.0.Alpha1-redhat-4</version.jbossas>
-      </properties>
       <repositories>
         <repository>
           <id>redhat-earlyaccess</id>

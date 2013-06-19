@@ -5,9 +5,26 @@ require 'torquebox-rake-support'
 
 $: << File.dirname( __FILE__ )
 
+MUTABLE_APP_BASE_PATH  = File.join( File.dirname( __FILE__ ), '..', 'target', 'apps' )
+TESTING_ON_WINDOWS = ( java.lang::System.getProperty( "os.name" ) =~ /windows/i )
+SLIM_DISTRO = java.lang::System.getProperty( "org.torquebox.slim_distro" ) == "true"
+
 def jboss_home
-  File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss' ) )
+  if SLIM_DISTRO
+    File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss' ) )
+  else
+    Dir.glob( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss-eap-6*' ) ).first
+  end
 end
+
+def jruby_home
+  if SLIM_DISTRO
+    File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jruby' ) )
+  else
+    File.join( Dir.glob( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss-eap-6*' ) ).first, 'jruby' )
+  end
+end
+java.lang::System.setProperty( 'jruby.home', jruby_home )
 
 def jboss_log_dir
   File.join( jboss_home, 'standalone', 'log' )
@@ -33,10 +50,6 @@ TorqueSpec.configure do |config|
 end
 FileUtils.mkdir_p(TorqueSpec.knob_root) unless File.exist?(TorqueSpec.knob_root)
 FileUtils.mkdir_p( jboss_log_dir ) unless File.exist?( jboss_log_dir )
-
-MUTABLE_APP_BASE_PATH  = File.join( File.dirname( __FILE__ ), '..', 'target', 'apps' )
-TESTING_ON_WINDOWS = ( java.lang::System.getProperty( "os.name" ) =~ /windows/i )
-SLIM_DISTRO = java.lang::System.getProperty( "org.torquebox.slim_distro" ) == "true"
 
 module TorqueSpec
   module AS7
@@ -76,7 +89,11 @@ def mutable_app(path)
 end
 
 def jruby_binary
-  bin = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jruby', 'bin', 'jruby' ) )
+  if SLIM_DISTRO
+    bin = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jruby', 'bin', 'jruby' ) )
+  else
+    bin = File.expand_path( File.join( jboss_home, 'jruby', 'bin', 'jruby' ) )
+  end
   bin << ".exe" if TESTING_ON_WINDOWS
   bin
 end
