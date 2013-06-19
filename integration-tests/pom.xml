@@ -415,12 +415,6 @@
       </properties>
     </profile>
     <profile>
-      <id>eap</id>
-      <properties>
-        <torquebox.slim>false</torquebox.slim>
-      </properties>
-    </profile>
-    <profile>
       <id>ci</id>
       <properties>
         <driver.type>headless</driver.type>
