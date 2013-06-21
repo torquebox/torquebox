@@ -5,7 +5,7 @@ describe "torquebox thor utility tests" do
 
   before(:all) do
     ENV['TORQUEBOX_HOME'] = File.join(File.dirname(__FILE__), '..', 'target', 'integ-dist')
-    ENV['JBOSS_HOME'] = "#{ENV['TORQUEBOX_HOME']}/jboss"
+    ENV['JBOSS_HOME'] = jboss_home
   end
 
   describe "torquebox archive" do
