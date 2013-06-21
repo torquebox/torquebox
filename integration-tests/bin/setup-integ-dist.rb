@@ -60,6 +60,8 @@ else
 
   eap_zip = "jboss-eap-#{eap_version}.zip"
   eap_zip_path = File.join( File.dirname( __FILE__), '..', eap_zip )
+  # On CI get EAP zips from /private
+  eap_zip_path = File.join( '/private', 'projectodd', eap_zip ) unless File.exists?( eap_zip_path )
   unless File.exists?( eap_zip_path )
     $stderr.puts ""
     $stderr.puts "Before you can run integration tests against JBoss EAP you\n" +
