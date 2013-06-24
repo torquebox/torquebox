@@ -89,11 +89,7 @@ def mutable_app(path)
 end
 
 def jruby_binary
-  if SLIM_DISTRO
-    bin = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jruby', 'bin', 'jruby' ) )
-  else
-    bin = File.expand_path( File.join( jboss_home, 'jruby', 'bin', 'jruby' ) )
-  end
+  bin = File.expand_path( File.join( jruby_home, 'bin', 'jruby' ) )
   bin << ".exe" if TESTING_ON_WINDOWS
   bin
 end

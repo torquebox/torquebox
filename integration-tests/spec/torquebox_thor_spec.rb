@@ -244,8 +244,7 @@ describe "torquebox thor utility tests" do
 
   def gem_dir
     dir = JRUBY_VERSION >= '1.7' ? 'shared' : '1.8'
-    File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target',
-                                 'integ-dist', 'jruby', 'lib', 'ruby',
+    File.expand_path( File.join( jruby_home,  'lib', 'ruby',
                                  'gems', dir ) )
   end
 
