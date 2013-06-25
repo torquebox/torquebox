@@ -48,7 +48,7 @@ class RailsTemplateAdjuster
     if local_build?
       "# Local build - no source needed"
     elsif @incremental
-      "add_source \"http://torquebox.org/builds/#{@build_number}/gem-repo\" if RAILS::VERSION::MAJOR > 2"
+      "add_source \"http://torquebox.org/builds/#{@build_number}/gem-repo\" if Rails::VERSION::MAJOR > 2"
     else
       ""
     end
