@@ -199,7 +199,7 @@ end</programlisting></para>
       the ruby: section of a deployment descriptor.</para>
 
       <para>Note that these settings are per application, allowing you to run
-      1.8 and 1.9 applications in the same TorqueBox, or have one JIT'ed and
+      1.8, 1.9, and 2.0 applications in the same TorqueBox, or have one JIT'ed and
       another not.</para>
 
       <para>In a YAML configuration, the ruby settings are grouped under the
@@ -233,11 +233,15 @@ end</programlisting></para>
                   </listitem>
 
                   <listitem>
-                    <para>1.9 - provides 1.9.2 compatibility</para>
+                    <para>1.9 - provides 1.9.3 compatibility</para>
+                  </listitem>
+
+                  <listitem>
+                    <para>2.0 - provides 2.0.0 compatibility</para>
                   </listitem>
                 </itemizedlist></entry>
 
-              <entry>1.8</entry>
+              <entry>1.9</entry>
             </row>
 
             <row>
@@ -302,7 +306,7 @@ end</programlisting></para>
 
       <para>For example, in YAML: <informalexample>
           <para><programlisting>ruby:
-  version: 1.9
+  version: 2.0
   compile_mode: off
   debug: false
   interactive: true
@@ -310,7 +314,7 @@ end</programlisting></para>
         </informalexample> And via the DSL: <informalexample>
           <para><programlisting>TorqueBox.configure do
   ruby do
-    version "1.9"
+    version "2.0"
     compile_mode "off"
     debug false
     interactive true

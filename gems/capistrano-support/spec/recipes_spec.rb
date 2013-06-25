@@ -50,6 +50,12 @@ describe Capistrano::TorqueBox, "loaded into a configuration" do
       @configuration.fetch( :app_ruby_version ).should == 1.8
     end
 
+    it "should allow default 2.0 override for app_ruby_version" do
+      @configuration.set( :app_ruby_version, 2.0 )
+      Capistrano::TorqueBox.load_into(@configuration)
+      @configuration.fetch( :app_ruby_version ).should == 2.0
+    end
+
     it "should add app_ruby_version if set to jruby opts if unset" do
       @configuration.set( :app_ruby_version, 1.9 )
       Capistrano::TorqueBox.load_into(@configuration)

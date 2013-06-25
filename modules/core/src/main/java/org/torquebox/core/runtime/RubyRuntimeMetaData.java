@@ -46,7 +46,7 @@ public class RubyRuntimeMetaData {
     public static final AttachmentKey<RubyRuntimeMetaData> ATTACHMENT_KEY = AttachmentKey.create(RubyRuntimeMetaData.class);
     
     public enum Version {
-        V1_8, V1_9
+        V1_8, V1_9, V2_0
     }
 
     public enum CompileMode {

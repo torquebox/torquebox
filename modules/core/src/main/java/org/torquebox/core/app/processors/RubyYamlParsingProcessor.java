@@ -61,6 +61,8 @@ public class RubyYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
             runtimeMetaData.setVersion( RubyRuntimeMetaData.Version.V1_8 );
         } else if ("1.9".equals( "" + version )) {
             runtimeMetaData.setVersion( RubyRuntimeMetaData.Version.V1_9 );
+        } else if ("2.0".equals( "" + version )) {
+            runtimeMetaData.setVersion( RubyRuntimeMetaData.Version.V2_0 );
         }
 
         Object compileMode = config.get( "compile_mode" );

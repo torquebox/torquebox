@@ -82,6 +82,8 @@ public class RubyRuntimeFactoryInstaller implements DeploymentUnitProcessor {
                 factory.setRubyVersion( CompatVersion.RUBY1_9 );
             } else if (runtimeMetaData.getVersion() == RubyRuntimeMetaData.Version.V1_8) {
                 factory.setRubyVersion( CompatVersion.RUBY1_8 );
+            } else if (runtimeMetaData.getVersion() == RubyRuntimeMetaData.Version.V2_0) {
+                factory.setRubyVersion( CompatVersion.RUBY2_0 );
             }
 
             RubyRuntimeMetaData.CompileMode compileMode = runtimeMetaData.getCompileMode();

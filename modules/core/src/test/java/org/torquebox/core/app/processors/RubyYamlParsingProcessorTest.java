@@ -103,6 +103,22 @@ public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
     }
 
     @Test
+    public void testWithRuntimeMetaData20() throws Exception {
+        MockDeploymentPhaseContext phaseContext = setupResourceAsTorqueboxYml( "ruby-2.0.yml" );
+        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
+
+        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
+        unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, runtimeMetaData );
+
+        deploy( phaseContext );
+
+        RubyRuntimeMetaData runtimeMetaData2 = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
+
+        assertSame( runtimeMetaData, runtimeMetaData2 );
+        assertEquals( RubyRuntimeMetaData.Version.V2_0, runtimeMetaData.getVersion() );
+    }
+
+    @Test
     public void testWithRuntimeMetaDataCompileModeForce() throws Exception {
         URL rubyYml = getClass().getResource( "ruby-compile-mode-force.yml" );
         MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", rubyYml );

@@ -95,7 +95,7 @@ module TorqueBox
                                                         :optional => [:username, :password]
                                                      }),
           :ruby        => OptionsEntry.with_settings(:validate => {
-                                                       :optional => [{ :version => ['1.8', '1.9'] },
+                                                       :optional => [{ :version => ['1.8', '1.9', '2.0'] },
                                                                      { :compile_mode => [:force, :jit, :off,
                                                                                          'force', 'jit', 'off'] },
                                                                      { :debug => [true, false] },

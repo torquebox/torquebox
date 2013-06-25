@@ -268,10 +268,10 @@ describe TorqueBox::DeployUtils do
     end
 
     it 'should strip and pass JRUBY_OPTS jvm options' do
-      ENV['JRUBY_OPTS'] = '--1.9 -J-Xmx1024m -J-Xss2048k -Xjit.logging=true'
+      ENV['JRUBY_OPTS'] = '--2.0 -J-Xmx1024m -J-Xss2048k -Xjit.logging=true'
       @util.should_receive(:set_java_opts).with('some java options -Djruby.jit.logging=true -Xmx1024m -Xss2048k')
       @util.run_server(:jvm_options => 'some java options')
-      ENV['JRUBY_OPTS'].should == '--1.9 -Xjit.logging=true'
+      ENV['JRUBY_OPTS'].should == '--2.0 -Xjit.logging=true'
     end
   end
 

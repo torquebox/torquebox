@@ -230,7 +230,7 @@ module TorqueBox
           end
 
           def methods_include?(methods, method)
-            method = (RUBY_VERSION =~ /^1\.9\./ ? method.to_sym : method.to_s)
+            method = (RUBY_VERSION =~ /^1\.8\./ ? method.to_s : method.to_sym)
             methods.include?(method)
           end
         end

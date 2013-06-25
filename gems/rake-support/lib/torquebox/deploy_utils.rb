@@ -373,7 +373,11 @@ module TorqueBox
 
       def jruby_command(cmd)
         jruby = File.join( RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'] )
-        RUBY_VERSION =~ /^1\.9\./ ? jruby << " --1.9" : jruby << " --1.8"
+        jruby << case RUBY_VERSION
+                 when /^1\.8\./ then ' --1.8'
+                 when /^1\.9\./ then ' --1.9'
+                 when /^2\.0\./ then ' --2.0'
+                 end
         run_command( "#{jruby} #{cmd}" )
       end
 

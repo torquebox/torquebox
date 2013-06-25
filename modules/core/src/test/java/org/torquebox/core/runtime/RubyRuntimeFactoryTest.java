@@ -186,6 +186,17 @@ public class RubyRuntimeFactoryTest {
     }
 
     @Test
+    public void testRuby20() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        factory.setRubyVersion( CompatVersion.RUBY2_0 );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertTrue( ruby.is2_0() );
+    }
+
+    @Test
     public void testCompileModeDefault() throws Exception {
         factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
@@ -387,6 +398,19 @@ public class RubyRuntimeFactoryTest {
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
         assertTrue( ruby.is1_9() );
+    }
+
+    @Test
+    public void testJRubyOpts20() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        Map<String, String> env = new HashMap<String, String>();
+        env.put( "JRUBY_OPTS", "--2.0" );
+        factory.setApplicationEnvironment( env );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertTrue( ruby.is2_0() );
     }
 
     @Test

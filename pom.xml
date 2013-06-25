@@ -53,6 +53,16 @@
     </profile>
 
     <profile>
+      <id>20</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <ruby.compat.version>2.0</ruby.compat.version>
+      </properties>
+    </profile>
+
+    <profile>
       <id>bees</id>
       <activation>
         <activeByDefault>false</activeByDefault>

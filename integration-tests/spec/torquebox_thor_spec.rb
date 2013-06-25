@@ -69,6 +69,8 @@ describe "torquebox thor utility tests" do
 
     it "should package gems" do
       gem_version = RUBY_VERSION[0..2]
+      # 2.0 gems get installed into 1.9 for whatever reason
+      gem_version = '1.9' if gem_version == '2.0'
       bundle_dir = File.join(root_dir, 'vendor', 'bundle', 'jruby')
       FileUtils.rm_rf(bundle_dir)
       begin

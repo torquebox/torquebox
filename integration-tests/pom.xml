@@ -447,6 +447,12 @@
       </properties>
     </profile>
     <profile>
+      <id>20</id>
+      <properties>
+        <ruby.compat.version>2.0</ruby.compat.version>
+      </properties>
+    </profile>
+    <profile>
       <id>fork you, windows</id>
       <activation>
         <os>

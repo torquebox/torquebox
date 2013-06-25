@@ -27,7 +27,7 @@ describe "basic rails3.1 test" do
     end
   end
 
-  if RUBY_VERSION[0,3] == '1.9'
+  if RUBY_VERSION[0,3] != '1.8'
     context 'streaming' do
 
       it "should work for small responses" do

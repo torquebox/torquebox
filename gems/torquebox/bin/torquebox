@@ -183,7 +183,11 @@ class TorqueBoxCommand < Thor
     jruby_path = File.join(ENV['JRUBY_HOME'], "bin")
     knob_path = File.expand_path(knob_file)
     bundle_exec = options.no_bundler_exec ? "" : "bundle exec"
-    rb_version = RUBY_VERSION =~ /^1\.9\./ ? "1.9" : "1.8"
+    rb_version = case RUBY_VERSION
+                 when /^1\.8\./ then '1.8'
+                 when /^1\.9\./ then '1.9'
+                 when /^2\.0\./ then '1.9' # 2.0 gems get put under 1.9
+                 end
     ENV['PATH'] = "#{ENV['PATH']}:#{jruby_path}"
     Dir.mktmpdir do |tmpdir|
       commands = ["cd #{tmpdir}", "jar -xf #{knob_path}"]
