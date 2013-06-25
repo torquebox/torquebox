@@ -40,7 +40,7 @@ class RailsTemplateAdjuster
     if line =~ /gem [\'\"](torquebox.*?)[\'\"]/
       output.puts line.sub( @build_number, @version ).sub( "${env.BUILD_NUMBER}", @version )
     else
-      output.puts line unless line =~ /^add_source \"http\:\/\/torquebox.org\/.+?\/builds\/[0-9]+\/gem-repo\"$/
+      output.puts line unless line =~ /^add_source \"http\:\/\/torquebox.org\/builds\/[0-9]+\/gem-repo\".*/
     end
   end
 
@@ -48,7 +48,7 @@ class RailsTemplateAdjuster
     if local_build?
       "# Local build - no source needed"
     elsif @incremental
-      "add_source \"http://torquebox.org/builds/#{@build_number}/gem-repo\""
+      "add_source \"http://torquebox.org/builds/#{@build_number}/gem-repo\" if RAILS::VERSION::MAJOR > 2"
     else
       ""
     end
