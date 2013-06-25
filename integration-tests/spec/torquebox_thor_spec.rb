@@ -190,10 +190,12 @@ describe "torquebox thor utility tests" do
       # this ensures things work without explicitly setting
       # RAILS_VERSION
       ENV['RAILS_VERSION'] = nil
-      tb( "rails #{@app_dir}" )
+      output = tb( "rails #{@app_dir}" )
       File.exist?( @app_dir ).should be_true
       File.exist?( File.join( @app_dir, 'config', 'environment.rb' ) ).should be_true
-      File.read( File.join( @app_dir, 'config', 'environment.rb' ) ).should include( 'torquebox' )
+      contents = File.read( File.join( @app_dir, 'config', 'environment.rb' ) )
+      puts output unless contents.include?( 'torquebox' )
+      contents.should include( 'torquebox' )
     end
 
     def check_app_dir
