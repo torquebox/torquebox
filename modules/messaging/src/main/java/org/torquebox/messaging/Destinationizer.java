@@ -19,6 +19,8 @@
 
 package org.torquebox.messaging;
 
+import org.jboss.as.messaging.jms.JMSQueueService;
+import org.jboss.as.messaging.jms.JMSTopicService;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
@@ -128,7 +130,7 @@ public class Destinationizer extends AtRuntimeInstaller<Destinationizer> {
             return new CountDownLatch(0);
         }
 
-        DestroyableJMSQueueService queue =
+        JMSQueueService queue =
                 QueueInstaller.deployGlobalQueue(getUnit().getServiceRegistry(),
                         getGlobalTarget(),
                         queueName,
@@ -139,10 +141,13 @@ public class Destinationizer extends AtRuntimeInstaller<Destinationizer> {
         createDestinationService(
                 queueName,
                 QueueInstaller.queueServiceName(queueName),
-                queue.getReferenceCount()
-        );
+                queue instanceof DestroyableJMSQueueService ?
+                        ((DestroyableJMSQueueService)queue).getReferenceCount() :
+                        null);
 
-        return queue.getStartLatch();
+        return queue instanceof DestroyableJMSQueueService ?
+                ((DestroyableJMSQueueService)queue).getStartLatch() :
+                null;
     }
 
     /**
@@ -162,7 +167,7 @@ public class Destinationizer extends AtRuntimeInstaller<Destinationizer> {
             return new CountDownLatch(0);
         }
 
-        DestroyableJMSTopicService topic =
+        JMSTopicService topic =
                 TopicInstaller.deployGlobalTopic(getUnit().getServiceRegistry(),
                         getGlobalTarget(),
                         topicName,
@@ -171,10 +176,13 @@ public class Destinationizer extends AtRuntimeInstaller<Destinationizer> {
         createDestinationService(
                 topicName,
                 TopicInstaller.topicServiceName(topicName),
-                topic.getReferenceCount()
-        );
+                topic instanceof DestroyableJMSTopicService ?
+                        ((DestroyableJMSTopicService)topic).getReferenceCount() :
+                        null);
 
-        return topic.getStartLatch();
+        return topic instanceof DestroyableJMSTopicService ?
+                ((DestroyableJMSTopicService)topic).getStartLatch() :
+                null;
     }
 
     /**

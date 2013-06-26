@@ -252,13 +252,15 @@ module TorqueBox
 
         # @api private
         def wait_for_latch(latch)
-          begin
-            # Wait for the services to come up for up to 30 seconds
-            latch.await(45, java.util.concurrent.TimeUnit::SECONDS)
-          rescue
-            return false
+          if latch
+            begin
+              # Wait for the services to come up for up to 30 seconds
+              latch.await(45, java.util.concurrent.TimeUnit::SECONDS)
+            rescue
+              return false
+            end
           end
-
+          
           true
         end
       end
