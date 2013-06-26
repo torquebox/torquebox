@@ -15,6 +15,16 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+# These codecs don't depend on anything outside Ruby stdlib
+require 'torquebox/codecs/marshal'
+require 'torquebox/codecs/marshal_base64'
+require 'torquebox/codecs/marshal_smart'
+
+# These codecs depend on external gems - attempt to load them
+# but ignore any load errors and we'll lazily try again later
+require 'torquebox/codecs/json' rescue nil
+require 'torquebox/codecs/edn' rescue nil
+
 module TorqueBox
   module Codecs
     class << self
@@ -22,25 +32,26 @@ module TorqueBox
       def [](key)
         case key
         when :edn
+          # This is only so any issues requiring the edn codec bubble
+          # up when it gets used
           require 'torquebox/codecs/edn' unless defined?(TorqueBox::Codecs::EDN)
           TorqueBox::Codecs::EDN
         when :json
+          # This is only so any issues requiring the json codec bubble
+          # up when it gets used
           require 'torquebox/codecs/json' unless defined?(TorqueBox::Codecs::JSON)
           TorqueBox::Codecs::JSON
         when :marshal
-          require 'torquebox/codecs/marshal' unless defined?(TorqueBox::Codecs::Marshal)
           TorqueBox::Codecs::Marshal
         when :marshal_base64
-          require 'torquebox/codecs/marshal_base64' unless defined?(MarshalBase64)
           MarshalBase64
         when :marshal_smart
-          require 'torquebox/codecs/marshal_smart' unless defined?(MarshalSmart)
           MarshalSmart
         else
           raise "Unsupported codec #{key}"
         end
       end
-      
+
       def encode(data, encoding)
         self[encoding].encode(data)
       end
@@ -48,7 +59,7 @@ module TorqueBox
       def decode(data, encoding)
         self[encoding].decode(data)
       end
-      
+
     end
   end
 end
