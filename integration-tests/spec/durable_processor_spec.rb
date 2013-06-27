@@ -22,7 +22,7 @@ describe "messaging rack test" do
       visit "/messaging-rack/?topic-ham-biscuit"
       proc.start
     end
-    result = TorqueBox::Messaging::Queue.new('/queues/results').receive(:timeout => 30_000)
+    result = TorqueBox::Messaging::Queue.new('/queues/results').receive(:timeout => 60_000)
     result.should == "TestTopicConsumer=topic-ham-biscuit"
   end
 
