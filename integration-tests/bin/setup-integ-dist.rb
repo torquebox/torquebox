@@ -125,7 +125,6 @@ standalone_xmls.each do |standalone_xml|
   login_module.add_element("module-option", "name"=>"rolesProperties", "value"=>"${jboss.server.config.dir}/pork-roles.properties")
 
   puts "Disabling standalone management interface security"
-  # Disable management interface security
   interfaces = doc.root.get_elements("//management-interfaces/*")
   interfaces.each { |i| i.attributes.delete( 'security-realm' )}
 
@@ -134,10 +133,19 @@ standalone_xmls.each do |standalone_xml|
   end
 end
 
+# Clustered integs need a bit more PermGen
+domain_xml = "#{jboss_dir}/domain/configuration/domain.xml"
+doc = REXML::Document.new(File.read(domain_xml))
+puts "Increasing Max PermGen for domain servers"
+permgens = doc.root.get_elements("//permgen")
+permgens.each { |permgen| permgen.attributes['max-size'] = '384m' }
+open(domain_xml, 'w') do |file|
+  doc.write(file, 4)
+end
+
 host_xml = "#{jboss_dir}/domain/configuration/host.xml"
 doc = REXML::Document.new(File.read(host_xml))
 puts "Disabling domain management interface security"
-# Disable management interface security
 interfaces = doc.root.get_elements("//management-interfaces/*")
 interfaces.each { |i| i.attributes.delete( 'security-realm' )}
 open(host_xml, 'w') do |file|
