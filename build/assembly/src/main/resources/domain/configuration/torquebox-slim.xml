@@ -837,6 +837,10 @@
     </socket-binding-groups>
     <server-groups>
         <server-group name='main-server-group' profile='default'>
+            <jvm name='default'>
+                <heap size='512m' max-size='512m'/>
+                <permgen max-size='256m'/>
+            </jvm>
             <socket-binding-group ref='standard-sockets'/>
         </server-group>
     </server-groups>

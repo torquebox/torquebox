@@ -133,16 +133,6 @@ standalone_xmls.each do |standalone_xml|
   end
 end
 
-# Clustered integs need a bit more PermGen
-domain_xml = "#{jboss_dir}/domain/configuration/domain.xml"
-doc = REXML::Document.new(File.read(domain_xml))
-puts "Increasing Max PermGen for domain servers"
-permgens = doc.root.get_elements("//permgen")
-permgens.each { |permgen| permgen.attributes['max-size'] = '384m' }
-open(domain_xml, 'w') do |file|
-  doc.write(file, 4)
-end
-
 host_xml = "#{jboss_dir}/domain/configuration/host.xml"
 doc = REXML::Document.new(File.read(host_xml))
 puts "Disabling domain management interface security"
