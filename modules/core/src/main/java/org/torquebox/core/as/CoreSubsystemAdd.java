@@ -79,10 +79,12 @@ import org.torquebox.core.pool.processors.PoolingYamlParsingProcessor;
 import org.torquebox.core.processor.LoggingPropertiesWorkaroundProcessor;
 import org.torquebox.core.processors.TorqueBoxRbProcessor;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
+import org.torquebox.core.runtime.RuntimeRestartScanner;
 import org.torquebox.core.runtime.processors.BaseRubyRuntimeInstaller;
 import org.torquebox.core.runtime.processors.RubyNamespaceContextSelectorProcessor;
 import org.torquebox.core.runtime.processors.RubyRuntimeFactoryInstaller;
 import org.torquebox.core.runtime.processors.RuntimePoolInstaller;
+import org.torquebox.core.runtime.processors.RuntimeRestartProcessor;
 
 class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
@@ -147,21 +149,22 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.INSTALL, 0, rootSafe( new RubyRuntimeFactoryInstaller() ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.INSTALL, 10, rootSafe( new RuntimePoolInstaller() ) );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.INSTALL, 20, rootSafe( new RuntimeRestartProcessor() ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.INSTALL, 9000, rootSafe( new RubyApplicationInstaller() ) );
     }
 
     protected void addCoreServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
             List<ServiceController<?>> newControllers,
             InjectableHandlerRegistry registry) throws Exception {
-        addTorqueBoxService( context, verificationHandler, newControllers, registry );
-        addGlobalRubyServices( context, verificationHandler, newControllers, registry );
+        addTorqueBoxService( context, verificationHandler, newControllers );
+        addGlobalRubyServices( context, verificationHandler, newControllers );
         addInjectionServices( context, verificationHandler, newControllers, registry );
+        addRuntimeRestartScannerService( context, verificationHandler, newControllers );
     }
 
     @SuppressWarnings("serial")
     protected void addTorqueBoxService(final OperationContext context, ServiceVerificationHandler verificationHandler,
-            List<ServiceController<?>> newControllers,
-            InjectableHandlerRegistry registry) throws IOException {
+            List<ServiceController<?>> newControllers) throws IOException {
         TorqueBox torqueBox = new TorqueBox();
 
         newControllers.add( context.getServiceTarget().addService( CoreServices.TORQUEBOX, torqueBox )
@@ -187,8 +190,7 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     @SuppressWarnings("serial")
     protected void addGlobalRubyServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
-            List<ServiceController<?>> newControllers,
-            InjectableHandlerRegistry registry) {
+            List<ServiceController<?>> newControllers) {
         newControllers.add( context.getServiceTarget().addService( CoreServices.GLOBAL_RUBY, new GlobalRuby() )
                 .addListener( verificationHandler )
                 .setInitialMode( Mode.ACTIVE )
@@ -223,6 +225,14 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         newControllers.add( context.getServiceTarget().addService( CoreServices.RUNTIME_INJECTION_ANALYZER, runtimeService )
                 .addListener( verificationHandler )
                 .install() );
+    }
+    
+    protected void addRuntimeRestartScannerService(final OperationContext context, ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) throws IOException {
+    	RuntimeRestartScanner service = new RuntimeRestartScanner();
+    	newControllers.add( context.getServiceTarget().addService( CoreServices.RUNTIME_RESTART_SCANNER, service)
+    			.addListener( verificationHandler )
+    			.install() );
     }
 
     protected void addTorqueBoxStdioContext() {

@@ -35,6 +35,7 @@ public class CoreServices {
     public static final ServiceName GLOBAL_RUBY                   = RUNTIME.append( "global" );
     public static final ServiceName INJECTABLE_HANDLER_REGISTRY   = INJECTION.append( "injectable-handler-registry" );
     public static final ServiceName RUNTIME_INJECTION_ANALYZER    = INJECTION.append( "runtime-injection-analyzer" );
+    public static final ServiceName RUNTIME_RESTART_SCANNER      = CORE.append( "runtime-restart-scanner" );
     
     
     public static ServiceName runtimeFactoryName(final DeploymentUnit unit) {

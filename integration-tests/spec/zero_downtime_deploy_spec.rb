@@ -21,7 +21,7 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
     seen_values.size.should == 1
   end
 
-  it 'should reload with runtime restart' do
+  it 'should reload with jmx runtime restart' do
     visit '/reloader-rack?0'
     element = page.find_by_id('success')
     element.should_not be_nil
@@ -29,12 +29,32 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
     seen_values << element.text
     counter = 1
     while seen_values.size <= 3 && counter < 60 do
-      restart_runtime('web', "#{runtime_type}_runtime")
+      restart_runtime_with_jmx('web', "#{runtime_type}_runtime")
       visit "/reloader-rack?#{counter}"
       element = page.find_by_id('success')
       element.should_not be_nil
       seen_values << element.text
       counter += 1
+    end
+
+    seen_values.size.should > 3
+  end
+
+  it 'should reload with runtime restart marker' do
+    visit '/reloader-rack?0'
+    element = page.find_by_id('success')
+    element.should_not be_nil
+    seen_values = Set.new
+    seen_values << element.text
+    counter = 1
+    while seen_values.size <= 3 && counter < 60 do
+      restart_runtime_with_marker('web')
+      visit "/reloader-rack?#{counter}"
+      element = page.find_by_id('success')
+      element.should_not be_nil
+      seen_values << element.text
+      counter += 1
+      sleep 0.2
     end
 
     seen_values.size.should > 3
@@ -51,7 +71,7 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
       end
     }
     10.times do
-      restart_runtime('web', "#{runtime_type}_runtime")
+      restart_runtime_with_jmx('web', "#{runtime_type}_runtime")
       sleep 0.1
     end
     thread.join
@@ -59,10 +79,17 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
     seen_values.size.should > 3
   end
 
-  def restart_runtime(pool, app)
+  def restart_runtime_with_jmx(pool, app)
     mbean("torquebox.pools:name=#{pool},app=#{app}") do |runtime|
       runtime.restart
     end
+  end
+
+  def restart_runtime_with_marker(pool)
+    app_root = File.join(MUTABLE_APP_BASE_PATH, 'rack', 'reloader')
+    FileUtils.mkdir_p(File.join(app_root, 'tmp'))
+    marker = File.join(app_root, 'tmp', 'restart.txt')
+    FileUtils.touch(marker)
   end
 
 end

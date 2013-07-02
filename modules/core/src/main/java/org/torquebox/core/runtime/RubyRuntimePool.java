@@ -39,6 +39,7 @@ public interface RubyRuntimePool {
     
     void start() throws Exception;
     void stop() throws Exception;
+    void restart() throws Exception;
     
     void setNamespaceContextSelector(NamespaceContextSelector nsContextSelector);
 }
