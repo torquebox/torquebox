@@ -706,7 +706,7 @@ gem 'jdbc-sqlite3'</programlisting></para>
         <filename>config/initializers/session_store.rb</filename></para>
       </formalpara>
 
-      <screen>ActionController::Base.session_store = :torquebox_store</screen>
+      <para><programlisting>ActionController::Base.session_store = :torquebox_store</programlisting></para>
 
       <formalpara>
         <title>Rails 3.x</title>
@@ -716,7 +716,20 @@ gem 'jdbc-sqlite3'</programlisting></para>
         (adjust for your application's name)</para>
       </formalpara>
 
-      <screen><replaceable>MyApp</replaceable>::Application.config.session_store :torquebox_store</screen>
+      <para><programlisting><replaceable>MyApp</replaceable>::Application.config.session_store :torquebox_store</programlisting></para>
+
+      <para>If you need more control over the session cookie, the full
+      list of supported options is below.</para>
+
+      <para><programlisting language="ruby"><replaceable>MyApp</replaceable>::Application.config.session_store :torquebox_store, {
+  :key => 'my_session_key',
+  :domain => 'foobar.com',
+  :path => '/baz',
+  :httponly => true,
+  :secure => true,
+  :max_age => 60, # seconds
+  :timeout => 180 # seconds
+}</programlisting></para>
     </section>
 
     <section id="rails-cache-configuration">
@@ -806,6 +819,19 @@ class SinatraSessions &lt; Sinatra::Base
   end
 
 end</programlisting></para>
+
+      <para>If you need more control over the session cookie, the full
+      list of supported options is below.</para>
+
+      <para><programlisting language="ruby">use TorqueBox::Session::ServletStore, {
+  :key => 'sinatra_sessions',
+  :domain => 'foobar.com',
+  :path => '/baz',
+  :httponly => true,
+  :secure => true,
+  :max_age => 60, # seconds
+  :timeout => 180 # seconds
+}</programlisting></para>
     </section>
 
     <section id="sinatra-cache-configuration">
