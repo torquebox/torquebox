@@ -26,18 +26,29 @@ versions = {
   :rails30        =>    '3.0.15',
   :rails31        =>    '3.1.7',
   :rails32        =>    '3.2.7',
+  :rails40        =>    '4.0.0',
   :sass_rails     =>    {
     :rails31 => '3.1.6',
     :rails32 => '3.2.5',
+    :rails40 => '4.0.0',
   },
   :coffee_rails   =>    {
     :rails31 => '3.1.1',
     :rails32 => '3.2.2',
+    :rails40 => '4.0.0',
   },
   :therubyrhino   =>    '1.73.5',
-  :uglifier       =>    '1.0.4',
-
-  :jquery_rails   =>    '1.0.19',
+  :uglifier       =>    {
+    :rails3x => '1.0.4',
+    :rails40 => '2.1.1',
+  },
+  :jquery_rails   =>    {
+    :rails3x => '1.0.19',
+    :rails40 => '3.0.2',
+  },
+  :turbolinks     =>    '1.2.0',
+  :jbuilder       =>    '1.4.2',
+  :sdoc           =>    '0.3.20',
 
   :arjdbc11       =>    '1.1.3',
   :arjdbc12       =>    '1.2.2',
@@ -74,14 +85,22 @@ GemInstaller.with( versions ) do |installer|
   installer.install( 'rails',         versions[:rails30] )
   installer.install( 'rails',         versions[:rails31] )
   installer.install( 'rails',         versions[:rails32] )
+  installer.install( 'rails',         versions[:rails40] )
   installer.install( 'therubyrhino' )
   installer.install( 'sass-rails',    versions[:sass_rails][:rails31] )
   installer.install( 'coffee-rails',  versions[:coffee_rails][:rails31] )
   installer.install( 'sass-rails',    versions[:sass_rails][:rails32] )
   installer.install( 'coffee-rails',  versions[:coffee_rails][:rails32] )
-  installer.install( 'jquery-rails',  versions[:jquery_rails], false )
-  installer.install( 'uglifier' )
-  
+  installer.install( 'sass-rails',    versions[:sass_rails][:rails40] )
+  installer.install( 'coffee-rails',  versions[:coffee_rails][:rails40] )
+  installer.install( 'jquery-rails',  versions[:jquery_rails][:rails3x], false )
+  installer.install( 'jquery-rails',  versions[:jquery_rails][:rails40], false )
+  installer.install( 'uglifier',      versions[:uglifier][:rails3x] )
+  installer.install( 'uglifier',      versions[:uglifier][:rails40] )
+  installer.install( 'turbolinks',    versions[:turbolinks] )
+  installer.install( 'jbuilder',      versions[:jbuilder] )
+  installer.install( 'sdoc',          versions[:sdoc] )
+
   installer.install( 'activerecord-jdbc-adapter', versions[:arjdbc11] )
   installer.install( 'activerecord-jdbc-adapter', versions[:arjdbc12] )
 
