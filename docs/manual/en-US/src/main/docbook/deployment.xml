@@ -123,4 +123,69 @@
     the application directory.</para></section>
     </section>
   </section>
+
+  <section id="zero-downtime-redeployment">
+    <title>Zero Downtime Redeployment</title>
+
+    <para>TorqueBox now supports redeploying part or all of an
+    application without any downtime. For now, this only works with
+    exploded deployments (not .knob archives). To initiate a zero
+    downtime deployment, copy the updated application code to the
+    server (overwriting the currently running files) and touch
+    <filename>$APP_ROOT/tmp/restart.txt</filename>, where
+    <filename>$APP_ROOT</filename> is the root directory of your
+    application. The application's web runtime will restart, sending
+    all new web requests to the updated runtime while existing
+    requests finish in the old runtimes. Other runtimes may be
+    restarted by touching the appropriate redeployment markers, listed
+    below.</para>
+
+    <table>
+      <title>Zero Downtime Redeployment Markers</title>
+        <tgroup cols="2">
+          <colspec align="left" />
+          <thead>
+            <row>
+              <entry>Marker File</entry>
+              <entry>Runtimes Restarted</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><varname>tmp/restart.txt</varname></entry>
+              <entry>web</entry>
+            </row>
+            <row>
+              <entry><varname>tmp/restart-web.txt</varname></entry>
+              <entry>web</entry>
+            </row>
+            <row>
+              <entry><varname>tmp/restart-jobs.txt</varname></entry>
+              <entry>jobs</entry>
+            </row>
+            <row>
+              <entry><varname>tmp/restart-messaging.txt</varname></entry>
+              <entry>messaging</entry>
+            </row>
+            <row>
+              <entry><varname>tmp/restart-services.txt</varname></entry>
+              <entry>services</entry>
+            </row>
+            <row>
+              <entry><varname>tmp/restart-stomplets.txt</varname></entry>
+              <entry>stomplets</entry>
+            </row>
+            <row>
+              <entry><varname>tmp/restart-all.txt</varname></entry>
+              <entry>web, jobs, messaging, services, stomplets</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <para>Note that when the services runtime gets restarted any
+      running services will be stopped and new service instances
+      initialized and started.</para>
+  </section>
 </chapter>
