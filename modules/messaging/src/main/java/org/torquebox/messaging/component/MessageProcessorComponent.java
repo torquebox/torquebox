@@ -24,6 +24,7 @@ import javax.jms.Session;
 
 import org.jruby.RubyModule;
 import org.torquebox.core.component.AbstractRubyComponent;
+import org.torquebox.core.util.RuntimeHelper;
 import org.torquebox.messaging.MessageProcessorGroup;
 
 public class MessageProcessorComponent extends AbstractRubyComponent {
@@ -33,10 +34,14 @@ public class MessageProcessorComponent extends AbstractRubyComponent {
     }
 
     public void process(Message message, Session session, MessageProcessorGroup group) {
-        RubyModule messageWrapperClass = getClass( "TorqueBox::Messaging::Message" );
-        Object wrappedMessage = _callRubyMethod( messageWrapperClass, "new", message );
-        _callRubyMethodIfDefined("initialize_proxy", group);
-        _callRubyMethod( findMiddleware(), "invoke", session, wrappedMessage, getRubyComponent() );
+        try {
+            RubyModule messageWrapperClass = getClass( "TorqueBox::Messaging::Message" );
+            Object wrappedMessage = _callRubyMethod( messageWrapperClass, "new", message );
+            _callRubyMethodIfDefined("initialize_proxy", group);
+            _callRubyMethod( findMiddleware(), "invoke", session, wrappedMessage, getRubyComponent() );
+        } finally {
+            RuntimeHelper.evalScriptlet( getRuby(), "ActiveRecord::Base.clear_active_connections! if defined?(ActiveRecord::Base)" );
+        }
     }
     
     protected Object findMiddleware() {

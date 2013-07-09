@@ -24,6 +24,7 @@ import org.jruby.Ruby;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.core.runtime.RubyRuntimePoolRestartListener;
+import org.torquebox.core.util.RuntimeHelper;
 import org.torquebox.services.component.ServiceComponent;
 
 public class RubyService implements RubyServiceMBean, RubyRuntimePoolRestartListener {
@@ -54,7 +55,11 @@ public class RubyService implements RubyServiceMBean, RubyRuntimePoolRestartList
 
     public synchronized void destroy() {
         if (this.runtime != null) {
-            this.runtimePool.returnRuntime( runtime );
+            try {
+                RuntimeHelper.evalScriptlet( this.runtime, "ActiveRecord::Base.clear_active_connections! if defined?(ActiveRecord::Base)" );
+            } finally {
+                this.runtimePool.returnRuntime( this.runtime );
+            }
         }
     }
 

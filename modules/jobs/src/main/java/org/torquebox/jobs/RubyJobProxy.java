@@ -33,6 +33,7 @@ import org.quartz.StatefulJob;
 import org.quartz.UnableToInterruptJobException;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
+import org.torquebox.core.util.RuntimeHelper;
 import org.torquebox.jobs.component.JobComponent;
 
 public class RubyJobProxy extends NotifiableJob implements Job, StatefulJob, InterruptableJob {
@@ -60,6 +61,8 @@ public class RubyJobProxy extends NotifiableJob implements Job, StatefulJob, Int
                 this.job.run();
             } catch (Exception e) {
                 this.job.onError( e );
+            } finally {
+                RuntimeHelper.evalScriptlet( ruby, "ActiveRecord::Base.clear_active_connections! if defined?(ActiveRecord::Base)" );
             }
             notifyFinished( context );
         } catch (Exception e) {
