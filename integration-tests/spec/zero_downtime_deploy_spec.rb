@@ -142,8 +142,22 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
   end
 
   def restart_runtime_with_jmx(pool, app)
-    mbean("torquebox.pools:name=#{pool},app=#{app}") do |runtime|
-      runtime.restart
+    # Sometimes the runtime reloading can trigger a full GC and
+    # when that happens things pause and can occasionally error out
+    # when trying to invoke a method on the JMX mbean
+    retries = 0
+    begin
+      mbean("torquebox.pools:name=#{pool},app=#{app}") do |runtime|
+        runtime.restart
+      end
+    rescue Exception => ex
+      retries += 1
+      if retries < 5
+        sleep 0.5
+        retry
+      else
+        raise ex
+      end
     end
   end
 
