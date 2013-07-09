@@ -19,19 +19,19 @@ describe "job timeout" do
   it "should interrupt the job with a real timeout" do
     queue = TorqueBox::Messaging::Queue.new('/queue/timeout-real')
     queue.receive(:timeout => 120_000).should == 'started'
-    queue.receive(:timeout => 30_000, :selector => "completion = 'true'").should == 'interrupted'
+    queue.receive(:timeout => 45_000, :selector => "completion = 'true'").should == 'interrupted'
   end
 
   it "should not interrupt the job with a 0s timeout" do
     queue = TorqueBox::Messaging::Queue.new('/queue/timeout0s')
     queue.receive(:timeout => 120_000).should == 'started'
-    queue.receive(:timeout => 30_000, :selector => "completion = 'true'").should == 'done'
+    queue.receive(:timeout => 45_000, :selector => "completion = 'true'").should == 'done'
   end
 
   it "should not interrupt the job with no timeout" do
     queue = TorqueBox::Messaging::Queue.new('/queue/notimeout')
     queue.receive(:timeout => 120_000).should == 'started'
-    queue.receive(:timeout => 30_000, :selector => "completion = 'true'").should == 'done'
+    queue.receive(:timeout => 45_000, :selector => "completion = 'true'").should == 'done'
   end
 
 end
