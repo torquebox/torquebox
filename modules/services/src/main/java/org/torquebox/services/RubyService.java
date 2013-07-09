@@ -19,39 +19,62 @@
 
 package org.torquebox.services;
 
+import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
+import org.torquebox.core.runtime.RubyRuntimePoolRestartListener;
 import org.torquebox.services.component.ServiceComponent;
 
-public class RubyService implements RubyServiceMBean {
+public class RubyService implements RubyServiceMBean, RubyRuntimePoolRestartListener {
 
     public RubyService(String name) {
         this.name = name;
     }
 
-    public void create() throws Exception {
+    public synchronized void create() throws Exception {
+        this.runtimePool.registerRestartListener( this );
         this.runtime = this.runtimePool.borrowRuntime( this.resolver.getComponentName() );
         this.servicesComponent = (ServiceComponent) this.resolver.resolve( runtime );
     }
 
-    public void start() {
+    public synchronized void start() {
         if (!isStarted()) {
             this.servicesComponent.start();
             this.started = true;
         }
     }
 
-    public void stop() {
+    public synchronized void stop() {
         if (this.servicesComponent != null) {
             this.servicesComponent.stop();
         }
         this.started = false;
     }
 
-    public void destroy() {
+    public synchronized void destroy() {
         if (this.runtime != null) {
             this.runtimePool.returnRuntime( runtime );
+        }
+    }
+
+    public synchronized void runtimeRestarted() {
+        boolean created = this.runtime != null;
+        boolean started = isStarted();
+        try {
+            if (started) {
+                log.info( "Restarting service " + this + " after runtime restart" );
+                this.stop();
+            }
+            if (created) {
+                this.destroy();
+                this.create();
+            }
+            if (started) {
+                this.start();
+            }
+        } catch (Exception e) {
+            log.error( "Error restarting service " + this, e );
         }
     }
 
@@ -115,5 +138,6 @@ public class RubyService implements RubyServiceMBean {
     private RubyRuntimePool runtimePool;
     private Ruby runtime;
     private ServiceComponent servicesComponent;
+    private static final Logger log = Logger.getLogger( "org.torquebox.services" );
 
 }

@@ -1,6 +1,16 @@
 require 'spec_helper'
+require 'torquebox-messaging'
 
 shared_examples_for 'zero downtime deploy' do |runtime_type|
+
+  before(:each) do
+    @service_queue = TorqueBox::Messaging::Queue.new('/queue/service_response')
+  end
+
+  after(:each) do
+    # Drain the service response queue
+    nil until @service_queue.receive(:timeout => 1).nil?
+  end
 
   it 'should not reload without runtime restart' do
     visit '/reloader-rack?0'
@@ -40,7 +50,7 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
     seen_values.size.should > 3
   end
 
-  it 'should reload with runtime restart marker' do
+  it 'should reload with runtime restart.txt marker' do
     visit '/reloader-rack?0'
     element = page.find_by_id('success')
     element.should_not be_nil
@@ -48,7 +58,7 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
     seen_values << element.text
     counter = 1
     while seen_values.size <= 3 && counter < 60 do
-      restart_runtime_with_marker('web')
+      restart_runtime_with_marker('restart.txt', 'web')
       visit "/reloader-rack?#{counter}"
       element = page.find_by_id('success')
       element.should_not be_nil
@@ -58,6 +68,58 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
     end
 
     seen_values.size.should > 3
+  end
+
+  it 'should reload with runtime restart-web.txt marker' do
+    visit '/reloader-rack?0'
+    element = page.find_by_id('success')
+    element.should_not be_nil
+    web_seen_values = Set.new
+    web_seen_values << element.text
+    service_seen_values = Set.new
+    service_value = @service_queue.receive(:timeout => 1)
+    service_seen_values << service_value unless service_value.nil?
+    counter = 1
+    while web_seen_values.size <= 3 && counter < 60 do
+      restart_runtime_with_marker('restart-web.txt', 'web')
+      visit "/reloader-rack?#{counter}"
+      element = page.find_by_id('success')
+      element.should_not be_nil
+      web_seen_values << element.text
+      service_value = @service_queue.receive(:timeout => 1)
+      service_seen_values << service_value unless service_value.nil?
+      counter += 1
+      sleep 0.2
+    end
+
+    web_seen_values.size.should > 3
+    service_seen_values.size.should == 0
+  end
+
+  it 'should reload with runtime restart-all.txt marker' do
+    visit '/reloader-rack?0'
+    element = page.find_by_id('success')
+    element.should_not be_nil
+    web_seen_values = Set.new
+    web_seen_values << element.text
+    service_seen_values = Set.new
+    service_value = @service_queue.receive(:timeout => 1)
+    service_seen_values << service_value unless service_value.nil?
+    counter = 1
+    while (web_seen_values.size <= 3 || service_seen_values.size <= 3) && counter < 60 do
+      restart_runtime_with_marker('restart-all.txt', 'web')
+      visit "/reloader-rack?#{counter}"
+      element = page.find_by_id('success')
+      element.should_not be_nil
+      web_seen_values << element.text
+      service_value = @service_queue.receive(:timeout => 1)
+      service_seen_values << service_value unless service_value.nil?
+      counter += 1
+      sleep 1
+    end
+
+    web_seen_values.size.should > 3
+    service_seen_values.size.should > 3
   end
 
   it 'should not drop requests while reloading' do
@@ -85,10 +147,10 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
     end
   end
 
-  def restart_runtime_with_marker(pool)
+  def restart_runtime_with_marker(marker, pool)
     app_root = File.join(MUTABLE_APP_BASE_PATH, 'rack', 'reloader')
     FileUtils.mkdir_p(File.join(app_root, 'tmp'))
-    marker = File.join(app_root, 'tmp', 'restart.txt')
+    marker = File.join(app_root, 'tmp', marker)
     FileUtils.touch(marker)
   end
 
@@ -104,6 +166,11 @@ describe 'shared runtime' do
       RACK_ENV: production
     web:
       context: /reloader-rack
+    queues:
+      /queue/service_response:
+        durable: false
+    services:
+      SimpleService:
     ruby:
       version: #{RUBY_VERSION[0,3]}
   END
@@ -122,10 +189,18 @@ describe 'bounded runtime' do
       RACK_ENV: production
     web:
       context: /reloader-rack
+    queues:
+      /queue/service_response:
+        durable: false
+    services:
+      SimpleService:
     pooling:
       web:
         min: 1
         max: 3
+      services:
+        min: 1
+        max: 2
     ruby:
       version: #{RUBY_VERSION[0,3]}
   END

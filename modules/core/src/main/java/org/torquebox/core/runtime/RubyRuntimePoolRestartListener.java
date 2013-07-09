@@ -19,28 +19,7 @@
 
 package org.torquebox.core.runtime;
 
-import java.util.Set;
+public interface RubyRuntimePoolRestartListener {
 
-import org.jboss.as.naming.context.NamespaceContextSelector;
-import org.jruby.Ruby;
-
-/**
- * Pool of managed Ruby runtime instances.
- * 
- * @author Bob McWhirter
- */
-public interface RubyRuntimePool {
-    Ruby borrowRuntime(String requester) throws Exception;
-    void returnRuntime(Ruby runtime);
-    
-    Set<String> getAllRuntimeNames();
-    
-    String getName();
-    
-    void start() throws Exception;
-    void stop() throws Exception;
-    void restart() throws Exception;
-    void registerRestartListener(RubyRuntimePoolRestartListener listener);
-    
-    void setNamespaceContextSelector(NamespaceContextSelector nsContextSelector);
+    public void runtimeRestarted();
 }

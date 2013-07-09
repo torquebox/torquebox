@@ -20,11 +20,14 @@
 package org.torquebox.core.pool;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.logging.Logger;
+import org.torquebox.core.runtime.RubyRuntimePoolRestartListener;
 
 /**
  * A pool implementation that shares a single instance to all consumers.
@@ -206,6 +209,13 @@ public class SharedPool<T> implements Pool<T> {
         }
         this.instance = null;
         startPool();
+        for (RubyRuntimePoolRestartListener listener : this.restartListeners) {
+            listener.runtimeRestarted();
+        }
+    }
+
+    public void registerRestartListener(RubyRuntimePoolRestartListener listener) {
+        this.restartListeners.add( listener );
     }
 
     @Override
@@ -281,5 +291,7 @@ public class SharedPool<T> implements Pool<T> {
     private boolean deferUntilRequested = true;
 
     private NamespaceContextSelector nsContextSelector = null;
+
+    private List<RubyRuntimePoolRestartListener> restartListeners = new CopyOnWriteArrayList<RubyRuntimePoolRestartListener>();
 
 }
