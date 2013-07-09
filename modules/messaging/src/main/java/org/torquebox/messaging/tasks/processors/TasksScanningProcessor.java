@@ -49,8 +49,8 @@ public class TasksScanningProcessor extends AbstractScanningProcessor {
         TaskMetaData taskMetaData = existingTaskMetaData( unit, rubyClassName );
 
         if (taskMetaData == null) {
-        	taskMetaData = new TaskMetaData();
-        	unit.addToAttachmentList( TaskMetaData.ATTACHMENTS_KEY, taskMetaData );	
+            taskMetaData = new TaskMetaData();
+            unit.addToAttachmentList( TaskMetaData.ATTACHMENTS_KEY, taskMetaData );
         }
         
         String simpleLocation = parentPath + relativePath.substring( 0, relativePath.length() - 3 );
@@ -60,7 +60,7 @@ public class TasksScanningProcessor extends AbstractScanningProcessor {
     }
     
     protected TaskMetaData existingTaskMetaData(DeploymentUnit unit, String rubyClassName) {
-    	AttachmentList<TaskMetaData> allMetaData = unit.getAttachment( TaskMetaData.ATTACHMENTS_KEY );
+        AttachmentList<TaskMetaData> allMetaData = unit.getAttachment( TaskMetaData.ATTACHMENTS_KEY );
         if (allMetaData != null) {
             for (TaskMetaData each : allMetaData) {
                 if (rubyClassName.equals( each.getRubyClassName() )) {

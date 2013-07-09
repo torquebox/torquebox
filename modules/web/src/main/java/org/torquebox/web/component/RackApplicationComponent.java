@@ -35,7 +35,7 @@ public class RackApplicationComponent extends AbstractRubyComponent {
     }
 
     public RackResponse call(RackEnvironment env) {
-    	return new RackResponse( (IRubyObject) _callRubyMethod( "call", env.getEnv() ) );
+        return new RackResponse( (IRubyObject) _callRubyMethod( "call", env.getEnv() ) );
     }
 
 }

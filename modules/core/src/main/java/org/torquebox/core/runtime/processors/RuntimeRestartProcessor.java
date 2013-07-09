@@ -30,8 +30,8 @@ import org.torquebox.core.runtime.RuntimeRestartScanner;
 
 public class RuntimeRestartProcessor implements DeploymentUnitProcessor {
 
-	@Override
-	public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+    @Override
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         final RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
 
@@ -40,25 +40,25 @@ public class RuntimeRestartProcessor implements DeploymentUnitProcessor {
         }
         RuntimeRestartScanner scanner = getRuntimeRestartScanner( unit );
         scanner.addDeploymentUnit( unit );
-	}
+    }
 
-	@Override
-	public void undeploy(DeploymentUnit unit) {
-		RuntimeRestartScanner scanner = getRuntimeRestartScanner( unit );
-		// During shutdown scanner may be removed before undeploy
-		if (scanner != null) {
-			scanner.removeDeploymentUnit( unit );
-		}
-	}
-	
-	@SuppressWarnings("rawtypes")
+    @Override
+    public void undeploy(DeploymentUnit unit) {
+        RuntimeRestartScanner scanner = getRuntimeRestartScanner( unit );
+        // During shutdown scanner may be removed before undeploy
+        if (scanner != null) {
+            scanner.removeDeploymentUnit( unit );
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
     protected RuntimeRestartScanner getRuntimeRestartScanner(DeploymentUnit unit) {
-	    ServiceController serviceController = unit.getServiceRegistry().
+        ServiceController serviceController = unit.getServiceRegistry().
                 getService( CoreServices.RUNTIME_RESTART_SCANNER );
-	    if (serviceController != null) {
-	        return (RuntimeRestartScanner) serviceController.getValue();
-	    }
-	    return null;
-	}
+        if (serviceController != null) {
+            return (RuntimeRestartScanner) serviceController.getValue();
+        }
+        return null;
+    }
 
 }

@@ -76,29 +76,29 @@ public class TasksYamlParsingProcessor extends AbstractSplitYamlParsingProcessor
             List<TaskMetaData> result = new ArrayList<TaskMetaData>();
 
             for (String rubyClassName :  tasks.keySet()) {
-            	TaskMetaData task = existingTaskMetaData( rubyClassName, existingTasks );
-            	
-            	Map options = tasks.get( rubyClassName );
-            	
-            	if (task == null) {
-            		task = new TaskMetaData();
-            		task.setRubyClassName( rubyClassName );
-            		result.add( task ); 
-            	}
+                TaskMetaData task = existingTaskMetaData( rubyClassName, existingTasks );
 
-            	if (options != null) {
-            		task.setConcurrency( (Integer)options.get( "concurrency") );
-            	    task.setDurable( (Boolean)options.get( "durable" ) );
-            	}
+                Map options = tasks.get( rubyClassName );
+
+                if (task == null) {
+                    task = new TaskMetaData();
+                    task.setRubyClassName( rubyClassName );
+                    result.add( task ); 
+                }
+
+                if (options != null) {
+                    task.setConcurrency( (Integer)options.get( "concurrency") );
+                    task.setDurable( (Boolean)options.get( "durable" ) );
+                }
             }
             
             return result;
         }
         
         static TaskMetaData existingTaskMetaData(String rubyClassName, List<? extends TaskMetaData> existingTasks) {
-        	for (TaskMetaData each : existingTasks) {
-        		if (rubyClassName.equals( each.getSimpleName() )) {
-        			return each;
+            for (TaskMetaData each : existingTasks) {
+                if (rubyClassName.equals( each.getSimpleName() )) {
+                    return each;
                 }
             }
              

@@ -38,7 +38,7 @@ import org.jboss.msc.service.StopContext;
 import org.torquebox.core.as.CoreServices;
 
 public class RuntimeRestartScanner implements Service <RuntimeRestartScanner>{
-	
+
     public RuntimeRestartScanner() {
         this.scheduledExecutor = Executors.newScheduledThreadPool( 1, new ThreadFactory() {
             @Override
@@ -70,7 +70,7 @@ public class RuntimeRestartScanner implements Service <RuntimeRestartScanner>{
     public void stop(StopContext context) {
         this.scheduledExecutor.shutdown();
     }
-	
+
     public void addDeploymentUnit(DeploymentUnit unit) {
         this.deploymentUnits.add( unit );
     }
@@ -78,7 +78,7 @@ public class RuntimeRestartScanner implements Service <RuntimeRestartScanner>{
     public void removeDeploymentUnit(DeploymentUnit unit) {
         this.deploymentUnits.remove( unit );
     }
-	
+
     protected void scan() {
         Iterator<DeploymentUnit> iter = this.deploymentUnits.iterator();
         while (iter.hasNext()) {
@@ -115,10 +115,10 @@ public class RuntimeRestartScanner implements Service <RuntimeRestartScanner>{
             redeployMarker.delete();
         }
     }
-	
-	private ScheduledExecutorService scheduledExecutor;
-	private int scanInterval = 2000; // in milliseconds
-	private CopyOnWriteArraySet<DeploymentUnit> deploymentUnits = new CopyOnWriteArraySet<DeploymentUnit>();
-	private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
+
+    private ScheduledExecutorService scheduledExecutor;
+    private int scanInterval = 2000; // in milliseconds
+    private CopyOnWriteArraySet<DeploymentUnit> deploymentUnits = new CopyOnWriteArraySet<DeploymentUnit>();
+    private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
 
 }

@@ -229,10 +229,10 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
     
     protected void addRuntimeRestartScannerService(final OperationContext context, ServiceVerificationHandler verificationHandler,
             List<ServiceController<?>> newControllers) throws IOException {
-    	RuntimeRestartScanner service = new RuntimeRestartScanner();
-    	newControllers.add( context.getServiceTarget().addService( CoreServices.RUNTIME_RESTART_SCANNER, service)
-    			.addListener( verificationHandler )
-    			.install() );
+        RuntimeRestartScanner service = new RuntimeRestartScanner();
+        newControllers.add( context.getServiceTarget().addService( CoreServices.RUNTIME_RESTART_SCANNER, service)
+                .addListener( verificationHandler )
+                .install() );
     }
 
     protected void addTorqueBoxStdioContext() {

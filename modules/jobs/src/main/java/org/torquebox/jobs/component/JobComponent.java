@@ -24,7 +24,7 @@ import org.torquebox.core.component.AbstractRubyComponent;
 public class JobComponent extends AbstractRubyComponent {
 
     public void run() {
-    	_callRubyMethod( "run" );
+        _callRubyMethod( "run" );
     }
 
     public void onTimeout(){

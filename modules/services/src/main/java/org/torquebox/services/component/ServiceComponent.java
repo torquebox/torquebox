@@ -24,11 +24,11 @@ import org.torquebox.core.component.AbstractRubyComponent;
 public class ServiceComponent extends AbstractRubyComponent {
 
     public void start() {
-    	_callRubyMethodIfDefined( "start" );
+        _callRubyMethodIfDefined( "start" );
     }
 
     public void stop() {
-    	_callRubyMethodIfDefined( "stop" );
+        _callRubyMethodIfDefined( "stop" );
     }
 
 }

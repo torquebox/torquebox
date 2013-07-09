@@ -35,7 +35,7 @@ public class ComponentResolver {
     public static AttachmentKey<AttachmentList<Injectable>> ADDITIONAL_INJECTABLES = AttachmentKey.createList( Injectable.class );
 
     public ComponentResolver(boolean alwaysReload) {
-    	this.alwaysReload = alwaysReload;
+        this.alwaysReload = alwaysReload;
     }
 
     public RubyComponent resolve(final Ruby runtime) throws Exception {

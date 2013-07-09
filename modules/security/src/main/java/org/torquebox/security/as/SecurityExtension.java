@@ -42,8 +42,8 @@ public class SecurityExtension extends AbstractBootstrappableExtension {
         initializeAuthentication(context);
     }
 
-	private void initializeAuthentication(ExtensionContext context) {
-		log.info( "Initializing TorqueBox Auth Subsystem" );
+    private void initializeAuthentication(ExtensionContext context) {
+        log.info( "Initializing TorqueBox Auth Subsystem" );
         final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME, 1, 0 );
         final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( AuthSubsystemProviders.SUBSYSTEM );
 
@@ -59,7 +59,7 @@ public class SecurityExtension extends AbstractBootstrappableExtension {
                 OperationEntry.EntryType.PRIVATE);
 
         registration.registerXMLElementWriter( AuthSubsystemParser.getInstance() );
-	}
+    }
 
     @Override
     public void initializeParsers(ExtensionParsingContext context) {

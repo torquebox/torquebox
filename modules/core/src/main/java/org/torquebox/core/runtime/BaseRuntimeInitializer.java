@@ -54,8 +54,8 @@ public class BaseRuntimeInitializer implements RuntimeInitializer {
     }
 
     public File getApplicationRoot() {
-	    return rubyAppMetaData.getRoot();
-	}
+        return rubyAppMetaData.getRoot();
+    }
     
     private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
     

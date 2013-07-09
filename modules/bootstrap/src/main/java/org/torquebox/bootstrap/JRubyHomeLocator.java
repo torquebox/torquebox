@@ -78,7 +78,7 @@ public class JRubyHomeLocator {
         File jbossHome = ifExists( System.getProperty( "jboss.home.dir" ) );
 
         if (jbossHome != null) {
-        	// look for jruby/ next to $JBOSS_HOME
+            // look for jruby/ next to $JBOSS_HOME
             jrubyHome = new File( jbossHome.getParentFile(), "jruby" );
             if (jrubyHome.exists() && jrubyHome.isDirectory()) {
                 return jrubyHome.getAbsolutePath();

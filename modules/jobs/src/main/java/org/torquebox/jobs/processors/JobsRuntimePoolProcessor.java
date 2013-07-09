@@ -40,8 +40,8 @@ import org.torquebox.jobs.ScheduledJobMetaData;
  */
 public class JobsRuntimePoolProcessor implements DeploymentUnitProcessor {
 
-	public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
-		DeploymentUnit unit = phaseContext.getDeploymentUnit();
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
         List<PoolMetaData> allMetaData = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
         PoolMetaData jobsPool = PoolMetaData.extractNamedMetaData( allMetaData, "jobs" );
@@ -55,7 +55,7 @@ public class JobsRuntimePoolProcessor implements DeploymentUnitProcessor {
     }
     
     public void undeploy(DeploymentUnit unit) {
-		
-    }	
+        
+    }
 
 }

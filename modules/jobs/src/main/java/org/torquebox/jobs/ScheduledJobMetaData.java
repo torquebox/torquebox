@@ -39,7 +39,7 @@ public class ScheduledJobMetaData {
 
     public void setSingleton(boolean singleton) {
         this.singleton = singleton;
-    }	
+    }
 
     public void setName(String name) {
         this.name = name;

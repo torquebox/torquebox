@@ -40,16 +40,16 @@ import org.torquebox.web.rack.RackMetaData;
 import org.torquebox.web.rack.RackRuntimeInitializer;
 
 public class RackRuntimeProcessorTest extends AbstractDeploymentProcessorTestCase {
-	
+    
     private Map<String, String> environment = new HashMap<String, String>();
-	private File root;
-	
-	@Before
-	public void setUpDeployer() {
-		appendDeployer( new RackRuntimeProcessor() );
-		root = new File( "/foo" );
-	}
-	
+    private File root;
+
+    @Before
+    public void setUpDeployer() {
+        appendDeployer( new RackRuntimeProcessor() );
+        root = new File( "/foo" );
+    }
+
     @Test
     public void testHappy() throws Exception {
         environment.put( "SOME_VAR", "gassy" );

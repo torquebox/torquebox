@@ -99,12 +99,12 @@ public class PoolMetaData {
     }
 
     public static PoolMetaData extractNamedMetaData(List<PoolMetaData> list, String name) {
-    	 for ( PoolMetaData each : list ) {
+        for ( PoolMetaData each : list ) {
              if ( each.getName().equals( name ) ) {
-            	 return each;
+                 return each;
              }
          }
-    	 return null;
+        return null;
     }
     
     /**

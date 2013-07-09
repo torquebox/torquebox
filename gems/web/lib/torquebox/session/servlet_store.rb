@@ -142,10 +142,10 @@ module TorqueBox
       alias :key? :has_key?
       alias :include? :has_key?
 
-			def store(key, value)
-				super(key.to_s, value)
-			end
-			alias :[]= :store
+      def store(key, value)
+        super(key.to_s, value)
+      end
+      alias :[]= :store
 
       def delete(key)
         super(key.to_s)

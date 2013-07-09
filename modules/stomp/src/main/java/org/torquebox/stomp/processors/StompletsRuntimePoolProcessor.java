@@ -33,10 +33,10 @@ import org.torquebox.stomp.RubyStompletMetaData;
  */
 public class StompletsRuntimePoolProcessor implements DeploymentUnitProcessor {
 
-	public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
-		DeploymentUnit unit = phaseContext.getDeploymentUnit();
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
-		List<RubyStompletMetaData> allMetaData = unit.getAttachmentList( RubyStompletMetaData.ATTACHMENTS_KEY ); 
+        List<RubyStompletMetaData> allMetaData = unit.getAttachmentList( RubyStompletMetaData.ATTACHMENTS_KEY ); 
         if (allMetaData.isEmpty()) {
             return;
         }
@@ -53,7 +53,7 @@ public class StompletsRuntimePoolProcessor implements DeploymentUnitProcessor {
     }
     
     public void undeploy(DeploymentUnit unit) {
-		
-    }	
+        
+    }
 
 }
