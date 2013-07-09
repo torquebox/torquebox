@@ -402,6 +402,11 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     public synchronized void destroyInstance(Ruby instance) {
         RuntimeContext.deregisterRuntime( instance );
         if (undisposed.remove( instance )) {
+            try {
+                RuntimeHelper.evalScriptlet( instance, "ActiveRecord::Base.clear_all_connections! if defined?(ActiveRecord::Base)" );
+            } catch (Exception e) {
+                // ignorable since we're tearing down the instance anyway
+            }
             instance.tearDown( false );
         }
     }
