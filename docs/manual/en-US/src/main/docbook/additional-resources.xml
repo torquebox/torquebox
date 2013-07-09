@@ -157,9 +157,10 @@ end</screen>
       <para><example>
         <title>JMX Configuration in standalone.xml</title>
 
-        <para><programlisting>&lt;subsystem xmlns='urn:jboss:domain:jmx:1.1'&gt;
-  &lt;show-model value='true'/&gt;
-  &lt;remoting-connector use-management-endpoint='false'/&gt;
+        <para><programlisting>&lt;subsystem xmlns='urn:jboss:domain:jmx:1.2'&gt;
+  &lt;expose-resolved-model/&gt;
+  &lt;expose-expression-model/&gt;
+  <emphasis role="strong">&lt;remoting-connector use-management-endpoint='false'/&gt;</emphasis>
 &lt;/subsystem&gt;
         </programlisting></para>
       </example></para>
@@ -182,7 +183,13 @@ What roles do you want this user to belong to? (Please enter a comma separated l
 About to add user 'testuser' for realm 'ApplicationRealm'
 Is this correct yes/no? yes
 Added user 'testuser' to file '/opt/torquebox/jboss/standalone/configuration/application-users.properties'
-Added user 'testuser' to file '/opt/torquebox/jboss/domain/configuration/application-users.properties'</screen></para>
+Added user 'testuser' to file '/opt/torquebox/jboss/domain/configuration/application-users.properties'
+Added user 'testuser' with roles  to file '/opt/torquebox/jboss/standalone/configuration/application-roles.properties'
+Added user 'testuser' with roles  to file '/opt/torquebox/jboss/domain/configuration/application-roles.properties'
+Is this new user going to be used for one AS process to connect to another AS process? 
+e.g. for a slave host controller connecting to the master or for a Remoting connection for server to server EJB calls.
+yes/no? yes
+To represent the user add the following to the server-identities definition &lt;secret value="cDRzc3cwcmQj" /&rt;</screen></para>
 
       <para>Finally, start TorqueBox on the remote server and bind it
       to a real IP address.
@@ -191,12 +198,12 @@ Added user 'testuser' to file '/opt/torquebox/jboss/domain/configuration/applica
 
       <para>When running VisualVM on the local machine you'll need to
       ensure
-      <filename>$JBOSS_HOME/bin/client/jboss-client.jar</filename> is
+      <filename>$JBOSS_HOME/bin/client/jboss-cli-client.jar</filename> is
       on the classpath. You can simply copy that file to the local
       machine or if TorqueBox is installed locally use the jar from
       inside there.
 
-      <screen><prompt>$</prompt> <command>jvisualvm --cp:a $JBOSS_HOME/bin/client/jboss-client.jar</command></screen></para>
+      <screen><prompt>$</prompt> <command>jvisualvm --cp:a $JBOSS_HOME/bin/client/jboss-cli-client.jar</command></screen></para>
 
       <para>Inside VisualVM, click on File -> Add JMX Connection. The
       connection string is
