@@ -20,9 +20,9 @@
 package org.torquebox.core.pool;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -290,7 +290,7 @@ public class SharedPool<T> implements Pool<T> {
     /** The previous shared instances. */
     private List<T> previousInstances = new ArrayList<T>();
     
-    private Map<T, AtomicInteger> instanceCounts = new HashMap<T, AtomicInteger>();
+    private Map<T, AtomicInteger> instanceCounts = new WeakHashMap<T, AtomicInteger>();
 
     /** Optional factory to create the initial instance. */
     private InstanceFactory<T> factory;
