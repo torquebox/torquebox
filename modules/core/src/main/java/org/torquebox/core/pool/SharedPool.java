@@ -19,6 +19,7 @@
 
 package org.torquebox.core.pool;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -186,8 +187,14 @@ public class SharedPool<T> implements Pool<T> {
      * Destroy the pool.
      */
     public synchronized void stop() {
-        if (this.factory != null && this.instance != null) {
-            this.factory.destroyInstance( this.instance );
+        if (this.factory != null) {
+            if (this.instance != null) {
+                this.factory.destroyInstance( this.instance );
+            }
+            for (T previousInstance : this.previousInstances) {
+                this.factory.destroyInstance( previousInstance );
+            }
+            this.previousInstances.clear();
         }
         this.instance = null;
         this.factory = null;
@@ -205,7 +212,7 @@ public class SharedPool<T> implements Pool<T> {
         if (currentCount == null || currentCount.intValue() == 0) {
             retireInstance( this.instance );
         } else {
-            this.previousInstance = this.instance;
+            this.previousInstances.add( this.instance );
         }
         this.instance = null;
         startPool();
@@ -227,9 +234,9 @@ public class SharedPool<T> implements Pool<T> {
     public synchronized void releaseInstance(T instance) {
         AtomicInteger count = this.instanceCounts.get( instance );
         int remainingCount = count.decrementAndGet();
-        if (instance.equals( this.previousInstance ) && remainingCount == 0) {
+        if (this.previousInstances.contains( instance ) && remainingCount == 0) {
             retireInstance( instance );
-            this.previousInstance = null;
+            this.previousInstances.remove( instance );
         }
     }
 
@@ -280,8 +287,8 @@ public class SharedPool<T> implements Pool<T> {
     /** The shared instance. */
     private T instance;
     
-    /** The previous shared instance. */
-    private T previousInstance;
+    /** The previous shared instances. */
+    private List<T> previousInstances = new ArrayList<T>();
     
     private Map<T, AtomicInteger> instanceCounts = new HashMap<T, AtomicInteger>();
 

@@ -54,6 +54,7 @@ public class RubyService implements RubyServiceMBean, RubyRuntimePoolRestartList
     }
 
     public synchronized void destroy() {
+        this.servicesComponent = null;
         if (this.runtime != null) {
             try {
                 RuntimeHelper.evalScriptlet( this.runtime, "ActiveRecord::Base.clear_active_connections! if defined?(ActiveRecord::Base)" );

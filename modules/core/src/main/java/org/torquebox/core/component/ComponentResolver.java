@@ -69,11 +69,12 @@ public class ComponentResolver {
     @SuppressWarnings("rawtypes")
     protected synchronized IRubyObject createComponent(final Ruby runtime) throws Exception {
         prepareInjections(runtime);
+        Object[] convertedParams = this.initializeParams;
         // Ensure config hashes are RubyHash objects instead of Java Maps
-        if (initializeParams != null && initializeParams.length == 1 && initializeParams[0] instanceof Map) {
-            initializeParams[0] = RuntimeHelper.convertJavaMapToRubyHash( runtime, (Map) initializeParams[0] );
+        if (convertedParams != null && convertedParams.length == 1 && convertedParams[0] instanceof Map) {
+            convertedParams[0] = RuntimeHelper.convertJavaMapToRubyHash( runtime, (Map) convertedParams[0] );
         }
-        IRubyObject rubyComponent = this.componentInstantiator.newInstance( runtime, this.initializeParams, this.alwaysReload );
+        IRubyObject rubyComponent = this.componentInstantiator.newInstance( runtime, convertedParams, this.alwaysReload );
         return rubyComponent;
     }
 
