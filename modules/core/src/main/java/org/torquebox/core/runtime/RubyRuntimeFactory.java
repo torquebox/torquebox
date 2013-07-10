@@ -373,6 +373,11 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
                 + ") in " + elapsedSeconds + "s" );
     }
 
+    private void logRuntimeDestroyed(RubyInstanceConfig config, String contextInfo) {
+        log.info( "Destroyed ruby runtime (ruby_version: " + config.getCompatVersion() + ", compile_mode: "
+                + config.getCompileMode() + getFullContext( contextInfo ) + ")" );
+    }
+
     protected String getFullContext(String contextInfo) {
         String fullContext = null;
 
@@ -400,6 +405,8 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     }
 
     public synchronized void destroyInstance(Ruby instance) {
+        RubyInstanceConfig config = instance.getInstanceConfig();
+        String contextInfo = (String) instance.getENV().get( "TORQUEBOX_CONTEXT" );
         RuntimeContext.deregisterRuntime( instance );
         if (undisposed.remove( instance )) {
             try {
@@ -408,6 +415,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
                 // ignorable since we're tearing down the instance anyway
             }
             instance.tearDown( false );
+            logRuntimeDestroyed( config, contextInfo );
         }
     }
 
