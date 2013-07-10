@@ -61,7 +61,11 @@ public class RuntimeRestartScanner implements Service <RuntimeRestartScanner>{
         this.scheduledExecutor.scheduleWithFixedDelay( new Runnable() {
             @Override
             public void run() {
-                scan();
+                try {
+                    scan();
+                } catch (Exception e) {
+                    log.error( "Error while scanning for runtime restart markers", e );
+                }
             }
         }, 0, scanInterval, TimeUnit.MILLISECONDS );
     }
