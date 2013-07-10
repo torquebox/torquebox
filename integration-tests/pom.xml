@@ -26,8 +26,8 @@
     <assembly.dir>${project.basedir}/../build/assembly/target/stage/torquebox</assembly.dir>
     <overlay.dir>${project.basedir}/../build/eap-overlay/target/torquebox-eap-overlay</overlay.dir>
     <integ.dist.dir>target/integ-dist</integ.dist.dir>
-    <rspec.max.heap>1280m</rspec.max.heap>
-    <jboss.max.heap>1024m</jboss.max.heap>
+    <rspec.max.heap>768m</rspec.max.heap>
+    <jboss.max.heap>1280m</jboss.max.heap>
     <jboss.lazy>false</jboss.lazy>
     <driver.type>headless</driver.type>
     <domain.mode>false</domain.mode>
@@ -418,7 +418,7 @@
       <id>ci</id>
       <properties>
         <driver.type>headless</driver.type>
-        <jboss.max.heap>1536m</jboss.max.heap>
+        <jboss.max.heap>1792m</jboss.max.heap>
       </properties>
     </profile>
     <profile>
