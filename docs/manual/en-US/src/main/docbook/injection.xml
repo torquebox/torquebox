@@ -91,6 +91,12 @@ end</programlisting>
         <para><programlisting>TorqueBox.fetch(Java::pl.softwaremine.PolishingService)</programlisting></para>
       </informalexample></para>
 
+    <note>
+      <title>CDI Injection Requires Full Distribution</title>
+      <para>You must be running the full distribution of TorqueBox on
+      top of JBoss EAP in order to use CDI injection.</para>
+    </note>
+
     <formalpara id="injectable-destinations">
       <title>Messaging Destinations</title>
 
