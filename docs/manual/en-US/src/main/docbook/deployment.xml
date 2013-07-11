@@ -129,7 +129,7 @@
 
     <para>TorqueBox now supports redeploying part or all of an
     application without any downtime. For now, this only works with
-    exploded deployments (not .knob archives). To initiate a zero
+    regular exploded deployments (not archives). To initiate a zero
     downtime deployment, copy the updated application code to the
     server (overwriting the currently running files) and touch
     <filename>$APP_ROOT/tmp/restart.txt</filename>, where
@@ -184,8 +184,18 @@
         </tgroup>
       </table>
 
-      <para>Note that when the services runtime gets restarted any
-      running services will be stopped and new service instances
-      initialized and started.</para>
+      <para>If you don't want to use fileystem markers, runtime pools
+      can also be restarted by JMX operations. Expand the MBean tree
+      under torquebox.pools -&gt; &lt;app_name&gt; to see all
+      the runtime pools for each application. Each pool has a restart
+      operation that behaves identically as touching that pool's
+      restart marker.</para>
+
+      <note>
+        <title>TorqueBox Services and Runtime Restarts</title>
+        <para>Note that when the services runtime gets restarted any
+        running services will be stopped and new service instances
+        initialized and started.</para>
+      </note>
   </section>
 </chapter>
