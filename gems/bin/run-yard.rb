@@ -20,8 +20,7 @@ def force_require(gem_name, version)
 end
 
 require 'rubygems'
-force_require 'yard', '0.7.2'
-force_require 'maruku', '0.6.0'
+force_require 'yard', '0.8.6.2'
 
 FILES = "*/lib/**/*.rb"
 OUTPUT_DIR = "target/yardocs/"
@@ -29,12 +28,14 @@ OUTPUT_DIR = "target/yardocs/"
 OPTIONS = [
            "--title", "TorqueBox Gems Documentation",
            "-o", OUTPUT_DIR,
-           "--query", "@api.text != 'private'",
+           "--api", "public",
+           "--no-api",
+           "--legacy",
            FILES
           ]
 
 puts "Generating yardocs on #{FILES} to #{OUTPUT_DIR}"
 
 Dir.chdir( File.join( File.dirname( __FILE__ ), '..' ) ) do
-  YARD::CLI::Yardoc.new.run( *OPTIONS )
+  YARD::CLI::CommandParser.run( *OPTIONS )
 end
