@@ -19,6 +19,7 @@ require 'java'
 require 'rubygems'
 
 module TorqueBox
+  # @api private
   class Server
 
     def self.torquebox_home

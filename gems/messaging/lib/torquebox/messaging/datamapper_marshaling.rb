@@ -21,6 +21,7 @@
 # class name of the resource, and use Resource.get to _load it.
 module TorqueBox
   module Messaging
+    # @api private
     module DataMapper
 
       def self.included(base)

@@ -21,6 +21,7 @@ require 'torquebox/messaging/future_responder'
 
 module TorqueBox
   module Messaging
+    # @api private
     class BackgroundableProcessor < MessageProcessor
 
       def self.log_newrelic_notice(klass)

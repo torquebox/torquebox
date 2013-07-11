@@ -15,18 +15,19 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+# @api no-op
 module TorqueBox
   module Messaging
     module Backgroundable
       def self.included(base)
-        base.extend(ClassMethods)
+        base.extend(BackgroundableClassMethods)
       end
 
       def background(options = {})
         self
       end
 
-      module ClassMethods
+      module BackgroundableClassMethods
         def always_background(*methods)
           # no-op
         end
@@ -55,7 +56,7 @@ module TorqueBox
     end
 
     class Message
-      class <<self
+      class << self
         def register_encoding(klass)
           # no-op
         end

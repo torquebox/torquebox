@@ -19,6 +19,7 @@ require 'logger'
 
 module TorqueBox
 
+  # @api private
   class FallbackLogger < ::Logger
 
     def initialize name = nil
@@ -54,6 +55,8 @@ module TorqueBox
       define_method(method) { true }
     end
 
+    # The minimum log level to actually log, with debug being the lowest
+    # and fatal the highest
     attr_accessor :level
 
     def add(severity, message, progname, &block)
@@ -65,6 +68,16 @@ module TorqueBox
       @logger.send(delegate, *params)
     end
 
+    # @!method debug(message)
+    #   @param [String] message The message to log
+    # @!method info(message)
+    #   @param [String] message The message to log
+    # @!method warn(message)
+    #   @param [String] message The message to log
+    # @!method error(message)
+    #   @param [String] message The message to log
+    # @!method fatal(message)
+    #   @param [String] message The message to log
     def method_missing(method, *args, &block)
       delegate = method
       is_boolean = false

@@ -28,10 +28,13 @@ module TorqueBox
     # Backgroundable provides mechanism for executing an object's
     # methods asynchronously.
     module Backgroundable
+      # @!parse extend BackgroundableClassMethods
+
+      # @api private
       MUTEX = Mutex.new
 
       def self.included(base)
-        base.extend(ClassMethods)
+        base.extend(BackgroundableClassMethods)
         base.extend(FutureStatus)
         base.send(:include, FutureStatus)
       end
@@ -42,7 +45,7 @@ module TorqueBox
       end
 
       # Allows you to background any method that has not been marked
-      # as a backgrounded method via {ClassMethods#always_background}.
+      # as a backgrounded method via {BackgroundableClassMethods#always_background}.
       # @param [Hash] options that are passed through to
       #   {TorqueBox::Messaging::Destination#publish}
       # @return [Future]
@@ -50,7 +53,7 @@ module TorqueBox
         BackgroundProxy.new(self, options)
       end
 
-      module ClassMethods
+      module BackgroundableClassMethods
 
         # Marks methods to always be backgrounded. Takes one or more
         # method symbols, and an optional options hash as the final
@@ -75,7 +78,7 @@ module TorqueBox
         end
 
         # Allows you to background any method that has not been marked
-        # as a backgrounded method via {ClassMethods#always_background}.
+        # as a backgrounded method via {BackgroundableClassMethods#always_background}.
         # @param [Hash] options that are passed through to
         #   {TorqueBox::Messaging::Destination#publish}
         # @return [Future]
@@ -83,16 +86,19 @@ module TorqueBox
           BackgroundProxy.new(self, options)
         end
 
+        # @api private
         def method_added(method)
           super
           __method_added(method)
         end
 
+        # @api private
         def singleton_method_added(method)
           super
           __method_added(method)
         end
 
+        # @api private
         def __enable_backgroundable_newrelic_tracing(method)
           method = method.to_s
           if Backgroundable.newrelic_available?
@@ -170,6 +176,7 @@ module TorqueBox
 
       end
 
+      # @api private
       class BackgroundProxy
         def initialize(receiver, options)
           @receiver = receiver
@@ -183,6 +190,7 @@ module TorqueBox
         end
       end
 
+      # @api private
       module Util
 
         class << self

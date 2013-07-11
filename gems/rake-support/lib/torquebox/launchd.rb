@@ -19,6 +19,7 @@
 
 require 'torquebox/deploy_utils'
 
+# @api private
 module TorqueBox
   module Launchd
     class << self

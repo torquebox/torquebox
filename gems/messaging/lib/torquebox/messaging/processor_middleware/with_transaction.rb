@@ -19,6 +19,7 @@ require 'torquebox/transactions'
 
 module TorqueBox
   module Messaging
+    # @api private
     module ProcessorMiddleware
       class WithTransaction
 

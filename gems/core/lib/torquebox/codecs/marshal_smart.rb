@@ -22,6 +22,7 @@ module TorqueBox
     module MarshalSmart
       class << self
 
+        # @api private
         MARSHAL_MARKER = "_|marshalled|_"
 
         def encode(object)

@@ -20,6 +20,7 @@
 require 'erb'
 require 'torquebox/deploy_utils'
 
+# @api private
 module TorqueBox
   module Upstart
     class << self

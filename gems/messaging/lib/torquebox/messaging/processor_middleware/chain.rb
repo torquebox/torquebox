@@ -17,6 +17,7 @@
 
 module TorqueBox
   module Messaging
+    # @api private
     module ProcessorMiddleware
       class Chain
 

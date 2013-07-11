@@ -65,6 +65,7 @@ module TorqueBox
 end
 
 # Temporarily workaround TorqueSpec needing an inject(...) method
+# @api private
 module TorqueSpec
   class Daemon
     def inject(something)

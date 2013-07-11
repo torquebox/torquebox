@@ -23,35 +23,29 @@ module TorqueBox
         @connection_factory = TorqueBox.fetch( 'xa-connection-factory' )
         @subscriptions = {}
       end
-    
+
       #def xa_resources
-      #  @xa_resources 
+      #  @xa_resources
       #end
-    
+
       def configure(stomplet_config)
         @connection = @connection_factory.create_xa_connection
         @connection.start
         @session = @connection.create_session( false )
         @xa_resources = [ @session.xa_resource ]
       end
-    
+
       def destroy
         @session.close
         @connection.close
       end
 
-      # -----
-      # -----
-    
       def on_unsubscribe(subscriber)
         subscriptions = @subscriptions.delete( subscriber )
         (subscriptions || []).each do |subscription|
           subscription.close
         end
       end
-    
-      # -----
-      # -----
 
       def queue(name)
         jms_session = @session.jms_session
@@ -67,7 +61,7 @@ module TorqueBox
         return queue(name) if ( type.to_sym == :queue )
         topic(name)
       end
-    
+
       def subscribe_to(subscriber, destination, selector=nil, options={})
         jms_session = @session.jms_session
         java_destination = @session.java_destination( destination )
@@ -76,17 +70,17 @@ module TorqueBox
         @subscriptions[ subscriber ] ||= []
         @subscriptions[ subscriber ] << consumer
       end
-    
+
       def send_to(destination, stomp_message, headers={}, options={})
         jms_session = @session.jms_session
         java_destination = @session.java_destination( destination )
-    
+
         producer    = @session.jms_session.create_producer( java_destination.to_java )
 
-        case ( stomp_message ) 
+        case ( stomp_message )
         when org.projectodd.stilts.stomp::StompMessage
           content = stomp_message.content_as_string
-        else 
+        else
           content = stomp_message
         end
 
@@ -108,17 +102,18 @@ module TorqueBox
 
         producer.send( jms_message )
       end
-    
+
+      # @api private
       class MessageListener
         include javax.jms.MessageListener
-    
+
         def initialize(subscriber, options={})
           @subscriber = subscriber
           @encoding = options[:encoding] 
         end
-    
+
         def onMessage(jms_message)
-          content = TorqueBox::Messaging::Message.new( jms_message ).decode 
+          content = TorqueBox::Messaging::Message.new( jms_message ).decode
           ( content = TorqueBox::Codecs.encode( content, @encoding ) ) if @encoding
           stomp_message = TorqueBox::Stomp::Message.new( content )
           jms_message.property_names.each do |name|
@@ -134,10 +129,10 @@ module TorqueBox
           end
           @subscriber.send( stomp_message )
         end
-    
+
       end
-    
+
     end
 
   end
-end 
+end

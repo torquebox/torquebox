@@ -26,11 +26,13 @@ FILES = "*/lib/**/*.rb"
 OUTPUT_DIR = "target/yardocs/"
 
 OPTIONS = [
+           "doc",
            "--title", "TorqueBox Gems Documentation",
            "-o", OUTPUT_DIR,
            "--api", "public",
            "--no-api",
            "--legacy",
+           "--exclude", "no-op/lib/*",
            FILES
           ]
 

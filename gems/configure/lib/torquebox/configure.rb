@@ -18,8 +18,9 @@
 require 'torquebox/configuration'
 
 module TorqueBox
+  # @api private
   CONFIGURATION_ROOT = '<root>'
-  
+
   def self.configure(&block)
     config = Thread.current[:torquebox_config]
     entry_map = Thread.current[:torquebox_config_entry_map]
@@ -27,5 +28,5 @@ module TorqueBox
       process( nil, &block )
     config
   end
-     
+
 end

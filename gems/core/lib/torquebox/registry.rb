@@ -19,8 +19,9 @@ require 'thread'
 
 module TorqueBox
   class Registry
+    # @api private
     MUTEX = Mutex.new
-    
+
     class << self
       def merge!(hash)
         MUTEX.synchronize do

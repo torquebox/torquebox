@@ -20,6 +20,7 @@ require 'torquebox/messaging/processor_middleware/with_transaction'
 
 module TorqueBox
   module Messaging
+    # @api private
     module ProcessorMiddleware
       module DefaultMiddleware
 

@@ -23,6 +23,7 @@ require 'rake'
 require 'torquebox/server'
 
 
+# @api private
 module TorqueBox
   module DeployUtils
     class << self

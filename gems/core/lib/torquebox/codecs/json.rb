@@ -21,6 +21,7 @@ module TorqueBox
     module JSON
       class << self
 
+        # @api private
         def require_json
           # We can't ship our own json, as it may collide with the gem
           # requirement for the app.
@@ -32,7 +33,7 @@ module TorqueBox
             end
           end
         end
-        
+
         def encode(data)
           require_json
           begin

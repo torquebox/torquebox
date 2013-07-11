@@ -23,11 +23,12 @@ require 'torquebox/messaging/processor_middleware/default_middleware'
 
 module TorqueBox
   module Messaging
-    
-    class Task 
+
+    # @api private
+    class Task
       include FutureStatus
       include ProcessorMiddleware::DefaultMiddleware
-      
+
       def self.queue_name( name = self.name[0...-4] )
         suffix = org.torquebox.core.util.StringUtils.underscore(name)
         "/queues/torquebox/#{ENV['TORQUEBOX_APP_NAME']}/tasks/#{suffix}"
@@ -45,7 +46,7 @@ module TorqueBox
         }
         options[:encoding] = :marshal
         queue.publish( message, options )
-        
+
         future
       rescue javax.naming.NameNotFoundException => ex
         raise RuntimeError.new("The queue for #{self.name} is not available. Did you disable it by setting its concurrency to 0?")

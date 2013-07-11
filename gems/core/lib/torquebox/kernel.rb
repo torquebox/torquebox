@@ -18,6 +18,7 @@
 require 'torquebox/service_registry'
 
 module TorqueBox
+  # @api private
   class Kernel
 
     def self.kernel=(kernel)
