@@ -427,7 +427,7 @@ remote_describe "in-container messaging tests" do
           t = Thread.new do
             queue.receive(:timeout => 10000) do |start_time|
               start_time.should_not be_nil
-              
+
               duration = (Time.now - start_time) * 1000.0
               duration.should be_within(200.0).of(2000.0)
             end
@@ -440,25 +440,22 @@ remote_describe "in-container messaging tests" do
       end
 
       it "should successfully send a scheduled message to the topic" do
-        # Allow to use fancy time in tests
-        require 'active_support/core_ext/numeric/time'
-
         with_topic("/topics/scheduled", :client_id => 'scheduled-topic') do |topic|
 
           topic.receive(:durable => true, :timeout => 1)
-          
+
           # Schedule a message for 2 seconds
           # Timeout after 10 seconds
           t = Thread.new do
             topic.receive(:durable => true, :timeout => 10_000) do |start_time|
               start_time.should_not be_nil
-            
+
               duration = (Time.now - start_time) * 1000.0
               duration.should be_within(200.0).of(2000.0)
             end
           end
 
-          topic.publish Time.now, :scheduled => 2.seconds.from_now
+          topic.publish Time.now, :scheduled => Time.now + 2
 
           t.join
         end
