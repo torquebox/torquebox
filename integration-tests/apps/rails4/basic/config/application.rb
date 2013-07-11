@@ -1,3 +1,10 @@
+# workaround JRuby 1.7.4 bug and Rails 2.0 in the Struct.to_h impl
+class Struct # :nodoc:
+  def to_h
+    Hash[members.zip(values)]
+  end
+end
+
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
