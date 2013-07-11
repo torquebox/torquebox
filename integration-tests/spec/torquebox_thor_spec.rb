@@ -145,7 +145,7 @@ describe "torquebox thor utility tests" do
 
   describe "torquebox rails" do
     before(:each) do
-      ENV['RAILS_VERSION'] = '>3.2'
+      ENV['RAILS_VERSION'] = '~>3.2'
       @app_dir = File.join( File.dirname( __FILE__ ), '..', 'target', 'apps', 'torquebox_thor_spec_app' )
     end
 
@@ -196,6 +196,14 @@ describe "torquebox thor utility tests" do
       contents = File.read( File.join( @app_dir, 'config', 'environment.rb' ) )
       puts output unless contents.include?( 'torquebox' )
       contents.should include( 'torquebox' )
+    end
+
+    if RUBY_VERSION >= '1.9'
+      it "should create a rails 4 app and its directory" do
+        ENV['RAILS_VERSION'] = '~>4.0'
+        tb( "rails #{@app_dir} --skip-bundle" )
+        check_app_dir
+      end
     end
 
     def check_app_dir
