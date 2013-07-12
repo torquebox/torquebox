@@ -78,7 +78,7 @@ describe "basic sinatra test" do
     visit "/basic-sinatra/log-marker"
     page.should have_content('it worked')
     log_file = File.new(File.join(jboss_log_dir, 'server.log'))
-    log_file.seek(-200, IO::SEEK_END)
+    log_file.seek(-800, IO::SEEK_END)
     log_file.read.should include('GET /log-marker')
     log_file.close
   end
