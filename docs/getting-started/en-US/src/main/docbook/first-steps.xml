@@ -63,17 +63,19 @@
 <prompt>$</prompt> <command>cd ~/torquebox_examples/rails_example</command>
 <prompt>$</prompt> <command>gem install rails</command>
 ...
-Successfully installed rails-3.2.11
-27 gems installed
+Successfully installed rails-4.0.0
+26 gems installed
 <prompt>$</prompt> <command>rails new .</command>
 ...
-Using rails (3.2.11) 
-Installing sass (3.2.5) 
-Installing sass-rails (3.2.6) 
+Using rails (4.0.0) 
+Installing sass (3.2.9) 
+Installing sass-rails (4.0.0) 
 Installing therubyrhino_jar (1.7.4) 
 Installing therubyrhino (2.0.2) 
-Installing uglifier (1.3.0) 
-Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem is installed.</screen>
+Installing turbolinks (1.3.0)
+Installing uglifier (2.1.1) 
+Your bundle is complete!
+Use `bundle show [gemname]` to see where a bundled gem is installed.</screen>
           <note>
             <title>Bundler and jruby-openssl</title>
             <para>
@@ -109,6 +111,18 @@ Deployed: rails_example-knob.yml
 <prompt>$</prompt> <command>torquebox run </command>
 ...
 15:59:28,053 INFO  [org.jboss.as.server] (DeploymentScanner-threads - 2) JBAS018559: Deployed "rails_example-knob.yml"</screen>
+          <note>
+            <title>Rails 4 and ActiveRecord-JDBC</title>
+            <para>
+              At the time of this writing, Rails 4 requires a
+              prerelease version of the activerecord-jdbc gems. If you
+              get an error when running migrations, try editing your
+              <filename>Gemfile</filename> and change the version of
+              activerecord-jdbcsqlite3-adapter to
+              '1.3.0.beta2'. Afterwards run <command>bundle
+              install</command> and try the migrations again.
+            </para>
+          </note>
         </para>
 
         <para>
@@ -144,8 +158,8 @@ Deployed: rails_example-knob.yml
       <screen><prompt>$</prompt> <command>mkdir -p ~/torquebox_examples/rack_example</command>
 <prompt>$</prompt> <command>cd ~/torquebox_examples/rack_example</command>
 <prompt>$</prompt> <command>gem install rack</command>
-Fetching: rack-1.5.0.gem (100%)
-Successfully installed rack-1.5.0
+Fetching: rack-1.5.2.gem (100%)
+Successfully installed rack-1.5.2
 1 gem installed
 </screen>
 
@@ -237,17 +251,20 @@ Deployed: rack_example-knob.yml
 <prompt>&gt;</prompt> <command>cd %HOME%\torquebox_examples\rails_example</command>
 <prompt>&gt;</prompt> <command>gem install rails</command>
 ...
-Successfully installed rails-3.2.11
-27 gems installed
+Successfully installed rails-4.0.0
+26 gems installed
+...
 <prompt>&gt;</prompt> <command>rails new .</command>
 ...
-Using rails (3.2.11) 
-Installing sass (3.2.5) 
-Installing sass-rails (3.2.6) 
+Using rails (4.0.0) 
+Installing sass (3.2.9) 
+Installing sass-rails (4.0.0) 
 Installing therubyrhino_jar (1.7.4) 
 Installing therubyrhino (2.0.2) 
-Installing uglifier (1.3.0) 
-Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem is installed.</screen>
+Installing turbolinks (1.3.0)
+Installing uglifier (2.1.1) 
+Your bundle is complete!
+Use `bundle show [gemname]` to see where a bundled gem is installed.</screen>
           <note>
             <title>Bundler and jruby-openssl</title>
             <para>
@@ -283,6 +300,18 @@ Deployed: rails_example-knob.yml
 <prompt>&gt;</prompt> <command>echo Y | jruby -S torquebox run </command>
 ...
 15:59:28,053 INFO  [org.jboss.as.server] (DeploymentScanner-threads - 2) JBAS018559: Deployed "rails_example-knob.yml"</screen>
+          <note>
+            <title>Rails 4 and ActiveRecord-JDBC</title>
+            <para>
+              At the time of this writing, Rails 4 requires a
+              prerelease version of the activerecord-jdbc gems. If you
+              get an error when running migrations, try editing your
+              <filename>Gemfile</filename> and change the version of
+              activerecord-jdbcsqlite3-adapter to
+              '1.3.0.beta2'. Afterwards run <command>bundle
+              install</command> and try the migrations again.
+            </para>
+          </note>
 
           <tip>
             <title>Why <command>echo Y</command> and <command>jruby -S</command>?</title>
@@ -335,8 +364,8 @@ Deployed: rails_example-knob.yml
       <screen><prompt>&gt;</prompt> <command>mkdir %HOME%\torquebox_examples\rack_example</command>
 <prompt>&gt;</prompt> <command>cd %HOME%\torquebox_examples\rack_example</command>
 <prompt>&gt;</prompt> <command>gem install rack</command>
-Fetching: rack-1.5.0.gem (100%)
-Successfully installed rack-1.5.0
+Fetching: rack-1.5.2.gem (100%)
+Successfully installed rack-1.5.2
 1 gem installed
 </screen>
 
@@ -437,8 +466,9 @@ gemsets for jruby-${version.jruby} (found in /Users/someone/.rvm/gems/jruby-${ve
 
 <prompt>$</prompt> <command>gem install rails</command>
 ...
-Successfully installed rails-3.2.11
-27 gems installed</screen>
+Successfully installed rails-4.0.0
+26 gems installed
+...</screen>
         </para>
 
         <para>
@@ -447,13 +477,15 @@ Successfully installed rails-3.2.11
 
         <screen><prompt>$</prompt> <command>rails new .</command>
 ...
-Using rails (3.2.11) 
-Installing sass (3.2.5) 
-Installing sass-rails (3.2.6) 
+Using rails (4.0.0) 
+Installing sass (3.2.9) 
+Installing sass-rails (4.0.0) 
 Installing therubyrhino_jar (1.7.4) 
 Installing therubyrhino (2.0.2) 
-Installing uglifier (1.3.0) 
-Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem is installed.
+Installing turbolinks (1.3.0)
+Installing uglifier (2.1.1) 
+Your bundle is complete!
+Use `bundle show [gemname]` to see where a bundled gem is installed.
 <prompt>$</prompt> <command>rails g scaffold post title body:text</command>
 ...
       create      app/assets/stylesheets/posts.css.scss
@@ -465,6 +497,13 @@ Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem 
    -> 0.0060s
    -> 0 rows
 ==  CreatePosts: migrated (0.0080s) ===========================================
+
+<prompt>$</prompt> <command>torquebox deploy</command>
+Deployed: rails_example-knob.yml
+    into: /Users/someone/.rvm/gems/jruby-${version.jruby}@global/gems/torquebox-server-${project.version}-java/jboss/standalone/deployments
+<prompt>$</prompt> <command>torquebox run </command>
+...
+15:59:28,053 INFO  [org.jboss.as.server] (DeploymentScanner-threads - 2) JBAS018559: Deployed "rails_example-knob.yml"</screen>
           <note>
             <title>Rails 4 and ActiveRecord-JDBC</title>
             <para>
@@ -477,13 +516,6 @@ Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem 
               install</command> and try the migrations again.
             </para>
           </note>
-
-<prompt>$</prompt> <command>torquebox deploy</command>
-Deployed: rails_example-knob.yml
-    into: /Users/someone/.rvm/gems/jruby-${version.jruby}@global/gems/torquebox-server-${project.version}-java/jboss/standalone/deployments
-<prompt>$</prompt> <command>torquebox run </command>
-...
-15:59:28,053 INFO  [org.jboss.as.server] (DeploymentScanner-threads - 2) JBAS018559: Deployed "rails_example-knob.yml"</screen>
         </para>
 
         <para>
@@ -577,8 +609,8 @@ gemsets for jruby-${version.jruby} (found in /Users/someone/.rvm/gems/jruby-${ve
    tb_rails_example
 
 <prompt>$</prompt> <command>gem install rack</command>
-Fetching: rack-1.5.0.gem (100%)
-Successfully installed rack-1.5.0
+Fetching: rack-1.5.2.gem (100%)
+Successfully installed rack-1.5.2
 1 gem installed
 </screen>
 
@@ -676,14 +708,9 @@ end</programlisting>
           the wget command below.
 
            <screen><prompt>$</prompt> <command>wget http://download.jboss.org/jbosseap/6/jboss-eap-6.1.0.Alpha/jboss-eap-6.1.0.Alpha.zip</command>
-...
-<prompt>$</prompt> <command>wget http://torquebox.org/release/org/torquebox/torquebox-eap-overlay/${project.version}/torquebox-dist-eap-overlay-${project.version}.zip</command>
-...
-TODO: make sure above URL is right
+<prompt>$</prompt> <command>wget http://torquebox.org/release/org/torquebox/torquebox-dist/${project.version}/torquebox-dist-${project.version}-eap-overlay.zip</command>
 <prompt>$</prompt> <command>unzip jboss-eap-6.1.0.Alpha.zip -d ~</command>
-...
-<prompt>$</prompt> <command>unzip torquebox-dist-eap-overlay-${project.version}.zip -d ~/jboss-eap-6.1</command>
-...
+<prompt>$</prompt> <command>unzip torquebox-dist-${project.version}-eap-overlay.zip -d ~/jboss-eap-6.1</command>
 <prompt>$</prompt> <command>export JBOSS_HOME=~/jboss-eap-6.1</command>
 <prompt>$</prompt> <command>export JRUBY_HOME=$JBOSS_HOME/jruby</command>
 <prompt>$</prompt> <command>export PATH=$JRUBY_HOME/bin:$PATH</command></screen>
@@ -785,8 +812,8 @@ Deployed: rails_example-knob.yml
       <screen><prompt>$</prompt> <command>mkdir -p ~/torquebox_examples/rack_example</command>
 <prompt>$</prompt> <command>cd ~/torquebox_examples/rack_example</command>
 <prompt>$</prompt> <command>gem install rack</command>
-Fetching: rack-1.5.0.gem (100%)
-Successfully installed rack-1.5.0
+Fetching: rack-1.5.2.gem (100%)
+Successfully installed rack-1.5.2
 1 gem installed
 </screen>
 
@@ -806,7 +833,7 @@ run app</programlisting>
 
         <screen><prompt>$</prompt> <command>torquebox deploy --context-path=/rack</command>
 Deployed: rack_example-knob.yml
-    into: /Users/someone/torquebox-${project.version}/jboss/standalone/deployments</screen>
+    into: /Users/someone/jboss-eap-6.1/standalone/deployments</screen>
         </para>
 
         <para>
@@ -815,8 +842,8 @@ Deployed: rack_example-knob.yml
 
         <screen><prompt>$</prompt> <command>torquebox run</command>
 ...
-19:25:38,049 INFO  [org.jboss.as.server] (DeploymentScanner-threads - 1) JBAS018559: Deployed "rails_example-knob.yml"
-19:25:38,050 INFO  [org.jboss.as.server] (DeploymentScanner-threads - 1) JBAS018559: Deployed "rack_example-knob.yml"</screen>
+22:37:35,963 INFO  [org.jboss.as.server] (ServerService Thread Pool -- 43) JBAS018559: Deployed "rails_example-knob.yml" (runtime-name : "rails_example-knob.yml")
+22:37:35,964 INFO  [org.jboss.as.server] (ServerService Thread Pool -- 43) JBAS018559: Deployed "rack_example-knob.yml" (runtime-name : "rack_example-knob.yml")</screen>
 
           Visit <ulink url="http://localhost:8080"/> and <ulink
           url="http://localhost:8080/rack/"/> to see that both your
