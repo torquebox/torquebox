@@ -39,6 +39,10 @@
             <configuration>
               <outputDirectory>${basedir}/target/docbook/staging/docbook/${translation.dash}</outputDirectory>
               <encoding>UTF-8</encoding>
+              <useDefaultDelimiters>false</useDefaultDelimiters>
+              <delimiters>
+                <delimiter>${*}</delimiter>
+              </delimiters>
               <resources>
                 <resource>
                   <directory>${basedir}/src/main/docbook</directory>
