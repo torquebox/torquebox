@@ -188,11 +188,12 @@ class AssemblyTool
 
   def install_polyglot_module(name, version)
     artifact_path = "#{m2_repo}/org/projectodd/polyglot-#{name}/#{version}/polyglot-#{name}-#{version}-module.zip"
-    artifact_dir = Dir.mktmpdir
-    Dir.chdir( artifact_dir ) do
-      unzip( artifact_path )
+    Dir.mktmpdir do |artifact_dir|
+      Dir.chdir( artifact_dir ) do
+        unzip( artifact_path )
+      end
+      install_module( name, artifact_dir, "/modules/system/layers/polyglot/org/projectodd/polyglot/#{name}/main", false )
     end
-    install_module( name, artifact_dir, "/modules/system/layers/polyglot/org/projectodd/polyglot/#{name}/main", false )
   end
 
 end

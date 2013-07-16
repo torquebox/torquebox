@@ -28,5 +28,4 @@ Infinispan-FileCacheStore
 rubyObj.*
 schema.rb
 *.cache
-build/assembly/d*
 integration-tests/jboss-eap-*.zip
