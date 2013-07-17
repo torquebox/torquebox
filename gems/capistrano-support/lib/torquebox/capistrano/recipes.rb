@@ -170,7 +170,7 @@ module Capistrano
 
             task :deployment_descriptor, :except => { :no_release => true } do
               puts "creating deployment descriptor"
-              dd_str = YAML.dump_stream( create_deployment_descriptor(latest_release) )
+              dd_str = YAML.dump_stream( create_deployment_descriptor(current_path) )
               dd_file = "#{jboss_home}/standalone/deployments/#{torquebox_app_name}-knob.yml"
               cmd =  "cat /dev/null > #{dd_file}"
               dd_str.each_line do |line|
@@ -195,10 +195,10 @@ module Capistrano
 
           desc "Dump the deployment descriptor"
           task :dump, :except => { :no_release => true } do
-            dd = create_deployment_descriptor( latest_release )
+            dd = create_deployment_descriptor( current_path )
             puts dd
             exit
-            puts YAML.dump( create_deployment_descriptor( latest_release ) )
+            puts YAML.dump( create_deployment_descriptor( current_path ) )
           end
 
         end

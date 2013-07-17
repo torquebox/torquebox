@@ -120,7 +120,7 @@ describe Capistrano::TorqueBox, "loaded into a configuration" do
 
       @configuration.stub(:create_deployment_descriptor).and_return({ :application => app_path})
       @configuration.set(:application, 'awesome-app')
-      @configuration.set(:latest_release, app_path)
+      @configuration.set(:current_path, app_path)
       @configuration.set(:torquebox_app_name, app_name)
   
 

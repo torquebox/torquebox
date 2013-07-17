@@ -25,3 +25,46 @@ Check the server is configured for capistrano:
 Check that you can get your application code to the server:
 
   jruby -S cap deploy:update_code
+
+
+
+An example of testing TorqueBox capistrano support locally:
+
+    gem install rails capistrano
+    mkdir -p  ~/torquebox_examples/rails_example
+    cd ~/torquebox_examples/rails_example
+    torquebox rails
+    capify .
+
+Edit deploy.rb to look like below:
+
+    require 'torquebox-capistrano-support'
+    role :app, "localhost"
+    set :use_sudo, false
+    set :application, 'rails_example'
+    set :repository, "."
+    set :scm, :none
+    set :deploy_to, "/path/to/deploy/dir"
+    set :deploy_via, :copy
+    set :torquebox_home, "/path/to/your/torquebox"
+
+See the tasks:
+
+    cap -T
+
+Set up the server for capistrano:
+
+    TMPDIR="/anywhere_but_/tmp" cap deploy:setup
+
+Deploy the updated code:
+
+    # TMPDIR hack only needed because we're deploying locally
+    TMPDIR="/anywhere_but_/tmp" cap deploy
+
+Tell TorqueBox to pick up the new deployment:
+
+    cap deploy:restart
+
+Boot TorqueBox and test if things worked:
+
+    torquebox run
