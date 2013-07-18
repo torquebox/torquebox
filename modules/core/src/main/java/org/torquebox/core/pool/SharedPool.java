@@ -133,15 +133,19 @@ public class SharedPool<T> implements Pool<T> {
 
     public synchronized void startPool() throws Exception {
         if (this.instance == null) {
+            this.instance = newInstance();
+        }
+    }
+
+    protected T newInstance() throws Exception {
+        if (this.nsContextSelector != null) {
+            NamespaceContextSelector.pushCurrentSelector( this.nsContextSelector );
+        }
+        try {
+            return factory.createInstance( getName() );
+        } finally {
             if (this.nsContextSelector != null) {
-                NamespaceContextSelector.pushCurrentSelector( this.nsContextSelector );
-            }
-            try {
-                this.instance = factory.createInstance( getName() );
-            } finally {
-                if (this.nsContextSelector != null) {
-                    NamespaceContextSelector.popCurrentSelector();
-                }
+                NamespaceContextSelector.popCurrentSelector();
             }
         }
     }
@@ -208,17 +212,27 @@ public class SharedPool<T> implements Pool<T> {
         if (this.instance == null) {
             return;
         }
-        AtomicInteger currentCount = this.instanceCounts.get( this.instance );
-        if (currentCount == null || currentCount.intValue() == 0) {
-            retireInstance( this.instance );
-        } else {
-            this.previousInstances.add( this.instance );
-        }
-        this.instance = null;
-        startPool();
-        for (RubyRuntimePoolRestartListener listener : this.restartListeners) {
-            listener.runtimeRestarted();
-        }
+        new Thread( new Runnable() {
+            public void run() {
+                try {
+                    T newInstance = newInstance();
+                    synchronized(SharedPool.this) {
+                        AtomicInteger currentCount = SharedPool.this.instanceCounts.get( SharedPool.this.instance );
+                        if (currentCount == null || currentCount.intValue() == 0) {
+                            retireInstance( SharedPool.this.instance );
+                        } else {
+                            SharedPool.this.previousInstances.add( SharedPool.this.instance );
+                        }
+                        SharedPool.this.instance = newInstance;
+                        for (RubyRuntimePoolRestartListener listener : SharedPool.this.restartListeners) {
+                            listener.runtimeRestarted();
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error( "Error restarting runtime", e);
+                }
+            }
+        }).start();
     }
 
     public void registerRestartListener(RubyRuntimePoolRestartListener listener) {

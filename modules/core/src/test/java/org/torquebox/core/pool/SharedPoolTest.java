@@ -21,7 +21,11 @@ package org.torquebox.core.pool;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.junit.Test;
+import org.torquebox.core.runtime.RubyRuntimePoolRestartListener;
 
 public class SharedPoolTest {
 
@@ -104,8 +108,15 @@ public class SharedPoolTest {
         instance = "burritos";
         instanceFactory.setInstance( instance );
         assertEquals( oldInstance, pool.borrowInstance( "test" ) );
+        final CountDownLatch restartLatch = new CountDownLatch( 1 );
+        pool.registerRestartListener( new RubyRuntimePoolRestartListener() {
+            public void runtimeRestarted() {
+                restartLatch.countDown();
+            }
+        });
         pool.restart();
 
+        restartLatch.await( 60, TimeUnit.SECONDS );
         for (int i = 0; i < 50; ++i) {
             assertEquals( instance, pool.borrowInstance( "test" ) );
         }
