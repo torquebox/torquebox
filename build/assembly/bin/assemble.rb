@@ -179,7 +179,10 @@ class Assembler
         'standalone-ha.xml' => 'torquebox-slim-ha.xml'
       },
       'domain' => {
-        'domain.xml' => 'torquebox-slim.xml'
+        'domain.xml' => 'torquebox-slim.xml',
+        'host.xml' => 'host-slim.xml',
+        'host-master.xml' => 'host-master-slim.xml',
+        'host-slave.xml' => 'host-slave-slim.xml'
       }
     }
     config_map.each_pair do |config_type, config_pairs|
