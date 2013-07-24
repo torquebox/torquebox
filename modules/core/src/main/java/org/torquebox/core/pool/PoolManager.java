@@ -149,7 +149,7 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
         started = true;
         this.instances = new Semaphore( this.maxInstances - this.minInstances, true );
         if (this.executor == null) {
-            int threadSize = Math.min( this.minInstances,
+            int threadSize = Math.min( Math.max( this.minInstances, 1 ),
                     Runtime.getRuntime().availableProcessors() * 3 );
             this.executor = Executors.newFixedThreadPool( threadSize );
         }
