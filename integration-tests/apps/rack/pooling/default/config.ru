@@ -13,7 +13,7 @@ class App
     end
 
     [200, { 'Content-Type' => 'text/html' }, %Q{it worked
-<div id='pool-class'>#{pool.java_class.name}</div>
+<div id='pool-class'>#{pool.backing_pool.java_class.name}</div>
 <div id='pool-min'>#{min}</div>
 <div id='pool-max'>#{max}</div>
 }] 

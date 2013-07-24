@@ -203,6 +203,10 @@ public class RestartableRubyRuntimePool implements RubyRuntimePool, RestartableR
         this.currentPool.setDeferUntilRequested( deferUntilRequested );
     }
 
+    public RubyRuntimePool getBackingPool() {
+        return this.currentPool;
+    }
+
     private volatile RubyRuntimePool currentPool;
     private Set<RubyRuntimePool> previousPools = new HashSet<RubyRuntimePool>();
     private Set<RubyRuntimePoolRestartListener> restartListeners = new CopyOnWriteArraySet<RubyRuntimePoolRestartListener>();
