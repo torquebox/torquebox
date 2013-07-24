@@ -91,37 +91,6 @@ public class SharedPoolTest {
         }
     }
 
-    @Test
-    public void testRestart() throws Exception {
-        String instance = "tacos";
-
-        MockInstanceFactory instanceFactory = new MockInstanceFactory( instance );
-        SharedPool<String> pool = new SharedPool<String>( instanceFactory );
-
-        pool.start();
-
-        for (int i = 0; i < 50; ++i) {
-            assertEquals( instance, pool.borrowInstance( "test" ) );
-        }
-
-        String oldInstance = instance;
-        instance = "burritos";
-        instanceFactory.setInstance( instance );
-        assertEquals( oldInstance, pool.borrowInstance( "test" ) );
-        final CountDownLatch restartLatch = new CountDownLatch( 1 );
-        pool.registerRestartListener( new RubyRuntimePoolRestartListener() {
-            public void runtimeRestarted() {
-                restartLatch.countDown();
-            }
-        });
-        pool.restart();
-
-        restartLatch.await( 60, TimeUnit.SECONDS );
-        for (int i = 0; i < 50; ++i) {
-            assertEquals( instance, pool.borrowInstance( "test" ) );
-        }
-    }
-
     class MockInstanceFactory implements InstanceFactory<String> {
 
         private String instance;

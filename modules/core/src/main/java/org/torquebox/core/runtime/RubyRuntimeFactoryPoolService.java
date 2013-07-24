@@ -28,9 +28,9 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 
-public class DefaultRubyRuntimePoolService implements Service<RubyRuntimePool>{
+public class RubyRuntimeFactoryPoolService implements Service<RubyRuntimePool>{
 
-    public DefaultRubyRuntimePoolService(DefaultRubyRuntimePool pool) {
+    public RubyRuntimeFactoryPoolService(RubyRuntimePool pool) {
         this.pool = pool;
     }
     
@@ -67,7 +67,7 @@ public class DefaultRubyRuntimePoolService implements Service<RubyRuntimePool>{
     
     private InjectedValue<RubyRuntimeFactory> runtimeFactoryInjector = new InjectedValue<RubyRuntimeFactory>();
     private InjectedValue<NamespaceContextSelector> selectorInjector = new InjectedValue<NamespaceContextSelector>();
-    private DefaultRubyRuntimePool pool;
+    private RubyRuntimePool pool;
 
 
 }

@@ -31,9 +31,8 @@ import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.projectodd.polyglot.test.as.MockServiceBuilder;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
-import org.torquebox.core.runtime.DefaultRubyRuntimePool;
 import org.torquebox.core.runtime.PoolMetaData;
-import org.torquebox.core.runtime.SharedRubyRuntimePool;
+import org.torquebox.core.runtime.RestartableRubyRuntimePool;
 import org.torquebox.core.runtime.processors.RuntimePoolInstaller;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
@@ -64,7 +63,7 @@ public class RuntimePoolInstallerTest extends AbstractDeploymentProcessorTestCas
         
         MockServiceBuilder<?> poolServiceBuilder = phaseContext.getMockServiceTarget().getMockServiceBuilder( poolServiceName );
         Value<?> poolServiceValue = poolServiceBuilder.getValue();
-        DefaultRubyRuntimePool poolOne = (DefaultRubyRuntimePool) poolServiceValue.getValue();
+        RestartableRubyRuntimePool poolOne = (RestartableRubyRuntimePool) poolServiceValue.getValue();
 
         assertNotNull( poolOne );
         assertEquals( "pool_one", poolOne.getName() );
@@ -92,7 +91,7 @@ public class RuntimePoolInstallerTest extends AbstractDeploymentProcessorTestCas
         
         MockServiceBuilder<?> poolServiceBuilder = phaseContext.getMockServiceTarget().getMockServiceBuilder( poolServiceName );
         Value<?> poolServiceValue = poolServiceBuilder.getValue();
-        SharedRubyRuntimePool poolOne = (SharedRubyRuntimePool) poolServiceValue.getValue();
+        RestartableRubyRuntimePool poolOne = (RestartableRubyRuntimePool) poolServiceValue.getValue();
 
         assertNotNull( poolOne );
         assertEquals( "pool_one", poolOne.getName() );

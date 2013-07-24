@@ -22,12 +22,23 @@ package org.torquebox.core.runtime;
 import java.util.Set;
 
 public interface BasicRubyRuntimePoolMBean {
-    
+
     String getName();
     Object evaluate(String code) throws Exception;
-    
+
     Set<String> getAllRuntimeNames();
 
-    void restart() throws Exception;
+    void setMinimumInstances(int minInstances);
+    int getMinimumInstances();
+
+    void setMaximumInstances(int maxInstances);
+    int getMaximumInstances();
+
+    boolean isLazy();
+    boolean isStarted();
+
+    int getSize();
+    int getBorrowed();
+    int getAvailable();
 
 }

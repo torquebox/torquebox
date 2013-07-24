@@ -41,12 +41,12 @@ import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.runtime.BasicRubyRuntimePoolMBean;
 import org.torquebox.core.runtime.DefaultRubyRuntimePool;
-import org.torquebox.core.runtime.DefaultRubyRuntimePoolMBean;
-import org.torquebox.core.runtime.DefaultRubyRuntimePoolService;
 import org.torquebox.core.runtime.PoolMetaData;
+import org.torquebox.core.runtime.RestartableRubyRuntimePool;
+import org.torquebox.core.runtime.RestartableRubyRuntimePoolMBean;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
+import org.torquebox.core.runtime.RubyRuntimeFactoryPoolService;
 import org.torquebox.core.runtime.RubyRuntimePoolStartService;
-import org.torquebox.core.runtime.SharedRubyRuntimeFactoryPoolService;
 import org.torquebox.core.runtime.SharedRubyRuntimePool;
 
 /**
@@ -86,8 +86,9 @@ public class RuntimePoolInstaller implements DeploymentUnitProcessor {
             
             pool.setName( poolMetaData.getName() );
             pool.setDeferUntilRequested( poolMetaData.isDeferUntilRequested() );
-            
-            SharedRubyRuntimeFactoryPoolService service = new SharedRubyRuntimeFactoryPoolService( pool );
+
+            RestartableRubyRuntimePool restartablePool = new RestartableRubyRuntimePool( pool );
+            RubyRuntimeFactoryPoolService service = new RubyRuntimeFactoryPoolService( restartablePool );
 
             ServiceName name = CoreServices.runtimePoolName( unit, pool.getName() );
 
@@ -126,8 +127,9 @@ public class RuntimePoolInstaller implements DeploymentUnitProcessor {
             pool.setMinimumInstances( poolMetaData.getMinimumSize() );
             pool.setMaximumInstances( poolMetaData.getMaximumSize() );
             pool.setDeferUntilRequested( poolMetaData.isDeferUntilRequested() );
-        
-            DefaultRubyRuntimePoolService service = new DefaultRubyRuntimePoolService( pool );
+
+            RestartableRubyRuntimePool restartablePool = new RestartableRubyRuntimePool( pool );
+            RubyRuntimeFactoryPoolService service = new RubyRuntimeFactoryPoolService( restartablePool );
 
             ServiceName name = CoreServices.runtimePoolName( unit, pool.getName() );
             phaseContext.getServiceTarget().addService( name, service )
@@ -150,10 +152,10 @@ public class RuntimePoolInstaller implements DeploymentUnitProcessor {
             } ).toString();
             
             ServiceName mbeanServiceName = name.append( "mbean" );
-            MBeanRegistrationService<DefaultRubyRuntimePoolMBean> mbeanService = new MBeanRegistrationService<DefaultRubyRuntimePoolMBean>( mbeanName, mbeanServiceName );
+            MBeanRegistrationService<RestartableRubyRuntimePoolMBean> mbeanService = new MBeanRegistrationService<RestartableRubyRuntimePoolMBean>( mbeanName, mbeanServiceName );
             phaseContext.getServiceTarget().addService( mbeanServiceName, mbeanService )
                     .addDependency( DependencyType.OPTIONAL, MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
-                    .addDependency( name, DefaultRubyRuntimePoolMBean.class, mbeanService.getValueInjector() )
+                    .addDependency( name, RestartableRubyRuntimePoolMBean.class, mbeanService.getValueInjector() )
                     .setInitialMode( Mode.PASSIVE )
                     .install();
         }

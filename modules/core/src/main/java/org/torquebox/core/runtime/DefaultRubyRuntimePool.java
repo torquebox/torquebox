@@ -38,7 +38,7 @@ import org.torquebox.core.util.RuntimeHelper;
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  * 
  */
-public class DefaultRubyRuntimePool extends ManagedPool<Ruby> implements RubyRuntimePool, DefaultRubyRuntimePoolMBean {
+public class DefaultRubyRuntimePool extends ManagedPool<Ruby> implements RubyRuntimePool, BasicRubyRuntimePoolMBean {
 
     /**
      * Construct with a factory.
@@ -99,6 +99,17 @@ public class DefaultRubyRuntimePool extends ManagedPool<Ruby> implements RubyRun
     @Override
     public Set<String> getAllRuntimeNames() {
         return collectNames( getAllInstances() );
+    }
+
+    @Override
+    public RubyRuntimePool duplicate() {
+        DefaultRubyRuntimePool duplicate = new DefaultRubyRuntimePool( getRubyRuntimeFactory() );
+        duplicate.setMinimumInstances( getMinimumInstances() );
+        duplicate.setMaximumInstances( getMaximumInstances() );
+        duplicate.setName( getName() );
+        duplicate.setDeferUntilRequested( isDeferredUntilRequested() );
+        duplicate.setNamespaceContextSelector( getNamespaceContextSelector() );
+        return duplicate;
     }
 
 }

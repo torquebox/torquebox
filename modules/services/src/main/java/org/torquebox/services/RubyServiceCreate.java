@@ -25,7 +25,7 @@ import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.projectodd.polyglot.core.AsyncService;
 import org.torquebox.core.component.ComponentResolver;
-import org.torquebox.core.runtime.RubyRuntimePool;
+import org.torquebox.core.runtime.RestartableRubyRuntimePool;
 
 public class RubyServiceCreate extends AsyncService<RubyService> {
     
@@ -54,12 +54,12 @@ public class RubyServiceCreate extends AsyncService<RubyService> {
         return this.componentResolverInjector;
     }
     
-    public Injector<RubyRuntimePool> getRubyRuntimePoolInjector() {
+    public Injector<RestartableRubyRuntimePool> getRubyRuntimePoolInjector() {
         return this.rubyRuntimePoolInjector;
     }
     
     private RubyService service;
     private InjectedValue<ComponentResolver> componentResolverInjector = new InjectedValue<ComponentResolver>();
-    private InjectedValue<RubyRuntimePool> rubyRuntimePoolInjector = new InjectedValue<RubyRuntimePool>();
+    private InjectedValue<RestartableRubyRuntimePool> rubyRuntimePoolInjector = new InjectedValue<RestartableRubyRuntimePool>();
 
 }

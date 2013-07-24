@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jruby.Ruby;
+import org.torquebox.core.pool.InstanceFactory;
 
 /**
  * Pool of managed Ruby runtime instances.
@@ -39,8 +40,26 @@ public interface RubyRuntimePool {
     
     void start() throws Exception;
     void stop() throws Exception;
-    void restart() throws Exception;
-    void registerRestartListener(RubyRuntimePoolRestartListener listener);
+    RubyRuntimePool duplicate();
+    boolean isDrained();
     
     void setNamespaceContextSelector(NamespaceContextSelector nsContextSelector);
+    void setInstanceFactory(InstanceFactory<Ruby> factory);
+
+    Object evaluate(String code) throws Exception;
+
+    void setMinimumInstances(int minInstances);
+    int getMinimumInstances();
+
+    void setMaximumInstances(int maxInstances);
+    int getMaximumInstances();
+
+    boolean isLazy();
+    boolean isStarted();
+    boolean isDeferredUntilRequested();
+    void setDeferUntilRequested(boolean deferUntilRequested);
+
+    int getSize();
+    int getBorrowed();
+    int getAvailable();
 }

@@ -108,7 +108,7 @@ public class RuntimeRestartScanner implements Service <RuntimeRestartScanner>{
                 ServiceController serviceController = unit.getServiceRegistry().getService( CoreServices.runtimePoolName( unit, poolName ) );
                 if (serviceController != null) {
                     log.info( "Restarting " + poolName + " runtime for " + unit.getName() );
-                    RubyRuntimePool pool = (RubyRuntimePool) serviceController.getValue();
+                    RestartableRubyRuntimePool pool = (RestartableRubyRuntimePool) serviceController.getValue();
                     try {
                         pool.restart();
                     } catch (Exception e) {

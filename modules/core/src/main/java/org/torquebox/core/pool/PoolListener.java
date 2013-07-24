@@ -31,6 +31,4 @@ public interface PoolListener<T> {
 
     void instanceDrained(T instance, int totalInstances, int availableNow);
 
-    void instanceRetired(T instance);
-
 }

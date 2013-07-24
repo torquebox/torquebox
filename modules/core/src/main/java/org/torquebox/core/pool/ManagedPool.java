@@ -19,13 +19,10 @@
 
 package org.torquebox.core.pool;
 
-import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.logging.Logger;
-import org.torquebox.core.runtime.RubyRuntimePoolRestartListener;
 
 public class ManagedPool<T> implements Pool<T> {
 
@@ -103,19 +100,8 @@ public class ManagedPool<T> implements Pool<T> {
             this.poolManager.stop();
             this.started = false;
             this.poolManager.waitForEmpty();
+            log.info( "Stopped runtime pool " + getName() );
         }
-    }
-
-    public synchronized void restart() throws Exception {
-        this.poolManager.restart();
-        this.poolManager.waitForMinimumFill();
-        for (RubyRuntimePoolRestartListener listener : this.restartListeners) {
-            listener.runtimeRestarted();
-        }
-    }
-
-    public void registerRestartListener(RubyRuntimePoolRestartListener listener) {
-        this.restartListeners.add( listener );
     }
 
     @Override
@@ -168,6 +154,10 @@ public class ManagedPool<T> implements Pool<T> {
         return availableSize();
     }
 
+    public boolean isDrained() {
+        return borrowedSize() == 0;
+    }
+
     protected Set<T> getAllInstances() {
         return this.pool.getAllInstances();
     }
@@ -212,7 +202,5 @@ public class ManagedPool<T> implements Pool<T> {
     private boolean deferUntilRequested = true;
     private boolean started = false;
     private NamespaceContextSelector nsContextSelector;
-    private List<RubyRuntimePoolRestartListener> restartListeners = new CopyOnWriteArrayList<RubyRuntimePoolRestartListener>();
-    
     
 }

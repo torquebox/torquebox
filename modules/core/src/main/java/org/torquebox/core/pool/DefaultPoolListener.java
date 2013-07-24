@@ -42,8 +42,4 @@ public class DefaultPoolListener<T> implements PoolListener<T> {
     public void instanceRequested(int totalInstances, int availableNow) {
     }
 
-    @Override
-    public void instanceRetired(T instance) {
-    }
-
 }

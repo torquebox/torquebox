@@ -19,16 +19,10 @@
 
 package org.torquebox.core.pool;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.logging.Logger;
-import org.torquebox.core.runtime.RubyRuntimePoolRestartListener;
 
 /**
  * A pool implementation that shares a single instance to all consumers.
@@ -191,52 +185,12 @@ public class SharedPool<T> implements Pool<T> {
      * Destroy the pool.
      */
     public synchronized void stop() {
-        if (this.factory != null) {
-            if (this.instance != null) {
-                this.factory.destroyInstance( this.instance );
-            }
-            for (T previousInstance : this.previousInstances) {
-                this.factory.destroyInstance( previousInstance );
-            }
-            this.previousInstances.clear();
+        if (this.factory != null && this.instance !=  null) {
+            this.factory.destroyInstance( this.instance );
         }
         this.instance = null;
         this.factory = null;
-    }
-
-    /**
-     * Restart the pool - all new borrowInstance requests get a new runtime
-     * and the old runtime gets destroyed after its release by all users
-     */
-    public synchronized void restart() throws Exception {
-        if (this.instance == null) {
-            return;
-        }
-        new Thread( new Runnable() {
-            public void run() {
-                try {
-                    T newInstance = newInstance();
-                    synchronized(SharedPool.this) {
-                        AtomicInteger currentCount = SharedPool.this.instanceCounts.get( SharedPool.this.instance );
-                        if (currentCount == null || currentCount.intValue() == 0) {
-                            retireInstance( SharedPool.this.instance );
-                        } else {
-                            SharedPool.this.previousInstances.add( SharedPool.this.instance );
-                        }
-                        SharedPool.this.instance = newInstance;
-                        for (RubyRuntimePoolRestartListener listener : SharedPool.this.restartListeners) {
-                            listener.runtimeRestarted();
-                        }
-                    }
-                } catch (Exception e) {
-                    log.error( "Error restarting runtime", e);
-                }
-            }
-        }).start();
-    }
-
-    public void registerRestartListener(RubyRuntimePoolRestartListener listener) {
-        this.restartListeners.add( listener );
+        log.info( "Stopped runtime pool " + this.name );
     }
 
     @Override
@@ -246,11 +200,8 @@ public class SharedPool<T> implements Pool<T> {
 
     @Override
     public synchronized void releaseInstance(T instance) {
-        AtomicInteger count = this.instanceCounts.get( instance );
-        int remainingCount = count.decrementAndGet();
-        if (this.previousInstances.contains( instance ) && remainingCount == 0) {
-            retireInstance( instance );
-            this.previousInstances.remove( instance );
+        if (instance == this.instance) {
+            this.instanceCount.decrementAndGet();
         }
     }
 
@@ -270,12 +221,7 @@ public class SharedPool<T> implements Pool<T> {
             }
         }
         
-        if (instanceCounts.get( this.instance) == null) {
-            instanceCounts.put( this.instance, new AtomicInteger( 1 ) );
-        } else {
-            AtomicInteger count = instanceCounts.get( this.instance );
-            count.incrementAndGet();
-        }
+        this.instanceCount.incrementAndGet();
         return this.instance;
     }
     
@@ -287,12 +233,8 @@ public class SharedPool<T> implements Pool<T> {
         return this.nsContextSelector;
     }
 
-    private void retireInstance(T instance) {
-        log.debugf( "Retiring JRuby runtime %s from pool %s", instance, this );
-        this.factory.destroyInstance( instance );
-        if (this.instanceCounts.containsKey( instance )) {
-            this.instanceCounts.remove( instance );
-        }
+    public boolean isDrained() {
+        return this.instanceCount.get() == 0;
     }
 
     /** Name of the pool. */
@@ -301,10 +243,7 @@ public class SharedPool<T> implements Pool<T> {
     /** The shared instance. */
     private T instance;
     
-    /** The previous shared instances. */
-    private List<T> previousInstances = new ArrayList<T>();
-    
-    private Map<T, AtomicInteger> instanceCounts = new WeakHashMap<T, AtomicInteger>();
+    private AtomicInteger instanceCount = new AtomicInteger();
 
     /** Optional factory to create the initial instance. */
     private InstanceFactory<T> factory;
@@ -312,7 +251,4 @@ public class SharedPool<T> implements Pool<T> {
     private boolean deferUntilRequested = true;
 
     private NamespaceContextSelector nsContextSelector = null;
-
-    private List<RubyRuntimePoolRestartListener> restartListeners = new CopyOnWriteArrayList<RubyRuntimePoolRestartListener>();
-
 }

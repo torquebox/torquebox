@@ -68,11 +68,4 @@ class PoolListeners<T> implements PoolListener<T> {
         }
     }
 
-    @Override
-    public void instanceRetired(T instance) {
-        for (PoolListener<T> each : this.listeners) {
-            each.instanceRetired( instance );
-        }
-    }
-
 }

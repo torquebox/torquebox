@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.core.component.ComponentClass;
 import org.torquebox.core.component.ComponentResolver;
+import org.torquebox.core.runtime.RestartableRubyRuntimePool;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
 import org.torquebox.core.runtime.SharedRubyRuntimePool;
 import org.torquebox.services.component.ServiceComponent;
@@ -46,7 +47,8 @@ public class RubyServiceTest {
         this.componentResolver.setComponentWrapperClass( ServiceComponent.class );
         this.service = new RubyService( "test service" );
         this.service.setComponentResolver( this.componentResolver );
-        this.service.setRubyRuntimePool( new SharedRubyRuntimePool( this.ruby ) );
+        this.service.setRubyRuntimePool( new RestartableRubyRuntimePool(
+                new SharedRubyRuntimePool( this.ruby ) ) );
     }
     
     @Test

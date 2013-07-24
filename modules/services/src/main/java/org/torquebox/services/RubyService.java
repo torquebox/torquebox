@@ -22,6 +22,7 @@ package org.torquebox.services;
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.torquebox.core.component.ComponentResolver;
+import org.torquebox.core.runtime.RestartableRubyRuntimePool;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.core.runtime.RubyRuntimePoolRestartListener;
 import org.torquebox.core.util.RuntimeHelper;
@@ -115,7 +116,7 @@ public class RubyService implements RubyServiceMBean, RubyRuntimePoolRestartList
         this.resolver = resolver;
     }
 
-    public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
+    public void setRubyRuntimePool(RestartableRubyRuntimePool runtimePool) {
         this.runtimePool = runtimePool;
     }
 
@@ -141,7 +142,7 @@ public class RubyService implements RubyServiceMBean, RubyRuntimePoolRestartList
     private boolean started;
 
     private ComponentResolver resolver;
-    private RubyRuntimePool runtimePool;
+    private RestartableRubyRuntimePool runtimePool;
     private Ruby runtime;
     private ServiceComponent servicesComponent;
     private static final Logger log = Logger.getLogger( "org.torquebox.services" );

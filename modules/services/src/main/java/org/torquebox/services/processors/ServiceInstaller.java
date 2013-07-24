@@ -41,7 +41,7 @@ import org.projectodd.polyglot.hasingleton.HASingleton;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
-import org.torquebox.core.runtime.RubyRuntimePool;
+import org.torquebox.core.runtime.RestartableRubyRuntimePool;
 import org.torquebox.core.util.StringUtils;
 import org.torquebox.services.RubyService;
 import org.torquebox.services.RubyServiceCreate;
@@ -73,7 +73,7 @@ public class ServiceInstaller implements DeploymentUnitProcessor {
         RubyServiceCreate serviceCreate = new RubyServiceCreate( service );
         ServiceBuilder<RubyService> builderCreate = phaseContext.getServiceTarget().addService( serviceCreateName, serviceCreate );
         builderCreate.addDependency( ServicesServices.serviceComponentResolver( unit, serviceMetaData.getName() ), ComponentResolver.class, serviceCreate.getComponentResolverInjector() );
-        builderCreate.addDependency( CoreServices.runtimePoolName( unit, "services" ), RubyRuntimePool.class, serviceCreate.getRubyRuntimePoolInjector() );
+        builderCreate.addDependency( CoreServices.runtimePoolName( unit, "services" ), RestartableRubyRuntimePool.class, serviceCreate.getRubyRuntimePoolInjector() );
         builderCreate.setInitialMode( Mode.PASSIVE );
         builderCreate.install();
         

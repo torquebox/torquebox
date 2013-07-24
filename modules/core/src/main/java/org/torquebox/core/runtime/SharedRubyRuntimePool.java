@@ -43,7 +43,7 @@ import org.torquebox.core.util.RuntimeHelper;
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  * 
  */
-public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRuntimePool, SharedRubyRuntimePoolMBean {
+public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRuntimePool, BasicRubyRuntimePoolMBean {
 
     public SharedRubyRuntimePool() {
         
@@ -116,6 +116,50 @@ public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRunti
     @Override
     public Set<String> getAllRuntimeNames() {
         return Collections.singleton( "" + getRuntime().hashCode() );
+    }
+
+    @Override
+    public RubyRuntimePool duplicate() {
+        SharedRubyRuntimePool duplicate = new SharedRubyRuntimePool( getRubyRuntimeFactory() );
+        duplicate.setName( getName() );
+        duplicate.setDeferUntilRequested( isDeferredUntilRequested() );
+        duplicate.setNamespaceContextSelector( getNamespaceContextSelector() );
+        return duplicate;
+    }
+
+    @Override
+    public void setMinimumInstances(int minInstances) {
+        // no-op, always 1
+    }
+
+    @Override
+    public int getMinimumInstances() {
+        return 1;
+    }
+
+    @Override
+    public void setMaximumInstances(int maxInstances) {
+        // no-op, always 1
+    }
+
+    @Override
+    public int getMaximumInstances() {
+        return 1;
+    }
+
+    @Override
+    public int getSize() {
+        return 1;
+    }
+
+    @Override
+    public int getBorrowed() {
+        return 0;
+    }
+
+    @Override
+    public int getAvailable() {
+        return 1;
     }
 
 }

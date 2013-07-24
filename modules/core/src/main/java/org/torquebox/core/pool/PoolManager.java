@@ -19,7 +19,7 @@
 
 package org.torquebox.core.pool;
 
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
@@ -60,17 +60,6 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
         }
     }
 
-    private static class DrainTask<T> extends PoolTask<T> {
-        public DrainTask(PoolManager<T> poolManager) {
-            super( poolManager );
-        }
-
-        @Override
-        public void perform() throws Exception {
-            this.poolManager.drainInstance();
-        }
-    }
-
     private SimplePool<T> pool;
     private InstanceFactory<T> factory;
 
@@ -79,9 +68,8 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
 
     private Semaphore instances;
 
-    private Executor executor;
+    private ExecutorService executor;
     private FillTask<T> fillTask;
-    private DrainTask<T> drainTask;
 
     private boolean started = false;
 
@@ -94,7 +82,6 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
         this.maxInstances = maxInstances;
 
         this.fillTask = new FillTask<T>( this );
-        this.drainTask = new DrainTask<T>( this );
     }
 
     protected void taskCompleted() {
@@ -124,14 +111,6 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
         return this.factory;
     }
 
-    public void setExecutor(Executor executor) {
-        this.executor = executor;
-    }
-
-    public Executor getExecutor() {
-        return this.executor;
-    }
-
     @Override
     public void instanceRequested(int totalInstances, int availableNow) {
         log.debug( "instanceRequested - totalInstances = " + totalInstances +
@@ -141,11 +120,6 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
         if (this.instances.tryAcquire()) {
             this.executor.execute( this.fillTask );
         }
-    }
-
-    @Override
-    public void instanceRetired(T instance) {
-        this.factory.destroyInstance( instance );
     }
 
     protected void fillInstance() throws Exception {
@@ -175,7 +149,9 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
         started = true;
         this.instances = new Semaphore( this.maxInstances - this.minInstances, true );
         if (this.executor == null) {
-            this.executor = Executors.newFixedThreadPool( 4 );
+            int threadSize = Math.min( this.minInstances,
+                    Runtime.getRuntime().availableProcessors() * 3 );
+            this.executor = Executors.newFixedThreadPool( threadSize );
         }
         for (int i = 0; i < this.minInstances; ++i) {
             this.executor.execute( this.fillTask );
@@ -188,11 +164,7 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
         while (pool.size() > 0) {
             drainInstance();
         }
-    }
-
-    public synchronized void restart() throws Exception {
-        this.pool.restart();
-        this.start();
+        this.executor.shutdown();
     }
 
     public void waitForMinimumFill() throws InterruptedException {
