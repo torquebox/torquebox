@@ -10,6 +10,15 @@
       <outputDirectory>/</outputDirectory>
       <excludes>
         <exclude>**/jruby/lib/ruby/gems/*/cache/*.gem</exclude>
+        <!-- No standalone-full or torquebox-full in the slim dist -->
+        <exclude>**/standalone/configuration/*-full*.xml</exclude>
+        <!-- No need to include the original upstream configs -->
+        <exclude>**/standalone/configuration/original-*.xml</exclude>
+        <exclude>**/domain/configuration/original-*.xml</exclude>
+        <!-- torquebox-slim.xml configs get copied to standalone.xml -->
+        <exclude>**/standalone/configuration/torquebox-slim*.xml</exclude>
+        <exclude>**/domain/configuration/torquebox-*.xml</exclude>
+        <exclude>**/domain/configuration/*-slim.xml</exclude>
       </excludes>
     </fileSet>
   </fileSets>
