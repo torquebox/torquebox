@@ -14,6 +14,10 @@
   <name>TorqueBox Build Distribution</name>
   <description />
 
+  <properties>
+    <version.json>1.4.6</version.json>
+  </properties>
+
   <profiles>
     <profile>
       <id>integ</id>
@@ -70,6 +74,12 @@
       <version>${project.version}</version>
       <type>pom</type>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>json</artifactId>
+      <type>gem</type>
+      <version>${version.json}</version>
     </dependency>
   </dependencies>
 
@@ -132,18 +142,6 @@
         <groupId>de.saumya.mojo</groupId>
         <artifactId>jruby-maven-plugin</artifactId>
         <executions>
-          <execution>
-            <id>install-json</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jruby</goal>
-            </goals>
-            <configuration>
-              <args>-S gem install json_pure --no-ri --no-rdoc</args>
-              <gemHome>./target/rubygems</gemHome>
-              <gemPath>./target/rubygems</gemPath>
-            </configuration>
-          </execution>
           <execution>
             <id>generate-build-metadata</id>
             <phase>package</phase>
