@@ -201,6 +201,17 @@ end</programlisting></para>
     automatically replicated throughout an <ulink
     url="http://infinispan.org">Infinispan</ulink> data grid.</para>
 
+    <note>
+      <title>TorqueBox Session Store and Sticky Sessions</title>
+      <para>It is only recommended to use the TorqueBox session store
+      with a load balancer configured to use sticky sessions. If you
+      want to use round-robin or some other non-sticky load-balancing
+      policy, you may may experience delays as servers wait for the
+      user's session to replicate from other nodes in the
+      cluster. Under high session loads, these delays may turn into
+      timeouts.</para>
+    </note>
+
     <para>Additionally, by using the TorqueBox session store, your application
     can communicate between both the Java and Ruby sides through the HTTP
     session. Where possible, elemental scalar attributes of the Ruby session
