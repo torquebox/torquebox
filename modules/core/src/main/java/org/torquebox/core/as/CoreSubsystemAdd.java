@@ -100,13 +100,6 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         final InjectableHandlerRegistry registry = new InjectableHandlerRegistry();
 
-        context.addStep( new AbstractDeploymentChainStep() {
-            @Override
-            protected void execute(DeploymentProcessorTarget processorTarget) {
-                addDeploymentProcessors( processorTarget, registry );
-            }
-        }, OperationContext.Stage.RUNTIME );
-
         try {
             addCoreServices( context, verificationHandler, newControllers, registry );
             addTorqueBoxStdioContext();
@@ -114,6 +107,13 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         } catch (Exception e) {
             throw new OperationFailedException( e, null );
         }
+
+        context.addStep( new AbstractDeploymentChainStep() {
+            @Override
+            protected void execute(DeploymentProcessorTarget processorTarget) {
+                addDeploymentProcessors( processorTarget, registry );
+            }
+        }, OperationContext.Stage.RUNTIME );
 
     }
 
