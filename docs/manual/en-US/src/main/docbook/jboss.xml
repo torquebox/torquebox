@@ -253,7 +253,7 @@
         <title>Logging Config from <filename>standalone/configuration/standalone.xml</filename></title>
 
         <programlisting>
-          &lt;subsystem xmlns='urn:jboss:domain:logging:1.1'&gt;
+          &lt;subsystem xmlns='urn:jboss:domain:logging:1.2'&gt;
               &lt;console-handler name='CONSOLE'&gt;
                   &lt;level name='INFO'/&gt;
                   &lt;formatter&gt;

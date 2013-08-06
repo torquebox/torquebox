@@ -2,193 +2,7 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="production-setup">
-  <title>TorqueBox Production Setup</title>
-
-  <section id="basic-deployment">
-    <title>Example Fedora 15 Production Setup</title>
-    <para>A basic TorqueBox installation running a Rails 3.x application on a
-    Fedora 15 server is a fairly straightforward setup. This section will
-    outline the steps needed to deploy TorqueBox into a production
-    enviornment. The example scenario assumes a stock Fedora 15.</para>
-
-    <section>
-      <title>Package Installation</title>
-
-      <para>With a stock operating system, you'll need to install a few
-        packages.</para>
-
-      <itemizedlist>
-        <listitem>
-          <para>In this example, we'll use PostgreSQL. Substitute your
-          database flavor of choice.</para>
-
-          <screen>$ yum install postgresql-server</screen>
-        </listitem>
-
-        <listitem>
-          <para>The Java runtime is required for AS7 and JRuby.</para>
-
-          <screen>$ yum install java-1.6.0-openjdk </screen>
-        </listitem>
-
-        <listitem>
-          <para>We'll deploy from SCM and use git.</para>
-
-          <screen>$ yum install git</screen>
-        </listitem>
-
-        <listitem>
-          <para>We'll use Apache as the web server, and JBoss mod_cluster for
-          request dispatching. To install Apache:
-
-          <screen>$ yum install httpd</screen>
-
-          Since AS7 uses mod_cluster 1.2, we'll need to
-          install that from source. Download and installation instructions for
-          mod_cluster can be found on the <ulink
-          url="http://www.jboss.org/mod_cluster/downloads/1-2-0-Final">mod_cluster
-          downloads page</ulink>; essentially it's download and compile, and 
-          then copy modules to your http module directory. 
-          </para>
-        </listitem>
-      </itemizedlist>
-    </section>
-    <section>
-      <title>TorqueBox Installation</title>
-      <para>Download the latest release from the website, and unzip it. By
-        convention, TorqueBox is placed in <code>/opt/torquebox/current</code>
-        and is owned by the <code>torquebox</code> user. 
-
-        <screen>$ wget http://torquebox.org/release/org/torquebox/torquebox-dist/${project.version}/torquebox-dist-${project.version}-bin.zip
-$ mkdir /opt/torquebox
-$ chown torquebox:torquebox /opt/torquebox
-$ su torquebox
-$ unzip torquebox-dist-${project.version}-bin.zip -d /opt/torquebox/
-$ cd /opt/torquebox
-$ ln -s torquebox-${project.version} current</screen>
-        To ensure that the <code>TORQUEBOX_HOME</code> and other relevant
-        environment variables are available to system users, add these to
-        <code>/etc/profile.d/torquebox.sh</code>
-        <programlisting>
-export TORQUEBOX_HOME=/opt/torquebox/current
-export JBOSS_HOME=$TORQUEBOX_HOME/jboss
-export JRUBY_HOME=$TORQUEBOX_HOME/jruby
-PATH=$JBOSS_HOME/bin:$JRUBY_HOME/bin:$PATH
-        </programlisting>
-        You can test your installation by logging in with a new shell and running
-        the <code>torquebox</code> command.
-        <screen>$ torquebox
-Tasks:
-  torquebox deploy ROOT        # Deploy an application to TorqueBox
-  torquebox undeploy ROOT      # Undeploy an application from TorqueBox
-  torquebox run                # Run TorqueBox (binds to localhost, use -b to ov...
-  torquebox rails ROOT         # Create a Rails application at ROOT using the...
-  torquebox archive ROOT       # Create a nice self-contained application arc...
-  torquebox cli                # Run the JBoss AS7 CLI
-  torquebox env [VARIABLE]     # Display TorqueBox environment variables
-  torquebox help [TASK]        # Describe available tasks or one specific task
-  torquebox list               # List applications deployed to TorqueBox and ...</screen>
-
-        Check to see if the server starts correctly by executing <code>torquebox run</code>.
-        You can just type <code>^C</code> to kill the server and continue to set up your system.
-      </para>
-    </section>
-    <section>
-      <title>Installing TorqueBox as a Startup Service</title>
-      <para>These instructions are for setting up TorqueBox as a system service
-        that will be started at boot time on Fedora 15. Instructions for operating
-        systems other than Fedora 15 may vary slighty.</para>
-
-      <para>JBoss AS7 ships with an <code>init.d</code> startup script that 
-        you can use. Copy it to the <code>/etc/init.d</code> directory
-        <screen>$ cp $JBOSS_HOME/bin/init.d/jboss-as-standalone.sh
-          /etc/init.d/jboss-as-standalone</screen>
-      </para>
-
-      <para>The jboss-as-standalone startup script makes use of a few
-        environment variables that can be set by creating a jboss-as.conf file
-        in <code>/etc/jboss-as</code>. 
-        <screen>$ mkdir /etc/jboss-as</screen>
-        <programlisting filename="jboss-as.conf"># General configuration for the init.d script
-JBOSS_USER=torquebox
-JBOSS_HOME=/opt/torquebox/current/jboss
-JBOSS_PIDFILE=/var/run/torquebox/torquebox.pid
-JBOSS_CONSOLE_LOG=/var/log/torquebox/console.log
-JBOSS_CONFIG=standalone-ha.xml</programlisting>
-        Run <code>chkconfig</code>
-        <screen>chkconfig --add jboss-as-standalone</screen>
-        to make sure the service is started at boot.  If everything is done
-        correctly, you can test your installation by running the following
-        command.
-
-        <screen>$ service jboss-as-standalone start</screen>
-
-        Then check the output in <code>/var/log/console.log</code>. 
-      </para>
-    </section>
-    <section id="mod-cluster-configuration">
-      <title>Request Dispatching with <code>mod_cluster</code></title>
-      <para>
-        As with MRI, a TorqueBox production server will typically have a request
-        dispatcher fronting the application, accepting web requests and handing
-        them off to your application. In this case, we will use Apache and
-        <code>mod_cluster</code> to achieve that. Even though we're not running
-        a cluster of servers, <code>mod_cluster</code> makes it very simple to
-        get Apache and TorqueBox talking with each other. And when the
-        application does outgrow a single backend, it's trivial to add more to
-        the cluster.  
-      </para>
-      <para>
-        Download and install <code>mod_cluster</code> using the instructions
-        provided from the <ulink
-          url="http://www.jboss.org/mod_cluster/downloads/1-2-0-Final">mod_cluster
-          downloads page</ulink>.
-      </para>
-      <para>
-        After downloading and installing, check the
-        configuration file <code>/etc/httpd/conf.d/mod_cluster.conf</code>.
-        It should look something like this.
-        <programlisting>LoadModule slotmem_module       modules/mod_slotmem.so
-LoadModule proxy_cluster_module modules/mod_proxy_cluster.so
-LoadModule advertise_module     modules/mod_advertise.so
-LoadModule manager_module       modules/mod_manager.so
-
-&lt;Location /mod_cluster_manager&gt;
-    SetHandler mod_cluster-manager
-    AllowDisplay On
-&lt;/Location&gt;
-
-Listen 127.0.0.1:6666
-&lt;VirtualHost 127.0.0.1:6666&gt;
- 
-  &lt;Directory /&gt;
-    Order deny,allow
-    Deny from all
-    Allow from all
-  &lt;/Directory&gt;
- 
-  KeepAliveTimeout 60
-  MaxKeepAliveRequests 0
-
-  EnableMCPMReceive
- 
-  ManagerBalancerName torquebox-balancer
-  AllowDisplay On
-  AdvertiseFrequency 5
- 
-&lt;/VirtualHost&gt;</programlisting>
-      With these settings, you should have Apache's httpd accepting web requests
-      on your host and JBoss <code>mod_cluster</code> dispatching those requests
-      to the TorqueBox system process.
-      </para>
-    </section>
-    <section>
-      <title>Capistrano Deployment</title>
-      <para>Using Capistrano to deploy your application is similar to deploying
-        with Capistrano to other servers. See <xref linkend="capistrano-support"/>
-        for full details.</para>
-    </section>
-  </section>
+  <title>TorqueBox Production Tips</title>
 
   <section id="production-clustering">
     <title>Clustering</title>
@@ -263,12 +77,12 @@ Listen 127.0.0.1:6666
           <title>JGroups Configuration
           (<filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>)</title>
 
-          <para><programlisting>&lt;server xmlns="urn:jboss:domain:1.3"&gt;
+          <para><programlisting>&lt;server xmlns="urn:jboss:domain:1.4"&gt;
   &lt;profile&gt;
     ...
     &lt;subsystem xmlns="urn:jboss:domain:jgroups:1.1" default-stack="tcp"&gt;
       &lt;stack name="tcp"&gt;
-        &lt;transport type="TCP" socket-binding="jgroups-tcp" diagnostics-socket-binding="jgroups-diagnostics"/&gt;
+        &lt;transport type="TCP" socket-binding="jgroups-tcp"/&gt;
         &lt;protocol type="TCPPING"&gt;
           &lt;property name="initial_hosts"&gt;
             10.100.10.2[7600],10.100.10.3[7600]
@@ -278,8 +92,7 @@ Listen 127.0.0.1:6666
         &lt;protocol type="FD_SOCK" socket-binding="jgroups-tcp-fd"/&gt;
         &lt;protocol type="FD"/&gt;
         &lt;protocol type="VERIFY_SUSPECT"/&gt;
-        &lt;protocol type="BARRIER"/&gt;
-        &lt;protocol type="pbcast.NAKACK"/&gt;
+        &lt;protocol type="pbcast.NAKACK2"/&gt;
         &lt;protocol type="UNICAST2"/&gt;
         &lt;protocol type="pbcast.STABLE"/&gt;
         &lt;protocol type="pbcast.GMS"/&gt;
@@ -291,11 +104,10 @@ Listen 127.0.0.1:6666
     &lt;/subsystem&gt;
     ...
   &lt;/profile&gt;
-  &lt;socket-binding-group name="standard-sockets" default-interface="public"&gt;
+  &lt;socket-binding-group name="standard-sockets" default-interface="public" port-offset="${jboss.socket.binding.port-offset:0}"&gt;
     ...
     &lt;socket-binding name="jgroups-tcp" port="7600"/&gt;
     &lt;socket-binding name="jgroups-tcp-fd" port="57600"/&gt;
-    &lt;socket-binding name="jgroups-diagnostics" port="7500"/&gt;
     ...
   &lt;/socket-binding-group&gt;
 &lt;/server&gt;</programlisting>
@@ -388,42 +200,6 @@ Listen 127.0.0.1:6666
         </para>
       </section>
 
-    </section>
-
-    <section id="clustering-modcluster-without-multicast">
-      <title>Clustering mod_cluster</title>
-
-      <para>mod_cluster can be used for load-balancing web requests to
-      a TorqueBox cluster. By default, clustered TorqueBox instances
-      look for mod_cluster servers via multicast but an example of
-      configuring mod_cluster without multicast is below.</para>
-
-      <para><example>
-          <title>mod_cluster Configuration
-          (<filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>)</title>
-
-          <para><programlisting>&lt;server xmlns="urn:jboss:domain:1.3"&gt;
-  &lt;profile&gt;
-    ...
-    &lt;subsystem xmlns="urn:jboss:domain:modcluster:1.1"&gt;
-      &lt;mod-cluster-config advertise="false" connector="ajp" proxy-list="mod_cluster_host:6666" excluded-contexts="invoker,jbossws,juddi,console"&rt;
-        &lt;dynamic-load-provider&rt;
-          &lt;load-metric type="busyness"/&rt;
-        &lt;/dynamic-load-provider&rt;
-      &lt;/mod-cluster-config&rt;
-    &lt;/subsystem&gt;
-    ...
-  &lt;/profile&gt;
-  ...
-&lt;/server&gt;
-        </programlisting> The changed pieces in the configuration
-        above are the proxy-list and advertise attributes. The
-        proxy-list attribute should contain a comma-separated list of
-        host:port entries, where each entry refers to a mod_cluster
-        server. The port (6666) should agree with the Listen directive
-        specified in <xref
-        linkend="mod-cluster-configuration"/>.</para>
-        </example></para>
     </section>
 
   <section id="number-http-threads">
@@ -543,12 +319,12 @@ Listen 127.0.0.1:6666
       <para><example>
         <title>SSL Configuration in standalone.xml</title>
 
-        <para><programlisting>&lt;subsystem xmlns="urn:jboss:domain:web:1.1" native="false" default-virtual-server="default-host"&rt;
+        <para><programlisting>&lt;subsystem xmlns="urn:jboss:domain:web:1.4" native="false" default-virtual-server="default-host"&rt;
   &lt;connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http"/&rt;
   &lt;connector name="https" protocol="HTTP/1.1" scheme="https" socket-binding="https" secure="true"&rt;
     &lt;ssl name="https" key-alias="myalias" password="foobar" certificate-key-file="/tmp/keystore"/&rt;
   &lt;/connector&rt;
-  &lt;virtual-server name="default-host" enable-welcome-root="false"&rt;
+  &lt;virtual-server name="default-host"&rt;
     &lt;alias name="localhost"/&rt;
     &lt;alias name="example.com"/&rt;
   &lt;/virtual-server&rt;
