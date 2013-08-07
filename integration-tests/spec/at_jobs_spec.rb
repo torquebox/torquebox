@@ -18,9 +18,9 @@ remote_describe "at jobs" do
     TorqueBox::ScheduledJob.at('SimpleJob', :every => 440, :until => Time.now + 5)
 
     # First run of first spec takes the longest while job runtimes spin up
-    count = queue.receive(:timeout => 15_000).nil? ? 0 : 1
+    count = queue.receive(:timeout => 45_000).nil? ? 0 : 1
 
-    while (queue.receive(:timeout => 1_000))
+    while (queue.receive(:timeout => 15_000))
       count += 1
     end
 
@@ -37,9 +37,9 @@ remote_describe "at jobs" do
     TorqueBox::ScheduledJob.at('SimpleJob', :at => Time.now + 1, :every => 460, :until => Time.now + 5)
 
     # First run takes the longest while job installs
-    count = queue.receive(:timeout => 5_000).nil? ? 0 : 1
+    count = queue.receive(:timeout => 45_000).nil? ? 0 : 1
 
-    while (queue.receive(:timeout => 1_000))
+    while (queue.receive(:timeout => 15_000))
       count += 1
     end
 
@@ -56,9 +56,9 @@ remote_describe "at jobs" do
     TorqueBox::ScheduledJob.at('SimpleJob', :in => 1_000, :every => 460, :until => Time.now + 5)
 
     # First run takes the longest while job installs
-    count = queue.receive(:timeout => 5_000).nil? ? 0 : 1
+    count = queue.receive(:timeout => 45_000).nil? ? 0 : 1
 
-    while (queue.receive(:timeout => 1_000))
+    while (queue.receive(:timeout => 15_000))
       count += 1
     end
 
@@ -75,9 +75,9 @@ remote_describe "at jobs" do
     TorqueBox::ScheduledJob.at_sync('SimpleJob', :in => 1_000, :repeat => 10, :every => 150).should == true
 
     # First run takes the longest while job installs
-    count = queue.receive(:timeout => 5_000).nil? ? 0 : 1
+    count = queue.receive(:timeout => 45_000).nil? ? 0 : 1
 
-    while (queue.receive(:timeout => 1_000))
+    while (queue.receive(:timeout => 15_000))
       count += 1
     end
 
