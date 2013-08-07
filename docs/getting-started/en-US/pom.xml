@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-docs-getting-started</artifactId>
-    <version>3.0.0.beta2</version>
+    <version>3.0.0-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
 
