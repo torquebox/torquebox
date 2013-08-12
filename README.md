@@ -1,19 +1,31 @@
-Requirements
-------------
+# What is TorqueBox?
+
+TorqueBox is a Ruby application server built on JBoss AS7 and
+JRuby. It supports Rack-based web frameworks and provides simple Ruby
+interfaces to standard enterprisey services, including scheduled jobs,
+caching, messaging, and services.
+
+# Useful Resources
+
+* Issues - https://issues.jboss.org/browse/TORQUE
+
+* CI - https://projectodd.ci.cloudbees.com/job/torquebox-incremental/
+
+# Development
+
+## Requirements
 
 * Maven 3
 * Configuration of the JBoss Maven repository in settings.xml
 
-Dependencies
-------------
+## Dependencies
 
 TorqueBox depends on polyglot: https://github.com/projectodd/jboss-polyglot
 
-Polyglot is published as a snapshot, so you may need to run mvn with the
--U option to check for updates if you run into build issues.
+If you chase a TorqueBox issue down and run into
+org.projectodd.polyglot classes, this is where their source is.
 
-Building
---------
+## Building
 
 Install the project using the provided settings.xml:
 
@@ -34,8 +46,7 @@ Once your repositories are configured, simply type:
 
     mvn install
 
-Running
--------
+## Running
 
 After successfully building it, you'll probably want to run it.  To do
 so, set `TORQUEBOX_HOME`, and add `$TORQUEBOX_HOME/jruby/bin` to your
@@ -47,8 +58,7 @@ so, set `TORQUEBOX_HOME`, and add `$TORQUEBOX_HOME/jruby/bin` to your
 You can then use the `torquebox` command to control your creation. Run
 it without parameters to see a list of its supported subcommands.
 
-Testing
--------
+## Testing
 
 All unit tests will be run during the build process, but tests can be run independently with the following command:
 
