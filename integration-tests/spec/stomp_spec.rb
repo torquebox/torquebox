@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'spec_helper'
 
 require 'fileutils'
@@ -41,7 +42,6 @@ describe "STOMP applications" do
 
     client.connect
     client.subscribe( "/queues/foo" ) do |message|
-      puts "received message #{message}"
     end
 
     sleep( 1 )
@@ -56,7 +56,6 @@ describe "STOMP applications" do
     received_message = nil
 
     client.subscribe( "/queues/foo" ) do |message|
-      puts "received message #{message}"
       received_message = message
     end
 
@@ -66,7 +65,7 @@ describe "STOMP applications" do
     sleep( 1 )
 
     client.disconnect
- 
+
     received_message.should_not be_nil
     received_message.body.should eql( "this is my message" )
   end
@@ -79,7 +78,6 @@ describe "STOMP applications" do
     received_message = nil
 
     client.subscribe( "/bridge/foo" ) do |message|
-      puts "received message #{message}"
       received_message = message
     end
 
@@ -105,7 +103,6 @@ describe "STOMP applications" do
     received_message = nil
 
     client.subscribe( "/bridge/bar" ) do |message|
-      puts "received message #{message}"
       received_message = message
     end
 
@@ -128,6 +125,28 @@ describe "STOMP applications" do
 
     received_message.should_not be_nil
     received_message.body.should eql( "this is my message" )
+  end
+
+  it "should be able to subscribe send and receive utf8 messages" do
+    client = Stilts::Stomp::Client.new( "stomp://localhost/" );
+
+    client.connect
+
+    received_message = nil
+
+    client.subscribe( "/queues/foo" ) do |message|
+      received_message = message
+    end
+
+    sleep( 1 )
+
+    client.send( "/queues/foo", "ääbb" )
+    sleep( 1 )
+
+    client.disconnect
+
+    received_message.should_not be_nil
+    received_message.body.should eql( "ääbb" )
   end
 
 end

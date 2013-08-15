@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'spec_helper'
 
 require 'fileutils'
@@ -27,9 +28,9 @@ describe "STOMP applications via websockets", :js=>true do
       connected = false;
       disconnected = false;
       complete = null;
-      client = Stomp.client( "ws://localhost:8675/stomp-websockets/" );
+      client = new Stomp.Client();
 
-      client.connect( null, null, function(frame) {
+      client.connect( function(frame) {
         connected = true;
         client.disconnect();
         disconnected = true;
@@ -49,9 +50,9 @@ describe "STOMP applications via websockets", :js=>true do
       subscribed       = null;
       disconnected     = null;
 
-      client = Stomp.client( "ws://localhost:8675/stomp-websockets/" );
+      client = new Stomp.Client();
 
-      client.connect( null, null, function(frame) {
+      client.connect( function(frame) {
         client.subscribe( "/queues/foo", function(message){
           received_message = message;
           client.disconnect();
@@ -83,9 +84,9 @@ describe "STOMP applications via websockets", :js=>true do
       subscribed       = null;
       disconnected     = null;
 
-      client = Stomp.client( "ws://localhost:8675/stomp-websockets/" );
+      client = new Stomp.Client();
 
-      client.connect( null, null, function(frame) {
+      client.connect( function(frame) {
         client.subscribe( "/bridge/foo", function(message){
           received_message = message;
           disconnected = true;
@@ -119,7 +120,43 @@ describe "STOMP applications via websockets", :js=>true do
 
     wait_for( :disconnected ).should_not be_nil
     message = page_variable( :received_message )
-    page_variable( :received_message )['body'].should == "this is my message"
+    message['body'].should == "this is my message"
+  end
+
+  it "should be able to subscribe send and receive utf8 messages" do
+    visit( '/stomp-websockets/give-me-a-cookie-please' )
+    visit( '/stomp-websockets/index.html' )
+    page.execute_script <<-END
+      received_message = null;
+      subscribed       = null;
+      disconnected     = null;
+
+      client = new Stomp.Client();
+
+      client.connect( function(frame) {
+        client.subscribe( "/queues/foo", function(message){
+          received_message = message;
+          client.disconnect();
+          disconnected = true;
+        } );
+        subscribed = true;
+      } );
+    END
+
+    wait_for( :subscribed ).should_not be_nil
+
+    sleep( 1 )
+
+    page.execute_script <<-END
+      client.send( "/queues/foo", {}, "ääbb" )
+    END
+
+    wait_for( :disconnected ).should_not be_nil
+    body = page_variable( :received_message )['body']
+    # We have to force encoding to UTF-8 because for some reason it
+    # comes though as ASCII-8BIT when passed from Firefox via Capybara
+    body.force_encoding('UTF-8') if body.respond_to?(:force_encoding)
+    body.should == "ääbb"
   end
 
 end
