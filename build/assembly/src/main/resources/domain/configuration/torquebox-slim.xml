@@ -29,6 +29,7 @@
     <system-properties>
         <!-- IPv4 is not required, but setting this helps avoid unintended use of IPv6 -->
         <property name='java.net.preferIPv4Stack' value='true'/>
+        <property name='org.apache.catalina.session.StandardManager.PATHNAME' value='sessions.ser'/>
         <property name='org.apache.tomcat.util.http.ServerCookie.FWD_SLASH_IS_SEPARATOR' value='false'/>
         <property name='org.apache.tomcat.util.net.WAIT_FOR_THREAD' value='false'/>
         <property name='org.quartz.scheduler.skipUpdateCheck' value='true'/>
@@ -92,11 +93,15 @@
                 <cache-container name='web' aliases='polyglot torquebox standard-session-cache' default-cache='repl' module='org.jboss.as.clustering.web.infinispan'>
                     <transport lock-timeout='60000'/>
                     <replicated-cache name='repl' mode='ASYNC' batching='true' start='EAGER'>
-                        <file-store/>
+                      <eviction strategy='LRU' max-entries='10000'/>
+                      <expiration max-idle='100000'/>
+                      <file-store passivation='false' purge='false'/>
                     </replicated-cache>
                     <replicated-cache name='sso' mode='SYNC' batching='true'/>
                     <distributed-cache name='dist' mode='ASYNC' batching='true' l1-lifespan='0'>
-                        <file-store/>
+                      <eviction strategy='LRU' max-entries='10000'/>
+                      <expiration max-idle='100000'/>
+                      <file-store passivation='false' purge='false'/>
                     </distributed-cache>
                 </cache-container>
             </subsystem>
@@ -517,11 +522,15 @@
                 <cache-container name='web' aliases='polyglot torquebox standard-session-cache' default-cache='repl' module='org.jboss.as.clustering.web.infinispan'>
                     <transport lock-timeout='60000'/>
                     <replicated-cache name='repl' mode='ASYNC' batching='true' start='EAGER'>
-                        <file-store/>
+                      <eviction strategy='LRU' max-entries='10000'/>
+                      <expiration max-idle='100000'/>
+                      <file-store passivation='false' purge='false'/>
                     </replicated-cache>
                     <replicated-cache name='sso' mode='SYNC' batching='true'/>
                     <distributed-cache name='dist' mode='ASYNC' batching='true' l1-lifespan='0'>
-                        <file-store/>
+                      <eviction strategy='LRU' max-entries='10000'/>
+                      <expiration max-idle='100000'/>
+                      <file-store passivation='false' purge='false'/>
                     </distributed-cache>
                 </cache-container>
             </subsystem>
