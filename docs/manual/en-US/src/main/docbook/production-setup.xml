@@ -82,23 +82,27 @@
     ...
     &lt;subsystem xmlns="urn:jboss:domain:jgroups:1.1" default-stack="tcp"&gt;
       &lt;stack name="tcp"&gt;
-        &lt;transport type="TCP" socket-binding="jgroups-tcp"/&gt;
+        &lt;transport type="TCP" socket-binding="jgroups-tcp"&gt;
+          &lt;property name="max_bundle_size"&gt;32k&lt;/property&gt;
+        &lt;/transport&gt;
         &lt;protocol type="TCPPING"&gt;
           &lt;property name="initial_hosts"&gt;
             10.100.10.2[7600],10.100.10.3[7600]
           &lt;/property&gt;
         &lt;/protocol&gt;
-        &lt;protocol type="MERGE2"/&gt;
+        &lt;protocol type="MERGE3"/&gt;
         &lt;protocol type="FD_SOCK" socket-binding="jgroups-tcp-fd"/&gt;
         &lt;protocol type="FD"/&gt;
         &lt;protocol type="VERIFY_SUSPECT"/&gt;
         &lt;protocol type="pbcast.NAKACK2"/&gt;
-        &lt;protocol type="UNICAST2"/&gt;
+        &lt;protocol type="UNICAST3"/&gt;
         &lt;protocol type="pbcast.STABLE"/&gt;
         &lt;protocol type="pbcast.GMS"/&gt;
         &lt;protocol type="UFC"/&gt;
         &lt;protocol type="MFC"/&gt;
-        &lt;protocol type="FRAG2"/&gt;
+        &lt;protocol type="FRAG2"&gt;
+          &lt;property name="frag_size"&gt;30k&lt;/property&gt;
+        &lt;/protocol&gt;
         &lt;protocol type="RSVP"/&gt;
       &lt;/stack&gt;
     &lt;/subsystem&gt;
@@ -155,7 +159,9 @@
           <para><programlisting>...
 &lt;subsystem xmlns="urn:jboss:domain:jgroups:1.1" default-stack="tcp"&gt;
   &lt;stack name="tcp"&gt;
-    &lt;transport type="TCP" socket-binding="jgroups-tcp"/&gt;
+    &lt;transport type="TCP" socket-binding="jgroups-tcp"&gt;
+      &lt;property name="max_bundle_size"&gt;32k&lt;/property&gt;
+    &lt;/transport&gt;
   
     &lt;protocol type="S3_PING"&gt;
       &lt;property name="secret_access_key"&gt;YOUR_SECRET_ACCESS_KEY&lt;/property&gt;
@@ -163,7 +169,7 @@
       &lt;property name="location"&gt;SOME_BUCKET_PATH&lt;/property&gt;
     &lt;/protocol&gt;
   
-    &lt;protocol type="MERGE2"/&gt;
+    &lt;protocol type="MERGE3"/&gt;
     &lt;protocol type="FD_SOCK" socket-binding="jgroups-tcp-fd"/&gt;
     ...
   &lt;/stack&gt;
