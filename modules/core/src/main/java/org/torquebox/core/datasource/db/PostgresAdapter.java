@@ -27,7 +27,7 @@ import org.torquebox.core.datasource.DatabaseMetaData;
 public class PostgresAdapter extends AbstractAdapter {
 
     public PostgresAdapter() {
-        super( "postgresql", "jdbc/postgres", "org.postgresql.Driver", "org.postgresql.xa.PGXADataSource" );
+        super( "postgresql", "jdbc/postgres", "Jdbc::Postgres", "org.postgresql.Driver", "org.postgresql.xa.PGXADataSource" );
     }
     
     @Override

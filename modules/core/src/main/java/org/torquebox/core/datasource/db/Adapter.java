@@ -32,6 +32,7 @@ public interface Adapter {
     String getRequirePath();
     String[] getNames(); 
     
+    String getRubyDriverClassName();
     String getDriverClassName();
     String getDataSourceClassName();
     

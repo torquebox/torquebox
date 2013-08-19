@@ -65,6 +65,11 @@ public class DriverService extends AsyncService<Driver> {
             RuntimeHelper.require( ruby, "bundler/setup" );
             RuntimeHelper.require( ruby, this.adapter.getRequirePath() );
 
+            String rubyDriverClassName = this.adapter.getRubyDriverClassName();
+            if (rubyDriverClassName != null) {
+                RuntimeHelper.evalScriptlet( ruby, rubyDriverClassName + ".load_driver if " + rubyDriverClassName + ".respond_to?(:load_driver)" );
+            }
+
             ClassLoader classLoader = ruby.getJRubyClassLoader();
             final Class<? extends Driver> driverClass = classLoader.loadClass( this.adapter.getDriverClassName() ).asSubclass( Driver.class );
             Driver driver = driverClass.newInstance();

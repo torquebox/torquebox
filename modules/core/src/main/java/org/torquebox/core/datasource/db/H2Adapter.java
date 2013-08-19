@@ -30,7 +30,7 @@ import org.torquebox.core.datasource.DatabaseMetaData;
 public class H2Adapter extends AbstractAdapter {
 
     public H2Adapter() {
-        super( "h2", "jdbc/h2", "org.h2.Driver", "org.h2.jdbcx.JdbcDataSource" );
+        super( "h2", "jdbc/h2", "Jdbc::H2", "org.h2.Driver", "org.h2.jdbcx.JdbcDataSource" );
     }
 
     @Override

@@ -51,10 +51,10 @@ versions = {
   :sdoc           =>    '0.3.20',
 
   :arjdbc11       =>    '1.1.3',
-  :arjdbc12       =>    '1.2.2',
+  :arjdbc12       =>    '1.2.9.1',
 
-  :jdbc_h2        =>    '1.3.154',
-  :jdbc_sqlite3   =>    '3.7.2',
+  :jdbc_h2        =>    '1.3.170.1',
+  :jdbc_sqlite3   =>    '3.7.2.1',
 
   :sinatra        =>    '1.2.8',
   :sinatra_flash  =>    '0.3.0',

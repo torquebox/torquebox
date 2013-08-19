@@ -27,7 +27,7 @@ import org.torquebox.core.datasource.DatabaseMetaData;
 public class OracleAdapter extends AbstractAdapter {
 
     public OracleAdapter() {
-        super( "oracle", "ojdbc6.jar", "oracle.jdbc.OracleDriver", "oracle.jdbc.xa.client.OracleXADataSource" );
+        super( "oracle", "ojdbc6.jar", null, "oracle.jdbc.OracleDriver", "oracle.jdbc.xa.client.OracleXADataSource" );
     }
     
     @Override

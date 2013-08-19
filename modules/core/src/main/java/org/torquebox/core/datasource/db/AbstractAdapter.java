@@ -27,9 +27,10 @@ import org.torquebox.core.datasource.DatabaseMetaData;
 
 public abstract class AbstractAdapter implements Adapter {
 
-    public AbstractAdapter(String id, String requirePath, String driverClassName, String dataSourceClassName) {
+    public AbstractAdapter(String id, String requirePath, String rubyDriverClassName, String driverClassName, String dataSourceClassName) {
         this.id = id;
         this.requirePath = requirePath;
+        this.rubyDriverClassName = rubyDriverClassName;
         this.driverClassName = driverClassName;
         this.dataSourceClassName = dataSourceClassName;
     }
@@ -42,6 +43,11 @@ public abstract class AbstractAdapter implements Adapter {
     @Override
     public String getRequirePath() {
         return this.requirePath;
+    }
+
+    @Override
+    public String getRubyDriverClassName() {
+        return this.rubyDriverClassName;
     }
 
     @Override
@@ -67,6 +73,7 @@ public abstract class AbstractAdapter implements Adapter {
 
     private String id;
     private String requirePath;
+    private String rubyDriverClassName;
     private String driverClassName;
     private String dataSourceClassName;
 }
