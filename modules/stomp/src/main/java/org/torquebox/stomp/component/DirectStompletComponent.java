@@ -20,7 +20,6 @@
 package org.torquebox.stomp.component;
 
 import org.jruby.Ruby;
-import org.jruby.javasupport.JavaEmbedUtils;
 import org.projectodd.stilts.stomp.StompException;
 import org.projectodd.stilts.stomp.StompMessage;
 import org.projectodd.stilts.stomp.spi.StompSession;
@@ -56,6 +55,7 @@ public class DirectStompletComponent implements Stomplet {
         try {
             this.component._callRubyMethodIfDefined( "on_message", message, session );
         } finally {
+            clearActiveRecordConnections();
             storeSessionData( session );
         }
     }
@@ -66,6 +66,7 @@ public class DirectStompletComponent implements Stomplet {
         try {
             this.component._callRubyMethodIfDefined( "on_subscribe", subscriber );
         } finally {
+            clearActiveRecordConnections();
             storeSessionData( subscriber.getSession() );
         }
     }
@@ -76,23 +77,30 @@ public class DirectStompletComponent implements Stomplet {
         try {
             this.component._callRubyMethodIfDefined( "on_unsubscribe", subscriber );
         } finally {
+            clearActiveRecordConnections();
             storeSessionData( subscriber.getSession() );
         }
     }
 
     protected void loadSessionData(StompSession session) {
         session.access();
-        Ruby ruby = this.component.getRubyComponent().getRuntime();
-        RuntimeHelper.callIfPossible( ruby, session, "load_session_data", EMPTY_OBJECT_ARRAY );
+        RuntimeHelper.callIfPossible( getRuby(), session, "load_session_data", EMPTY_OBJECT_ARRAY );
     }
 
     protected void storeSessionData(StompSession session) {
         try {
-            Ruby ruby = this.component.getRubyComponent().getRuntime();
-            RuntimeHelper.callIfPossible( ruby, session, "store_session_data", EMPTY_OBJECT_ARRAY );
+            RuntimeHelper.callIfPossible( getRuby(), session, "store_session_data", EMPTY_OBJECT_ARRAY );
         } finally {
             session.endAccess();
         }
+    }
+
+    protected Ruby getRuby() {
+        return this.component.getRubyComponent().getRuntime();
+    }
+
+    protected void clearActiveRecordConnections() {
+        RuntimeHelper.evalScriptlet( getRuby(), "ActiveRecord::Base.clear_active_connections! if defined?(ActiveRecord::Base)" );
     }
 
     private static final Object[] EMPTY_OBJECT_ARRAY = {};
