@@ -247,6 +247,10 @@
                             netty
                         </connector-ref>
                         <discovery-group-ref discovery-group-name='dg-group1'/>
+                        <retry-interval>500</retry-interval>
+                        <retry-interval-multiplier>1.5</retry-interval-multiplier>
+                        <max-retry-interval>4000</max-retry-interval>
+                        <reconnect-attempts>8</reconnect-attempts>
                     </cluster-connection>
                 </cluster-connections>
                 <security-settings>
