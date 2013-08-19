@@ -4,6 +4,8 @@ remote_describe "sequel support" do
   it "should work for in-memory H2 databases" do
     require 'rubygems'
     require 'sequel'
+    require 'jdbc/h2'
+    Jdbc::H2.load_driver
     lambda {
       db = Sequel.connect("jdbc:h2:mem:ham;DB_CLOSE_DELAY=-1")
       db.create_table :biscuits do
