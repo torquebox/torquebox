@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-require 'cache'
+require 'torquebox/cache'
 
 def random_string( length = 20 )
   chars = ('a'..'z').to_a + ('A'..'Z').to_a

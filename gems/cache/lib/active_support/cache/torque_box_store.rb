@@ -17,7 +17,7 @@
 
 require 'active_support/cache'
 require 'torquebox/kernel'
-require 'cache'
+require 'torquebox/cache'
 
 # @api private
 module ActiveSupport
