@@ -50,8 +50,7 @@ versions = {
   :jbuilder       =>    '1.4.2',
   :sdoc           =>    '0.3.20',
 
-  :arjdbc11       =>    '1.1.3',
-  :arjdbc12       =>    '1.2.9.1',
+  :arjdbc         =>    '1.2.9.1',
 
   :jdbc_h2        =>    '1.3.170.1',
   :jdbc_sqlite3   =>    '3.7.2.1',
@@ -101,8 +100,7 @@ GemInstaller.with( versions ) do |installer|
   installer.install( 'jbuilder',      versions[:jbuilder] )
   installer.install( 'sdoc',          versions[:sdoc] )
 
-  installer.install( 'activerecord-jdbc-adapter', versions[:arjdbc11] )
-  installer.install( 'activerecord-jdbc-adapter', versions[:arjdbc12] )
+  installer.install( 'activerecord-jdbc-adapter', versions[:arjdbc] )
 
   installer.install( 'jdbc-h2'      )
   installer.install( 'jdbc-sqlite3' )
