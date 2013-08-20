@@ -39,8 +39,7 @@ module TorqueBox
           exported = options.fetch(:exported, false)
 
           with_destinationizer do |destinationizer|
-            latch = destinationizer.create_queue(name, durable, selector, exported)
-            return nil unless TorqueBox::Messaging::Destination.wait_for_latch(latch)
+            destinationizer.create_queue(name, durable, selector, exported)
           end
 
           new(name, options)

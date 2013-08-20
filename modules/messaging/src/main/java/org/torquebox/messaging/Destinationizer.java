@@ -19,8 +19,6 @@
 
 package org.torquebox.messaging;
 
-import org.jboss.as.messaging.jms.JMSQueueService;
-import org.jboss.as.messaging.jms.JMSTopicService;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
@@ -31,7 +29,7 @@ import org.jboss.msc.service.ServiceTarget;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.projectodd.polyglot.core.AtRuntimeInstaller;
-import org.projectodd.polyglot.core.HasStartStopLatches;
+import org.projectodd.polyglot.core.ServiceSynchronizationManager;
 import org.projectodd.polyglot.messaging.destinations.DestinationUtils;
 import org.projectodd.polyglot.messaging.destinations.Destroyable;
 import org.projectodd.polyglot.messaging.destinations.DestroyableJMSQueueService;
@@ -45,7 +43,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A class to manage the destinations at runtime. It allows to create and remove destinations (queues and topics).
@@ -81,12 +78,11 @@ public class Destinationizer extends AtRuntimeInstaller<Destinationizer> {
 
                     log.debugf("Deploying '%s' queue...", metaData.getName());
 
-                    createQueue(
-                            metaData.getName(),
-                            metaData.isDurable(),
-                            metaData.getSelector(),
-                            metaData.isExported()
-                    );
+                    QueueInstaller.deployAsync(getUnit(), getTarget(), getGlobalTarget(),
+                                               metaData.getName(),
+                                               metaData.getSelector(),
+                                               metaData.isDurable(),
+                                               metaData.isExported());
                 }
             }
         }
@@ -102,10 +98,9 @@ public class Destinationizer extends AtRuntimeInstaller<Destinationizer> {
 
                     log.debugf("Deploying '%s' topic...", metaData.getName());
 
-                    createTopic(
-                            metaData.getName(),
-                            metaData.isExported()
-                    );
+                    TopicInstaller.deployAsync(getUnit(), getTarget(), getGlobalTarget(),
+                                               metaData.getName(),
+                                               metaData.isExported());
                 }
             }
         }
@@ -113,76 +108,54 @@ public class Destinationizer extends AtRuntimeInstaller<Destinationizer> {
 
     /**
      * Creates a new queue by deploying required services.
-     * <p/>
-     * This method is executed asynchronously.
      *
      * @param queueName The queue name
      * @param durable   If the queue should be durable
      * @param selector  The optional selector used for the queue
      * @param exported  If the queue should be available in remote JNDI lookups
-     * @return CountDownLatch The latch to check if the service is fully started
+     * @return boolean  true if a new queue was created, false if it already exists
      * @see DestroyableJMSQueueService
-     * @see CountDownLatch
-     */
-    public CountDownLatch createQueue(final String queueName, final boolean durable, final String selector, boolean exported) {
+          */
+    public boolean createQueue(final String queueName, final boolean durable, final String selector, boolean exported) {
         if (DestinationUtils.destinationPointerExists(getUnit(), queueName)) {
             log.debugf("Service for '%s' queue already exists", queueName);
-            return new CountDownLatch(0);
+            return false;
         }
 
-        JMSQueueService queue =
-                QueueInstaller.deployGlobalQueue(getUnit().getServiceRegistry(),
-                        getGlobalTarget(),
-                        queueName,
-                        durable,
-                        selector,
-                        DestinationUtils.jndiNames(queueName, exported));
+        this.destinations.put(queueName,
+                              QueueInstaller.deploySync(getUnit(),
+                                                        getTarget(),
+                                                        getGlobalTarget(),
+                                                        queueName,
+                                                        selector,
+                                                        durable,
+                                                        exported));
 
-        createDestinationService(
-                queueName,
-                QueueInstaller.queueServiceName(queueName),
-                queue instanceof DestroyableJMSQueueService ?
-                        ((DestroyableJMSQueueService)queue).getReferenceCount() :
-                        null);
-
-        return queue instanceof DestroyableJMSQueueService ?
-                ((DestroyableJMSQueueService)queue).getStartLatch() :
-                null;
+        return true;
     }
 
     /**
      * Creates a new topic by deploying required services.
-     * <p/>
-     * This method is executed asynchronously.
      *
      * @param topicName The name of the topic
      * @param exported  If the topic should be accessible in remote JNDI lookups
-     * @return CountDownLatch The latch to check if the service is fully started
+     * @return boolean  true if a new topic was created, false if it already exists
      * @see DestroyableJMSTopicService
-     * @see CountDownLatch
      */
-    public CountDownLatch createTopic(String topicName, boolean exported) {
+    public boolean createTopic(String topicName, boolean exported) {
         if (DestinationUtils.destinationPointerExists(getUnit(), topicName)) {
             log.debugf("Service for '%s' topic already exists", topicName);
-            return new CountDownLatch(0);
+            return false;
         }
 
-        JMSTopicService topic =
-                TopicInstaller.deployGlobalTopic(getUnit().getServiceRegistry(),
-                        getGlobalTarget(),
-                        topicName,
-                        DestinationUtils.jndiNames(topicName, exported));
+        this.destinations.put(topicName,
+                              TopicInstaller.deploySync(getUnit(),
+                                                        getTarget(),
+                                                        getGlobalTarget(),
+                                                        topicName,
+                                                        exported));
 
-        createDestinationService(
-                topicName,
-                TopicInstaller.topicServiceName(topicName),
-                topic instanceof DestroyableJMSTopicService ?
-                        ((DestroyableJMSTopicService)topic).getReferenceCount() :
-                        null);
-
-        return topic instanceof DestroyableJMSTopicService ?
-                ((DestroyableJMSTopicService)topic).getStartLatch() :
-                null;
+        return true;
     }
 
     /**
@@ -193,18 +166,21 @@ public class Destinationizer extends AtRuntimeInstaller<Destinationizer> {
      * @param name Name of the destination (queue or topic)
      * @return CountDownLatch The latch to check if the service is fully stopped
      * @see CountDownLatch
+     * @return boolean true if the removal succeeded
      */
     @SuppressWarnings({"rawtypes", "unchecked", "unused"})
-    public CountDownLatch removeDestination(String name) {
-        ServiceName serviceName = this.destinations.get(name);
+    public CountDownLatch removeDestination(final String name) {
+        CountDownLatch latch = null;
+        final ServiceName serviceName = this.destinations.get(name);
         if (serviceName != null) {
             ServiceRegistry registry = getUnit().getServiceRegistry();
             ServiceController dest = registry.getService(serviceName);
+            ServiceName globalName = QueueInstaller.queueServiceName(name);
             if (dest != null) {
-                ServiceController globalDest =
-                        registry.getService(QueueInstaller.queueServiceName(name));
+                ServiceController globalDest = registry.getService(globalName);
                 if (globalDest == null) {
-                    globalDest = registry.getService(TopicInstaller.topicServiceName(name));
+                    globalName = TopicInstaller.topicServiceName(name);
+                    globalDest = registry.getService(globalName);
                 }
                 if (globalDest == null) {
                     //should never happen, but...
@@ -217,30 +193,46 @@ public class Destinationizer extends AtRuntimeInstaller<Destinationizer> {
                     ((Destroyable) service).setShouldDestroy(true);
                 }
 
+                final CountDownLatch waitLatch = new CountDownLatch(1);
+                latch = waitLatch;
+                final ServiceName finalGlobalName = globalName;
+
+                Runnable wait = new Runnable() {
+                    @Override
+                    public void run() {
+                        ServiceSynchronizationManager mgr = ServiceSynchronizationManager.INSTANCE;
+
+                        if (!mgr.waitForServiceRemove(serviceName,
+                                                      DestinationUtils.destinationWaitTimeout())) {
+                            log.warn("Timed out waiting for " + name + " pointer to stop.");
+                        }
+
+                        if (mgr.hasService(finalGlobalName) &&
+                                !mgr.hasDependents(finalGlobalName)) {
+                            if (!mgr.waitForServiceDown(finalGlobalName,
+                                                        DestinationUtils.destinationWaitTimeout())) {
+                                log.warn("Timed out waiting for " + name + " to stop.");
+                            }
+
+                        }
+
+                        waitLatch.countDown();
+                    }
+                };
+
                 dest.setMode(Mode.REMOVE);
 
-                if (service instanceof HasStartStopLatches) {
-                    return ((HasStartStopLatches) service).getStopLatch();
-                }
+                (new Thread(wait)).start();
             }
             this.destinations.remove(name);
         }
 
-        // In case the service is already removed or the service is not created by TB, return a dummy CountDownLatch.
-        return new CountDownLatch(0);
-    }
+        if (latch == null) {
+            // In case the service is already removed or the service is not created by TB, return a dummy CountDownLatch.
+            latch = new CountDownLatch(0);
+        }
 
-    protected void createDestinationService(String destName,
-                                            ServiceName globalName,
-                                            AtomicInteger referenceCount) {
-        this.destinations.put(destName,
-                DestinationUtils.deployDestinationPointerService(
-                        getUnit(),
-                        getTarget(),
-                        destName,
-                        globalName,
-                        referenceCount
-                ));
+        return latch;
     }
 
     // Useful for testing

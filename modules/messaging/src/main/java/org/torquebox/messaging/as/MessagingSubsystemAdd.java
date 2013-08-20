@@ -46,8 +46,6 @@ import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
 import org.projectodd.polyglot.messaging.destinations.HornetQStartupPoolService;
-import org.projectodd.polyglot.messaging.destinations.processors.QueueInstaller;
-import org.projectodd.polyglot.messaging.destinations.processors.TopicInstaller;
 import org.projectodd.polyglot.messaging.processors.ApplicationNamingContextBindingProcessor;
 import org.torquebox.core.injection.jndi.ManagedReferenceInjectableService;
 import org.torquebox.messaging.component.processors.MessageProcessorComponentResolverInstaller;

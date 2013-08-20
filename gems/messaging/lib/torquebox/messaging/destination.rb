@@ -98,10 +98,9 @@ module TorqueBox
       # @return [Boolean] true if the destination was successfully stopped, false otherwise
       # @see TorqueBox::Messaging::Destination.stop
       def stop_sync
-        latch = stop
-        TorqueBox::Messaging::Destination.wait_for_latch(latch)
+        TorqueBox::Messaging::Destination.wait_for_latch(stop)
       end
-
+      
       # Publishes a message to the destination
       #
       # @param message The message to publish
