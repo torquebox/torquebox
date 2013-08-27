@@ -119,8 +119,8 @@
         </listitem>
 
         <listitem>
-          <para><code>on_message(message)</code> Called when a client has sent
-          a message.</para>
+          <para><code>on_message(message, session)</code> Called when
+          a client has sent a message.</para>
         </listitem>
       </itemizedlist></para>
 
@@ -335,12 +335,12 @@ end</programlisting></para>
     <methodname>on_unsubscribe()</methodname> methods using a hash-like
     syntax: <code>subscriber[paramName]</code>.</para>
 
-    <para>STOMP supports the notion of virtuals, just as with web container.
-    By default, if your application specifies a virtual host for the web
-    portion of the configuration, the same value will be used for the STOMP
-    container. The host may be overridden, though, by specifying a
-    <parameter>host:</parameter> parameter within the
-    <parameter>stomp:</parameter> block.</para>
+    <para>STOMP supports the notion of virtual hosts, just as with web
+    container.  By default, if your application specifies a virtual
+    host for the web portion of the configuration, the same value will
+    be used for the STOMP container. The host may be overridden,
+    though, by specifying a <parameter>host:</parameter> parameter
+    within the <parameter>stomp:</parameter> block.</para>
 
     <para>To configure stomplets using the YAML syntax: <informalexample>
         <para><programlisting>stomp:
@@ -441,14 +441,20 @@ end</programlisting></para>
         <filename>/stomp.js</filename>. When the STOMP client is loaded in
         this fashion into your HTML page, the Client() constructor is
         pre-configured with the host, port and secure flag for the same
-        server.</para>
+        server. See <xref linkend="injecting-stomp-endpoint"/> for details on
+        retrieving the endpoint variable used in the example below.</para>
 
         <para><informalexample>
-            <programlisting>// To use the preconfigured client provided by the server.
-client = new Stomp.Client(); 
+            <programlisting>// Load the client from the STOMP server
+&lt;script src="http://&lt;%= endpoint.host %&gt;:&lt;%= endpoint.port %>/stomp.js"&gt;&lt;/script&gt;
 
-// To specify the host, port and secure flag explicitly
-client = new Stomp.Client( "somehost.com", 8676, true );</programlisting>
+&lt;script type="text/javascript"&gt;
+  // To use the preconfigured client provided by the server.
+  client = new Stomp.Client(); 
+
+  // To specify the host, port and secure flag explicitly
+  client = new Stomp.Client( "somehost.com", 8676, true );
+&lt;/script&gt;</programlisting>
           </informalexample></para>
       </section>
 
@@ -567,27 +573,7 @@ if ( everyoneIsHappy ) {
       </section>
     </section>
 
-    <section>
-      <title>Rack middleware to provide the Javascript client</title>
-
-      <para>The torquebox-stomp gem includes a simple Rack middleware to make
-      it easy to serve the Javascript client with your application, without
-      having to copy it into your application's source tree. The
-      <classname>TorqueBox::Stomp::StompJavascriptClientProvider</classname>
-      middleware matches requests to <filename>/stilts-stomp.js</filename> and
-      serves the Javascript client.<informalexample>
-          <para><programlisting>require 'torquebox-stomp'
-
-app = lambda { |env| 
-  # your app here
-}
-
-use TorqueBox::Stomp::StompJavascriptClientProvider
-run app</programlisting></para>
-        </informalexample></para>
-    </section>
-
-    <section>
+    <section id="injecting-stomp-endpoint">
       <title>Injecting the endpoint URL</title>
 
       <para>In your application, it's useful to be able to know exactly the
