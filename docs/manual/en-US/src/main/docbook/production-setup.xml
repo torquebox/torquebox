@@ -340,4 +340,30 @@
       </example></para>
     </section>
   </section>
+  <section id="jvm-tuning">
+    <title>JVM Tuning</title>
+
+    <section id="jvm-codecache">
+      <title>CodeCache</title>
+
+      <para>In a production system it's very important to not let the
+      JVM CodeCache get full. The CodeCache is an area of memory where
+      the bytecode from all JITted methods gets stored. If it fills
+      up, methods will no longer be JITted and things will run slower
+      than they could. The default CodeCache size varies by JVM and
+      platform, but for most servers it's only 48MB.</para>
+
+      <para>When you run out of CodeCache space, a warning will be
+      logged in the TorqueBox <filename>server.log</filename> that
+      looks like this:
+
+      <screen>Java HotSpot(TM) 64-Bit Server VM warning: CodeCache is full. Compiler has been disabled</screen>
+
+      To increase the CodeCache size, you'll want to set the JVM
+      property <code>-XX:ReservedCodeCacheSize=256m</code>, replacing
+      the 256m with the desired size of your CodeCache. See <xref
+      linkend="setting-jvm-properties"/> for details on how to
+      set this JVM property.</para>
+    </section>
+  </section>
 </chapter>
