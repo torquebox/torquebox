@@ -26,6 +26,8 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.web.rack.RackMetaData;
 
+import java.io.File;
+
 public class RailsRackProcessor implements DeploymentUnitProcessor {
 
     @Override
@@ -41,7 +43,11 @@ public class RailsRackProcessor implements DeploymentUnitProcessor {
         }
         
         if (!railsAppMetaData.isRails3()) {
-            rackAppMetaData.setRackUpScript( getRackUpScript( rackAppMetaData.getContextPath() ) );
+            File root = rubyAppMetaData.getRoot();
+            File rackup = rackAppMetaData.getRackUpScriptFile(root);
+            if (!rackup.exists()) {
+                rackAppMetaData.setRackUpScript( getRackUpScript( rackAppMetaData.getContextPath() ) );
+            }
         }
     }
     
