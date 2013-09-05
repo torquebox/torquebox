@@ -53,11 +53,14 @@ module TorqueBox
       end
 
       def initialize(opts = {})
-        return nothing unless INFINISPAN_AVAILABLE
         @options = opts
-        options[:transaction_mode] = :transactional unless options.has_key?( :transaction_mode )
-        options[:locking_mode] ||= :optimistic if (transactional? && !options.has_key?( :locking_mode ))
-        options[:sync] = true if options[:sync].nil?
+        
+        if INFINISPAN_AVAILABLE
+          options[:transaction_mode] = :transactional unless options.has_key?( :transaction_mode )
+          options[:locking_mode] ||= :optimistic if (transactional? && !options.has_key?( :locking_mode ))
+          options[:sync] = true if options[:sync].nil?
+        end
+
         if options[:encoding] == :marshal
           log( "Encoding of :marshal cannot be used with " +
                "TorqueBox::Infinispan::Cache - using :marshal_base64 instead",
