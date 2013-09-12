@@ -93,7 +93,8 @@ public class RackFilter implements Filter {
         try {
             servletName = ((ApplicationFilterChain) chain).getServlet().getServletConfig().getServletName();
         } catch (Exception e) {
-            log.error(e);
+            // If we can't fetch the name, we can be pretty sure it's not one of our servlets, in which case it really
+            // doesn't matter what the name is.
         }
 
         if (servletName.equals(RackWebApplicationInstaller.FIVE_HUNDRED_SERVLET_NAME) ||
