@@ -88,7 +88,14 @@ public class RackFilter implements Filter {
             return;
         }
 
-        String servletName = ((ApplicationFilterChain) chain).getServlet().getServletConfig().getServletName();
+        String servletName = "";
+
+        try {
+            servletName = ((ApplicationFilterChain) chain).getServlet().getServletConfig().getServletName();
+        } catch (Exception e) {
+            log.error(e);
+        }
+
         if (servletName == RackWebApplicationInstaller.FIVE_HUNDRED_SERVLET_NAME ||
                 servletName == RackWebApplicationInstaller.STATIC_RESROUCE_SERVLET_NAME) {
             // Only hand off requests to Rack if they're handled by one of the
