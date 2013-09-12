@@ -96,8 +96,8 @@ public class RackFilter implements Filter {
             log.error(e);
         }
 
-        if (servletName == RackWebApplicationInstaller.FIVE_HUNDRED_SERVLET_NAME ||
-                servletName == RackWebApplicationInstaller.STATIC_RESROUCE_SERVLET_NAME) {
+        if (servletName.equals(RackWebApplicationInstaller.FIVE_HUNDRED_SERVLET_NAME) ||
+                servletName.equals(RackWebApplicationInstaller.STATIC_RESROUCE_SERVLET_NAME)) {
             // Only hand off requests to Rack if they're handled by one of the
             // TorqueBox servlets
             HttpServletResponseCapture responseCapture = new HttpServletResponseCapture( response );
