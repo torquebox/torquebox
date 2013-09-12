@@ -88,9 +88,17 @@ public class RackFilter implements Filter {
             return;
         }
 
-        String servletName = ((ApplicationFilterChain) chain).getServlet().getServletConfig().getServletName();
-        if (servletName == RackWebApplicationInstaller.FIVE_HUNDRED_SERVLET_NAME ||
-                servletName == RackWebApplicationInstaller.STATIC_RESROUCE_SERVLET_NAME) {
+        String servletName = "";
+
+        try {
+            servletName = ((ApplicationFilterChain) chain).getServlet().getServletConfig().getServletName();
+        } catch (Exception e) {
+            // If we can't fetch the name, we can be pretty sure it's not one of our servlets, in which case it really
+            // doesn't matter what the name is.
+        }
+
+        if (servletName.equals(RackWebApplicationInstaller.FIVE_HUNDRED_SERVLET_NAME) ||
+                servletName.equals(RackWebApplicationInstaller.STATIC_RESROUCE_SERVLET_NAME)) {
             // Only hand off requests to Rack if they're handled by one of the
             // TorqueBox servlets
             HttpServletResponseCapture responseCapture = new HttpServletResponseCapture( response );
