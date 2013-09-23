@@ -39,7 +39,7 @@
   arbitrary: true
   -default_message_encoding:
     type: enum
-    values: [marshal, marshal_base64, json, text]
+    values: [marshal, marshal_base64, json, text, edn]
   value-types:
     string:
     map:
