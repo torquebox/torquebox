@@ -27,8 +27,9 @@ class GemInstaller
 
   def initialize(versions={})
     @versions = versions
-    @installer = Gem::DependencyInstaller.new
-    @no_deps_installer = Gem::DependencyInstaller.new(:ignore_dependencies => true)
+    @installer = Gem::DependencyInstaller.new(:force => true)
+    @no_deps_installer = Gem::DependencyInstaller.new(:ignore_dependencies => true,
+                                                      :force => true)
   end
 
   def install(gem_name, version=nil, include_deps=true)

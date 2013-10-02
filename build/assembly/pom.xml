@@ -151,6 +151,9 @@
             <goals>
               <goal>initialize</goal>
             </goals>
+            <configuration>
+              <args>--no-rdoc --no-ri</args>
+            </configuration>
           </execution>
         </executions>
       </plugin>

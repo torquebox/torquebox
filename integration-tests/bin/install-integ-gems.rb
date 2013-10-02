@@ -19,7 +19,7 @@ ENV['GEM_PATH'] = ENV['GEM_HOME']
 require File.dirname(__FILE__) + '/../lib/gem_installer.rb'
 
 versions = {
-  :jruby_openssl  =>    '0.7.7',
+  :jruby_openssl  =>    '0.9.0',
   :haml           =>    '3.1.6',
   :json           =>    '1.7.4',
   :rails2x        =>    '2.3.14',

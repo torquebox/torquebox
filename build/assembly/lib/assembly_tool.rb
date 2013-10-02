@@ -53,8 +53,7 @@ class AssemblyTool
       installer = Gem::Commands::InstallCommand.new
       installer.options[:args] = [ 'builder' ]
       installer.options[:version] = '3.0.0'
-      installer.options[:generate_rdoc] = false
-      installer.options[:generate_ri] = false
+      installer.options[:document] = []
       begin
         installer.execute
       rescue Gem::SystemExitException=>e2
@@ -119,13 +118,14 @@ class AssemblyTool
     opts = {
       :bin_dir     => @jruby_dir + '/bin',
       :env_shebang => true,
-      :install_dir => install_dir,
-      :wrappers    => true
+      :wrappers    => true,
+      :document    => []
     }
 
+    Gem.use_paths( install_dir )
     installer = Gem::DependencyInstaller.new( opts )
     installer.install( gem )
-    generate_windows_bat_files( gem, opts )
+    # generate_windows_bat_files( gem, opts )
     copy_gem_to_repo(gem, update_index) if File.exist?( gem )
   end
 
