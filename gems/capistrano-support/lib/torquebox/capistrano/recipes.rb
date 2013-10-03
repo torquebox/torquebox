@@ -21,51 +21,51 @@ require 'capistrano'
 module Capistrano
   class Configuration
     def create_deployment_descriptor( root )
-      dd = {
-        'application'=>{
+        dd = {
+          'application'=>{
             # Force the encoding to UTF-8 on 1.9 since the value may be ASCII-8BIT, which marshals as an encoded bytestream, not a String.
             'root'=>"#{root.respond_to?(:force_encoding) ? root.force_encoding('UTF-8') : root}",
-            },
-          }
+          },
+        }
 
-          if ( exists?( :app_host ) )
-            dd['web'] ||= {}
-            dd['web']['host'] = app_host
-          end
-
-          if ( exists?( :app_context ) )
-            dd['web'] ||= {}
-            dd['web']['context'] = app_context
-          end
-
-          if ( exists?( :app_ruby_version ) )
-            dd['ruby'] ||= {}
-            dd['ruby']['version'] = app_ruby_version
-          end
-
-          if ( exists?( :app_environment ) && ! app_environment.empty? ) 
-            dd['environment'] = app_environment
-          end
-
-          if ( exists?( :rails_env ) )
-            dd['environment'] ||= {}
-            dd['environment']['RAILS_ENV'] = rails_env
-          end
-
-          if (exists?( :stomp_host ) )
-            dd['stomp'] ||= {}
-            dd['stomp']['host'] = stomp_host
-          end
-
-          dd
+        if ( exists?( :app_host ) )
+          dd['web'] ||= {}
+          dd['web']['host'] = app_host
         end
-      end
-      
-      module TorqueBox
 
-        def self.load_into( configuration )
+        if ( exists?( :app_context ) )
+          dd['web'] ||= {}
+          dd['web']['context'] = app_context
+        end
 
-          configuration.load do 
+        if ( exists?( :app_ruby_version ) )
+          dd['ruby'] ||= {}
+          dd['ruby']['version'] = app_ruby_version
+        end
+
+        if ( exists?( :app_environment ) && ! app_environment.empty? ) 
+          dd['environment'] = app_environment
+        end
+
+        if ( exists?( :rails_env ) )
+          dd['environment'] ||= {}
+          dd['environment']['RAILS_ENV'] = rails_env
+        end
+
+        if (exists?( :stomp_host ) )
+          dd['stomp'] ||= {}
+          dd['stomp']['host'] = stomp_host
+        end
+
+        dd
+    end
+  end
+        
+  module TorqueBox
+
+    def self.load_into( configuration )
+
+      configuration.load do 
         # --
 
         set( :torquebox_home,      '/opt/torquebox' ) unless exists?( :torquebox_home )
@@ -94,54 +94,54 @@ module Capistrano
           task :restart, :except => { :no_release => true } do
             run "touch #{jboss_home}/standalone/deployments/#{torquebox_app_name}-knob.yml.dodeploy"
           end
-          
+ 
           namespace :torquebox do
 
             desc "Start TorqueBox Server"
             task :start, :except => { :no_release => true } do
               puts "Starting TorqueBox AS"
               case ( jboss_control_style )
-              when :initd
-                run "#{sudo} #{jboss_init_script} start"
-              when :binscripts
-                run "nohup #{jboss_home}/bin/standalone.sh -b #{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
-              when :runit
-                run "#{sudo} sv start torquebox"
-              when :upstart
-                run "#{sudo} service torquebox start"
+                when :initd
+                  run "#{sudo} #{jboss_init_script} start"
+                when :binscripts
+                  run "nohup #{jboss_home}/bin/standalone.sh -b #{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
+                when :runit
+                  run "#{sudo} sv start torquebox"
+                when :upstart
+                  run "#{sudo} service torquebox start"
               end
             end
-            
+        
             desc "Stop TorqueBox Server"
             task :stop, :except => { :no_release => true } do
               puts "Stopping TorqueBox AS"
               case ( jboss_control_style )
-              when :initd
-                run "#{sudo} JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
-              when :binscripts
-                run "#{jboss_home}/bin/jboss-cli.sh --connect :shutdown"
-              when :runit
-                run "#{sudo} sv stop torquebox"
-              when :upstart
-                run "#{sudo} service torquebox stop"
+                when :initd
+                  run "#{sudo} JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
+                when :binscripts
+                  run "#{jboss_home}/bin/jboss-cli.sh --connect :shutdown"
+                when :runit
+                  run "#{sudo} sv stop torquebox"
+                when :upstart
+                  run "#{sudo} service torquebox stop"
               end
             end
-            
+        
             desc "Restart TorqueBox Server"
             task :restart, :except => { :no_release => true } do
               case ( jboss_control_style )
-              when :initd
-                puts "Restarting TorqueBox AS"
-                run "#{sudo} JBOSS_HOME=#{jboss_home} #{jboss_init_script} restart"
-              when :binscripts
-                run "#{jboss_home}/bin/jboss-cli.sh --connect :shutdown"
-                run "nohup #{jboss_home}/bin/standalone.sh -bpublic=#{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
-              when :runit
-                puts "Restarting TorqueBox AS"
-                run "#{sudo} sv restart torquebox"
-              when :upstart
-                puts "Restarting TorqueBox AS"
-                run "#{sudo} service torquebox restart"
+                when :initd
+                  puts "Restarting TorqueBox AS"
+                  run "#{sudo} JBOSS_HOME=#{jboss_home} #{jboss_init_script} restart"
+                when :binscripts
+                  run "#{jboss_home}/bin/jboss-cli.sh --connect :shutdown"
+                  run "nohup #{jboss_home}/bin/standalone.sh -bpublic=#{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
+                when :runit
+                  puts "Restarting TorqueBox AS"
+                  run "#{sudo} sv restart torquebox"
+                when :upstart
+                  puts "Restarting TorqueBox AS"
+                  run "#{sudo} service torquebox restart"
               end
             end
 
@@ -211,7 +211,7 @@ module Capistrano
             deploy.update
             restart_zero_downtime
           end
-
+          
         end
 
         before 'deploy:check',             'deploy:torquebox:check'
