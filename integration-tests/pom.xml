@@ -546,7 +546,7 @@
             </goals>
             <configuration>
               <file>bin/install-integ-gems.rb</file>
-              <gemHome>./target/integ-dist/jruby/lib/ruby/gems/1.8</gemHome>
+              <gemHome>./target/integ-dist/jruby/lib/ruby/gems/shared</gemHome>
               <jrubyJvmArgs>
                 -Dorg.torquebox.slim_distro=${torquebox.slim}
               </jrubyJvmArgs>

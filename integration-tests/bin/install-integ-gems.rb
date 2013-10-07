@@ -9,11 +9,7 @@ def jruby_home
   end
 end
 
-if JRUBY_VERSION =~ /^1\.7/
-  ENV['GEM_HOME'] = "#{jruby_home}/lib/ruby/gems/shared"
-else
-  ENV['GEM_HOME'] = "#{jruby_home}/lib/ruby/gems/1.8"
-end
+ENV['GEM_HOME'] = "#{jruby_home}/lib/ruby/gems/shared"
 ENV['GEM_PATH'] = ENV['GEM_HOME']
 
 require File.dirname(__FILE__) + '/../lib/gem_installer.rb'
