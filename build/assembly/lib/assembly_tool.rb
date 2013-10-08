@@ -110,11 +110,7 @@ class AssemblyTool
 
   def install_gem(gem, update_index=false)
     puts "Installing #{gem}"
-    if JRUBY_VERSION =~ /^1\.7/
-      install_dir = @jruby_dir + '/lib/ruby/gems/shared'
-    else
-      install_dir = @jruby_dir + '/lib/ruby/gems/1.8'
-    end
+    install_dir = @jruby_dir + '/lib/ruby/gems/shared'
     opts = {
       :bin_dir     => @jruby_dir + '/bin',
       :env_shebang => true,
@@ -125,19 +121,18 @@ class AssemblyTool
     Gem.use_paths( install_dir )
     installer = Gem::DependencyInstaller.new( opts )
     installer.install( gem )
-    # generate_windows_bat_files( gem, opts )
+    generate_windows_bat_files( gem, opts, install_dir )
     copy_gem_to_repo(gem, update_index) if File.exist?( gem )
   end
 
-  def generate_windows_bat_files(gem, opts)
+  def generate_windows_bat_files(gem, opts, install_dir)
     # Completely hacked together from JRuby .bat templates and RubyGems
-    bin_dir = opts[:bin_dir] || Gem.bindir( opts[:install_dir] )
-    cache_dir = opts[:cache_dir] || opts[:install_dir]
+    bin_dir = opts[:bin_dir] || Gem.bindir( install_dir )
     installer = Gem::DependencyInstaller.new( opts )
-    spec, source_uri = installer.find_spec_by_name_and_version( gem ).first
-    local_gem_path = Gem::RemoteFetcher.fetcher.download( spec, source_uri,
-                                                          cache_dir )
-    local_spec = Gem::Format.from_file_by_path( local_gem_path ).spec
+    tuple = installer.find_spec_by_name_and_version( gem ).first
+    spec = tuple.spec
+    source = tuple.source
+    local_spec = source.fetch_spec(spec.name_tuple)
     local_spec.executables.each do |filename|
       script_name = filename + ".bat"
       script_path = File.join( bin_dir, File.basename( script_name ) )
