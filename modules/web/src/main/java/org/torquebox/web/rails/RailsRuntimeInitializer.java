@@ -77,6 +77,9 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
         StringBuffer bootScript = new StringBuffer();
         bootScript.append( "ENV['RAILS_ROOT']=RACK_ROOT\n" );
         bootScript.append( "ENV['RAILS_ENV']=RACK_ENV\n" );
+        if (this.railsAppMetaData.isRails2()) {
+            bootScript.append( "require %q(org/torquebox/web/rails/v2_3/gem_hack)\n" );
+        }
         bootScript.append( "require %q(org/torquebox/web/rails/boot)\n" );
         return bootScript.toString();
     }
