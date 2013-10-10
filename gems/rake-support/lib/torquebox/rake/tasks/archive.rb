@@ -21,7 +21,7 @@ require 'torquebox/deploy_utils'
 namespace :torquebox do
 
   desc "Create a nice self-contained application archive"
-  task :archive, :name do |t, args|
+  task :archive, [:name, :precompile_assets] do |t, args|
     path = TorqueBox::DeployUtils.create_archive( args )
     puts "Created archive: #{path}"
   end
