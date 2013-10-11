@@ -37,10 +37,10 @@ public class AtJob extends BaseAtJob implements AtJobMBean {
     }
 
     @Override
-    public synchronized void start() throws ParseException, SchedulerException {
+    protected synchronized void _start() throws ParseException, SchedulerException {
         JobScheduler jobScheduler = (JobScheduler) ((Value) getJobSchedulerInjector()).getValue();
         jobScheduler.addComponentResolver(new JobKey(getName(), getGroup()), this.componentResolverInjector.getValue());
-        super.start();
+        super._start();
     }
 
     public Injector<ComponentResolver> getComponentResolverInjector() {

@@ -41,12 +41,12 @@ public class ScheduledJob extends BaseScheduledJob implements ScheduledJobMBean 
     }
 
     @Override
-    public synchronized void start() throws ParseException, SchedulerException {
+    protected synchronized void _start() throws ParseException, SchedulerException {
         waitForMSCServiceToStart();
         if (!isStarted()) {
             JobScheduler jobScheduler = (JobScheduler)((Value)getJobSchedulerInjector()).getValue();
             jobScheduler.addComponentResolver(new JobKey(getName(), getGroup()), this.componentResolverInjector.getValue());
-            super.start();
+            super._start();
         }
     }
 
