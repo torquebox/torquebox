@@ -117,7 +117,7 @@
                     <locking isolation='REPEATABLE_READ'/>
                 </replicated-cache>
             </cache-container>
-            <cache-container name='web' aliases='polyglot torquebox standard-session-cache' default-cache='repl' module='org.jboss.as.clustering.web.infinispan'>
+            <cache-container name='web' aliases='standard-session-cache' default-cache='repl' module='org.jboss.as.clustering.web.infinispan'>
                 <transport lock-timeout='60000'/>
                 <replicated-cache name='repl' mode='ASYNC' batching='true' start='EAGER'>
                     <eviction strategy='LRU' max-entries='10000'/>
@@ -130,6 +130,10 @@
                     <expiration max-idle='100000'/>
                     <file-store passivation='false' purge='false'/>
                 </distributed-cache>
+            </cache-container>
+            <cache-container name='polyglot' default-cache="default">
+                <transport lock-timeout='60000'/>
+                <distributed-cache name="default" mode="ASYNC"/>
             </cache-container>
         </subsystem>
         <subsystem xmlns='urn:jboss:domain:jca:1.1'>

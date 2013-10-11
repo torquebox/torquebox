@@ -177,7 +177,7 @@
                         <locking isolation='REPEATABLE_READ'/>
                     </replicated-cache>
                 </cache-container>
-                <cache-container name='web' aliases='polyglot torquebox standard-session-cache' default-cache='repl' module='org.jboss.as.clustering.web.infinispan'>
+                <cache-container name='web' aliases='standard-session-cache' default-cache='repl' module='org.jboss.as.clustering.web.infinispan'>
                     <transport lock-timeout='60000'/>
                     <replicated-cache name='repl' mode='ASYNC' batching='true' start='EAGER'>
                       <eviction strategy='LRU' max-entries='10000'/>
@@ -223,6 +223,10 @@
                         <transaction mode='NONE'/>
                         <eviction strategy='NONE'/>
                     </replicated-cache>
+                </cache-container>
+                <cache-container name='polyglot' default-cache="default">
+                    <transport lock-timeout='60000'/>
+                    <distributed-cache name="default" mode="ASYNC"/>
                 </cache-container>
             </subsystem>
             <subsystem xmlns='urn:jboss:domain:jaxrs:1.0'/>
@@ -508,7 +512,7 @@
                 <default-missing-method-permissions-deny-access value='true'/>
             </subsystem>
             <subsystem xmlns='urn:jboss:domain:infinispan:1.4'>
-                <cache-container name='web' aliases='polyglot torquebox standard-session-cache' default-cache='local-web' module='org.jboss.as.clustering.web.infinispan'>
+                <cache-container name='web' aliases='standard-session-cache' default-cache='local-web' module='org.jboss.as.clustering.web.infinispan'>
                     <local-cache name='local-web' batching='true'>
                         <file-store passivation='false' purge='false'/>
                     </local-cache>
@@ -528,6 +532,10 @@
                         <transaction mode='NONE'/>
                         <eviction strategy='NONE'/>
                     </local-cache>
+                </cache-container>
+                <cache-container name='polyglot' default-cache="default">
+                    <transport lock-timeout='60000'/>
+                    <distributed-cache name="default" mode="ASYNC"/>
                 </cache-container>
             </subsystem>
             <subsystem xmlns='urn:jboss:domain:jacorb:1.3'>
@@ -885,7 +893,7 @@
                         <locking isolation='REPEATABLE_READ'/>
                     </replicated-cache>
                 </cache-container>
-                <cache-container name='web' aliases='polyglot torquebox standard-session-cache' default-cache='repl' module='org.jboss.as.clustering.web.infinispan'>
+                <cache-container name='web' aliases='standard-session-cache' default-cache='repl' module='org.jboss.as.clustering.web.infinispan'>
                     <transport lock-timeout='60000'/>
                     <replicated-cache name='repl' mode='ASYNC' batching='true' start='EAGER'>
                       <eviction strategy='LRU' max-entries='10000'/>
@@ -931,6 +939,10 @@
                         <transaction mode='NONE'/>
                         <eviction strategy='NONE'/>
                     </replicated-cache>
+                </cache-container>
+                <cache-container name='polyglot' default-cache="default">
+                    <transport lock-timeout='60000'/>
+                    <distributed-cache name="default" mode="ASYNC"/>
                 </cache-container>
             </subsystem>
             <subsystem xmlns='urn:jboss:domain:jacorb:1.3'>
