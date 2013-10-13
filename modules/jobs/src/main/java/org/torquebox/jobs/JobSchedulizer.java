@@ -299,6 +299,8 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
                             log.errorf(e, "Couldn't install component resolver for job '%s' for deployment unit '%s'", job.getName(), getUnit());
                         }
 
+                        final ServiceName mbeanName = installMBean(jobServiceName, "torquebox.jobs", job);
+
                         // And install the correct service
                         replaceService(jobServiceName, new Runnable() {
                             @SuppressWarnings({"unchecked", "rawtypes"})
@@ -310,11 +312,10 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
                                 builder.addDependency(CoreServices.runtimePoolName(getUnit(), "jobs"), RubyRuntimePool.class, rubyRuntimePoolInjector)
                                         .addDependency(JobsServices.componentResolver(getUnit(), job.getName()), ComponentResolver.class, componentResolverInjector)
                                         .addDependency(JobsServices.scheduler(getUnit(), job.isSingleton() && ClusterUtil.isClustered(getUnit().getServiceRegistry())), BaseJobScheduler.class, job.getJobSchedulerInjector())
+                                        .addDependency(mbeanName)
                                         .install();
 
                                 latch.countDown();
-
-                                installMBean(jobServiceName, "torquebox.jobs", job);
                             }
                         });
                         latch.countDown();
