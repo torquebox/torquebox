@@ -30,12 +30,14 @@ describe "basic rails3.1 test" do
   if RUBY_VERSION[0,3] != '1.8'
     context 'streaming' do
 
-      it "should work for small responses" do
-        verify_streaming("/basic-rails31/root/streaming?count=0")
-      end
+      pending 'jruby 1.7.x fiber fixes' do
+        it "should work for small responses" do
+          verify_streaming("/basic-rails31/root/streaming?count=0")
+        end
 
-      it "should work for large responses" do
-        verify_streaming("/basic-rails31/root/streaming?count=500")
+        it "should work for large responses" do
+          verify_streaming("/basic-rails31/root/streaming?count=500")
+        end
       end
 
       def verify_streaming(url)
