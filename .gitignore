@@ -25,6 +25,7 @@ Gemfile.lock
 .yardoc
 .DS_Store
 Infinispan-FileCacheStore
+Infinispan-SingleFileStore
 rubyObj.*
 schema.rb
 *.cache

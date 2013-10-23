@@ -283,20 +283,25 @@ describe TorqueBox::Infinispan::Cache do
   end
 
   describe "with persistence" do
+
+    def cache_on_disk(dir=nil, name=nil)
+      five = org.infinispan.Version::VERSION[/^5/]
+      File.join(File.dirname(__FILE__), '..', 
+                (dir || (five ? 'Infinispan-FileCacheStore' : 'Infinispan-SingleFileStore')),
+                (name ? (five ? name : name+".dat") : ""))
+    end
+
     before(:all) do
-      @default_dir    = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
-      @configured_dir = File.join( File.dirname(__FILE__), '..', random_string + "-persisted.cache" )
-      @date_cfg_dir   = File.join( File.dirname(__FILE__), '..', random_string + "-persisted-date.cache" )
-      @index_dir      = File.join( File.dirname(__FILE__), '..', 'java.util.HashMap' )
-      FileUtils.mkdir @configured_dir 
-      FileUtils.mkdir @date_cfg_dir 
+      @configured_dir = random_string + "-persisted.cache"
+      @date_cfg_dir   = random_string + "-persisted-date.cache"
+      FileUtils.mkdir cache_on_disk(@configured_dir)
+      FileUtils.mkdir cache_on_disk(@date_cfg_dir)
     end
 
     after(:all) do
-      FileUtils.rm_rf @default_dir
-      FileUtils.rm_rf @configured_dir
-      FileUtils.rm_rf @date_cfg_dir
-      FileUtils.rm_rf @index_dir if File.exist?( @index_dir )
+      FileUtils.rm_rf cache_on_disk
+      FileUtils.rm_rf cache_on_disk(@configured_dir)
+      FileUtils.rm_rf cache_on_disk(@date_cfg_dir)
     end
 
     it "should persist the data with a default directory" do
@@ -304,22 +309,22 @@ describe TorqueBox::Infinispan::Cache do
       entry = java.util.HashMap.new
       entry.put( "Hello", "world" )
       cache.put('foo', entry)
-      File.exist?(@default_dir).should be_true
+      File.exist?(cache_on_disk(nil, 'persisted-cache')).should be_true
     end
 
     it "should persist the data with a configured directory" do
-      cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-date-cache', :persist => @configured_dir.to_s )
+      cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-date-cache', :persist => cache_on_disk(@configured_dir).to_s )
       entry = java.util.HashMap.new
       entry.put( "Hello", "world" )
       cache.put('foo', entry)
-      File.exist?("#{@configured_dir.to_s}/persisted-date-cache").should be_true
+      File.exist?(cache_on_disk(@configured_dir, "persisted-date-cache")).should be_true
     end
 
     it "should persist dates with a configured directory" do
-      cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-configured-date-cache', :persist => @date_cfg_dir.to_s )
+      cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-configured-date-cache', :persist => cache_on_disk(@date_cfg_dir).to_s )
       entry = java.util.Date.new
       cache.put('foo', entry).should be_nil
-      File.exist?("#{@date_cfg_dir.to_s}/persisted-configured-date-cache").should be_true
+      File.exist?(cache_on_disk(@date_cfg_dir, "persisted-configured-date-cache")).should be_true
     end
 
     it "should evict keys from the heap" do

@@ -315,7 +315,9 @@ module TorqueBox
           config.transaction.lockingMode( locking_mode )
         end
         if persisted?
-          store = config.loaders.add_file_cache_store
+          store = (config.respond_to?(:loaders) ? 
+                   config.loaders.add_file_cache_store :
+                   config.persistence.add_single_file_store)
           store.purgeOnStartup( false )
           store.location(options[:persist]) if File.exist?( options[:persist].to_s )
         end
@@ -328,7 +330,7 @@ module TorqueBox
         config.build
       end
 
-      def same_config?(c1, c2)
+      def same_5_config?(c1, c2)
         c1.clustering.cacheMode == c2.clustering.cacheMode &&
           (c1.loaders == c2.loaders ||
            (c1.loaders.cacheLoaders.size == c2.loaders.cacheLoaders.size &&
@@ -337,6 +339,25 @@ module TorqueBox
           c1.transaction.lockingMode == c2.transaction.lockingMode &&
           c1.eviction.max_entries == c2.eviction.max_entries &&
           c1.eviction.strategy == c2.eviction.strategy
+      end
+      
+      def same_6_config?(c1, c2)
+        c1.clustering.cacheMode == c2.clustering.cacheMode &&
+          (c1.persistence == c2.persistence ||
+           (c1.persistence.stores.size == c2.persistence.stores.size &&
+            c1.persistence.stores.first.location == c2.persistence.stores.first.location)) &&
+          c1.transaction.transactionMode == c2.transaction.transactionMode &&
+          c1.transaction.lockingMode == c2.transaction.lockingMode &&
+          c1.eviction.max_entries == c2.eviction.max_entries &&
+          c1.eviction.strategy == c2.eviction.strategy
+      end
+      
+      def same_config?(c1, c2)
+        if c1.respond_to?(:loaders)
+          same_5_config?(c1, c2)
+        else
+          same_6_config?(c1, c2)
+        end
       end
       
       def transaction_manager_lookup
