@@ -71,14 +71,6 @@ module TorqueBox
         cache
       end
 
-      def self.create(name, opts = {})
-        if manager.running?(name)
-          manager.get_cache(name).stop
-        end
-        opts[:name] = name
-        new(opts)
-      end
-
       def name
         options[:name] || TORQUEBOX_APP_NAME
       end
@@ -100,7 +92,7 @@ module TorqueBox
       end
 
       def clustered?
-        INFINISPAN_AVAILABLE && self.class.service.clustered? 
+        INFINISPAN_AVAILABLE && service.clustered? 
       end
 
       def clustering_mode
@@ -281,28 +273,41 @@ module TorqueBox
 
       def cache
         if INFINISPAN_AVAILABLE 
-          @cache ||= self.class.manager.running?(name) ? self.class.manager.get_cache(name) : configure
+          @cache ||= manager.running?( name ) ? reconfigure : configure
         else
           @cache ||= nothing
         end
       end
 
-      def self.service
-        TorqueBox::ServiceRegistry[CacheService::CACHE]
+      def service
+        @service ||= TorqueBox::ServiceRegistry[CacheService::CACHE]
       end
 
-      def self.manager
-        service.cache_container
+      def manager
+        @manager ||= service.cache_container
+      end
+
+      def reconfigure(mode=clustering_mode)
+        existing_cache  = manager.get_cache(name)
+        base_config = existing_cache.cache_configuration
+        new_config = configuration(mode)
+        unless same_config?(base_config, new_config)
+          log("Reconfiguring Infinispan cache #{name}")
+          existing_cache.stop
+          manager.define_configuration(name, new_config )
+          existing_cache.start
+        end
+        return existing_cache
       end
 
       def configure(mode=clustering_mode)
         log( "Configuring Infinispan cache #{name}" )
-        self.class.manager.define_configuration(name, configuration(mode) )
-        self.class.manager.get_cache(name)
+        manager.define_configuration(name, configuration(mode) )
+        manager.get_cache(name)
       end
 
       def configuration(mode=clustering_mode)
-        config = ConfigurationBuilder.new.read( self.class.manager.default_cache_configuration )
+        config = ConfigurationBuilder.new.read( manager.default_cache_configuration )
         config.clustering.cacheMode( mode )
         config.transaction.transactionMode( transaction_mode )
         if transactional?
@@ -325,6 +330,36 @@ module TorqueBox
         config.build
       end
 
+      def same_5_config?(c1, c2)
+        c1.clustering.cacheMode == c2.clustering.cacheMode &&
+          (c1.loaders == c2.loaders ||
+           (c1.loaders.cacheLoaders.size == c2.loaders.cacheLoaders.size &&
+            c1.loaders.cacheLoaders.first.location == c2.loaders.cacheLoaders.first.location)) &&
+          c1.transaction.transactionMode == c2.transaction.transactionMode &&
+          c1.transaction.lockingMode == c2.transaction.lockingMode &&
+          c1.eviction.max_entries == c2.eviction.max_entries &&
+          c1.eviction.strategy == c2.eviction.strategy
+      end
+      
+      def same_6_config?(c1, c2)
+        c1.clustering.cacheMode == c2.clustering.cacheMode &&
+          (c1.persistence == c2.persistence ||
+           (c1.persistence.stores.size == c2.persistence.stores.size &&
+            c1.persistence.stores.first.location == c2.persistence.stores.first.location)) &&
+          c1.transaction.transactionMode == c2.transaction.transactionMode &&
+          c1.transaction.lockingMode == c2.transaction.lockingMode &&
+          c1.eviction.max_entries == c2.eviction.max_entries &&
+          c1.eviction.strategy == c2.eviction.strategy
+      end
+      
+      def same_config?(c1, c2)
+        if c1.respond_to?(:loaders)
+          same_5_config?(c1, c2)
+        else
+          same_6_config?(c1, c2)
+        end
+      end
+      
       def transaction_manager_lookup
         @tm ||= if TorqueBox.fetch('transaction-manager')
                   ContainerTransactionManagerLookup.new 
