@@ -134,7 +134,10 @@ module TorqueBox
       def [](key)
         super(key.to_s)
       end
-      alias :fetch :[]
+      
+      def fetch(key, *args, &block)
+        super(key.to_s, *args, &block)
+      end
 
       def has_key?(key)
         super(key.to_s)
