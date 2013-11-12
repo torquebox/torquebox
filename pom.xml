@@ -659,6 +659,13 @@
         <type>zip</type>
       </dependency>
 
+      <!-- workaround jdocbook and missing transitive dependency -->
+      <dependency>
+        <groupId>org.eclipse.core</groupId>
+        <artifactId>runtime</artifactId>
+        <version>${version.org.eclipse.core.runtime}</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -708,6 +715,8 @@
     <version.org.infinispan>5.1.7.FINAL</version.org.infinispan>
 
     <version.org.jboss.jboss-msc>1.0.2.GA</version.org.jboss.jboss-msc>
+
+    <version.org.eclipse.core.runtime>3.3.100-v20070530</version.org.eclipse.core.runtime>
   </properties>
 
   <dependencies>
