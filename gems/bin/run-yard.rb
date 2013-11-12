@@ -17,7 +17,7 @@ def force_require(gem_name, version)
     rescue Gem::Exception => e3
       retry_count += 1
       if retry_count > 8
-        raise e
+        raise e3
       else
         puts "Error fetching remote gem - sleeping and retrying"
         sleep 1
