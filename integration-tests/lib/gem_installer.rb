@@ -48,9 +48,9 @@ class GemInstaller
     retry_count = 0
     begin
       installer.install( gem_name, version )
-    rescue Gem::Exception  => e
+    rescue Gem::RemoteFetcher::FetchError  => e
       retry_count += 1
-      if retry_count > 8
+      if retry_count > 5
         raise e
       else
         puts "Error fetching remote gem - sleeping and retrying"

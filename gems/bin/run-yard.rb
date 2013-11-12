@@ -10,19 +10,9 @@ def force_require(gem_name, version)
     installer.options[:generate_rdoc] = false
     installer.options[:generate_ri] = false
 
-    retry_count = 0
     begin
       installer.execute
     rescue Gem::SystemExitException=>e2
-    rescue Gem::Exception => e3
-      retry_count += 1
-      if retry_count > 8
-        raise e3
-      else
-        puts "Error fetching remote gem - sleeping and retrying"
-        sleep 1
-        retry
-      end
     end
     Gem.clear_paths
   end
