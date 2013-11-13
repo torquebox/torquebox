@@ -1,3 +1,0 @@
-org.torquebox.messaging.injection.QueueInjectableHandler
-org.torquebox.messaging.injection.TopicInjectableHandler
-org.torquebox.messaging.injection.MessagingPredeterminedInjectableHandler

@@ -1,4 +1,0 @@
-application:
-  RAILS_ENV: production
-web:
-  context: /

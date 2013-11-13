@@ -1,6 +1,0 @@
-queues:
-  /queues/itchy:
-    durable: true
-  /queues/scratchy:
-    durable: false
-  /queues/poochie:

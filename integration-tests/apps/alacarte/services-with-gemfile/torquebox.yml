@@ -1,4 +1,0 @@
-
-services:
-  simple_service:
-    service: SimpleService

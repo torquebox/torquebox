@@ -1,9 +1,0 @@
-queues:
-  /queues/backchannel:
-    durable: false
-
-tasks: 
-  Backgroundable:
-    concurrency: 2
-  SampleTask:
-    concurrency: 2

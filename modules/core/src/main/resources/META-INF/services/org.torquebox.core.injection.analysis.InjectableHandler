@@ -1,3 +1,0 @@
-org.torquebox.core.injection.CorePredeterminedInjectableHandler
-org.torquebox.core.injection.jndi.JNDIInjectableHandler
-org.torquebox.core.injection.msc.ServiceInjectableHandler

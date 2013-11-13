@@ -1,6 +1,0 @@
----
-application:
-  root: /path/to/my/app
-
-environment:
-  RACK_ENV: biscuit
