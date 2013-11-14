@@ -30,3 +30,4 @@ rubyObj.*
 schema.rb
 *.cache
 integration-tests/jboss-eap-*.zip
+pkg/
