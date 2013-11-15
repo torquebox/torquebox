@@ -11,9 +11,12 @@ module Rack
         yield server if block_given?
 
         server.start(:rack_app => app)
+        thread = Thread.current
         Signal.trap("INT") do
           server.stop
+          thread.wakeup
         end
+        sleep
       end
 
       def self.valid_options

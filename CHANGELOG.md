@@ -1,7 +1,12 @@
 ## 0.1.1
 
+* Fix an issue that prevented `rails s torqbox` from working because
+  Rails thought the server stopped immediately after starting
+
 * wunderboss-all.jar renamed to wunderboss-rack.jar, updated to commit
-  498d5badcaefffa19e0c529caa62c490497f3079
+  498d5badcaefffa19e0c529caa62c490497f3079 which improves overall
+  throughput by rewriting our Rack implementation from a Servlet
+  adapter to an Undertow HttpHandler
 
 ## 0.1.0
 
