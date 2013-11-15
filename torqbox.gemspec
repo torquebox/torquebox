@@ -17,7 +17,8 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.bindir        = 'bin'
   s.executables   = ['torqbox']
-  s.files         = Dir['CHANGELOG.md', 'README.md', 'bin/**/*', 'lib/**/*']
+  s.files         = Dir['CHANGELOG.md', 'README.md', 'LICENSE',
+                        'bin/**/*', 'lib/**/*']
 
   s.add_dependency 'rack', '>= 1.4.0', '< 2.0'
 
