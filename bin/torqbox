@@ -15,4 +15,10 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'thor'
+require 'torqbox'
+
+cli = TorqBox::CLI.new(ARGV)
+cli.start
+Signal.trap("INT") do
+  cli.stop
+end

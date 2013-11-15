@@ -3,4 +3,4 @@
 * Initial release
 
 * Bundled wunderboss-all.jar from projectodd/wunderboss commit
-  2694cc6c8e139ed9fd53a5bdd8c1797de412ade8
+  23dd4ab2ca9321a7f57aa09c1dee041eaf1667c9

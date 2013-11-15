@@ -19,21 +19,43 @@ require 'wunderboss-all.jar'
 
 module TorqBox
   class Server
+
+    SERVER_DEFAULT_OPTIONS = {
+      :host => 'localhost',
+      :port => 8080,
+      :log_level => 'INFO'
+    }
+    APP_DEFAULT_OPTIONS = {
+      :context => '/',
+      :root => '.',
+      :rackup => 'config.ru',
+      :rack_app => nil
+    }
+
     def initialize(options)
+      options = SERVER_DEFAULT_OPTIONS.merge(options)
       @container = Java::OrgProjectoddWunderboss::WunderBoss.new
+      @container.log_level = options[:log_level]
       @container.register_language('ruby', Java::OrgProjectoddWunderbossRuby::RubyLanguage.new)
       @container.register_component('web', Java::OrgProjectoddWunderbossWeb::WebComponent.new)
       @container.register_component('servlet', Java::OrgProjectoddWunderbossWeb::ServletComponent.new)
       @container.register_component('rack', Java::OrgProjectoddWunderbossRubyRack::RackComponent.new)
       @container.configure('web', 'host' => options[:host], 'port' => options[:port].to_s)
-      @app = @container.new_application('ruby')
+      @logger = @container.get_logger('TorqBox::Server')
     end
 
-    def start(rack_app)
-      @app.start('rack', 'context' => '/', 'rack_app' => rack_app)
+    def start(options)
+      options = APP_DEFAULT_OPTIONS.merge(options)
+      @logger.info("TorqBox #{::TorqBox::VERSION} starting...")
+      app = @container.new_application('ruby')
+      app.start('rack', 'context' => options[:context],
+                'root' => options[:root],
+                'rackup' => options[:rackup],
+                'rack_app' => options[:rack_app])
     end
 
     def stop
+      @logger.info("Stopping TorqBox...")
       @container.stop
     end
   end

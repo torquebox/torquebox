@@ -15,6 +15,7 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'torqbox/cli'
-require 'torqbox/server'
-require 'torqbox/version'
+require 'net/http'
+require 'uri'
+
+require 'torqbox'

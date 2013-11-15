@@ -5,30 +5,22 @@ module Rack
   module Handler
     module TorqBox
 
-      DEFAULT_OPTIONS = {
-        :Host => 'localhost',
-        :Port => 8080
-      }
-
       def self.run(app, options={})
-        options = DEFAULT_OPTIONS.merge(options)
-
         server = ::TorqBox::Server.new({ :host => options[:Host],
                                          :port => options[:Port] })
         yield server if block_given?
 
-        puts "TorqBox #{::TorqBox::VERSION} starting..."
-        server.start(app)
+        server.start(:rack_app => app)
         Signal.trap("INT") do
-          puts "\nStopping TorqBox..."
           server.stop
         end
       end
 
       def self.valid_options
+        defaults = TorqBox::Server::DEFAULT_OPTIONS
         {
-          "Host=HOST" => "Hostname to listen on (default: #{DEFAULT_OPTIONS[:Host]})",
-          "Port=PORT" => "Port to listen on (default: #{DEFAULT_OPTIONS[:Port]})"
+          "Host=HOST" => "Hostname to listen on (default: #{defaults[:host]})",
+          "Port=PORT" => "Port to listen on (default: #{defaults[:port]})"
         }
       end
     end
