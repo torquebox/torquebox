@@ -15,7 +15,7 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'wunderboss-all.jar'
+require 'wunderboss-rack.jar'
 
 module TorqBox
   class Server
@@ -38,7 +38,6 @@ module TorqBox
       @container.log_level = options[:log_level]
       @container.register_language('ruby', Java::OrgProjectoddWunderbossRuby::RubyLanguage.new)
       @container.register_component('web', Java::OrgProjectoddWunderbossWeb::WebComponent.new)
-      @container.register_component('servlet', Java::OrgProjectoddWunderbossWeb::ServletComponent.new)
       @container.register_component('rack', Java::OrgProjectoddWunderbossRubyRack::RackComponent.new)
       @container.configure('web', 'host' => options[:host], 'port' => options[:port].to_s)
       @logger = @container.get_logger('TorqBox::Server')

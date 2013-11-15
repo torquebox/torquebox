@@ -1,5 +1,8 @@
 ## 0.1.1
 
+* wunderboss-all.jar renamed to wunderboss-rack.jar, updated to commit
+  498d5badcaefffa19e0c529caa62c490497f3079
+
 ## 0.1.0
 
 * Initial release
