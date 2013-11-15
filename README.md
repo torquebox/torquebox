@@ -17,8 +17,9 @@ prototype, we'll remove the codename and release it under the regular
 
 ### Requirements
 
-TorqBox requires JRuby 1.7.x. The code has only been tested on JRuby
-1.7.6 and higher but should work on earlier versions.
+TorqBox requires JRuby 1.7.x running in Ruby 1.9 or 2.0 mode. The code
+has only been tested on JRuby 1.7.6 and higher but should work on
+earlier versions.
 
 ### Running directly
 
@@ -96,10 +97,10 @@ to you. It could be messaging, caching, scheduled jobs, daemons, or
 something completely different. Please [let us know][community] what
 you'd like to see.
 
-Long-term we do expect TorqBox to run on top of [WildFly][wildfly] for
-users that still want the full Java application server (or are trying
-to sneak Ruby into a Java shop). But this will just be an option, not
-the default.
+Long-term we do expect TorqBox to run on top of WildFly for users that
+still want the full Java application server (or are trying to sneak
+Ruby into a Java shop). But this will just be an option, not the
+default.
 
 
 [tb_future_thread]: http://markmail.org/thread/4ffelg3qklycwhfo
