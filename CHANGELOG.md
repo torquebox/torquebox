@@ -1,3 +1,5 @@
+## 0.1.2
+
 ## 0.1.1
 
 * Fix an issue that prevented `rails s torqbox` from working because
