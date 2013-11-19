@@ -383,7 +383,13 @@ module TorqueBox
       end
 
       def run_command(cmd)
-        puts `RUBYOPT='' #{cmd} 2>&1`
+        old_rubyopt = ENV['RUBYOPT']
+        begin
+          ENV['RUBYOPT'] = ''
+          puts `#{cmd} 2>&1`
+        ensure
+          ENV['RUBYOPT'] = old_rubyopt
+        end
       end
 
       # Used when we want to effectively replace this process with the
