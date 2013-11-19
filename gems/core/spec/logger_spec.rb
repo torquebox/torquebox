@@ -38,6 +38,11 @@ shared_examples_for 'a torquebox logger' do
     logger.should respond_to(:write)
     logger.should respond_to(:flush)
   end
+
+  it "should have a formatter" do
+    logger.should respond_to(:formatter)
+    logger.formatter.should_not be_nil
+  end
 end
 
 describe TorqueBox::Logger do

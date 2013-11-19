@@ -22,9 +22,12 @@ module TorqueBox
   # @api private
   class FallbackLogger < ::Logger
 
+    attr_accessor :formatter
+
     def initialize name = nil
       super(ENV['TORQUEBOX_FALLBACK_LOGFILE'] || $stderr)
       @category = name || (TORQUEBOX_APP_NAME if defined? TORQUEBOX_APP_NAME) || "TorqueBox"
+      @formatter = ::Logger::Formatter.new
     end
 
     def add(severity, message, progname, &block)
@@ -56,9 +59,12 @@ module TorqueBox
 
   class Logger
 
+    attr_accessor :formatter
+
     def initialize name = nil
       category = name || (TORQUEBOX_APP_NAME if defined? TORQUEBOX_APP_NAME) || "TorqueBox"
       @logger = org.jboss.logging::Logger.getLogger( category.to_s.gsub('::','.') )
+      @formatter = ::Logger::Formatter.new
     end
 
     [:warn?, :error?, :fatal?].each do |method|
