@@ -38,7 +38,7 @@ module TorqueBox
         else
           # Fallback to just storing session data in a hash if we're
           # running outside of TorqueBox
-          @test_session_data = {}
+          @test_session_data = SessionData.new
         end
       end
 
