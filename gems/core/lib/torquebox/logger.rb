@@ -35,7 +35,17 @@ module TorqueBox
       message = progname if message.nil?
       super( severity, message, @category, &block )
     end
-  end 
+
+    # Allow our logger to be used for env['rack.errors']
+    def puts(message)
+      info message.to_s
+    end
+    def write(message)
+      info message.strip
+    end
+    def flush
+    end
+  end
 
   begin
     org.jboss.logging::Logger
@@ -95,10 +105,14 @@ module TorqueBox
       self.send(method, *args, &block)
     end
 
-    # Make the Logger compatible with Rack::CommonLogger
-    #
+    # Allow our logger to be used for env['rack.errors']
+    def puts(message)
+      info message.to_s
+    end
     def write(message)
       info message.strip
+    end
+    def flush
     end
 
     private

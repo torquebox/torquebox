@@ -62,5 +62,12 @@ describe TorqueBox::Logger do
     fake_logger.should_receive(:warn).with('block')
     logger.add(Logger::WARN, nil, nil) { 'block' }
   end
+
+  it "should support the rack.errors interface" do
+    logger = TorqueBox::Logger.new
+    logger.should respond_to(:puts)
+    logger.should respond_to(:write)
+    logger.should respond_to(:flush)
+  end
 end
 
