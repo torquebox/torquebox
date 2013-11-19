@@ -590,8 +590,11 @@
                     <journal-type>
                         NIO
                     </journal-type>
+                    <min-large-message-size>
+                      102400
+                    </min-large-message-size>
                     <journal-file-size>
-                        102400
+                      1048576
                     </journal-file-size>
                     <journal-min-files>
                         2
@@ -1038,8 +1041,11 @@
                     <journal-type>
                         NIO
                     </journal-type>
+                    <min-large-message-size>
+                      102400
+                    </min-large-message-size>
                     <journal-file-size>
-                        102400
+                      1048576
                     </journal-file-size>
                     <journal-min-files>
                         2

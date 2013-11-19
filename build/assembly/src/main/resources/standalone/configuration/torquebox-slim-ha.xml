@@ -206,8 +206,11 @@
                 <persistence-enabled>
                     true
                 </persistence-enabled>
+                <min-large-message-size>
+                  102400
+                </min-large-message-size>
                 <journal-file-size>
-                    102400
+                    1048576
                 </journal-file-size>
                 <journal-min-files>
                     2
