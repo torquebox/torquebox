@@ -23,7 +23,7 @@ module TorqueBox
   class FallbackLogger < ::Logger
 
     def initialize name = nil
-      super( $stderr )
+      super(ENV['TORQUEBOX_FALLBACK_LOGFILE'] || $stderr)
       @category = name || (TORQUEBOX_APP_NAME if defined? TORQUEBOX_APP_NAME) || "TorqueBox"
     end
 
@@ -65,6 +65,18 @@ module TorqueBox
       define_method(method) { true }
     end
 
+    def info?
+      @logger.info_enabled?
+    end
+
+    def debug?
+      @logger.debug_enabled?
+    end
+
+    def trace?
+      @logger.trace_enabled?
+    end
+
     # The minimum log level to actually log, with debug being the lowest
     # and fatal the highest
     attr_accessor :level
@@ -90,15 +102,10 @@ module TorqueBox
     #   @param [String] message The message to log
     def method_missing(method, *args, &block)
       delegate = method
-      is_boolean = false
-      if method.to_s.end_with?('?')
-        delegate = "#{method.to_s.chop}_enabled?".to_sym
-        is_boolean = true
-      end
       self.class.class_eval do
         define_method(method) do |*a, &b|
           params = params_for_logger(a, b)
-          params = [""] if params.empty? && !is_boolean
+          params = [""] if params.empty?
           @logger.send(delegate, *params)
         end
       end
