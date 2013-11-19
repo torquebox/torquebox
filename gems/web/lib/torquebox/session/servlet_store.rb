@@ -24,7 +24,7 @@ module TorqueBox
       def initialize(app, options={})
         @app = app
 
-        if defined? TORQUEBOX_APP_NAME
+        if ServletStore.torquebox_available?
           web_context = TorqueBox::MSC.java_web_context
           web_context.session_timeout = options[:timeout] / 60 if options[:timeout]
 
@@ -35,6 +35,10 @@ module TorqueBox
           cookie_config.http_only = !!options[:httponly]
           cookie_config.secure = !!options[:secure]
           cookie_config.max_age = options[:max_age] if options[:max_age]
+        else
+          # Fallback to just storing session data in a hash if we're
+          # running outside of TorqueBox
+          @test_session_data = {}
         end
       end
 
@@ -45,14 +49,28 @@ module TorqueBox
         return [ status, headers, body ]
       end
 
+      def self.torquebox_available?
+        defined? TORQUEBOX_APP_NAME
+      end
+
       def self.load_session(env)
-        env['rack.session'] = load_session_data( env['java.servlet_request'].getSession(true) )
+        if torquebox_available?
+          session_data = load_session_data(env['java.servlet_request'].getSession(true))
+        else
+          session_data = @test_session_data
+        end
+        env['rack.session'] = session_data
         env['rack.session.options' ] = {}
       end
 
       def self.commit_session(env, status, headers, body)
         session_data = env['rack.session' ]
-        ServletStore.store_session_data( env['java.servlet_request'].getSession(true), session_data )
+        if torquebox_available?
+          ServletStore.store_session_data(env['java.servlet_request'].getSession(true),
+                                          session_data)
+        else
+          @test_session_data = session_data
+        end
       end
 
       def self.load_session_data(session)
