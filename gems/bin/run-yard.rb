@@ -33,15 +33,14 @@ end
 require 'rubygems'
 force_require 'yard', '0.8.7.3'
 
-FILES = "*/lib/**/*.rb"
+FILES = Dir["*/lib/**/*.rb"].join(" ")
 OUTPUT_DIR = "target/yardocs/"
 
 OPTIONS = [
            "doc",
            "--title", "TorqueBox Gems Documentation",
            "-o", OUTPUT_DIR,
-           "--api", "public",
-           "--no-api",
+           "--hide-api", "private",
            "--no-save",
            "--exclude", "no-op/lib/*",
            "--exclude", ".+\/torquebox\/.+\/ext\/.+",

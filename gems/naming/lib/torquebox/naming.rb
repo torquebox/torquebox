@@ -19,6 +19,7 @@ require 'torquebox/naming/ext/javax_naming_context'
 require 'torquebox/logger'
 
 module TorqueBox
+  # @api public
   module Naming
 
     REMOTE_NAMING_FACTORY = 'org.jboss.naming.remote.client.InitialContextFactory'

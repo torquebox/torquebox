@@ -36,6 +36,7 @@ module TorqueBox
       end
     end
 
+    # @api public
     class Cache
 
       SECONDS = java.util.concurrent.TimeUnit::SECONDS
