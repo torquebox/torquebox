@@ -193,11 +193,11 @@
     </profile>
  
     <profile>
-      <id>site-1.8-only</id>
+      <id>site-1.9-only</id>
       <activation>
         <property>
           <name>ruby.compat.version</name>
-          <value>1.8</value>
+          <value>1.9</value>
         </property>
       </activation>
 

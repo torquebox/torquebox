@@ -42,7 +42,6 @@ OPTIONS = [
            "-o", OUTPUT_DIR,
            "--api", "public",
            "--no-api",
-           "--legacy",
            "--no-save",
            "--exclude", "no-op/lib/*",
            "--exclude", ".+\/torquebox\/.+\/ext\/.+",

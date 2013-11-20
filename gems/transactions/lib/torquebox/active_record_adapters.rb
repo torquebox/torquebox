@@ -140,6 +140,7 @@ module TorqueBox
   end
 end
 
+# @api private
 module ActiveRecord
   module ConnectionAdapters
     module JndiConnectionPoolCallbacks

@@ -47,11 +47,11 @@
 
   <profiles>
     <profile>
-      <id>publish-1.8-only</id>
+      <id>publish-1.9-only</id>
       <activation>
         <property>
           <name>ruby.compat.version</name>
-          <value>1.8</value>
+          <value>1.9</value>
         </property>
       </activation>
       <build>
