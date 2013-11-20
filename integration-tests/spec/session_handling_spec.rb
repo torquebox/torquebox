@@ -8,7 +8,6 @@ shared_examples_for "session handling" do
 
   def assert_success_and_cookies(value)
     cookies = page.driver.cookies
-    cookies.count.should == 1
     cookies['JSESSIONID'].value.should == @session_id
     assert_success(value)
   end
@@ -32,7 +31,7 @@ shared_examples_for "session handling" do
   end
 
   it "should reset session data after logout" do
-    page.driver.cookies.count.should == 0
+    page.driver.cookies['JSESSIONID'].should be_nil
     visit "/basic-rails/sessioning/get_value"
     assert_success("")
     visit "/basic-rails/sessioning/set_value"
@@ -45,7 +44,7 @@ shared_examples_for "session handling" do
   end
 
   it "should work via matrix url" do
-    page.driver.cookies.count.should == 0
+    page.driver.cookies['JSESSIONID'].should be_nil
     visit "/basic-rails/sessioning/get_value"
     assert_success("")
     visit "/basic-rails/sessioning/set_value"
@@ -55,18 +54,18 @@ shared_examples_for "session handling" do
 
     session_id = page.driver.cookies['JSESSIONID'].value
     session_id.length.should be > 0
-    
+
     page.driver.cookies.clear
 
     visit "/basic-rails/sessioning/get_value;jsessionid=#{session_id}"
     assert_success("the value")
 
     find('#session_id').text.should == session_id
-    page.driver.cookies.count.should == 0
+    page.driver.cookies['JSESSIONID'].should be_nil
   end
 
   it "should support session language crossing" do
-    page.driver.cookies.count.should == 0
+    page.driver.cookies['JSESSIONID'].should be_nil
     visit "/basic-rails/sessioning/logout"
     visit "/basic-rails/sessioning/set_from_ruby"
     visit "/basic-rails/sessioning/display_session"
@@ -103,7 +102,7 @@ describe "rails2 sessions" do
       RAILS_ENV: development
     web:
       context: /basic-rails
-    
+
     ruby:
       version: #{RUBY_VERSION[0,3]}
   END
@@ -117,9 +116,26 @@ describe "rails3 sessions" do
       RAILS_ENV: development
     web:
       context: /basic-rails
-    
+
     ruby:
       version: #{RUBY_VERSION[0,3]}
   END
   it_should_behave_like "session handling"
+end
+
+if RUBY_VERSION >= '1.9'
+  describe "rails4 sessions" do
+    deploy <<-END.gsub(/^ {6}/,'')
+      ---
+      application:
+        RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails4/basic
+        RAILS_ENV: development
+      web:
+        context: /basic-rails
+
+      ruby:
+        version: #{RUBY_VERSION[0,3]}
+    END
+    it_should_behave_like "session handling"
+  end
 end

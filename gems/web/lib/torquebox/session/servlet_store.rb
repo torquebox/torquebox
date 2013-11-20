@@ -137,6 +137,7 @@ module TorqueBox
       end
 
       def destroy
+        clear
         @java_session.invalidate if @java_session
       end
 
