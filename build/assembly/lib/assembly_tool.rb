@@ -120,7 +120,19 @@ class AssemblyTool
 
     Gem.use_paths( install_dir )
     installer = Gem::DependencyInstaller.new( opts )
-    installer.install( gem )
+    retry_count = 0
+    begin
+      installer.install( gem )
+    rescue Gem::Exception  => e
+      retry_count += 1
+      if retry_count > 8
+        raise e
+      else
+        puts "Error fetching remote gem - sleeping and retrying"
+        sleep 1
+        retry
+      end
+    end
     generate_windows_bat_files( gem, opts, install_dir )
     copy_gem_to_repo(gem, update_index) if File.exist?( gem )
   end
