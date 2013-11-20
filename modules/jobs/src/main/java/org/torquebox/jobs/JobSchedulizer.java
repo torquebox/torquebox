@@ -314,7 +314,7 @@ public class JobSchedulizer extends AtRuntimeInstaller<JobSchedulizer> {
 
                                 latch.countDown();
 
-                                installMBeanFor(jobServiceName, "torquebox.jobs", job);
+                                installMBean(jobServiceName, "torquebox.jobs", job);
                             }
                         });
                         latch.countDown();
