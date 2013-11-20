@@ -95,7 +95,7 @@
         &lt;protocol type="FD"/&gt;
         &lt;protocol type="VERIFY_SUSPECT"/&gt;
         &lt;protocol type="pbcast.NAKACK2"/&gt;
-        &lt;protocol type="UNICAST3"/&gt;
+        &lt;protocol type="UNICAST2"/&gt;
         &lt;protocol type="pbcast.STABLE"/&gt;
         &lt;protocol type="pbcast.GMS"/&gt;
         &lt;protocol type="UFC"/&gt;
