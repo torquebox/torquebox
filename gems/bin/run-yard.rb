@@ -31,7 +31,7 @@ def force_require(gem_name, version)
 end
 
 require 'rubygems'
-force_require 'yard', '0.8.6.2'
+force_require 'yard', '0.8.7.3'
 
 FILES = "*/lib/**/*.rb"
 OUTPUT_DIR = "target/yardocs/"
@@ -43,7 +43,9 @@ OPTIONS = [
            "--api", "public",
            "--no-api",
            "--legacy",
+           "--no-save",
            "--exclude", "no-op/lib/*",
+           "--exclude", ".+\/torquebox\/.+\/ext\/.+",
            FILES
           ]
 
