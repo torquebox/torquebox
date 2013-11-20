@@ -706,7 +706,7 @@
     <version.newrelic>3.3.2</version.newrelic>
 
     <!-- <version.jbossas>7.2.0.Final-polyglot-slim-1-SNAPSHOT</version.jbossas> -->
-    <version.jbossas>7.2.x.slim.incremental.9</version.jbossas>
+    <version.jbossas>7.2.x.slim.tb3.incremental.1</version.jbossas>
 
     <version.org.projectodd.stilts>0.1.40</version.org.projectodd.stilts>
     <version.org.projectodd.yaml-schema>0.2</version.org.projectodd.yaml-schema>
