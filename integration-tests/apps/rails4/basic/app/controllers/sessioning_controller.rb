@@ -16,7 +16,6 @@ class SessioningController < ApplicationController
   end
 
   def logout
-    puts "!!! Resetting session"
     reset_session
     render :nothing => true
   end
