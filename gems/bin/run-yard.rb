@@ -33,7 +33,7 @@ end
 require 'rubygems'
 force_require 'yard', '0.8.7.3'
 
-FILES = Dir["*/lib/**/*.rb"].join(" ")
+FILES = Dir["*/lib/**/*.rb"]
 OUTPUT_DIR = "target/yardocs/"
 
 OPTIONS = [
@@ -44,8 +44,7 @@ OPTIONS = [
            "--no-save",
            "--exclude", "no-op/lib/*",
            "--exclude", ".+\/torquebox\/.+\/ext\/.+",
-           FILES
-          ]
+          ] + FILES
 
 puts "Generating yardocs on #{FILES} to #{OUTPUT_DIR}"
 
