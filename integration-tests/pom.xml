@@ -22,7 +22,7 @@
     <version.dm_core>1.1.0</version.dm_core>
     <version.dm_serializer>1.1.0</version.dm_serializer>
     <version.json>1.4.6</version.json>
-    <version.eap>6.1.0.Alpha</version.eap>
+    <version.eap>6.1.0</version.eap>
     <assembly.dir>${project.basedir}/../build/assembly/target/stage/torquebox</assembly.dir>
     <overlay.dir>${project.basedir}/../build/eap-overlay/target/torquebox-eap-overlay</overlay.dir>
     <integ.dist.dir>target/integ-dist</integ.dist.dir>
