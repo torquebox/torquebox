@@ -183,7 +183,7 @@ module TorqueBox
       # name: (string) what to call the resulting knob file
       # app_dir: (string) where the application to be packaged is
       # dest_dir: (string) where to put the resulting knob file
-      # excludes: (string) string or regex of files to exclude from the archive
+      # exclude: (string) string or regex of files to exclude from the archive
       # precompile_assets: (boolean) whether or not to precompile assets. this is rails-specific.
       # package_gems: (boolean) whether or not to install all bundle gems to vendor/bundle (this
       #                         is rather convenient as it means that you don't have to run bundle

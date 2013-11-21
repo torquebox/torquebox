@@ -76,22 +76,34 @@ class TorqueBoxCommand < Thor
   method_option :package_gems, :type => :boolean, :desc => "Include all Bundler gem dependencies in the archive."
   method_option :package_without, :type => :array, :desc => "Package without these bundler groups.", :default => "development test assets"
   method_option :precompile_assets, :type => :boolean, :desc => "Precompile all assets (Rails-specific)."
+  method_option :exclude, :type => :array, :desc => "Exclude files from the archive with regexps."
   long_desc <<-EOS
     Creates an application archive containing all of your application dependencies.
     The archive can be deployed to TorqueBox with the --deploy option or by
     hand after the archive file, known as a .knob, has been created by using
     `torquebox deploy myapp.knob`.
+
+    The exclude parameter takes a list of Ruby-compatible regular expressions of
+    paths to exclude. The paths are implicitly anchored at the beginning. For
+    example, `torquebox archive foo --exclude public/500.html config/.+` will
+    exclude public/500.html and everything from the config directory.
   EOS
   def archive(root = Dir.pwd)
     help(__method__) and return if options.help
     root = Dir.pwd if (root == '.')
     TorqueBox::Server.setup_environment
     archive_name = TorqueBox::DeployUtils.archive_name( root )
-    path = TorqueBox::DeployUtils.create_archive(
-      :name => archive_name,                            :app_dir => root,
-      :precompile_assets => options.precompile_assets,  :package_gems => options.package_gems,
+    archive_options = {
+      :name => archive_name,
+      :app_dir => root,
+      :precompile_assets => options.precompile_assets,
+      :package_gems => options.package_gems,
       :package_without => options.package_without
-    )
+    }
+    unless options.exclude.nil?
+      archive_options[:exclude] = options.exclude.join(',')
+    end
+    path = TorqueBox::DeployUtils.create_archive(archive_options)
     puts "Created archive: #{path}"
     if options.deploy
       puts "Deployed: #{archive_name}"

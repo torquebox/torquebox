@@ -87,6 +87,22 @@ describe "torquebox thor utility tests" do
       end
     end
 
+    it "should exclude files" do
+      begin
+        tb("archive #{root_dir} --exclude public/404.html config/.+ .+file")
+        knob_files = `jar -tf basic.knob`
+        knob_files.should include('README')
+        knob_files.should_not include('Rakefile')
+        knob_files.should_not include('Gemfile')
+        knob_files.should include('public/500.html')
+        knob_files.should_not include('public/404.html')
+        knob_files.should_not include('config/application.rb')
+        knob_files.should_not include('config/environments/production.rb')
+      ensure
+        FileUtils.rm_rf('basic.knob')
+      end
+    end
+
   end
 
   describe "torquebox deploy" do
