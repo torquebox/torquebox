@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'torquebox-messaging'
 
 shared_examples_for "configured pool" do
   before(:each) do
@@ -110,6 +111,11 @@ shared_examples_for 'lazy_pool' do
       pool.should_not be_nil
       pool.started.should == true
     end
+
+    if @publishes_result
+      queue = TorqueBox::Messaging::Queue.new('/queues/results')
+      queue.receive(:timeout => 60_000).should_not be_nil
+    end
   end
 end
 
@@ -139,6 +145,7 @@ describe 'lazy runtime pooling' do
     @app_prefix = 'lazy'
     @web_lazy = true
     @messaging_lazy = true
+    @publishes_result = true
   end
 
   it_should_behave_like 'lazy_pool'
@@ -168,6 +175,7 @@ describe 'eager runtime pooling' do
     @app_prefix = 'eager'
     @web_lazy = false
     @messaging_lazy = false
+    @publishes_result = true
   end
 
   it_should_behave_like 'lazy_pool'
@@ -188,6 +196,7 @@ describe 'dsl eager runtime pooling' do
     @app_prefix = 'dsl_eager'
     @web_lazy = false
     @messaging_lazy = false
+    @publishes_result = false
   end
 
   it_should_behave_like 'lazy_pool'
@@ -208,6 +217,7 @@ describe 'default runtime pooling' do
     @app_prefix = 'default'
     @web_lazy = false
     @messaging_lazy = true
+    @publishes_result = true
   end
 
   it_should_behave_like 'lazy_pool'
