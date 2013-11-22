@@ -1,5 +1,12 @@
 ## 0.1.2
 
+* Add torqbox -E <development/test/production> option to control the
+  RACK_ENV and RAILS_ENV
+
+* Bundled wunderboss-rack.jar commit
+  4fcdf2c1dc9d5665b8f94e97dd0c93d8d64607be which improves web
+  performance
+
 ## 0.1.1
 
 * Fix an issue that prevented `rails s torqbox` from working because

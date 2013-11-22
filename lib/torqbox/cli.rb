@@ -24,6 +24,7 @@ module TorqBox
     def initialize(argv)
       @boot_options = {}
       @app_options = {}
+      ENV['RACK_ENV'] = ENV['RAILS_ENV'] = 'development'
       OptionParser.new do |opts|
         opts.banner = 'Usage: torqbox [options] [rackup file]'
 
@@ -32,6 +33,9 @@ module TorqBox
         end
         opts.on '--dir DIR', 'Change directory before starting' do |arg|
           @app_options[:root] = arg
+        end
+        opts.on '-E', '--env ENVIRONMENT', 'Environment to run under (default: development)' do |arg|
+          ENV['RACK_ENV'] = ENV['RAILS_ENV'] = arg
         end
         opts.on '-p', '--port PORT', 'HTTP port to listen on' do |arg|
           @boot_options[:port] = arg
