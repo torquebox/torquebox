@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.summary  = 'Prototype of the next-generation TorqueBox'
   s.author   = 'The TorqueBox Team'
   s.email    = 'torquebox-dev@torquebox.org'
-  s.homepage = 'http://torquebox.org'
+  s.homepage = 'http://torquebox.org/torqbox'
 
   s.required_ruby_version = '>= 1.9.3'
   s.license = 'LGPL3'
