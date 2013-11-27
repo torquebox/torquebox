@@ -1,3 +1,9 @@
+## 0.1.4
+
+* Bundled wunderboss-rack commit
+  d33c77329993c3697a265987c17ab72ecf751037 which improves performance
+  of retrieving HTTP request headers
+
 ## 0.1.3
 
 * Fix an issue where Rails application started via 'torqbox' would get
