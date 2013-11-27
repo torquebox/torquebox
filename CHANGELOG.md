@@ -1,3 +1,13 @@
+## 0.1.3
+
+* Fix an issue where Rails application started via 'torqbox' would get
+  'Bad file descriptor' errors when trying to write to Rails logs
+
+* Bundled wunderboss-rack commit
+  6cb09be797bbb265f35561d736692e2afcaea77d which fixes a bug in HTTP
+  header parsing and adds Date and Server response headers
+
+
 ## 0.1.2
 
 * Add torqbox -E <development/test/production> option to control the

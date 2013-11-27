@@ -16,5 +16,5 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 module TorqBox
-  VERSION = '0.1.2'
+  VERSION = '0.1.3'
 end

@@ -19,6 +19,9 @@ require 'torqbox'
 
 cli = TorqBox::CLI.new(ARGV)
 cli.start
+thread = Thread.current
 Signal.trap("INT") do
   cli.stop
+  thread.wakeup
 end
+sleep
