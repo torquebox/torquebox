@@ -54,13 +54,15 @@ public class RestartableRubyRuntimePool implements RubyRuntimePool, RestartableR
             log.error( "Error starting new runtime " + newPool, e);
             return;
         }
-        synchronized(restartLock) {
-            RubyRuntimePool oldPool = this.currentPool;
-            this.currentPool = newPool;
-            if (oldPool.isDrained()) {
-                retirePool( oldPool );
-            } else {
-                this.previousPools.add( oldPool );
+        synchronized(borrowLock) {
+            synchronized(returnLock) {
+                RubyRuntimePool oldPool = this.currentPool;
+                this.currentPool = newPool;
+                if (oldPool.isDrained()) {
+                    retirePool( oldPool );
+                } else {
+                    this.previousPools.add( oldPool );
+                }
             }
         }
         for (RubyRuntimePoolRestartListener listener : this.restartListeners) {
@@ -70,14 +72,14 @@ public class RestartableRubyRuntimePool implements RubyRuntimePool, RestartableR
 
     @Override
     public Ruby borrowRuntime(String requester) throws Exception {
-        synchronized (this.restartLock) {
+        synchronized(borrowLock) {
             return this.currentPool.borrowRuntime( requester );
         }
     }
 
     @Override
     public void returnRuntime(Ruby runtime) {
-        synchronized (this.restartLock) {
+        synchronized (returnLock) {
             this.currentPool.returnRuntime( runtime );
             Iterator<RubyRuntimePool> poolIterator = this.previousPools.iterator();
             while (poolIterator.hasNext()) {
@@ -210,6 +212,7 @@ public class RestartableRubyRuntimePool implements RubyRuntimePool, RestartableR
     private volatile RubyRuntimePool currentPool;
     private Set<RubyRuntimePool> previousPools = new HashSet<RubyRuntimePool>();
     private Set<RubyRuntimePoolRestartListener> restartListeners = new CopyOnWriteArraySet<RubyRuntimePoolRestartListener>();
-    private final Object restartLock = new Object();
+    private final Object borrowLock = new Object();
+    private final Object returnLock = new Object();
     private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
 }

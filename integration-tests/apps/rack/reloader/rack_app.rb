@@ -12,14 +12,16 @@ class RackApp
 
     version = env['QUERY_STRING']
 
-    template = ERB.new( File.read( 'rack_app.rb.erb' ) )
-    puts "rewriting app"
-    File.open( 'rack_app.rb', 'w' ) do |f|
-      f.write template.result(binding)
-    end
-    template = ERB.new( File.read( 'simple_service.rb.erb' ) )
-    File.open( 'simple_service.rb', 'w' ) do |f|
-      f.write template.result(binding)
+    unless version.nil? || version.empty?
+      template = ERB.new( File.read( 'rack_app.rb.erb' ) )
+      puts "rewriting app"
+      File.open( 'rack_app.rb', 'w' ) do |f|
+        f.write template.result(binding)
+      end
+      template = ERB.new( File.read( 'simple_service.rb.erb' ) )
+      File.open( 'simple_service.rb', 'w' ) do |f|
+        f.write template.result(binding)
+      end
     end
 
     result

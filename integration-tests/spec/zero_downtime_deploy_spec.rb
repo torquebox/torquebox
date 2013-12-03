@@ -141,6 +141,21 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
     seen_values.size.should > 3
   end
 
+  it 'should not deadlock with multiple request threads' do
+    threads = 25.times.map do
+      Thread.new {
+        10.times do |i|
+          uri = URI.parse("#{Capybara.app_host}/reloader-rack/")
+          response = Net::HTTP.get_response(uri)
+          response.code.should == '200'
+          response.body.should include('success')
+        end
+      }
+    end
+
+    threads.each(&:join)
+  end
+
   def restart_runtime_with_jmx(pool, app)
     # Sometimes the runtime reloading can trigger a full GC and
     # when that happens things pause and can occasionally error out
@@ -210,7 +225,7 @@ describe 'bounded runtime' do
       SimpleService:
     pooling:
       web:
-        min: 1
+        min: 2
         max: 3
       services:
         min: 1
