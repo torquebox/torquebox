@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.name     = 'torqbox'
   s.version  = TorqBox::VERSION
   s.platform = 'java'
-  s.summary  = 'Prototype of the next-generation TorqueBox'
+  s.summary  = 'TorqueBox Next Generation'
   s.author   = 'The TorqueBox Team'
   s.email    = 'torquebox-dev@torquebox.org'
   s.homepage = 'http://torquebox.org/torqbox'
