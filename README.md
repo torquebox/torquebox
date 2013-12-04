@@ -17,9 +17,9 @@ prototype, we'll remove the codename and release it under the regular
 
 ### Requirements
 
-TorqBox requires JRuby 1.7.x running in Ruby 1.9 or 2.0 mode. The code
-has only been tested on JRuby 1.7.6 and higher but should work on
-earlier versions.
+TorqBox requires JRuby 1.7.x running on Java 7+ in Ruby 1.9 or 2.0
+mode. The code has only been tested on JRuby 1.7.6 and higher but
+should work on earlier versions.
 
 ### Running directly
 
