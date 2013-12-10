@@ -23,9 +23,9 @@ def start_server(server)
                      :address => [{ :host => 'master' },
                                   { 'server-config' => server_config }])
   wait_for_status(server_config, 'STARTED', 30)
-  # Sleep to give the application time to deploy after the server
-  # has started
-  sleep 20
+  # Shouldn't be necessary as the app should be fully deployed by the
+  # time status changes to STARTED, but for grins...
+  sleep 1
 end
 
 def stop_server(server)
