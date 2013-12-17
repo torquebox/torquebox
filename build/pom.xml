@@ -39,7 +39,6 @@
       <modules>
         <module>server</module>
         <module>dist</module>
-        <module>incremental</module>
       </modules>
     </profile>
     <profile>
@@ -47,7 +46,6 @@
       <modules>
         <module>server</module>
         <module>dist</module>
-        <module>incremental</module>
       </modules>
     </profile>
     <profile>
