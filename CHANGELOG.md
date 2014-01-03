@@ -1,5 +1,11 @@
 ## 0.1.5
 
+* Bundled wunderboss-rack commit
+  26ddebe347d5763f76dedeea9da62a95a78c7cb4 that lazily looks up Rack
+  environment values as-needed, converts Rack response headers to Java
+  response headers more efficiently, and simplifies the
+  container/application API a bit
+
 ## 0.1.4
 
 * Bundled wunderboss-rack commit

@@ -16,6 +16,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'wunderboss-rack.jar'
+require 'wunderboss'
 
 module TorqBox
   class Server
@@ -34,7 +35,7 @@ module TorqBox
 
     def initialize(options)
       options = SERVER_DEFAULT_OPTIONS.merge(options)
-      @container = Java::OrgProjectoddWunderboss::WunderBoss.new
+      @container = WunderBoss.container
       @container.log_level = options[:log_level]
       @container.register_language('ruby', Java::OrgProjectoddWunderbossRuby::RubyLanguage.new)
       @container.register_component('web', Java::OrgProjectoddWunderbossWeb::WebComponent.new)
