@@ -1,3 +1,9 @@
+## 0.1.6
+
+* Bundled wunderboss-rack commit
+  7e51cba42dd720d01c01c00203a4d01bebe340d8 to fix a bug preventing
+  Rails 3.2 apps from working
+
 ## 0.1.5
 
 * Bundled wunderboss-rack commit
