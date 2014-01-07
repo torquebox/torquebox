@@ -24,18 +24,18 @@ module TorqBox
     SERVER_DEFAULT_OPTIONS = {
       :host => 'localhost',
       :port => 8080,
-      :log_level => 'INFO'
+      :log_level => 'INFO',
+      :root => '.'
     }
     APP_DEFAULT_OPTIONS = {
       :context => '/',
-      :root => '.',
       :rackup => 'config.ru',
       :rack_app => nil
     }
 
     def initialize(options)
       options = SERVER_DEFAULT_OPTIONS.merge(options)
-      @container = WunderBoss.container
+      @container = WunderBoss.container('root' => options[:root])
       @container.log_level = options[:log_level]
       @container.register_language('ruby', Java::OrgProjectoddWunderbossRuby::RubyLanguage.new)
       @container.register_component('web', Java::OrgProjectoddWunderbossWeb::WebComponent.new)
@@ -47,15 +47,15 @@ module TorqBox
     def start(options)
       options = APP_DEFAULT_OPTIONS.merge(options)
       @logger.info("TorqBox #{::TorqBox::VERSION} starting...")
-      app = @container.new_application('ruby')
-      app.start('rack', 'context' => options[:context],
-                'root' => options[:root],
-                'rackup' => options[:rackup],
-                'rack_app' => options[:rack_app])
+      @app = @container.new_application('ruby')
+      @app.start('rack', 'context' => options[:context],
+                 'rackup' => options[:rackup],
+                 'rack_app' => options[:rack_app])
     end
 
     def stop
       @logger.info("Stopping TorqBox...")
+      @app.stop
       @container.stop
     end
   end

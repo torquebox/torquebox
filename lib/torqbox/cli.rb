@@ -32,7 +32,7 @@ module TorqBox
           @boot_options[:host] = arg
         end
         opts.on '--dir DIR', 'Change directory before starting' do |arg|
-          @app_options[:root] = arg
+          @boot_options[:root] = arg
         end
         opts.on '-E', '--env ENVIRONMENT', 'Environment to run under (default: development)' do |arg|
           ENV['RACK_ENV'] = ENV['RAILS_ENV'] = arg
