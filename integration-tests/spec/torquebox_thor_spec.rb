@@ -68,6 +68,7 @@ describe "torquebox thor utility tests" do
     end
 
     it "should package gems" do
+      pending "rubygems fix for bundle package of default gems"
       gem_version = RUBY_VERSION[0..2]
       # 2.0 gems get installed into 1.9 for whatever reason
       gem_version = '1.9' if gem_version == '2.0'
