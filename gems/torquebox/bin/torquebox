@@ -205,6 +205,12 @@ class TorqueBoxCommand < Thor
     TorqueBox::Server.setup_environment
     jruby_path = File.join(ENV['JRUBY_HOME'], "bin")
     knob_path = File.expand_path(knob_file)
+    extract_cmd = begin
+                    `jar > /dev/null 2>&1`
+                    $?.success? && "jar -xf" || "unzip -q"
+                  rescue
+                    "unzip -q"
+                  end
     bundle_exec = options.no_bundle ? "" : "bundle exec"
     rb_version = case RUBY_VERSION
                  when /^1\.8\./ then '1.8'
@@ -213,7 +219,7 @@ class TorqueBoxCommand < Thor
                  end
     ENV['PATH'] = "#{ENV['PATH']}:#{jruby_path}"
     Dir.mktmpdir do |tmpdir|
-      commands = ["cd #{tmpdir}", "jar -xf #{knob_path}"]
+      commands = ["cd #{tmpdir}", "#{extract_cmd} #{knob_path}"]
       commands << "chmod +x vendor/bundle/jruby/#{rb_version}/bin/*"
       commands << "jruby -S #{bundle_exec} #{command}"
       exec(commands.join(" && "))
