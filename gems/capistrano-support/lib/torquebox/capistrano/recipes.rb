@@ -211,8 +211,8 @@ module Capistrano
   end
 end
 
-unless Capistrano::Configuration.respond_to?(:instance)
+if !Capistrano::Configuration.respond_to?(:instance)
   abort "capistrano/ext/multistage is required, just make sure you are using Capistrano 2"
-else
+elsif Capistrano::Configuration.instance
   Capistrano::TorqueBox.load_into(Capistrano::Configuration.instance)
 end
