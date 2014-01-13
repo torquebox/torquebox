@@ -1,9 +1,15 @@
+## 0.1.7
+
+* Bundled wunderboss-rack commit
+  fc2378dfe02394fa406e1aba1ac2efe07305cadd that upgrades to Undertow
+  1.0.0.Beta30
+
 ## 0.1.6
 
 * Bundled wunderboss-rack commit
   7bce2a980976cb215ff28548d2eef19c48a7410f to fix a bug preventing
   Rails 3.2 apps from working and some Ruby runtime creation/destory
-  changes to get our specs passing again.
+  changes to get our specs passing again
 
 ## 0.1.5
 
