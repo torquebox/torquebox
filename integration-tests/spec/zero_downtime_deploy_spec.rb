@@ -10,6 +10,7 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
   after(:each) do
     # Drain the service response queue
     nil until @service_queue.receive(:timeout => 1).nil?
+    java.lang.System.run_finalization
   end
 
   it 'should not reload without runtime restart' do
