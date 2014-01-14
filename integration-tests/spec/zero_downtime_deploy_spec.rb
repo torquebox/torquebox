@@ -37,18 +37,27 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
     element = page.find_by_id('success')
     element.should_not be_nil
     seen_values = Set.new
-    seen_values << element.text
-    counter = 1
-    while seen_values.size <= 3 && counter < 60 do
+    seen_value = element.text
+    seen_values << seen_value
+    restart_counter = 1
+    while seen_values.size <= 3 && restart_counter <= 3 do
       restart_runtime_with_jmx('web', "#{runtime_type}_runtime")
-      visit "/reloader-rack?#{counter}"
-      element = page.find_by_id('success')
-      element.should_not be_nil
-      seen_values << element.text
-      counter += 1
+
+      counter = 1
+      while seen_values.include?(seen_value) && counter <= 200 do
+        visit "/reloader-rack?#{uuid}"
+        element = page.find_by_id('success')
+        element.should_not be_nil
+        seen_value = element.text
+        counter += 1
+        sleep 0.5
+      end
+
+      seen_values << seen_value
+      restart_counter += 1
     end
 
-    seen_values.size.should > 3
+    seen_values.size.should >= 3
   end
 
   it 'should reload with runtime restart.txt marker' do
@@ -56,19 +65,27 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
     element = page.find_by_id('success')
     element.should_not be_nil
     seen_values = Set.new
-    seen_values << element.text
-    counter = 1
-    while seen_values.size <= 3 && counter < 60 do
+    seen_value = element.text
+    seen_values << seen_value
+    restart_counter = 1
+    while seen_values.size <= 3 && restart_counter <= 3 do
       restart_runtime_with_marker('restart.txt', 'web')
-      visit "/reloader-rack?#{counter}"
-      element = page.find_by_id('success')
-      element.should_not be_nil
-      seen_values << element.text
-      counter += 1
-      sleep 0.2
+
+      counter = 1
+      while seen_values.include?(seen_value) && counter <= 200 do
+        visit "/reloader-rack?#{uuid}"
+        element = page.find_by_id('success')
+        element.should_not be_nil
+        seen_value = element.text
+        counter += 1
+        sleep 0.5
+      end
+
+      seen_values << seen_value
+      restart_counter += 1
     end
 
-    seen_values.size.should > 3
+    seen_values.size.should >= 3
   end
 
   it 'should reload with runtime restart-web.txt marker' do
@@ -76,24 +93,32 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
     element = page.find_by_id('success')
     element.should_not be_nil
     web_seen_values = Set.new
-    web_seen_values << element.text
+    web_value = element.text
+    web_seen_values << web_value
     service_seen_values = Set.new
     service_value = @service_queue.receive(:timeout => 1)
     service_seen_values << service_value unless service_value.nil?
-    counter = 1
-    while web_seen_values.size <= 3 && counter < 60 do
+    restart_counter = 1
+    while web_seen_values.size <= 3 && restart_counter <= 3 do
       restart_runtime_with_marker('restart-web.txt', 'web')
-      visit "/reloader-rack?#{counter}"
-      element = page.find_by_id('success')
-      element.should_not be_nil
-      web_seen_values << element.text
-      service_value = @service_queue.receive(:timeout => 1)
-      service_seen_values << service_value unless service_value.nil?
-      counter += 1
-      sleep 0.2
+
+      counter = 1
+      while web_seen_values.include?(web_value) && counter <= 200 do
+        visit "/reloader-rack?#{uuid}"
+        element = page.find_by_id('success')
+        element.should_not be_nil
+        web_value = element.text
+        service_value = @service_queue.receive(:timeout => 1)
+        service_seen_values << service_value unless service_value.nil?
+        counter += 1
+        sleep 0.5
+      end
+
+      web_seen_values << web_value
+      restart_counter += 1
     end
 
-    web_seen_values.size.should > 3
+    web_seen_values.size.should >= 3
     service_seen_values.size.should == 0
   end
 
@@ -102,25 +127,34 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
     element = page.find_by_id('success')
     element.should_not be_nil
     web_seen_values = Set.new
-    web_seen_values << element.text
+    web_value = element.text
+    web_seen_values << web_value
     service_seen_values = Set.new
     service_value = @service_queue.receive(:timeout => 1)
     service_seen_values << service_value unless service_value.nil?
-    counter = 1
-    while (web_seen_values.size <= 3 || service_seen_values.size <= 3) && counter < 60 do
+    restart_counter = 1
+    while (web_seen_values.size <= 3 || service_seen_values.size <= 3) && restart_counter <= 3 do
       restart_runtime_with_marker('restart-all.txt', 'web')
-      visit "/reloader-rack?#{counter}"
-      element = page.find_by_id('success')
-      element.should_not be_nil
-      web_seen_values << element.text
-      service_value = @service_queue.receive(:timeout => 1)
-      service_seen_values << service_value unless service_value.nil?
-      counter += 1
-      sleep 1
+
+      counter = 1
+      service_value = nil
+      while web_seen_values.include?(web_value) && service_value.nil? && counter <= 200 do
+        visit "/reloader-rack?#{uuid}"
+        element = page.find_by_id('success')
+        element.should_not be_nil
+        web_value = element.text
+        service_value = @service_queue.receive(:timeout => 1)
+        counter += 1
+        sleep 0.5
+      end
+
+      web_seen_values << web_value
+      service_seen_values << service_value
+      restart_counter += 1
     end
 
-    web_seen_values.size.should > 3
-    service_seen_values.size.should > 3
+    web_seen_values.size.should >= 3
+    service_seen_values.size.should >= 3
   end
 
   it 'should not drop requests while reloading' do
@@ -182,6 +216,10 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
     FileUtils.mkdir_p(File.join(app_root, 'tmp'))
     marker = File.join(app_root, 'tmp', marker)
     FileUtils.touch(marker)
+  end
+
+  def uuid
+    java.util.UUID.randomUUID.to_s
   end
 
 end
