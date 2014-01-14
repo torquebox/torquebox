@@ -138,7 +138,7 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
 
       counter = 1
       service_value = nil
-      while web_seen_values.include?(web_value) && service_value.nil? && counter <= 200 do
+      while (web_seen_values.include?(web_value) || service_value.nil?) && counter <= 200 do
         visit "/reloader-rack?#{uuid}"
         element = page.find_by_id('success')
         element.should_not be_nil
