@@ -15,12 +15,9 @@ shared_examples_for "session handling" do
   it "should behave reasonably" do
     page.driver.cookies.count.should == 0
 
-    visit "/basic-rails/sessioning/get_value"
+    visit "/basic-rails/sessioning/set_value"
     @session_id = page.driver.cookies['JSESSIONID'].value
     @session_id.should_not be_nil
-    assert_success_and_cookies("")
-
-    visit "/basic-rails/sessioning/set_value"
     assert_success_and_cookies("the value")
     visit "/basic-rails/sessioning/get_value"
     assert_success_and_cookies("the value")
@@ -90,6 +87,13 @@ shared_examples_for "session handling" do
     assert_success("the value")
     visit "/basic-rails/sessioning/reset_and_restore"
     find('#success').should_not be_nil
+  end
+
+  it "should not create a session unless needed" do
+    page.driver.cookies['JSESSIONID'].should be_nil
+    visit "/basic-rails/sessioning/no_session"
+    page.should have_content('no session')
+    page.driver.cookies['JSESSIONID'].should be_nil
   end
 
 end
