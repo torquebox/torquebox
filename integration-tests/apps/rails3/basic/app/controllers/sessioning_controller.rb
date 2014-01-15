@@ -42,4 +42,8 @@ class SessioningController < ApplicationController
     render :action=>:get_value
   end
 
+  def no_session
+    render :text => 'no session'
+  end
+
 end

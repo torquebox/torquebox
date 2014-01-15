@@ -55,7 +55,7 @@ module TorqueBox
 
       def self.load_session(env)
         if torquebox_available?
-          session_data = load_session_data(env['java.servlet_request'].getSession(true))
+          session_data = load_session_data(env['java.servlet_request'].getSession(false))
         else
           session_data = @test_session_data
         end
@@ -67,7 +67,7 @@ module TorqueBox
         session_data = env['rack.session' ]
         if torquebox_available?
           ServletStore.store_session_data(env['java.servlet_request'].getSession(true),
-                                          session_data)
+                                          session_data) unless session_data.empty?
         else
           @test_session_data = session_data
         end
@@ -75,21 +75,23 @@ module TorqueBox
 
       def self.load_session_data(session)
         session_data = SessionData.new
-        session_data.java_session = session
-        session.getAttributeNames.each do |key|
-          if ( key == RAILS_SESSION_KEY )
-            marshalled_bytes = session.getAttribute(RAILS_SESSION_KEY)
-            if ( marshalled_bytes )
-              data = Marshal.load( String.from_java_bytes( marshalled_bytes ) )
-              session_data.update( data ) if Hash === data
+        if session
+          session_data.java_session = session
+          session.getAttributeNames.each do |key|
+            if ( key == RAILS_SESSION_KEY )
+              marshalled_bytes = session.getAttribute(RAILS_SESSION_KEY)
+              if ( marshalled_bytes )
+                data = Marshal.load( String.from_java_bytes( marshalled_bytes ) )
+                session_data.update( data ) if Hash === data
+              end
+            else
+              session_data[key] = session.getAttribute(key)
             end
-          else
-            session_data[key] = session.getAttribute(key)
           end
+          initial_keys = session_data.keys
+          session_data[:session_id] = session.getId()
+          session_data[:TORQUEBOX_INITIAL_KEYS] = initial_keys
         end
-        initial_keys = session_data.keys
-        session_data[:session_id] = session.getId()
-        session_data[:TORQUEBOX_INITIAL_KEYS] = initial_keys
         session_data
       end
 
@@ -153,7 +155,7 @@ module TorqueBox
       def [](key)
         super(key.to_s)
       end
-      
+
       def fetch(key, *args, &block)
         super(key.to_s, *args, &block)
       end

@@ -33,6 +33,7 @@ describe "rails3 form handling" do
   end
 
   it "should support flash uploading by matrix url" do
+    visit "/basic-rails/form_handling/"
     visit "/basic-rails/form_handling/upload_file"
     page.driver.cookies.count.should == 1
     session_id = page.driver.cookies["JSESSIONID"].value
