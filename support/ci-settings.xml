@@ -56,8 +56,38 @@
       </repositories>
       <pluginRepositories>
         <pluginRepository>
+          <!-- sometimes centrl proxy gets out of sync -->
+          <id>central-no-bees</id>
+          <name>Maven Central</name>
+          <url>http://repo.maven.apache.org/maven2/</url>
+          <layout>default</layout>
+          <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+            <updatePolicy>never</updatePolicy>
+          </snapshots>
+        </pluginRepository>
+        <pluginRepository>
           <!-- bees proxies repositories named 'jboss' -->
           <id>jboss</id>
+          <name>JBoss Public Maven Repository Group</name>
+          <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+          <layout>default</layout>
+          <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+          </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+          <!-- but sometimes that proxies gets out of sync -->
+          <id>jboss-no-bees</id>
           <name>JBoss Public Maven Repository Group</name>
           <url>http://repository.jboss.org/nexus/content/groups/public/</url>
           <layout>default</layout>
