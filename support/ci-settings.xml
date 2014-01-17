@@ -9,36 +9,6 @@
       <id>ci-repositories</id>
       <repositories>
         <repository>
-          <!-- bees proxies repositories named 'jboss' -->
-          <id>jboss</id>
-          <name>JBoss Public Maven Repository Group</name>
-          <url>http://repository.jboss.org/nexus/content/groups/public/</url>
-          <layout>default</layout>
-          <releases>
-            <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-          </releases>
-          <snapshots>
-            <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-          </snapshots>
-        </repository>
-        <repository>
-          <!-- but sometimes that proxies gets out of sync -->
-          <id>jboss-no-bees</id>
-          <name>JBoss Public Maven Repository Group</name>
-          <url>http://repository.jboss.org/nexus/content/groups/public/</url>
-          <layout>default</layout>
-          <releases>
-            <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-          </releases>
-          <snapshots>
-            <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-          </snapshots>
-        </repository>
-        <repository>
           <!-- sometimes centrl proxy gets out of sync -->
           <id>central-no-bees</id>
           <name>Maven Central</name>
@@ -53,9 +23,7 @@
             <updatePolicy>never</updatePolicy>
           </snapshots>
         </repository>
-      </repositories>
-      <pluginRepositories>
-        <pluginRepository>
+        <repository>
           <!-- bees proxies repositories named 'jboss' -->
           <id>jboss</id>
           <name>JBoss Public Maven Repository Group</name>
@@ -69,10 +37,27 @@
             <enabled>true</enabled>
             <updatePolicy>never</updatePolicy>
           </snapshots>
-        </pluginRepository>
-        <pluginRepository>
+        </repository>
+        <repository>
           <!-- but sometimes that proxies gets out of sync -->
           <id>jboss-no-bees</id>
+          <name>JBoss Public Maven Repository Group</name>
+          <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+          <layout>default</layout>
+          <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+          </snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <!-- bees proxies repositories named 'jboss' -->
+          <id>jboss</id>
           <name>JBoss Public Maven Repository Group</name>
           <url>http://repository.jboss.org/nexus/content/groups/public/</url>
           <layout>default</layout>
