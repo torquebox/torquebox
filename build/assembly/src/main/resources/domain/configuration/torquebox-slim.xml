@@ -94,13 +94,11 @@
                     <transport lock-timeout='60000'/>
                     <replicated-cache name='repl' mode='ASYNC' batching='true' start='EAGER'>
                       <eviction strategy='LRU' max-entries='10000'/>
-                      <expiration max-idle='100000'/>
                       <file-store passivation='false' purge='false'/>
                     </replicated-cache>
                     <replicated-cache name='sso' mode='SYNC' batching='true'/>
                     <distributed-cache name='dist' mode='ASYNC' batching='true' l1-lifespan='0'>
                       <eviction strategy='LRU' max-entries='10000'/>
-                      <expiration max-idle='100000'/>
                       <file-store passivation='false' purge='false'/>
                     </distributed-cache>
                 </cache-container>
@@ -535,13 +533,11 @@
                     <transport lock-timeout='60000'/>
                     <replicated-cache name='repl' mode='ASYNC' batching='true' start='EAGER'>
                       <eviction strategy='LRU' max-entries='10000'/>
-                      <expiration max-idle='100000'/>
                       <file-store passivation='false' purge='false'/>
                     </replicated-cache>
                     <replicated-cache name='sso' mode='SYNC' batching='true'/>
                     <distributed-cache name='dist' mode='ASYNC' batching='true' l1-lifespan='0'>
                       <eviction strategy='LRU' max-entries='10000'/>
-                      <expiration max-idle='100000'/>
                       <file-store passivation='false' purge='false'/>
                     </distributed-cache>
                 </cache-container>
