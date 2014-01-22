@@ -118,7 +118,6 @@
             <cache-container name='polyglot' default-cache='sessions' aliases='torquebox'>
                 <local-cache name='sessions' start='EAGER'>
                     <eviction strategy='LRU' max-entries='10000'/>
-                    <expiration max-idle='100000'/>
                     <transaction mode='FULL_XA'/>
                 </local-cache>
             </cache-container>
