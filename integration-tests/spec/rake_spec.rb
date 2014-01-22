@@ -159,7 +159,6 @@ describe "rake tasks" do
       output.should include("Deployed: #{name}#{suffix}")
       output.should include("into: #{TorqueBox::DeployUtils.deploy_dir}")
       File.exist?("#{TorqueBox::DeployUtils.deploy_dir}/#{name}#{suffix}").should == true
-      File.exist?("#{TorqueBox::DeployUtils.deploy_dir}/#{name}#{suffix}.dodeploy").should == true
 
       # Wait for the application to actually deploy
       30.times {
