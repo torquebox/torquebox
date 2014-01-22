@@ -201,6 +201,17 @@ module Capistrano
             puts YAML.dump( create_deployment_descriptor( current_path ) )
           end
 
+          desc "Restart application with zero downtime"
+          task :restart_zero_downtime do
+            run "touch #{current_path}/tmp/restart-all.txt"
+          end
+
+          desc "Deploy application with zero downtime"
+          task :deploy_zero_downtime do
+            deploy.update
+            restart_zero_downtime
+          end
+          
         end
 
         before 'deploy:check',             'deploy:torquebox:check'
