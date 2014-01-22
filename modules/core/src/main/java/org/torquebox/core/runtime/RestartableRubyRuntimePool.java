@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.Semaphore;
 
 import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.logging.Logger;
@@ -54,15 +55,25 @@ public class RestartableRubyRuntimePool implements RubyRuntimePool, RestartableR
             log.error( "Error starting new runtime " + newPool, e);
             return;
         }
-        synchronized(borrowLock) {
-            synchronized(returnLock) {
-                RubyRuntimePool oldPool = this.currentPool;
-                this.currentPool = newPool;
-                if (oldPool.isDrained()) {
-                    retirePool( oldPool );
-                } else {
-                    this.previousPools.add( oldPool );
-                }
+        try {
+            borrowLock.acquire(NUM_PERMITS);
+            returnLock.acquire(NUM_PERMITS);
+            RubyRuntimePool oldPool = this.currentPool;
+            this.currentPool = newPool;
+            if (oldPool.isDrained()) {
+                retirePool( oldPool );
+            } else {
+                this.previousPools.add( oldPool );
+            }
+        } catch (InterruptedException e) {
+            log.error("Error restarting runtime", e);
+            return;
+        } finally {
+            if (returnLock.availablePermits() == 0) {
+                returnLock.release(NUM_PERMITS);
+            }
+            if (borrowLock.availablePermits() == 0) {
+                borrowLock.release(NUM_PERMITS);
             }
         }
         for (RubyRuntimePoolRestartListener listener : this.restartListeners) {
@@ -72,14 +83,23 @@ public class RestartableRubyRuntimePool implements RubyRuntimePool, RestartableR
 
     @Override
     public Ruby borrowRuntime(String requester) throws Exception {
-        synchronized(borrowLock) {
+        borrowLock.acquire();
+        try {
             return this.currentPool.borrowRuntime( requester );
+        } finally {
+            borrowLock.release();
         }
     }
 
     @Override
     public void returnRuntime(Ruby runtime) {
-        synchronized (returnLock) {
+        try {
+            returnLock.acquire();
+        } catch (InterruptedException e) {
+            log.error("Error returning runtime", e);
+            return;
+        }
+        try {
             this.currentPool.returnRuntime( runtime );
             Iterator<RubyRuntimePool> poolIterator = this.previousPools.iterator();
             while (poolIterator.hasNext()) {
@@ -90,6 +110,8 @@ public class RestartableRubyRuntimePool implements RubyRuntimePool, RestartableR
                     poolIterator.remove();
                 }
             }
+        } finally {
+            returnLock.release();
         }
     }
 
@@ -212,7 +234,8 @@ public class RestartableRubyRuntimePool implements RubyRuntimePool, RestartableR
     private volatile RubyRuntimePool currentPool;
     private Set<RubyRuntimePool> previousPools = new HashSet<RubyRuntimePool>();
     private Set<RubyRuntimePoolRestartListener> restartListeners = new CopyOnWriteArraySet<RubyRuntimePoolRestartListener>();
-    private final Object borrowLock = new Object();
-    private final Object returnLock = new Object();
+    private static final int NUM_PERMITS = 5000000; // arbitrary - no more than 5 million concurrent treads
+    private final Semaphore borrowLock = new Semaphore(NUM_PERMITS);
+    private final Semaphore returnLock = new Semaphore(NUM_PERMITS);
     private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
 }

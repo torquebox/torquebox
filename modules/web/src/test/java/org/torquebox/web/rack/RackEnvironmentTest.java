@@ -49,6 +49,7 @@ public class RackEnvironmentTest extends AbstractRubyTestCase {
     @Before
     public void setUp() throws Exception {
         this.ruby = createRuby();
+        RackChannel.createRackChannelClass( this.ruby );
     }
 
     @SuppressWarnings("unchecked")
@@ -59,7 +60,6 @@ public class RackEnvironmentTest extends AbstractRubyTestCase {
         //RackApplicationImpl rackApp = new RackApplicationImpl( ruby, rackup, VFS.getChild( "/test/path/config.ru" ) );
         //assertNotNull( rackApp );
 
-        final ServletContext servletContext = mock( ServletContext.class );
         final HttpServletRequest servletRequest = mock( HttpServletRequest.class );
 
         // final InputStream inputStream = new ByteArrayInputStream(
@@ -89,7 +89,7 @@ public class RackEnvironmentTest extends AbstractRubyTestCase {
 
         // Map<String, Object> javaEnv = (Map<String, Object>)
         // rubyEnv.toJava(Map.class);
-        RackEnvironment env = new RackEnvironment( ruby, servletContext, servletRequest );
+        RackEnvironment env = new RackEnvironment( ruby, servletRequest );
         RubyHash envHash = env.getEnv();
         assertNotNull( envHash );
 
@@ -121,7 +121,6 @@ public class RackEnvironmentTest extends AbstractRubyTestCase {
         //RackApplicationImpl rackApp = new RackApplicationImpl( ruby, rackup, VFS.getChild( "/test/path/config.ru" ) );
         //assertNotNull( rackApp );
 
-        final ServletContext servletContext = mock( ServletContext.class );
         final HttpServletRequest servletRequest = mock( HttpServletRequest.class );
 
         // final InputStream inputStream = new ByteArrayInputStream(
@@ -151,7 +150,7 @@ public class RackEnvironmentTest extends AbstractRubyTestCase {
 
         // Map<String, Object> javaEnv = (Map<String, Object>)
         // rubyEnv.toJava(Map.class);
-        RackEnvironment env = new RackEnvironment( ruby, servletContext, servletRequest );
+        RackEnvironment env = new RackEnvironment( ruby, servletRequest );
         RubyHash envHash = env.getEnv();
         assertNotNull( envHash );
 
@@ -178,7 +177,6 @@ public class RackEnvironmentTest extends AbstractRubyTestCase {
     @Test
     public void testMissingContentLength() throws Exception {
 
-        final ServletContext servletContext = mock( ServletContext.class );
         final HttpServletRequest servletRequest = mock( HttpServletRequest.class );
         final ServletInputStream inputStream = new MockServletInputStream( new ByteArrayInputStream( "".getBytes() ) );
 
@@ -188,7 +186,7 @@ public class RackEnvironmentTest extends AbstractRubyTestCase {
         when( servletRequest.getContextPath() ).thenReturn( "/myapp" );
         when( servletRequest.getServletPath() ).thenReturn( "/" );
 
-        RackEnvironment env = new RackEnvironment( ruby, servletContext, servletRequest );
+        RackEnvironment env = new RackEnvironment( ruby, servletRequest );
         RubyHash envHash = env.getEnv();
         assertNotNull( envHash );
         assertNull( envHash.get( "CONTENT_LENGTH" ) );
@@ -197,7 +195,6 @@ public class RackEnvironmentTest extends AbstractRubyTestCase {
     @SuppressWarnings("unchecked")
     @Test
     public void testLeakingRubyFilenoMap() throws Exception {
-        final ServletContext servletContext = mock( ServletContext.class );
         final HttpServletRequest servletRequest = mock( HttpServletRequest.class );
         final ServletInputStream inputStream = new MockServletInputStream( new ByteArrayInputStream( "".getBytes() ) );
 
@@ -213,7 +210,7 @@ public class RackEnvironmentTest extends AbstractRubyTestCase {
         Map<Integer, Integer> filenoIntExtMap = (Map<Integer, Integer>) filenoMapField.get( ruby );
 
         int startingSize = filenoIntExtMap.size();
-        new RackEnvironment( ruby, servletContext, servletRequest );
+        new RackEnvironment( ruby, servletRequest );
         int sizeAfterCreatingEnv = filenoIntExtMap.size();
 
         assertEquals( startingSize, sizeAfterCreatingEnv );

@@ -28,31 +28,27 @@ import javax.servlet.http.HttpServletRequest;
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyArray;
+import org.jruby.RubyClass;
 import org.jruby.RubyFixnum;
 import org.jruby.RubyHash;
 import org.jruby.RubyIO;
+import org.jruby.RubyModule;
 import org.jruby.RubyString;
 
 public class RackEnvironment {
 
-    public RackEnvironment(Ruby ruby, ServletContext servletContext, HttpServletRequest request) throws IOException {
-        initializeEnv( ruby, servletContext, request );
+    public RackEnvironment(Ruby ruby, HttpServletRequest request) throws IOException {
+        initializeEnv( ruby, request );
     }
 
-    private void initializeEnv(Ruby ruby, ServletContext servletContext, HttpServletRequest request) throws IOException {
+    private void initializeEnv(Ruby ruby, HttpServletRequest request) throws IOException {
         this.env = new RubyHash( ruby );
 
-        // Wrap the input stream in a RewindableChannel because Rack expects
-        // 'rack.input' to be rewindable and a ServletInputStream is not
-        RewindableChannel rewindableChannel = new RewindableChannel( request.getInputStream() );
-        this.input = new RubyIO( ruby, rewindableChannel );
-        this.input.binmode();
-        this.input.setAutoclose( false );
+        RubyClass rackChannel = ruby.getModule( "TorqueBox" ).getClass( "RackChannel" );
+        this.input = new RackChannel(ruby, rackChannel, request.getInputStream() );
         env.put( RubyString.newString( ruby, "rack.input" ), input );
 
-        this.errors = new RubyIO( ruby, ruby.getErr() );
-        this.errors.setAutoclose( false );
-        env.put( RubyString.newString( ruby, "rack.errors" ), errors );
+        env.put( RubyString.newString( ruby, "rack.errors" ), ruby.getGlobalVariables().get( "$stderr" ) );
 
         RubyArray rackVersion = RubyArray.newArray( ruby );
         rackVersion.add( RubyFixnum.one( ruby ) );
@@ -117,17 +113,17 @@ public class RackEnvironment {
         //explicitly close the inputstream, but leave the err stream open,
         //as closing that detaches it from the log forever!
 
-        if (this.input != null &&
-            !this.input.isClosed()) {
-            this.input.close();
+        if (this.input != null) {
+            try {
+                this.input.close();
+            } catch (IOException e) {
+                log.error( "Error closing rack.input", e );
+            }
         }
     }
     
     private static final Logger log = Logger.getLogger( RackEnvironment.class );
 
     private RubyHash env;
-    private RubyIO input;
-    private RubyIO errors;
-
-
+    private RackChannel input;
 }
