@@ -51,6 +51,7 @@ public class RackRuntimeInitializer extends BaseRuntimeInitializer {
         super.initialize( ruby, runtimeContext );
         RuntimeHelper.requireIfAvailable(  ruby, "torquebox-web" );
         RuntimeHelper.evalScriptlet( ruby, getInitializerScript() );
+        RackChannel.createRackChannelClass( ruby );
     }
 
     protected void setRuntimeType(Ruby ruby, String type) {

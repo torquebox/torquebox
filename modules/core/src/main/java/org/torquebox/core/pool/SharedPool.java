@@ -199,25 +199,27 @@ public class SharedPool<T> implements Pool<T> {
     }
 
     @Override
-    public synchronized void releaseInstance(T instance) {
+    public void releaseInstance(T instance) {
         if (instance == this.instance) {
             this.instanceCount.decrementAndGet();
         }
     }
 
     @Override
-    public synchronized T borrowInstance(String requester, long timeout) throws Exception {
+    public T borrowInstance(String requester, long timeout) throws Exception {
         if (this.instance == null) {
-            startPool();
-        }
+            synchronized(this) {
+                startPool();
 
-        long remaining = timeout;
-        while (this.instance == null) {
-            long startWait = System.currentTimeMillis();
-            this.wait( timeout );
-            remaining = remaining - (System.currentTimeMillis() - startWait);
-            if (remaining <= 0) {
-                break;
+                long remaining = timeout;
+                while (this.instance == null) {
+                    long startWait = System.currentTimeMillis();
+                    this.wait( timeout );
+                    remaining = remaining - (System.currentTimeMillis() - startWait);
+                    if (remaining <= 0) {
+                        return null;
+                    }
+                }
             }
         }
         

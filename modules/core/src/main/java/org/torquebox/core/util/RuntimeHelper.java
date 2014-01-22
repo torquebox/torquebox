@@ -20,8 +20,10 @@
 package org.torquebox.core.util;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 
 import org.jboss.logging.Logger;
@@ -31,6 +33,7 @@ import org.jruby.RubyModule;
 import org.jruby.RubyThread;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.jruby.util.JRubyClassLoader;
 
 /**
  * Ruby reflection helper utilities.
@@ -246,19 +249,29 @@ public class RuntimeHelper {
     // ------------------------------------------------------------------------
 
     protected static <R> R withinContext(Ruby ruby, Callable<R> block) {
+        WeakReference<ClassLoader> weakRef = jrubyClassLoaders.get(ruby);
+        ClassLoader jrubyClassLoader = weakRef == null ? null : weakRef.get();
+        if (jrubyClassLoader == null) {
+            synchronized(jrubyClassLoaders) {
+                jrubyClassLoader = ruby.getJRubyClassLoader();
+                jrubyClassLoaders.put(ruby, new WeakReference<ClassLoader>(jrubyClassLoader));
+            }
+        }
         ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
 
         try {
-            Thread.currentThread().setContextClassLoader( ruby.getJRubyClassLoader() );
+            Thread.currentThread().setContextClassLoader(jrubyClassLoader);
             return block.call();
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuntimeException( e );
+            throw new RuntimeException(e);
         } finally {
-            Thread.currentThread().setContextClassLoader( originalCl );
+            Thread.currentThread().setContextClassLoader(originalCl);
         }
     }
+
+    private static final WeakHashMap<Ruby, WeakReference<ClassLoader>> jrubyClassLoaders = new WeakHashMap<Ruby, WeakReference<ClassLoader>>();
 
     private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
     private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};

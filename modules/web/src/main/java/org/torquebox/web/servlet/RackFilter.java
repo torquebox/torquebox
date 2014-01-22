@@ -62,8 +62,6 @@ public class RackFilter implements Filter {
         if (this.runtimePool == null) {
             throw new ServletException( "Unable to obtain runtime pool: " + runtimePoolServiceName );
         }
-
-        this.servletContext = filterConfig.getServletContext();
     }
 
     public void destroy() {
@@ -129,7 +127,7 @@ public class RackFilter implements Filter {
         try {
             runtime = this.runtimePool.borrowRuntime( "rack" );
             rackApp = (RackApplicationComponent) this.componentResolver.resolve( runtime );
-            rackEnv = new RackEnvironment( runtime, servletContext, request );
+            rackEnv = new RackEnvironment( runtime, request );
             rackApp.call( rackEnv ).respond( response );
         } catch (RaiseException e) {
             log.error( "Error invoking Rack filter", e );
@@ -155,5 +153,4 @@ public class RackFilter implements Filter {
 
     private ComponentResolver componentResolver;
     private RubyRuntimePool runtimePool;
-    private ServletContext servletContext;
 }
