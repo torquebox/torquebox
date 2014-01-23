@@ -64,6 +64,8 @@ public class InjectableHandlerTest {
         assertTrue( this.registry.getHandler( "java:/comp/whatever" ) instanceof JNDIInjectableHandler );
         assertTrue( this.registry.getHandler( "/queues/mine" ) instanceof QueueInjectableHandler );
         assertTrue( this.registry.getHandler( "/topics/yours" ) instanceof TopicInjectableHandler );
+        assertTrue( this.registry.getHandler( "DLQ" ) instanceof QueueInjectableHandler );
+        assertTrue( this.registry.getHandler( "ExpiryQueue" ) instanceof QueueInjectableHandler );
     }
 
 

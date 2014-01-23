@@ -45,8 +45,9 @@ public class QueueInjectableHandler extends AbstractInjectableHandler {
 
     @Override
     public boolean recognizes(Object injection) {
-        String str = getString( injection );
-        return (str != null ) && ( str.startsWith( "queue" ) || str.contains( "/queue" ) );
+        String str = getString( injection ).toLowerCase();
+        return (str != null ) && ( str.startsWith( "queue" ) || str.contains( "/queue" ) ||
+                str.contains("dlq") || str.contains("expiryqueue") );
     }
 
 
