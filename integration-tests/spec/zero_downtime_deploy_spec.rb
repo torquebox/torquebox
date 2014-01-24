@@ -123,7 +123,7 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
   end
 
   it 'should reload with runtime restart-all.txt marker' do
-    visit '/reloader-rack?0'
+    visit "/reloader-rack?#{uuid}"
     element = page.find_by_id('success')
     element.should_not be_nil
     web_seen_values = Set.new
