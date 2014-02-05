@@ -96,7 +96,7 @@
         <code>always_background</code> or <code>obj.background.some_method</code>
         will appear in this tab.
         Complete details about New Relic's Ruby integration can be found on the
-        <ulink url="https://newrelic.com/docs/ruby/new-relic-for-ruby">
+        <ulink url="https://docs.newrelic.com/docs/ruby/new-relic-on-jruby">
           New Relic website</ulink>.
       </para>
 
