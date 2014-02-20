@@ -78,7 +78,7 @@
     <profile>
         <subsystem xmlns='urn:jboss:domain:logging:1.2'>
             <console-handler name='CONSOLE'>
-                <level name='INFO'/>
+                <level name='${jboss.logging.level:INFO}'/>
                 <formatter>
                     <pattern-formatter pattern='%K{level}%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n'/>
                 </formatter>
@@ -110,7 +110,7 @@
                 <level name='ERROR'/>
             </logger>
             <root-logger>
-                <level name='INFO'/>
+                <level name='${jboss.logging.level:INFO}'/>
                 <handlers>
                     <handler name='CONSOLE'/>
                     <handler name='FILE'/>
