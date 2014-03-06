@@ -15,11 +15,14 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'wunderboss-rack.jar'
-require 'wunderboss'
+require 'rack'
+require 'wunderboss-torquebox'
 
 module TorqBox
   class Server
+
+    java_import org.projectodd.wunderboss.WunderBoss
+    java_import org.projectodd.wunderboss.torquebox.RackHandler
 
     SERVER_DEFAULT_OPTIONS = {
       :host => 'localhost',
@@ -35,28 +38,26 @@ module TorqBox
 
     def initialize(options)
       options = SERVER_DEFAULT_OPTIONS.merge(options)
-      @container = WunderBoss.container('root' => options[:root])
-      @container.log_level = options[:log_level]
-      @container.register_language('ruby', Java::OrgProjectoddWunderbossRuby::RubyLanguage.new)
-      @container.register_component('web', Java::OrgProjectoddWunderbossWeb::WebComponent.new)
-      @container.register_component('rack', Java::OrgProjectoddWunderbossRubyRack::RackComponent.new)
-      @container.configure('web', 'host' => options[:host], 'port' => options[:port].to_s)
-      @logger = @container.get_logger('TorqBox::Server')
+      WunderBoss.merge_options('root' => options[:root])
+      WunderBoss.log_level = options[:log_level]
+      @logger = WunderBoss.logger('TorqBox::Server')
+      @web = WunderBoss.find_or_create_component('web', 'host' => options[:host], 'port' => options[:port].to_s)
     end
 
     def start(options)
       options = APP_DEFAULT_OPTIONS.merge(options)
       @logger.info("TorqBox #{::TorqBox::VERSION} starting...")
-      @app = @container.new_application('ruby')
-      @app.start('rack', 'context' => options[:context],
-                 'rackup' => options[:rackup],
-                 'rack_app' => options[:rack_app])
+      if options[:rack_app].nil?
+        options[:rack_app] = Rack::Builder.parse_file(options[:rackup])[0]
+      end
+      handler = RackHandler.new(options[:rack_app], options[:context])
+      @web.registerHttpHandler(options[:context], handler,
+                               'static_dir' => 'public')
     end
 
     def stop
       @logger.info("Stopping TorqBox...")
-      @app.stop
-      @container.stop
+      @web.stop
     end
   end
 end

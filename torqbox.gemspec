@@ -22,6 +22,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'rack', '>= 1.4.0', '< 2.0'
 
+  s.add_development_dependency('jbundler')
   s.add_development_dependency('rake')
+  s.add_development_dependency('rake-compiler')
   s.add_development_dependency('rspec', '~> 2.14')
 end

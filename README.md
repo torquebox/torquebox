@@ -102,6 +102,17 @@ still want the full Java application server (or are trying to sneak
 Ruby into a Java shop). But this will just be an option, not the
 default.
 
+## Building TorqBox
+
+    gem install jbundler
+    jbundle install
+    rake build
+
+## Releasing
+
+    rake clean
+    rake release
+
 
 [tb_future_thread]: http://markmail.org/thread/4ffelg3qklycwhfo
 [community]: http://torquebox.org/community/
