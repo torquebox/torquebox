@@ -42,8 +42,20 @@ Rake::Task[:clobber].clear_prerequisites
 task 'spec' => 'compile'
 
 
+require 'rake/clean'
+module Rake
+  module Cleaner
+    module_function
+    def cleanup(file_name, opts={})
+      begin
+        rm_rf file_name, opts # rm_rf to not complain about missing files
+      rescue StandardError => ex
+        puts "Failed to remove #{file_name}: #{ex}"
+      end
+    end
+  end
+end
 require 'fileutils'
-desc 'Clean the pkg directory'
 task 'clean' => 'clobber' do
   FileUtils.rm_rf(File.join(Dir.pwd, 'pkg'))
   FileUtils.rm_rf(File.join(Dir.pwd, WB_JARS_DIR))
