@@ -24,6 +24,8 @@ module TorqBox
     java_import org.projectodd.wunderboss.WunderBoss
     java_import org.projectodd.wunderboss.torquebox.RackHandler
 
+    attr_reader :options
+
     DEFAULT_OPTIONS = {
       :host => 'localhost',
       :port => 8080,
@@ -36,20 +38,19 @@ module TorqBox
 
     def initialize(options)
       @options = DEFAULT_OPTIONS.merge(options)
-      if @options[:rack_app].nil?
-        @options[:rack_app] = Rack::Builder.parse_file(@options[:rackup])[0]
-      end
-
       WunderBoss.put_option('root', @options[:root])
       WunderBoss.log_level = @options[:log_level]
       @logger = WunderBoss.logger('TorqBox::Server')
-      @web = WunderBoss.find_or_create_component('web',
-                                                 'host' => @options[:host],
-                                                 'port' => @options[:port].to_s)
     end
 
     def start
       @logger.info("TorqBox #{::TorqBox::VERSION} starting...")
+      if @options[:rack_app].nil?
+        @options[:rack_app] = Rack::Builder.parse_file(@options[:rackup])[0]
+      end
+      @web = WunderBoss.find_or_create_component('web',
+                                                 'host' => @options[:host],
+                                                 'port' => @options[:port].to_s)
       handler = RackHandler.new(@options[:rack_app], @options[:context])
       @web.registerHandler(@options[:context], handler,
                            'static_dir' => 'public')
@@ -57,8 +58,10 @@ module TorqBox
 
     def stop
       @logger.info("Stopping TorqBox...")
-      @web.unregister(@options[:context])
-      @web.stop
+      if @web
+        @web.unregister(@options[:context])
+        @web.stop
+      end
     end
   end
 end

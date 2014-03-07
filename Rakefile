@@ -39,6 +39,7 @@ task 'build' => 'compile'
 # Hide the clobber task from -T and remove its dependency on clean
 Rake::Task[:clobber].clear_comments
 Rake::Task[:clobber].clear_prerequisites
+task 'spec' => 'compile'
 
 
 require 'fileutils'

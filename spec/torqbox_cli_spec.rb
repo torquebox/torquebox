@@ -25,50 +25,26 @@ describe TorqBox::CLI do
   end
 
   it 'should override bind address' do
-    pending 'figure out how to reliably find a non-localhost IP'
+    @args += %W{-b 1.2.3.4}
+    cli = TorqBox::CLI.new(@args)
+    cli.server.options[:host].should == '1.2.3.4'
   end
 
   it 'should override port' do
     @args += %W{-p 8765}
-    Dir.chdir(@spec_dir) do
-      cli = TorqBox::CLI.new(@args)
-      begin
-        cli.start
-        uri = URI.parse('http://localhost:8765/')
-        response = Net::HTTP.get_response(uri)
-        response.code.should == '200'
-        response.body.should include('config.ru')
-      ensure
-        cli.stop
-      end
-    end
+    cli = TorqBox::CLI.new(@args)
+    cli.server.options[:port].should == '8765'
   end
 
   it 'should override rackup file' do
     @args << File.join(@spec_dir, 'other_config.ru')
     cli = TorqBox::CLI.new(@args)
-    begin
-      cli.start
-      uri = URI.parse('http://localhost:8080/')
-      response = Net::HTTP.get_response(uri)
-      response.code.should == '200'
-      response.body.should include('other_config.ru')
-    ensure
-      cli.stop
-    end
+    cli.server.options[:rackup].should end_with('other_config.ru')
   end
 
   it 'should override root directory' do
     @args += %W{--dir #{@spec_dir}}
     cli = TorqBox::CLI.new(@args)
-    begin
-      cli.start
-      uri = URI.parse('http://localhost:8080/')
-      response = Net::HTTP.get_response(uri)
-      response.code.should == '200'
-      response.body.should include('config.ru')
-    ensure
-      cli.stop
-    end
+    cli.server.options[:root].should == @spec_dir
   end
 end
