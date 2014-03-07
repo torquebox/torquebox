@@ -16,22 +16,25 @@ RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 
 
-WB_JARS_DIR = 'lib/wunderboss-jars'
 require 'rake/javaextensiontask'
 Rake::JavaExtensionTask.new('wunderboss-torquebox') do |ext|
   ext.classpath = JBUNDLER_CLASSPATH
   ext.source_version = '1.7'
   ext.target_version = '1.7'
 end
-task 'compile' do
-  FileUtils.mkdir_p(WB_JARS_DIR)
-  excluded_jars = ['jruby-complete']
-  JBUNDLER_CLASSPATH.each do |file|
-    if file.end_with?('.jar')
-      jar = File.basename(file)
-      unless excluded_jars.any? { |excluded_jar| jar.start_with?(excluded_jar) }
-        install file, "#{WB_JARS_DIR}/#{jar}"
+WB_JARS_DIR = 'lib/wunderboss-jars'
+directory WB_JARS_DIR
+task 'compile' => WB_JARS_DIR do
+end
+excluded_jars = ['jruby-complete']
+JBUNDLER_CLASSPATH.each do |path|
+  if path.end_with?('.jar')
+    jar = File.basename(path)
+    unless excluded_jars.any? { |excluded_jar| jar.start_with?(excluded_jar) }
+      file "#{WB_JARS_DIR}/#{jar}" => 'lib/wunderboss-torquebox.jar' do
+        install path, "#{WB_JARS_DIR}/#{jar}"
       end
+      task 'compile' => "#{WB_JARS_DIR}/#{jar}"
     end
   end
 end
