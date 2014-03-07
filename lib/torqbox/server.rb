@@ -24,39 +24,40 @@ module TorqBox
     java_import org.projectodd.wunderboss.WunderBoss
     java_import org.projectodd.wunderboss.torquebox.RackHandler
 
-    SERVER_DEFAULT_OPTIONS = {
+    DEFAULT_OPTIONS = {
       :host => 'localhost',
       :port => 8080,
       :log_level => 'INFO',
-      :root => '.'
-    }
-    APP_DEFAULT_OPTIONS = {
+      :root => '.',
       :context => '/',
       :rackup => 'config.ru',
       :rack_app => nil
     }
 
     def initialize(options)
-      options = SERVER_DEFAULT_OPTIONS.merge(options)
-      WunderBoss.merge_options('root' => options[:root])
-      WunderBoss.log_level = options[:log_level]
+      @options = DEFAULT_OPTIONS.merge(options)
+      if @options[:rack_app].nil?
+        @options[:rack_app] = Rack::Builder.parse_file(@options[:rackup])[0]
+      end
+
+      WunderBoss.put_option('root', @options[:root])
+      WunderBoss.log_level = @options[:log_level]
       @logger = WunderBoss.logger('TorqBox::Server')
-      @web = WunderBoss.find_or_create_component('web', 'host' => options[:host], 'port' => options[:port].to_s)
+      @web = WunderBoss.find_or_create_component('web',
+                                                 'host' => @options[:host],
+                                                 'port' => @options[:port].to_s)
     end
 
-    def start(options)
-      options = APP_DEFAULT_OPTIONS.merge(options)
+    def start
       @logger.info("TorqBox #{::TorqBox::VERSION} starting...")
-      if options[:rack_app].nil?
-        options[:rack_app] = Rack::Builder.parse_file(options[:rackup])[0]
-      end
-      handler = RackHandler.new(options[:rack_app], options[:context])
-      @web.registerHttpHandler(options[:context], handler,
-                               'static_dir' => 'public')
+      handler = RackHandler.new(@options[:rack_app], @options[:context])
+      @web.registerHandler(@options[:context], handler,
+                           'static_dir' => 'public')
     end
 
     def stop
       @logger.info("Stopping TorqBox...")
+      @web.unregister(@options[:context])
       @web.stop
     end
   end

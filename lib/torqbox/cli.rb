@@ -22,26 +22,25 @@ module TorqBox
     attr_reader :server
 
     def initialize(argv)
-      @boot_options = {}
-      @app_options = {}
+      @options = {}
       ENV['RACK_ENV'] = ENV['RAILS_ENV'] = 'development'
       OptionParser.new do |opts|
         opts.banner = 'Usage: torqbox [options] [rackup file]'
 
         opts.on '-b', '--bind-address IP', 'IP or host to bind to' do |arg|
-          @boot_options[:host] = arg
+          @options[:host] = arg
         end
         opts.on '--dir DIR', 'Change directory before starting' do |arg|
-          @boot_options[:root] = arg
+          @options[:root] = arg
         end
         opts.on '-E', '--env ENVIRONMENT', 'Environment to run under (default: development)' do |arg|
           ENV['RACK_ENV'] = ENV['RAILS_ENV'] = arg
         end
         opts.on '-p', '--port PORT', 'HTTP port to listen on' do |arg|
-          @boot_options[:port] = arg
+          @options[:port] = arg
         end
         opts.on '-q', '--quiet', 'Only write errors to the output' do
-          @boot_options[:log_level] = 'ERROR'
+          @options[:log_level] = 'ERROR'
         end
         opts.on_tail('-h', '--help', 'Show this message') do
           puts opts
@@ -54,14 +53,14 @@ module TorqBox
       end.parse!(argv)
 
       unless argv.empty?
-        @app_options[:rackup] = argv.shift
+        @options[:rackup] = argv.shift
       end
 
-      @server = ::TorqBox::Server.new(@boot_options)
+      @server = ::TorqBox::Server.new(@options)
     end
 
     def start
-      @server.start(@app_options)
+      @server.start
     end
 
     def stop

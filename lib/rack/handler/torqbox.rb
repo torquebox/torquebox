@@ -7,10 +7,11 @@ module Rack
 
       def self.run(app, options={})
         server = ::TorqBox::Server.new({ :host => options[:Host],
-                                         :port => options[:Port] })
+                                         :port => options[:Port],
+                                         :rack_app => app })
         yield server if block_given?
 
-        server.start(:rack_app => app)
+        server.start
         thread = Thread.current
         Signal.trap("INT") do
           server.stop
