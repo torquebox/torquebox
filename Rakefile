@@ -12,7 +12,9 @@ Bundler::GemHelper.install_tasks
 
 
 require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new(:spec)
+RSpec::Core::RakeTask.new(:spec) do |config|
+  config.pattern = './spec/*_spec.rb'
+end
 task :default => :spec
 
 
