@@ -1,0 +1,16 @@
+language: ruby
+
+rvm:
+  - jruby-19mode
+
+before_install:
+  - git clone https://github.com/projectodd/wunderboss.git
+  - cd wunderboss && mvn install
+
+install:
+  - gem install jbundler
+  - jbundle install
+
+branches:
+  only:
+    - torqbox
