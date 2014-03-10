@@ -93,8 +93,13 @@ end
 
 def __torqbox_start(options)
   args = options.to_a.flatten.join(' ')
-  command = "#{jruby_command} -I#{lib_dir} #{File.join(bin_dir, 'torqbox')} -q #{args}"
+  app_dir = options['--dir']
+  ENV['BUNDLE_GEMFILE'] = "#{app_dir}/Gemfile"
+  ENV['RUBYLIB'] = "#{lib_dir}:#{app_dir}"
+  command = "#{jruby_command} -r 'bundler/setup' #{File.join(bin_dir, 'torqbox')} -q #{args}"
   pid, stdin, stdout, stderr = IO.popen4(command)
+  ENV['BUNDLE_GEMFILE'] = nil
+  ENV['RUBYLIB'] = nil
   @tb_pid = pid
 
   stdin.close

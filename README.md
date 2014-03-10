@@ -108,6 +108,14 @@ default.
     jbundle install
     rake build
 
+## Running all specs
+
+    rake spec
+
+## Running a single spec
+
+    SPEC=spec/basic_sinatra_spec.rb rake spec
+
 ## Releasing
 
     rake clean

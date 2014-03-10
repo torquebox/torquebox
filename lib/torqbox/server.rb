@@ -55,7 +55,7 @@ module TorqBox
       handler = RackHandler.new(@options[:rack_app], @options[:context_path])
       @web.registerHandler(handler,
                            'context-path' => @options[:context_path],
-                           'static_dir' => 'public')
+                           'static_dir' => File.join(@options[:root], 'public'))
     end
 
     def stop
