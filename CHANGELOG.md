@@ -1,3 +1,19 @@
+## 0.2.0
+
+* Switched from bundling wunderboss-rack.jar to pulling in wunderboss
+  and other necessary jars via maven.
+
+* All the Rack components that used to exist in wunderboss were moved
+  here, so the build was restructured to allow compiling java source
+  files with maven dependencies without actually needing to use maven.
+
+* Added --context-path option to 'torqbox' command to start web
+  applications at a non-root context. In embedded mode this probably
+  isn't all that useful outside of testing.
+
+* Listen for SIGTERM (in addition to SIGINT) to know when to
+  gracefully stop.
+
 ## 0.1.7
 
 * Bundled wunderboss-rack commit
