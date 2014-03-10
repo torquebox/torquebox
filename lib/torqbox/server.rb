@@ -31,7 +31,7 @@ module TorqBox
       :port => 8080,
       :log_level => 'INFO',
       :root => '.',
-      :context => '/',
+      :context_path => '/',
       :rackup => 'config.ru',
       :rack_app => nil
     }
@@ -46,20 +46,21 @@ module TorqBox
     def start
       @logger.info("TorqBox #{::TorqBox::VERSION} starting...")
       if @options[:rack_app].nil?
-        @options[:rack_app] = Rack::Builder.parse_file(@options[:rackup])[0]
+        rackup = File.join(@options[:root], @options[:rackup])
+        @options[:rack_app] = Rack::Builder.parse_file(rackup)[0]
       end
       @web = WunderBoss.find_or_create_component('web',
                                                  'host' => @options[:host],
                                                  'port' => @options[:port].to_s)
-      handler = RackHandler.new(@options[:rack_app], @options[:context])
-      @web.registerHandler(@options[:context], handler,
+      handler = RackHandler.new(@options[:rack_app], @options[:context_path])
+      @web.registerHandler(@options[:context_path], handler,
                            'static_dir' => 'public')
     end
 
     def stop
       @logger.info("Stopping TorqBox...")
       if @web
-        @web.unregister(@options[:context])
+        @web.unregister(@options[:context_path])
         @web.stop
       end
     end

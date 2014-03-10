@@ -30,6 +30,9 @@ module TorqBox
         opts.on '-b', '--bind-address IP', 'IP or host to bind to' do |arg|
           @options[:host] = arg
         end
+        opts.on '--context-path PATH', 'Web context path to use (default: /)' do |arg|
+          @options[:context_path] = arg
+        end
         opts.on '--dir DIR', 'Change directory before starting' do |arg|
           @options[:root] = arg
         end

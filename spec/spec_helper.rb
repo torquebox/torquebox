@@ -15,7 +15,130 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'capybara/poltergeist'
+require 'capybara/rspec'
 require 'net/http'
+require 'torqbox'
 require 'uri'
 
-require 'torqbox'
+Capybara.app_host = "http://localhost:8080"
+Capybara.run_server = false
+Capybara.default_driver = :poltergeist
+
+RSpec.configure do |config|
+
+  config.before(:suite) do
+    begin
+      Capybara.visit "/"
+    rescue Exception => ex
+      if ex.message.include?('phantomjs')
+        $stderr.puts <<-EOF
+
+
+
+========================================================================
+
+It looks like phantomjs was not found. Ensure it is installed and
+available in your $PATH. See http://phantomjs.org/download.html for
+details.
+
+========================================================================
+
+
+
+EOF
+        $stderr.puts ex.message
+        exit 1
+      else
+        raise ex
+      end
+    end
+  end
+
+  config.before(:all) do
+    if self.class.respond_to?(:torqbox_options)
+      __torqbox_start(self.class.torqbox_options)
+    end
+  end
+
+  config.after(:all) do
+    if self.class.respond_to?(:torqbox_options)
+      __torqbox_stop
+    end
+  end
+end
+
+def jruby_command
+  File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
+end
+
+def lib_dir
+  File.join(File.dirname(__FILE__), '..', 'lib')
+end
+
+def bin_dir
+  File.join(File.dirname(__FILE__), '..', 'bin')
+end
+
+def apps_dir
+  File.join(File.dirname(__FILE__), 'apps')
+end
+
+def torqbox(options)
+  metaclass = class << self; self; end
+  metaclass.send(:define_method, :torqbox_options) do
+    return options
+  end
+end
+
+def __torqbox_start(options)
+  args = options.to_a.flatten.join(' ')
+  command = "#{jruby_command} -I#{lib_dir} #{File.join(bin_dir, 'torqbox')} -q #{args}"
+  pid, stdin, stdout, stderr = IO.popen4(command)
+  @tb_pid = pid
+
+  stdin.close
+  stdout.sync = true
+  stderr.sync = true
+  error_seen = false
+  @tb_stdout_thread = Thread.new(stdout) { |stdout_io|
+    begin
+      while true
+        STDOUT.write(stdout_io.readpartial(1024))
+      end
+    rescue EOFError
+    end
+  }
+  @tb_stderr_thread = Thread.new(stderr) { |stderr_io|
+    begin
+      while true
+        STDERR.write(stderr_io.readpartial(1024))
+        error_seen = true
+      end
+    rescue EOFError
+    end
+  }
+  start = Time.now
+  while (Time.now - start) < 30 do
+    context = options['--context-path'] || '/'
+    uri = URI.parse("http://localhost:8080#{context}")
+    begin
+      response = Net::HTTP.get_response(uri)
+      break
+    rescue Exception
+      sleep 0.2 # sleep and retry
+    end
+    break if error_seen
+  end
+end
+
+def __torqbox_stop
+  if @tb_pid
+    Process.kill 'INT', @tb_pid
+    @tb_pid = nil
+    @tb_stdout_thread.join
+    @tb_stdout_thread = nil
+    @tb_stderr_thread.join
+    @tb_stderr_thread = nil
+  end
+end
