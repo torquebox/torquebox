@@ -24,4 +24,8 @@ Signal.trap("INT") do
   cli.stop
   thread.wakeup
 end
+Signal.trap("TERM") do
+  cli.stop
+  thread.wakeup
+end
 sleep

@@ -17,6 +17,10 @@ module Rack
           server.stop
           thread.wakeup
         end
+        Signal.trap("TERM") do
+          server.stop
+          thread.wakeup
+        end
         sleep
       end
 
