@@ -96,7 +96,8 @@ def __torqbox_start(options)
   app_dir = options['--dir']
   ENV['BUNDLE_GEMFILE'] = "#{app_dir}/Gemfile"
   ENV['RUBYLIB'] = "#{lib_dir}:#{app_dir}"
-  command = "#{jruby_command} -r 'bundler/setup' #{File.join(bin_dir, 'torqbox')} -q #{args}"
+  jruby_jvm_opts = "-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1"
+  command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{File.join(bin_dir, 'torqbox')} -q #{args}"
   pid, stdin, stdout, stderr = IO.popen4(command)
   ENV['BUNDLE_GEMFILE'] = nil
   ENV['RUBYLIB'] = nil
