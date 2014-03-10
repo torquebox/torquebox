@@ -53,7 +53,8 @@ module TorqBox
                                                  'host' => @options[:host],
                                                  'port' => @options[:port].to_s)
       handler = RackHandler.new(@options[:rack_app], @options[:context_path])
-      @web.registerHandler(@options[:context_path], handler,
+      @web.registerHandler(handler,
+                           'context-path' => @options[:context_path],
                            'static_dir' => 'public')
     end
 

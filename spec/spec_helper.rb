@@ -134,7 +134,11 @@ end
 
 def __torqbox_stop
   if @tb_pid
-    Process.kill 'INT', @tb_pid
+    begin
+      Process.kill 'INT', @tb_pid
+    rescue Errno::ESRCH
+      # ignore no such process errors - it died already
+    end
     @tb_pid = nil
     @tb_stdout_thread.join
     @tb_stdout_thread = nil
