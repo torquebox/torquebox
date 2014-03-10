@@ -1,0 +1,17 @@
+language: ruby
+rvm:
+  - 1.8.7
+  - 1.9.3
+  - 2.0.0
+  - jruby-19mode
+  - rbx
+git:
+  submodules: false
+gemfile:
+  - Gemfile
+matrix:
+  include:
+    - rvm: 2.0.0
+      gemfile: gemfiles/rubyracer
+    - rvm: jruby-19mode
+      gemfile: gemfiles/rubyrhino
