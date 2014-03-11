@@ -5,6 +5,7 @@ rvm:
 
 before_install:
   - git clone https://github.com/projectodd/wunderboss.git
+  - cd wunderboss/modules/core && mvn install -s ../../support/settings.xml
   - cd wunderboss/modules/web && mvn install -s ../../support/settings.xml
   - cd wunderboss/modules/ruby && mvn install -s ../../support/settings.xml
 
