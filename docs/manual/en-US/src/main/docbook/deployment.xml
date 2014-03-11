@@ -134,7 +134,10 @@
     server (overwriting the currently running files) and touch
     <filename>$APP_ROOT/tmp/restart.txt</filename>, where
     <filename>$APP_ROOT</filename> is the root directory of your
-    application. The application's web runtime will restart, sending
+    application. Please be aware that Torquebox will need permissions 
+    to read and delete from the <filename>$APP_ROOT/tmp</filename> directory
+    as the restart.txt file will get deleted once Torquebox detects one of the 
+    redeployment markers. The application's web runtime will restart, sending
     all new web requests to the updated runtime while existing
     requests finish in the old runtimes. Other runtimes may be
     restarted by touching the appropriate redeployment markers, listed
