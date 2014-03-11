@@ -10,7 +10,6 @@ _yardoc
 coverage
 doc/
 lib/bundler/man
-lib/thread_safe/jruby_cache_backend.jar
 pkg
 rdoc
 spec/reports
