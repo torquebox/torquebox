@@ -58,12 +58,9 @@
               </goals>
               <configuration>
                 <fork>true</fork>
-                <systemProperties>
-                  <property>
-                    <name>log4j.configuration</name>
-                    <value>test-log4j.xml</value>
-                  </property>
-                </systemProperties>
+                <jrubyJvmArgs>
+                  -Dlog4j.configuration=test-log4j.xml
+                </jrubyJvmArgs>
               </configuration>
             </execution>
           </executions>

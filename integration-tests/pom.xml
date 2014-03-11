@@ -590,42 +590,18 @@
             <id>run-specs</id>
             <phase>test</phase>
             <configuration>
-              <jrubyJvmArgs>-XX:MaxPermSize=256m -Xms64m -Xmx${rspec.max.heap}</jrubyJvmArgs>
+              <jrubyJvmArgs>
+                -XX:MaxPermSize=256m -Xms64m -Xmx${rspec.max.heap}
+                -Dmax.heap=${jboss.max.heap}
+                -Djboss.lazy=${jboss.lazy}
+                -Djruby.home=${project.basedir}/${integ.dist.dir}/jruby
+                -Dorg.jboss.modules=TRACE
+                -Ddriver.type=${driver.type}
+                -Ddomain.mode=${domain.mode}
+                -Dinteg.debug=${integ.debug}
+                -Dorg.torquebox.slim_distro=${torquebox.slim}
+              </jrubyJvmArgs>
               <specSourceDirectory>${spec.dir}</specSourceDirectory>
-              <systemProperties>
-                <property>
-                  <name>max.heap</name>
-                  <value>${jboss.max.heap}</value>
-                </property>
-                <property>
-                  <name>jboss.lazy</name>
-                  <value>${jboss.lazy}</value>
-                </property>
-                <property>
-                  <name>jruby.home</name>
-                  <value>${project.basedir}/${integ.dist.dir}/jruby</value>
-                </property>
-                <property>
-                  <name>org.jboss.modules</name>
-                  <value>TRACE</value>
-                </property>
-                <property>
-                  <name>driver.type</name>
-                  <value>${driver.type}</value>
-                </property>
-                <property>
-                  <name>domain.mode</name>
-                  <value>${domain.mode}</value>
-                </property>
-                <property>
-                  <name>integ.debug</name>
-                  <value>${integ.debug}</value>
-                </property>
-                <property>
-                  <name>org.torquebox.slim_distro</name>
-                  <value>${torquebox.slim}</value>
-                </property>
-              </systemProperties>
             </configuration>
           </execution>
         </executions>
