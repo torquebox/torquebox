@@ -166,7 +166,7 @@
                       <groupId>de.saumya.mojo</groupId>
                       <artifactId>gem-maven-plugin</artifactId>
                       <versionRange>
-                        [0.28.4-SNAPSHOT,)
+                        [1.0.0-rc,)
                       </versionRange>
                       <goals>
                         <goal>initialize</goal>
@@ -181,7 +181,7 @@
                       <groupId>de.saumya.mojo</groupId>
                       <artifactId>jruby-maven-plugin</artifactId>
                       <versionRange>
-                        [0.28.4-SNAPSHOT,)
+                        [1.0.0-rc,)
                       </versionRange>
                       <goals>
                         <goal>jruby</goal>
