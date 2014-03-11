@@ -5,7 +5,7 @@ rvm:
 
 before_install:
   - git clone https://github.com/projectodd/wunderboss.git
-  - cd wunderboss && mvn install -s support/settings -Dmaven.test.skip
+  - cd wunderboss && mvn install -s support/settings.xml -Dmaven.test.skip
 
 install:
   - gem install jbundler
