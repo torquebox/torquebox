@@ -114,7 +114,6 @@ module TorqueBox
           # Ignore subdirectories when looking for specs
           config.pattern = './spec/*_spec.rb'
         end
-        task :default => :spec
       end
 
       def install_clean_tasks

@@ -1,4 +1,4 @@
-require 'tasks/torquebox'
+require "#{File.dirname(__FILE__)}/tasks/torquebox"
 TorqueBox::RakeHelper.install_standard_tasks
 TorqueBox::RakeHelper.install_compile_tasks('wunderboss-torquebox',
                                             :gemspec => 'torqbox.gemspec',
@@ -20,3 +20,6 @@ namespace :all do
     end
   end
 end
+
+
+task :default => 'all:spec'
