@@ -104,13 +104,12 @@ default.
 
 ## Building TorqBox
 
-    gem install jbundler
-    jbundle install
-    rake build
+    bundle install
+    rake all:build
 
 ## Running all specs
 
-    rake spec
+    rake all:spec
 
 ## Running a single spec
 
@@ -118,8 +117,8 @@ default.
 
 ## Releasing
 
-    rake clean
-    rake release
+    rake all:clean
+    rake all:release
 
 
 [tb_future_thread]: http://markmail.org/thread/4ffelg3qklycwhfo

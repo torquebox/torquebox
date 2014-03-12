@@ -17,4 +17,5 @@
 
 module TorqBox
   VERSION = '0.2.0.dev'
+  WUNDERBOSS_VERSION = '0.1.0-SNAPSHOT'
 end

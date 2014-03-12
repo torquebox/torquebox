@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
-require "#{File.dirname(__FILE__)}/lib/torqbox/version"
+require "#{File.dirname(__FILE__)}/../lib/torqbox/version"
 
 Gem::Specification.new do |s|
-  s.name     = 'torqbox'
+  s.name     = 'torquebox-scheduling'
   s.version  = TorqBox::VERSION
   s.platform = 'java'
   s.summary  = 'TorqueBox Next Generation'
@@ -14,19 +14,11 @@ Gem::Specification.new do |s|
   s.license = 'LGPL3'
 
   s.require_paths = ["lib"]
-  s.bindir        = 'bin'
-  s.executables   = ['torqbox']
   s.files         = Dir['CHANGELOG.md', 'README.md', 'LICENSE',
                         'bin/**/*', 'lib/**/*']
-
-  s.add_dependency 'rack', '>= 1.4.0', '< 2.0'
 
   s.add_development_dependency('jbundler')
   s.add_development_dependency('rake')
   s.add_development_dependency('rake-compiler')
   s.add_development_dependency('rspec', '~> 2.14')
-  s.add_development_dependency('poltergeist', '~> 1.4.1')
-
-  s.requirements << "jar org.projectodd.wunderboss:wunderboss-ruby, #{TorqBox::WUNDERBOSS_VERSION}"
-  s.requirements << "jar org.projectodd.wunderboss:wunderboss-web, #{TorqBox::WUNDERBOSS_VERSION}"
 end

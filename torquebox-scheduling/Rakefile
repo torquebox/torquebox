@@ -1,0 +1,2 @@
+require "#{File.dirname(__FILE__)}/../tasks/torquebox"
+TorqueBox::RakeHelper.install_standard_tasks

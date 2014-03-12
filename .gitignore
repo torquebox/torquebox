@@ -31,6 +31,4 @@ schema.rb
 *.cache
 integration-tests/jboss-eap-*.zip
 pkg/
-.jbundler/
-lib/wunderboss-jars/*.jar
-lib/wunderboss-torquebox.jar
+lib/**/*.jar
