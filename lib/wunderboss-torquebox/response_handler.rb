@@ -33,6 +33,8 @@ module WunderBoss
         end
       end
 
+      # TODO: remove this once we upgrade to Undertow 1.0.2.Final
+      # https://issues.jboss.org/browse/UNDERTOW-133
       def self.strip_term_markers(chunk)
         # Heavily copied from jruby-rack's rack/response.rb
         term = "\r\n"
