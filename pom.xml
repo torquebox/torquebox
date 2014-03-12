@@ -874,6 +874,7 @@
                 <jrubySwitches>-rjruby --${ruby.compat.version}</jrubySwitches>
                 <gemHome>${project.build.directory}/rubygems</gemHome>
                 <gemPath>${project.build.directory}/rubygems</gemPath>
+                <reportName>rspec-report.htm</reportName>
                 <fork>true</fork>
                 <jrubyJvmArgs>
                   -Dlog4j.configuration=test-log4j.xml
