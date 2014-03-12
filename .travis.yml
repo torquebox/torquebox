@@ -7,6 +7,8 @@ before_install:
   - git clone --depth=1 https://github.com/projectodd/wunderboss.git
   - cd wunderboss && mvn install -s support/settings.xml -Dmaven.test.skip
 
+install: bundle install
+
 branches:
   only:
     - torqbox
