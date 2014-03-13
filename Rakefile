@@ -5,7 +5,7 @@ TorqueBox::RakeHelper.install_compile_tasks('wunderboss-torquebox',
                                             :copy_deps => 'lib/wunderboss-jars',
                                             :excluded_deps => ['jruby-complete'])
 
-MODULES = %w(torquebox-scheduling)
+GEMS = %w(scheduling)
 
 namespace :all do
   ['build', 'clean', 'install', 'release', 'spec'].each do |task_name|
@@ -13,8 +13,8 @@ namespace :all do
     task task_name do
       errors = []
       system(%(#{$0} #{task_name})) || errors << 'torquebox'
-      MODULES.each do |mod|
-        system(%(cd #{mod} && #{$0} #{task_name})) || errors << mod
+      GEMS.each do |gem|
+        system(%(cd #{gem} && #{$0} #{task_name})) || errors << gem
       end
       fail("Errors in #{errors.join(', ')}") unless errors.empty?
     end
