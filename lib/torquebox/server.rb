@@ -54,7 +54,7 @@ module TorqueBox
         Web::CreateOption::HOST => @options[:host],
         Web::CreateOption::PORT => @options[:port].to_s
       }
-      @web = WunderBoss.find_or_create_component('web', "default",
+      @web = WunderBoss.find_or_create_component(Web.java_class, "default",
                                                  component_options)
       handler = RackHandler.new(@options[:rack_app], @options[:context_path])
       handler_options = {
