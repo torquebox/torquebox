@@ -2,7 +2,9 @@ require 'spec_helper'
 
 feature "basic rack at non-root context" do
 
-  torqbox('--dir' => "#{apps_dir}/rack/basic", '--context-path' => '/basic-rack')
+  torqbox('--dir' => "#{apps_dir}/rack/basic",
+          '--context-path' => '/basic-rack',
+          '--port' => '8081')
 
   it "should work for basic requests" do
     visit "/basic-rack"

@@ -23,6 +23,7 @@ module TorqBox
 
     java_import org.projectodd.wunderboss.WunderBoss
     java_import org.projectodd.wunderboss.torquebox.RackHandler
+    java_import org.projectodd.wunderboss.web.Web
 
     attr_reader :options
 
@@ -49,13 +50,18 @@ module TorqBox
         rackup = File.join(@options[:root], @options[:rackup])
         @options[:rack_app] = Rack::Builder.parse_file(rackup)[0]
       end
-      @web = WunderBoss.find_or_create_component('web',
-                                                 'host' => @options[:host],
-                                                 'port' => @options[:port].to_s)
+      component_options = {
+        Web::CreateOption::HOST => @options[:host],
+        Web::CreateOption::PORT => @options[:port].to_s
+      }
+      @web = WunderBoss.find_or_create_component('web', "default",
+                                                 component_options)
       handler = RackHandler.new(@options[:rack_app], @options[:context_path])
-      @web.registerHandler(handler,
-                           'context-path' => @options[:context_path],
-                           'static_dir' => File.join(@options[:root], 'public'))
+      handler_options = {
+        Web::RegisterOption::CONTEXT_PATH => @options[:context_path],
+        Web::RegisterOption::STATIC_DIR => File.join(@options[:root], 'public')
+      }
+      @web.registerHandler(handler, handler_options)
     end
 
     def stop

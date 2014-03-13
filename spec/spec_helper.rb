@@ -66,6 +66,7 @@ EOF
       __torqbox_stop
     end
   end
+
 end
 
 def jruby_command
@@ -92,11 +93,14 @@ def torqbox(options)
 end
 
 def __torqbox_start(options)
-  args = options.to_a.flatten.join(' ')
   app_dir = options['--dir']
+  context = options['--context-path'] || '/'
+  port = options['--port'] || '8080'
+  Capybara.app_host = "http://localhost:#{port}"
   ENV['BUNDLE_GEMFILE'] = "#{app_dir}/Gemfile"
   ENV['RUBYLIB'] = "#{lib_dir}:#{app_dir}"
   jruby_jvm_opts = "-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1"
+  args = options.to_a.flatten.join(' ')
   command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{File.join(bin_dir, 'torqbox')} -q #{args}"
   pid, stdin, stdout, stderr = IO.popen4(command)
   ENV['BUNDLE_GEMFILE'] = nil
@@ -125,9 +129,8 @@ def __torqbox_start(options)
     end
   }
   start = Time.now
-  while (Time.now - start) < 30 do
-    context = options['--context-path'] || '/'
-    uri = URI.parse("http://localhost:8080#{context}")
+  while (Time.now - start) < 15 do
+    uri = URI.parse("#{Capybara.app_host}#{context}")
     begin
       response = Net::HTTP.get_response(uri)
       break
