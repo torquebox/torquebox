@@ -18,7 +18,7 @@
 require 'capybara/poltergeist'
 require 'capybara/rspec'
 require 'net/http'
-require 'torqbox'
+require 'torquebox'
 require 'uri'
 
 Capybara.app_host = "http://localhost:8080"
@@ -56,14 +56,14 @@ EOF
   end
 
   config.before(:all) do
-    if self.class.respond_to?(:torqbox_options)
-      __torqbox_start(self.class.torqbox_options)
+    if self.class.respond_to?(:torquebox_options)
+      __torquebox_start(self.class.torquebox_options)
     end
   end
 
   config.after(:all) do
-    if self.class.respond_to?(:torqbox_options)
-      __torqbox_stop
+    if self.class.respond_to?(:torquebox_options)
+      __torquebox_stop
     end
   end
 
@@ -85,14 +85,14 @@ def apps_dir
   File.join(File.dirname(__FILE__), 'apps')
 end
 
-def torqbox(options)
+def torquebox(options)
   metaclass = class << self; self; end
-  metaclass.send(:define_method, :torqbox_options) do
+  metaclass.send(:define_method, :torquebox_options) do
     return options
   end
 end
 
-def __torqbox_start(options)
+def __torquebox_start(options)
   app_dir = options['--dir']
   context = options['--context-path'] || '/'
   port = options['--port'] || '8080'
@@ -101,7 +101,7 @@ def __torqbox_start(options)
   ENV['RUBYLIB'] = "#{lib_dir}:#{app_dir}"
   jruby_jvm_opts = "-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1"
   args = options.to_a.flatten.join(' ')
-  command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{File.join(bin_dir, 'torqbox')} -q #{args}"
+  command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{File.join(bin_dir, 'torquebox')} -q #{args}"
   pid, stdin, stdout, stderr = IO.popen4(command)
   ENV['BUNDLE_GEMFILE'] = nil
   ENV['RUBYLIB'] = nil
@@ -141,7 +141,7 @@ def __torqbox_start(options)
   end
 end
 
-def __torqbox_stop
+def __torquebox_stop
   if @tb_pid
     begin
       Process.kill 'INT', @tb_pid

@@ -1,14 +1,5 @@
-require 'fileutils'
-
-# Use a custom git tag for releasing
 require 'bundler'
-module Bundler
-  class GemHelper
-    def version_tag
-      "vtorqbox-#{version}"
-    end
-  end
-end
+require 'fileutils'
 
 # Don't complain about missing files when cleaning
 require 'rake/clean'

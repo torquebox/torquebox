@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
-require "#{File.dirname(__FILE__)}/../lib/torqbox/version"
+require "#{File.dirname(__FILE__)}/../lib/torquebox/version"
 
 Gem::Specification.new do |s|
   s.name     = 'torquebox-scheduling'
-  s.version  = TorqBox::VERSION
+  s.version  = TorqueBox::VERSION
   s.platform = 'java'
   s.summary  = 'TorqueBox Next Generation'
   s.author   = 'The TorqueBox Team'

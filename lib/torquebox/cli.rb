@@ -17,7 +17,7 @@
 
 require 'optparse'
 
-module TorqBox
+module TorqueBox
   class CLI
     attr_reader :server
 
@@ -25,7 +25,7 @@ module TorqBox
       @options = {}
       ENV['RACK_ENV'] = ENV['RAILS_ENV'] = 'development'
       OptionParser.new do |opts|
-        opts.banner = 'Usage: torqbox [options] [rackup file]'
+        opts.banner = 'Usage: torquebox [options] [rackup file]'
 
         opts.on '-b', '--bind-address IP', 'IP or host to bind to' do |arg|
           @options[:host] = arg
@@ -50,7 +50,7 @@ module TorqBox
           exit 1
         end
         opts.on_tail('--version', 'Show version') do
-          puts "TorqBox #{TorqBox::VERSION}"
+          puts "TorqueBox #{TorqueBox::VERSION}"
           exit 1
         end
       end.parse!(argv)
@@ -59,7 +59,7 @@ module TorqBox
         @options[:rackup] = argv.shift
       end
 
-      @server = ::TorqBox::Server.new(@options)
+      @server = ::TorqueBox::Server.new(@options)
     end
 
     def start

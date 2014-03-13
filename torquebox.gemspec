@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
-require "#{File.dirname(__FILE__)}/lib/torqbox/version"
+require "#{File.dirname(__FILE__)}/lib/torquebox/version"
 
 Gem::Specification.new do |s|
-  s.name     = 'torqbox'
-  s.version  = TorqBox::VERSION
+  s.name     = 'torquebox'
+  s.version  = TorqueBox::VERSION
   s.platform = 'java'
   s.summary  = 'TorqueBox Next Generation'
   s.author   = 'The TorqueBox Team'
@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
 
   s.require_paths = ["lib"]
   s.bindir        = 'bin'
-  s.executables   = ['torqbox']
+  s.executables   = ['torquebox']
   s.files         = Dir['CHANGELOG.md', 'README.md', 'LICENSE',
                         'bin/**/*', 'lib/**/*']
 
@@ -27,6 +27,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rspec', '~> 2.14')
   s.add_development_dependency('poltergeist', '~> 1.4.1')
 
-  s.requirements << "jar org.projectodd.wunderboss:wunderboss-ruby, #{TorqBox::WUNDERBOSS_VERSION}"
-  s.requirements << "jar org.projectodd.wunderboss:wunderboss-web, #{TorqBox::WUNDERBOSS_VERSION}"
+  s.requirements << "jar org.projectodd.wunderboss:wunderboss-ruby, #{TorqueBox::WUNDERBOSS_VERSION}"
+  s.requirements << "jar org.projectodd.wunderboss:wunderboss-web, #{TorqueBox::WUNDERBOSS_VERSION}"
 end

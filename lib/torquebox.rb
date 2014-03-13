@@ -15,7 +15,6 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-module TorqBox
-  VERSION = '0.2.0.dev'
-  WUNDERBOSS_VERSION = '0.1.0-SNAPSHOT'
-end
+require 'torquebox/cli'
+require 'torquebox/server'
+require 'torquebox/version'

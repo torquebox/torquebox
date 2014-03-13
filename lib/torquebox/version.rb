@@ -15,17 +15,7 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'torqbox'
-
-cli = TorqBox::CLI.new(ARGV)
-cli.start
-thread = Thread.current
-Signal.trap("INT") do
-  cli.stop
-  thread.wakeup
+module TorqueBox
+  VERSION = '4.0.0.alpha1.dev'
+  WUNDERBOSS_VERSION = '0.1.0-SNAPSHOT'
 end
-Signal.trap("TERM") do
-  cli.stop
-  thread.wakeup
-end
-sleep

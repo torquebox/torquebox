@@ -18,7 +18,7 @@
 require 'rack'
 require 'wunderboss-torquebox'
 
-module TorqBox
+module TorqueBox
   class Server
 
     java_import org.projectodd.wunderboss.WunderBoss
@@ -41,11 +41,11 @@ module TorqBox
       @options = DEFAULT_OPTIONS.merge(options)
       WunderBoss.put_option('root', @options[:root])
       WunderBoss.log_level = @options[:log_level]
-      @logger = WunderBoss.logger('TorqBox::Server')
+      @logger = WunderBoss.logger('TorqueBox::Server')
     end
 
     def start
-      @logger.info("TorqBox #{::TorqBox::VERSION} starting...")
+      @logger.info("TorqueBox #{::TorqueBox::VERSION} starting...")
       if @options[:rack_app].nil?
         rackup = File.join(@options[:root], @options[:rackup])
         @options[:rack_app] = Rack::Builder.parse_file(rackup)[0]
@@ -65,7 +65,7 @@ module TorqBox
     end
 
     def stop
-      @logger.info("Stopping TorqBox...")
+      @logger.info("Stopping TorqueBox...")
       if @web
         @web.unregister(@options[:context_path])
         @web.stop

@@ -1,12 +1,12 @@
-require 'torqbox'
+require 'torquebox'
 require 'rack/handler'
 
 module Rack
   module Handler
-    module TorqBox
+    module TorqueBox
 
       def self.run(app, options={})
-        server = ::TorqBox::Server.new({ :host => options[:Host],
+        server = ::TorqueBox::Server.new({ :host => options[:Host],
                                          :port => options[:Port],
                                          :rack_app => app })
         yield server if block_given?
@@ -25,7 +25,7 @@ module Rack
       end
 
       def self.valid_options
-        defaults = TorqBox::Server::DEFAULT_OPTIONS
+        defaults = TorqueBox::Server::DEFAULT_OPTIONS
         {
           "Host=HOST" => "Hostname to listen on (default: #{defaults[:host]})",
           "Port=PORT" => "Port to listen on (default: #{defaults[:port]})"
@@ -33,6 +33,6 @@ module Rack
       end
     end
 
-    register :torqbox, TorqBox
+    register :torquebox, TorqueBox
   end
 end

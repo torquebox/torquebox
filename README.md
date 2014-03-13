@@ -1,23 +1,19 @@
-# TorqBox
+# TorqueBox
 
-This is a prototype for the next-generation TorqueBox. We're assigning
-the codename 'TorqBox' to this effort because we need some way to
-differentiate it from TorqueBox itself until this prototype matures
-enough to replace TorqueBox.
-
-Why 'TorqBox'? Mainly because we wanted a new Ruby gem name to release
-under that's not 'torquebox' and it's close enough to TorqueBox that
-the connection is obvious. Plus, search engines should still redirect
-users to the right place for help. Once TorqBox graduates out of a
-prototype, we'll remove the codename and release it under the regular
-'torquebox' gem.
+This is TorqueBox 4.0 and represents a substantial change in direction
+from previous TorqueBox releases. We're moving to a lightweight,
+embedded model that runs without any Java application server, at the
+expense of a few of the more enterprisy features. For users that want
+to run in a Java application server or need those enterprisy features,
+we'll provide a way to take your TorqueBox application and run it
+unmodified on a stock [WildFly][wildfly] installation.
 
 
-## Running TorqBox
+## Running TorqueBox
 
 ### Requirements
 
-TorqBox requires JRuby 1.7.x running on Java 7+ in Ruby 1.9 or 2.0
+TorqueBox requires JRuby 1.7.x running on Java 7+ in Ruby 1.9 or 2.0
 mode. The code has only been tested on JRuby 1.7.6 and higher but
 should work on earlier versions.
 
@@ -25,18 +21,18 @@ should work on earlier versions.
 
 From inside your Rack application's root directory:
 
-    gem install torqbox
-    torqbox
+    gem install torquebox
+    torquebox
 
 ### Rails
 
-Ensure `torqbox` is in your `Gemfile`, then:
+Ensure `torquebox` is in your `Gemfile`, then:
 
-    rails s torqbox
+    rails s torquebox
 
 ### Rack
 
-    rackup -s torqbox
+    rackup -s torquebox
 
 
 ## Motivation
@@ -49,10 +45,10 @@ torquebox-user mailing list.
 
 ## Technology
 
-TorqBox runs on JRuby and sits on top of a new lightweight, pluggable,
+TorqueBox runs on JRuby and sits on top of a new lightweight, pluggable,
 polyglot server codenamed [WunderBoss][wunderboss] (at least for
-now). All the new features of TorqBox will be implemented in
-WunderBoss then exposed via a Ruby API in the TorqBox project. This
+now). All the new features of TorqueBox will be implemented in
+WunderBoss then exposed via a Ruby API in the TorqueBox project. This
 lets other projects, in other languages, reuse the same functionality
 by creating small language-specific API wrappers.
 
@@ -62,16 +58,16 @@ to JBoss Application Server).
 
 We aim to reuse the same underlying components as WildFly where it
 makes sense, and bring our own where it doesn't. Eventually, we hope
-that TorqBox can run on top of WildFly in addition to running without
-it, to give users an option between a full-blown Java application
-server and a very lightweight, minimal server. The lightweight,
-minimal server is what we'll focus on at first, since TorqueBox
-already provides the full application server experience.
+that TorqueBox can run on top of WildFly in addition to running
+without it, to give users an option between a full-blown Java
+application server and a very lightweight, minimal server. The
+lightweight, minimal server is what we'll focus on at first, since
+TorqueBox 3 already provides the full application server experience.
 
 
 ## Current Status
 
-Right now `torqbox` just provides a basic, high-performance Rack
+Right now TorqueBox 4 just provides a basic, high-performance Rack
 implementation. It should outperform anything else out there, but if
 you find any cases where this is not true please [let us
 know][community]. It is substantially faster than TorqueBox 3, which
@@ -81,11 +77,11 @@ their own performance tests.
 
 ## Roadmap
 
-We're developing TorqBox while also maintaining TorqueBox, and we
-expect it to take some time before the TorqBox prototype becomes
-mature enough to be called a new major version of TorqueBox.
+We're developing TorqueBox 4 while also maintaining TorqueBox 3, and
+we expect it to take some time before TorqueBox 4 comes out of alpha
+and betas and into a final release.
 
-Our first goal is for TorqBox to become the best JRuby web server
+Our first goal is for TorqueBox to become the best JRuby web server
 option. To us this means high performance, support for newer web
 technologies (WebSockets, Server Sent Events, SPDY, etc), lightweight,
 and simple to use. It may mean something else to you, and if it does
@@ -97,12 +93,12 @@ to you. It could be messaging, caching, scheduled jobs, daemons, or
 something completely different. Please [let us know][community] what
 you'd like to see.
 
-Long-term we do expect TorqBox to run on top of WildFly for users that
-still want the full Java application server (or are trying to sneak
-Ruby into a Java shop). But this will just be an option, not the
+Long-term we do expect TorqueBox to run on top of WildFly for users
+that still want the full Java application server (or are trying to
+sneak Ruby into a Java shop). But this will just be an option, not the
 default.
 
-## Building TorqBox
+## Building TorqueBox
 
     bundle install
     rake all:build

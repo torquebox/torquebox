@@ -1,4 +1,8 @@
-## 0.2.0
+## 4.0.0.alpha1 - Big Changes
+
+* The gem previous known as 'torqbox' is now 'torquebox-web'
+  4.0.0.alpha1. The 'torquebox' gem pulls in the complete TorqueBox
+  4.0 stack.
 
 * Switched from bundling wunderboss-rack.jar to pulling in wunderboss
   and other necessary jars via maven.
@@ -7,7 +11,7 @@
   here, so the build was restructured to allow compiling java source
   files with maven dependencies without actually needing to use maven.
 
-* Added --context-path option to 'torqbox' command to start web
+* Added --context-path option to 'torquebox' command to start web
   applications at a non-root context. In embedded mode this probably
   isn't all that useful outside of testing.
 

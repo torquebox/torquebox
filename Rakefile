@@ -1,7 +1,7 @@
 require "#{File.dirname(__FILE__)}/tasks/torquebox"
 TorqueBox::RakeHelper.install_standard_tasks
 TorqueBox::RakeHelper.install_compile_tasks('wunderboss-torquebox',
-                                            :gemspec => 'torqbox.gemspec',
+                                            :gemspec => 'torquebox.gemspec',
                                             :copy_deps => 'lib/wunderboss-jars',
                                             :excluded_deps => ['jruby-complete'])
 

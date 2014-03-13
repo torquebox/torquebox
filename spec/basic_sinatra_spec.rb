@@ -2,7 +2,7 @@ require 'spec_helper'
 
 feature "basic sinatra test" do
 
-  torqbox('--dir' => "#{apps_dir}/sinatra/basic", '--context-path' => '/basic-sinatra')
+  torquebox('--dir' => "#{apps_dir}/sinatra/basic", '--context-path' => '/basic-sinatra')
 
   it "should work" do
     visit "/basic-sinatra"
