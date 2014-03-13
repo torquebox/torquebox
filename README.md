@@ -109,6 +109,9 @@ default.
 
 ## Running all specs
 
+Make sure `phantomjs` is available on your $PATH -
+http://phantomjs.org/download.html
+
     rake all:spec
 
 ## Running a single spec
