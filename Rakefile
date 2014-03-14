@@ -17,6 +17,10 @@ GEMS = %w(core scheduling web)
   end
 end
 
+require "#{File.dirname(__FILE__)}/etc/tasks/torquebox"
+TorqueBox::RakeHelper.install_bundler_tasks
+TorqueBox::RakeHelper.install_clean_tasks
+
 task 'build' do
   all_jars = GEMS.map do |gem|
     Dir.glob("#{gem}/lib/**/*.jar")
@@ -31,7 +35,7 @@ task 'build' do
     exit 1
   end
 
-  all_gems = GEMS.map do |gem|
+  all_gems = (GEMS + ['.']).map do |gem|
     Dir.glob("#{gem}/pkg/*.gem")
   end.flatten
   puts "Gem sizes:"
