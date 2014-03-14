@@ -1,4 +1,4 @@
-require "#{File.dirname(__FILE__)}/../tasks/torquebox"
+require "#{File.dirname(__FILE__)}/../etc/tasks/torquebox"
 TorqueBox::RakeHelper.install_standard_tasks
 
 task :default => :spec
