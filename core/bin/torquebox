@@ -18,14 +18,3 @@
 require 'torquebox'
 
 cli = TorqueBox::CLI.new(ARGV)
-cli.start
-thread = Thread.current
-Signal.trap("INT") do
-  cli.stop
-  thread.wakeup
-end
-Signal.trap("TERM") do
-  cli.stop
-  thread.wakeup
-end
-sleep

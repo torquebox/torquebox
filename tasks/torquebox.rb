@@ -30,12 +30,12 @@ module TorqueBox
 
       # Install Rake tasks necessary to compile TorqueBox gems
       #
-      # @param jar_name [String] The name of the generated jar file
       # @param options Optional parameters (a Hash), including:
+      # @option options [String] :source The directory containing java code to compile, if any
       # @option options [String] :gemspec The path to a gemspec file containing requirements entries for any maven jars required for compilation
       # @option options [String] :copy_deps The path to copy maven dependencies to - nil means don't copy
-      # @option Options [Array] :excluded_deps An array of maven dependencies to exclude from inclusion in the gem
-      def install_compile_tasks(jar_name, options={})
+      # @option options [Array] :excluded_deps An array of maven dependencies to exclude from inclusion in the gem
+      def install_java_tasks(options={})
         #
         # Resolve maven dependencies using JBundler API
         # We don't use JBundler directly because that requires a separate
@@ -63,11 +63,13 @@ module TorqueBox
           classpath = []
         end
 
-        require 'rake/javaextensiontask'
-        ext_task = Rake::JavaExtensionTask.new(jar_name) do |ext|
-          ext.classpath = classpath
-          ext.source_version = '1.7'
-          ext.target_version = '1.7'
+        if options[:source]
+          require 'rake/javaextensiontask'
+          ext_task = Rake::JavaExtensionTask.new(options[:source]) do |ext|
+            ext.classpath = classpath
+            ext.source_version = '1.7'
+            ext.target_version = '1.7'
+          end
         end
         if options[:copy_deps]
           deps_dir = options[:copy_deps]
@@ -78,7 +80,7 @@ module TorqueBox
             if path.end_with?('.jar')
               jar = File.basename(path)
               unless excluded_deps.any? { |excluded_dep| jar.match(excluded_dep) }
-                file "#{deps_dir}/#{jar}" => "lib/#{ext_task.name}.jar" do
+                file "#{deps_dir}/#{jar}" do
                   install path, "#{deps_dir}/#{jar}"
                 end
                 task 'compile' => "#{deps_dir}/#{jar}"

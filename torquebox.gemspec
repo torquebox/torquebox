@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-require "#{File.dirname(__FILE__)}/lib/torquebox/version"
+require "#{File.dirname(__FILE__)}/core/lib/torquebox/version"
 
 Gem::Specification.new do |s|
   s.name     = 'torquebox'
@@ -19,14 +19,12 @@ Gem::Specification.new do |s|
   s.files         = Dir['CHANGELOG.md', 'README.md', 'LICENSE',
                         'bin/**/*', 'lib/**/*']
 
-  s.add_dependency 'rack', '>= 1.4.0', '< 2.0'
+  s.add_dependency 'torquebox-core', TorqueBox::VERSION
+  s.add_dependency 'torquebox-scheduling', TorqueBox::VERSION
+  s.add_dependency 'torquebox-web', TorqueBox::VERSION
 
   s.add_development_dependency('jbundler')
   s.add_development_dependency('rake')
   s.add_development_dependency('rake-compiler')
   s.add_development_dependency('rspec', '~> 2.14')
-  s.add_development_dependency('poltergeist', '~> 1.4.1')
-
-  s.requirements << "jar org.projectodd.wunderboss:wunderboss-ruby, #{TorqueBox::WUNDERBOSS_VERSION}"
-  s.requirements << "jar org.projectodd.wunderboss:wunderboss-web, #{TorqueBox::WUNDERBOSS_VERSION}"
 end

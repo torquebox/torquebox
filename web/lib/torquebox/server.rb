@@ -16,13 +16,13 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'rack'
-require 'wunderboss-torquebox'
+require 'torquebox-web'
 
 module TorqueBox
   class Server
 
     java_import org.projectodd.wunderboss.WunderBoss
-    java_import org.projectodd.wunderboss.torquebox.RackHandler
+    java_import org.projectodd.wunderboss.rack.RackHandler
     java_import org.projectodd.wunderboss.web.Web
 
     attr_reader :options

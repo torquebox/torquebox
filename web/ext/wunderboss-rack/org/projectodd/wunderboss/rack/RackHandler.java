@@ -1,4 +1,4 @@
-package org.projectodd.wunderboss.torquebox;
+package org.projectodd.wunderboss.rack;
 
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -57,6 +57,6 @@ public class RackHandler implements HttpHandler {
     private RubyClass rackResponderClass;
     private RackEnvironment rackEnvironment;
 
-    public static final String RESPONSE_HANDLER_CLASS_NAME = "WunderBoss::TorqueBox::ResponseHandler";
+    public static final String RESPONSE_HANDLER_CLASS_NAME = "WunderBoss::Rack::ResponseHandler";
     public static final String RESPONSE_HANDLER_METHOD_NAME = "handle";
 }

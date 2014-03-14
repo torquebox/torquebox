@@ -1,4 +1,4 @@
-package org.projectodd.wunderboss.torquebox;
+package org.projectodd.wunderboss.rack;
 
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;

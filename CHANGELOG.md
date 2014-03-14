@@ -4,6 +4,8 @@
   4.0.0.alpha1. The 'torquebox' gem pulls in the complete TorqueBox
   4.0 stack.
 
+* The 'torqbox' command is now 'torquebox run'.
+
 * Switched from bundling wunderboss-rack.jar to pulling in wunderboss
   and other necessary jars via maven.
 

@@ -1,5 +1,5 @@
 module WunderBoss
-  module TorqueBox
+  module Rack
     class ResponseHandler
       def self.handle(rack_response, rack_responder)
         status  = rack_response[0]

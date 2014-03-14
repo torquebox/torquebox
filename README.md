@@ -22,7 +22,7 @@ should work on earlier versions.
 From inside your Rack application's root directory:
 
     gem install torquebox
-    torquebox
+    torquebox run
 
 ### Rails
 
@@ -101,23 +101,28 @@ default.
 ## Building TorqueBox
 
     bundle install
-    rake all:build
+    rake build
 
 ## Running all specs
 
 Make sure `phantomjs` is available on your $PATH -
 http://phantomjs.org/download.html
 
-    rake all:spec
+    rake spec
 
 ## Running a single spec
 
+    cd web
     SPEC=spec/basic_sinatra_spec.rb rake spec
+
+## Installing from source
+
+    rake install
 
 ## Releasing
 
-    rake all:clean
-    rake all:release
+    rake clean
+    rake release
 
 
 [tb_future_thread]: http://markmail.org/thread/4ffelg3qklycwhfo

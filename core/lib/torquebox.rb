@@ -15,6 +15,9 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+Dir.glob("#{File.dirname(__FILE__)}/wunderboss-jars/*.jar") do |jar|
+  require jar
+end
+
 require 'torquebox/cli'
-require 'torquebox/server'
 require 'torquebox/version'

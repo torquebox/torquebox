@@ -31,4 +31,4 @@ schema.rb
 *.cache
 integration-tests/jboss-eap-*.zip
 pkg/
-lib/**/*.jar
+**/lib/**/*.jar

@@ -1,4 +1,4 @@
-package org.projectodd.wunderboss.torquebox;
+package org.projectodd.wunderboss.rack;
 
 import java.io.File;
 import java.io.IOException;

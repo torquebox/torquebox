@@ -15,10 +15,12 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+CORE_DIR = "#{File.dirname(__FILE__)}/../../core"
+$: << "#{CORE_DIR}/lib"
+require "#{CORE_DIR}/spec/spec_helper"
 require 'capybara/poltergeist'
 require 'capybara/rspec'
 require 'net/http'
-require 'torquebox'
 require 'uri'
 
 Capybara.app_host = "http://localhost:8080"
@@ -69,16 +71,12 @@ EOF
 
 end
 
-def jruby_command
-  File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
-end
-
 def lib_dir
   File.join(File.dirname(__FILE__), '..', 'lib')
 end
 
 def bin_dir
-  File.join(File.dirname(__FILE__), '..', 'bin')
+  File.join(CORE_DIR, 'bin')
 end
 
 def apps_dir
@@ -101,7 +99,7 @@ def __torquebox_start(options)
   ENV['RUBYLIB'] = "#{lib_dir}:#{app_dir}"
   jruby_jvm_opts = "-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1"
   args = options.to_a.flatten.join(' ')
-  command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{File.join(bin_dir, 'torquebox')} -q #{args}"
+  command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' -I#{CORE_DIR}/lib #{File.join(bin_dir, 'torquebox')} run -q #{args}"
   pid, stdin, stdout, stderr = IO.popen4(command)
   ENV['BUNDLE_GEMFILE'] = nil
   ENV['RUBYLIB'] = nil
