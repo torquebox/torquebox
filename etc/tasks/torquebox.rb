@@ -56,6 +56,7 @@ module TorqueBox
           require 'jbundler/aether'
           config = JBundler::Config.new
           aether = JBundler::AetherRuby.new(config)
+          aether.add_repository('bees-snapshot', 'https://repository-projectodd.forge.cloudbees.com/snapshot/')
           jars.each { |jar| aether.add_artifact(jar) }
           aether.resolve
           classpath = aether.classpath_array
@@ -94,8 +95,6 @@ module TorqueBox
         task 'build' => 'compile'
         task 'spec' => 'compile'
       end
-
-      protected
 
       def install_bundler_tasks
         Bundler::GemHelper.install_tasks
