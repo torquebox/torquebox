@@ -14,8 +14,6 @@ Gem::Specification.new do |s|
   s.license = 'LGPL3'
 
   s.require_paths = ["lib"]
-  s.bindir        = 'bin'
-  s.executables   = ['torquebox']
   s.files         = Dir['CHANGELOG.md', 'README.md', 'LICENSE',
                         'bin/**/*', 'lib/**/*']
 
@@ -27,4 +25,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rake')
   s.add_development_dependency('rake-compiler')
   s.add_development_dependency('rspec', '~> 2.14')
+  s.add_development_dependency('poltergeist', '~> 1.4.1')
 end
