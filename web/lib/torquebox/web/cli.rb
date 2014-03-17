@@ -40,13 +40,13 @@ module TorqueBox
           options[:static_dir] = File.join(options[:root], 'public')
         end
 
-        if ENV['TORQUEBOX_CLI_SPECS']
-          options[:auto_start] = false
-        end
+        # We always want direct control over starting / stopping
+        options[:auto_start] = false
 
         @options = options
         @server = ::TorqueBox::Web::Server.run('default', options)
         unless ENV['TORQUEBOX_CLI_SPECS']
+          @server.start
           thread = Thread.current
           Signal.trap("INT") do
             @server.stop

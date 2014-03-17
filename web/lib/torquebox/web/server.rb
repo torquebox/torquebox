@@ -36,6 +36,8 @@ module TorqueBox
       def mount(options={})
         options = DEFAULT_MOUNT_OPTIONS.merge(options)
         validate_options(options, DEFAULT_MOUNT_OPTIONS)
+        @logger.debugf("Mounting context path %s with options %s on TorqueBox::Web::Server '%s'",
+                       options[:context_path], options.inspect, @web_component.name)
         if options[:rack_app].nil?
           require 'rack'
           rackup = File.join(options[:root], options[:rackup])
@@ -58,10 +60,14 @@ module TorqueBox
       end
 
       def start
+        @logger.infof("Starting TorqueBox::Web::Server '%s'",
+                      @web_component.name)
         @web_component.start
       end
 
       def stop
+        @logger.infof("Stopping TorqueBox::Web::Server '%s'",
+                      @web_component.name)
         @web_component.stop
       end
 
@@ -69,11 +75,14 @@ module TorqueBox
       protected
 
       def initialize(name, options={})
+        @logger = WB.logger('TorqueBox::Web::Server')
         options = DEFAULT_CREATE_OPTIONS.merge(options)
         validate_options(options, DEFAULT_CREATE_OPTIONS)
         create_options = extract_options(options, WBWeb::CreateOption)
         web = WB.find_or_create_component(WBWeb.java_class, name,
                                           create_options)
+        @logger.debugf("TorqueBox::Web::Server %s has component %s",
+                       name, web)
         @web_component = web
       end
 
