@@ -60,8 +60,12 @@ module TorqueBox
       parser.on '-q', '--quiet', 'Only write errors to the output' do
         options[:log_level] = 'ERROR'
       end
-      parser.on '-v', '--verbose', 'Write more logging information to the output' do
-        options[:log_level] = 'DEBUG'
+      parser.on '-v', '--verbose', 'Be verbose - use twice for even more output' do
+        if options[:log_level] = 'DEBUG'
+          options[:log_level] = 'TRACE'
+        else
+          options[:log_level] = 'DEBUG'
+        end
       end
       parser.on_tail('-h', '--help', 'Show this message') do
         puts parser

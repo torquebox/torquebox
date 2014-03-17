@@ -48,6 +48,7 @@ module TorqueBox
         end
         handler = RackHandler.new(options[:rack_app], options[:context_path])
         register_options = extract_options(options, WBWeb::RegisterOption)
+        @logger.tracef("Registering handler at context path %s", options[:context_path])
         @web_component.register_handler(handler, register_options)
         handler
       end
@@ -81,7 +82,7 @@ module TorqueBox
         create_options = extract_options(options, WBWeb::CreateOption)
         web = WB.find_or_create_component(WBWeb.java_class, name,
                                           create_options)
-        @logger.debugf("TorqueBox::Web::Server %s has component %s",
+        @logger.debugf("TorqueBox::Web::Server '%s' has component %s",
                        name, web)
         @web_component = web
       end
