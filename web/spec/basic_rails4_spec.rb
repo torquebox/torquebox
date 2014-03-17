@@ -6,6 +6,7 @@ feature 'basic rails4 test' do
 
   it 'should do a basic get' do
     visit '/basic-rails4'
+    puts page.source
     expect(page).to have_content('It works')
     expect(page.find('#success')[:class]).to eq('basic-rails4')
   end
