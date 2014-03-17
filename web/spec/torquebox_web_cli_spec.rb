@@ -22,7 +22,7 @@ describe TorqueBox::Web::CLI do
   before(:each) do
     ENV['TORQUEBOX_CLI_SPECS'] = 'true'
     @spec_dir = File.dirname(__FILE__)
-    @args = %W{run -q}
+    @args = %W{run --dir #{apps_dir}/rack/basic -q}
   end
 
   after(:each) do
@@ -32,28 +32,29 @@ describe TorqueBox::Web::CLI do
   it 'should override bind address' do
     @args += %W{-b 1.2.3.4}
     TorqueBox::CLI.new(@args)
-    server = TorqueBox::CLI.extensions['run'].server
-    server.options[:host].should == '1.2.3.4'
+    options = TorqueBox::CLI.extensions['run'].options
+    options[:host].should == '1.2.3.4'
   end
 
   it 'should override port' do
     @args += %W{-p 8765}
     TorqueBox::CLI.new(@args)
-    server = TorqueBox::CLI.extensions['run'].server
-    server.options[:port].should == '8765'
+    options = TorqueBox::CLI.extensions['run'].options
+    options[:port].should == '8765'
   end
 
   it 'should override rackup file' do
-    @args << File.join(@spec_dir, 'other_config.ru')
+    @args << 'other_config.ru'
     TorqueBox::CLI.new(@args)
-    server = TorqueBox::CLI.extensions['run'].server
-    server.options[:rackup].should end_with('other_config.ru')
+    options = TorqueBox::CLI.extensions['run'].options
+    options[:rackup].should end_with('other_config.ru')
   end
 
   it 'should override root directory' do
-    @args += %W{--dir #{@spec_dir}}
+    dir = "#{apps_dir}/rack/other"
+    @args += %W{--dir #{dir}}
     TorqueBox::CLI.new(@args)
-    server = TorqueBox::CLI.extensions['run'].server
-    server.options[:root].should == @spec_dir
+    options = TorqueBox::CLI.extensions['run'].options
+    options[:root].should == dir
   end
 end

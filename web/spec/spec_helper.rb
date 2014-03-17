@@ -61,6 +61,8 @@ EOF
     if self.class.respond_to?(:torquebox_options)
       __torquebox_start(self.class.torquebox_options)
     end
+
+    org.projectodd.wunderboss.WunderBoss.log_level = 'ERROR'
   end
 
   config.after(:all) do

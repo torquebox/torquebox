@@ -5,5 +5,4 @@ end
 require 'wunderboss-rack.jar'
 require 'wunderboss_rack_response_handler'
 
-require 'torquebox/web/cli'
-require 'torquebox/server'
+require 'torquebox/web'

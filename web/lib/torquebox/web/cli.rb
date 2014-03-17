@@ -5,7 +5,7 @@ module TorqueBox
   module Web
     class CLI
 
-      attr_reader :server
+      attr_reader :options
 
       def usage_parameters
         "[options] [rackup_file]"
@@ -35,9 +35,18 @@ module TorqueBox
           options[:rackup] = argv.shift
         end
 
-        @server = ::TorqueBox::Server.new(options)
+        if options[:root]
+          org.projectodd.wunderboss.WunderBoss.put_option('root', options[:root])
+          options[:static_dir] = File.join(options[:root], 'public')
+        end
+
+        if ENV['TORQUEBOX_CLI_SPECS']
+          options[:auto_start] = false
+        end
+
+        @options = options
+        @server = ::TorqueBox::Web::Server.run('default', options)
         unless ENV['TORQUEBOX_CLI_SPECS']
-          @server.start
           thread = Thread.current
           Signal.trap("INT") do
             @server.stop

@@ -70,6 +70,10 @@ module TorqueBox
       end
       parser.parse!(argv)
 
+      if options.has_key?(:log_level)
+        org.projectodd.wunderboss.WunderBoss.log_level = options.delete(:log_level)
+      end
+
       if extension
         extension.run(argv, options)
       else
