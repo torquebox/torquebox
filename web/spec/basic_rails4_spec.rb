@@ -6,8 +6,8 @@ feature 'basic rails4 test' do
 
   it 'should do a basic get' do
     visit '/basic-rails4'
-    page.should have_content('It works')
-    page.find('#success')[:class].should == 'basic-rails4'
+    expect(page).to have_content('It works')
+    expect(page.find('#success')[:class]).to eq('basic-rails4')
   end
 
   context 'streaming' do
@@ -22,18 +22,18 @@ feature 'basic rails4 test' do
     def verify_streaming(url)
       uri = URI.parse("#{Capybara.app_host}#{url}")
       Net::HTTP.get_response(uri) do |response|
-        response.should be_chunked
-        response.header['transfer-encoding'].should == 'chunked'
+        expect(response).to be_chunked
+        expect(response.header['transfer-encoding']).to eq('chunked')
         chunk_count, body = 0, ""
         response.read_body do |chunk|
           chunk_count += 1
           body += chunk
         end
-        body.should include('It works')
+        expect(body).to include('It works')
         body.each_line do |line|
-          line.should_not match(/^\d+\s*$/)
+          expect(line).not_to match(/^\d+\s*$/)
         end
-        chunk_count.should be > 1
+        expect(chunk_count).to be > 1
       end
     end
   end
@@ -41,15 +41,15 @@ feature 'basic rails4 test' do
   it 'should return a static page beneath default public dir' do
     visit "/basic-rails4/some_page.html"
     element = page.find('#success')
-    element.should_not be_nil
-    element.text.should == 'static page'
+    expect(element).not_to be_nil
+    expect(element.text).to eq('static page')
   end
 
   it "should support setting multiple cookies" do
     visit "/basic-rails4/root/multiple_cookies"
-    page.driver.cookies['foo1'].value.should == 'bar1'
-    page.driver.cookies['foo2'].value.should == 'bar2'
-    page.driver.cookies['foo3'].value.should == 'bar3'
+    expect(page.driver.cookies['foo1'].value).to eq('bar1')
+    expect(page.driver.cookies['foo2'].value).to eq('bar2')
+    expect(page.driver.cookies['foo3'].value).to eq('bar3')
   end
 
 end
