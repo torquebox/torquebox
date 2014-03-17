@@ -136,6 +136,7 @@ def __torquebox_start(options)
     uri = URI.parse("#{Capybara.app_host}#{context}")
     begin
       response = Net::HTTP.get_response(uri)
+      puts "!!! response is #{response.code} #{response.inspect} #{response.body}"
       break
     rescue Exception
       sleep 0.2 # sleep and retry
