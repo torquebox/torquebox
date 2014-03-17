@@ -122,8 +122,11 @@ def __torquebox_start(options)
   @tb_stderr_thread = Thread.new(stderr) { |stderr_io|
     begin
       while true
-        STDERR.write(stderr_io.readpartial(1024))
-        error_seen = true
+        error_output = stderr_io.readpartial(1024)
+        unless error_output.empty?
+          error_seen = true
+        end
+        STDERR.write(error_output)
       end
     rescue EOFError
     end
@@ -137,7 +140,10 @@ def __torquebox_start(options)
     rescue Exception
       sleep 0.2 # sleep and retry
     end
-    break if error_seen
+    if error_seen
+      $stderr.puts "Error in application start, returning immediately"
+      break
+    end
   end
 end
 
