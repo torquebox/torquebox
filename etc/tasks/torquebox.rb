@@ -56,7 +56,7 @@ module TorqueBox
           require 'jbundler/aether'
           config = JBundler::Config.new
           aether = JBundler::AetherRuby.new(config)
-          aether.add_repository('bees-snapshot', 'https://repository-projectodd.forge.cloudbees.com/snapshot/')
+          aether.add_snapshot_repository('bees-snapshot', 'https://repository-projectodd.forge.cloudbees.com/snapshot/')
           jars.each { |jar| aether.add_artifact(jar) }
           aether.resolve
           classpath = aether.classpath_array
