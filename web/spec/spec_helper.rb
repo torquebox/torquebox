@@ -58,16 +58,16 @@ EOF
   end
 
   config.before(:all) do
-    if self.class.respond_to?(:torquebox_options)
-      __torquebox_start(self.class.torquebox_options)
+    if self.class.respond_to?(:server_options)
+      __server_start(self.class.server_options)
     end
 
     org.projectodd.wunderboss.WunderBoss.log_level = 'ERROR'
   end
 
   config.after(:all) do
-    if self.class.respond_to?(:torquebox_options)
-      __torquebox_stop
+    if self.class.respond_to?(:server_options)
+      __server_stop
     end
   end
 
@@ -87,31 +87,51 @@ end
 
 def torquebox(options)
   metaclass = class << self; self; end
-  metaclass.send(:define_method, :torquebox_options) do
+  metaclass.send(:define_method, :server_options) do
+    args = options.to_a.flatten.join(' ')
+    return {
+      :app_dir => options['--dir'],
+      :context_path => options['--context-path'] || '/',
+      :port => options['--port'] || '8080',
+      :command => "#{File.join(bin_dir, 'torquebox')} run -vv #{args}"
+    }
     return options
   end
 end
 
-def __torquebox_start(options)
-  app_dir = options['--dir']
-  context = options['--context-path'] || '/'
-  port = options['--port'] || '8080'
+def rackup(options)
+  metaclass = class << self; self; end
+  metaclass.send(:define_method, :server_options) do
+    app_dir = options.delete(:dir)
+    args = options.to_a.flatten.join(' ')
+    return {
+      :app_dir => app_dir,
+      :context_path => '/',
+      :port => options['--port'] || '9292',
+      :command => "-S rackup -s torquebox #{args} #{app_dir}/config.ru"
+    }
+  end
+end
+
+def __server_start(options)
+  app_dir = options[:app_dir]
+  context_path = options[:context_path]
+  port = options[:port]
   Capybara.app_host = "http://localhost:#{port}"
   ENV['BUNDLE_GEMFILE'] = "#{app_dir}/Gemfile"
-  ENV['RUBYLIB'] = "#{lib_dir}:#{app_dir}"
+  ENV['RUBYLIB'] = "#{CORE_DIR}/lib:#{lib_dir}:#{app_dir}"
   jruby_jvm_opts = "-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1"
-  args = options.to_a.flatten.join(' ')
-  command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' -I#{CORE_DIR}/lib #{File.join(bin_dir, 'torquebox')} run -vv #{args}"
+  command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{options[:command]}"
   pid, stdin, stdout, stderr = IO.popen4(command)
   ENV['BUNDLE_GEMFILE'] = nil
   ENV['RUBYLIB'] = nil
-  @tb_pid = pid
+  @server_pid = pid
 
   stdin.close
   stdout.sync = true
   stderr.sync = true
   error_seen = false
-  @tb_stdout_thread = Thread.new(stdout) { |stdout_io|
+  @stdout_thread = Thread.new(stdout) { |stdout_io|
     begin
       while true
         STDOUT.write(stdout_io.readpartial(1024))
@@ -119,7 +139,7 @@ def __torquebox_start(options)
     rescue EOFError
     end
   }
-  @tb_stderr_thread = Thread.new(stderr) { |stderr_io|
+  @stderr_thread = Thread.new(stderr) { |stderr_io|
     begin
       while true
         STDERR.write(stderr_io.readpartial(1024))
@@ -132,7 +152,7 @@ def __torquebox_start(options)
   booted = false
   timeout = 60
   while (Time.now - start) < timeout do
-    uri = URI.parse("#{Capybara.app_host}#{context}")
+    uri = URI.parse("#{Capybara.app_host}#{context_path}")
     begin
       response = Net::HTTP.get_response(uri)
       booted = true
@@ -147,17 +167,17 @@ def __torquebox_start(options)
   end
 end
 
-def __torquebox_stop
-  if @tb_pid
+def __server_stop
+  if @server_pid
     begin
-      Process.kill 'INT', @tb_pid
+      Process.kill 'INT', @server_pid
     rescue Errno::ESRCH
       # ignore no such process errors - it died already
     end
-    @tb_pid = nil
-    @tb_stdout_thread.join
-    @tb_stdout_thread = nil
-    @tb_stderr_thread.join
-    @tb_stderr_thread = nil
+    @server_pid = nil
+    @stdout_thread.join
+    @stdout_thread = nil
+    @stderr_thread.join
+    @stderr_thread = nil
   end
 end

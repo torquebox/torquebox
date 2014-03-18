@@ -88,7 +88,6 @@ feature "basic rack at non-root context" do
 end
 
 feature "basic rack at root context" do
-
   torquebox('--dir' => "#{apps_dir}/rack/basic", '--context-path' => '/')
 
   it "should have correct path information" do
@@ -98,5 +97,17 @@ feature "basic rack at root context" do
     page.find("#path_info").text.strip.should == '/plaintext'
     page.find("#request_uri").text.strip.should == '/plaintext'
   end
+end
 
+feature "basic rack with rackup" do
+  rackup(:dir => "#{apps_dir}/rack/basic")
+
+  it "should work for basic requests" do
+    visit "/"
+    page.should have_content('it worked')
+    page.find("#success")[:class].strip.should == 'basic-rack'
+    page.find("#script_name").text.strip.should == ''
+    page.find("#path_info").text.strip.should == '/'
+    page.find("#request_uri").text.strip.should == '/'
+  end
 end
