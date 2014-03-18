@@ -132,7 +132,7 @@ def __torquebox_start(options)
     end
   }
   start = Time.now
-  while (Time.now - start) < 15 do
+  while (Time.now - start) < 45 do
     uri = URI.parse("#{Capybara.app_host}#{context}")
     begin
       response = Net::HTTP.get_response(uri)
