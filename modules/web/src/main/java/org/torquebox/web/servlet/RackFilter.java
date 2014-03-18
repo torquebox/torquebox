@@ -62,6 +62,30 @@ public class RackFilter implements Filter {
         if (this.runtimePool == null) {
             throw new ServletException( "Unable to obtain runtime pool: " + runtimePoolServiceName );
         }
+        preloadRackup();
+    }
+
+    protected void preloadRackup() throws ServletException {
+        // No need to preload lazy pools
+        if (this.runtimePool.isLazy()) {
+            return;
+        }
+        Ruby runtime = null;
+        try {
+            runtime = this.runtimePool.borrowRuntime( "rack" );
+            this.componentResolver.resolve( runtime );
+        } catch (RaiseException e) {
+            log.error( "Error loading rackup file", e );
+            log.error( "Underlying Ruby exception", e.getCause() );
+            throw new ServletException( e );
+        } catch (Exception e) {
+            log.error( "Error loading rackup file", e );
+            throw new ServletException( e );
+        } finally {
+            if (runtime != null) {
+                this.runtimePool.returnRuntime( runtime );
+            }
+        }
     }
 
     public void destroy() {
