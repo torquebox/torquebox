@@ -5,7 +5,8 @@ rvm:
 
 install: bundle install
 
+before_script: rake build
+
 branches:
   only:
     - torqbox
-
