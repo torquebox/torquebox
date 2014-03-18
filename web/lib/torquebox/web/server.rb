@@ -39,27 +39,15 @@ module TorqueBox
         @logger.debugf("Mounting context path %s with options %s on TorqueBox::Web::Server '%s'",
                        options[:context_path], options.inspect, @web_component.name)
         if options[:rack_app].nil?
-          begin
-            require 'rack'
-            rackup = File.join(options[:root], options[:rackup])
-            options[:rack_app] = Rack::Builder.parse_file(rackup).first
-            puts "!!! Parsed rackup"
-          rescue Exception => e
-            puts "!!! Exception parsing rackup: #{e.inspect}"
-            puts e.backtrace
-            throw e
-          end
+          require 'rack'
+          rackup = File.join(options[:root], options[:rackup])
+          options[:rack_app] = Rack::Builder.parse_file(rackup).first
         end
         if options[:init]
           options[:init] = options[:init].to_java(java.lang.Runnable)
         end
-        begin
-          handler = RackHandler.new(options[:rack_app], options[:context_path])
-          register_options = extract_options(options, WBWeb::RegisterOption)
-        rescue Exception => e
-          puts "!!! Exception creating RackHandler: #{e.inspect}"
-          puts e.backtrace
-        end
+        handler = RackHandler.new(options[:rack_app], options[:context_path])
+        register_options = extract_options(options, WBWeb::RegisterOption)
         @logger.tracef("Registering handler at context path %s", options[:context_path])
         @web_component.register_handler(handler, register_options)
         handler

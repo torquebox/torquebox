@@ -122,11 +122,8 @@ def __torquebox_start(options)
   @tb_stderr_thread = Thread.new(stderr) { |stderr_io|
     begin
       while true
-        error_output = stderr_io.readpartial(1024)
-        unless error_output.empty?
-          error_seen = true
-        end
-        STDERR.write(error_output)
+        STDERR.write(stderr_io.readpartial(1024))
+        error_seen = true
       end
     rescue EOFError
     end
@@ -136,20 +133,12 @@ def __torquebox_start(options)
     uri = URI.parse("#{Capybara.app_host}#{context}")
     begin
       response = Net::HTTP.get_response(uri)
-      puts "!!! response is #{response.code} #{response.inspect} #{response.body}"
       break
     rescue Exception
       sleep 0.2 # sleep and retry
     end
-    if error_seen
-      $stderr.puts "Error in application start, returning immediately"
-      break
-    end
+    break if error_seen
   end
-rescue Exception => e
-  $stderr.puts "Unexpected exception in __torquebox_start: #{e.inspect}"
-  $stderr.puts e.backtrace
-  throw e
 end
 
 def __torquebox_stop
