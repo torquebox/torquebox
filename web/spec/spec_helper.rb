@@ -126,6 +126,7 @@ def __torquebox_start(options)
         unless error_output.empty?
           error_seen = true
         end
+        STDOUT.write(error_output)
         STDERR.write(error_output)
       end
     rescue EOFError
@@ -142,11 +143,14 @@ def __torquebox_start(options)
       sleep 0.2 # sleep and retry
     end
     if error_seen
+      puts "Error in application start, returning immediately"
       $stderr.puts "Error in application start, returning immediately"
       break
     end
   end
 rescue Exception => e
+  puts "Unexpected exception in __torquebox_start: #{e.inspect}"
+  puts e.backtrace
   $stderr.puts "Unexpected exception in __torquebox_start: #{e.inspect}"
   $stderr.puts e.backtrace
   throw e
