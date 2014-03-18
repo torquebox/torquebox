@@ -146,6 +146,10 @@ def __torquebox_start(options)
       break
     end
   end
+rescue Exception => e
+  $stderr.puts "Unexpected exception in __torquebox_start: #{e.inspect}"
+  $stderr.puts e.backtrace
+  throw e
 end
 
 def __torquebox_stop
