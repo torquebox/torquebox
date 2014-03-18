@@ -129,15 +129,21 @@ def __torquebox_start(options)
     end
   }
   start = Time.now
-  while (Time.now - start) < 45 do
+  booted = false
+  timeout = 60
+  while (Time.now - start) < timeout do
     uri = URI.parse("#{Capybara.app_host}#{context}")
     begin
       response = Net::HTTP.get_response(uri)
+      booted = true
       break
     rescue Exception
       sleep 0.2 # sleep and retry
     end
     break if error_seen
+  end
+  if !booted
+    raise "Application #{app_dir} failed to start within #{timeout} seconds"
   end
 end
 
