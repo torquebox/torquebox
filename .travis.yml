@@ -5,7 +5,7 @@ rvm:
 
 install: bundle install
 
-before_script: rake build
+before_script: bundle exec rake build
 
 branches:
   only:
