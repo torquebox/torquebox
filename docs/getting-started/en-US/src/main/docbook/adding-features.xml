@@ -47,7 +47,6 @@
         <example>
           <title><filename>~/torquebox_examples/rails_example/app/models/post.rb</filename></title>
           <programlisting><![CDATA[class Post < ActiveRecord::Base
-  attr_accessible :body, :title
 
   after_create :publish_to_social_network
 
@@ -79,7 +78,6 @@ end]]></programlisting>
         <example>
           <title><filename>~/torquebox_examples/rails_example/app/models/post.rb</filename></title>
           <programlisting><![CDATA[class Post < ActiveRecord::Base
-  attr_accessible :body, :title
 
   after_create :publish_to_social_network
   always_background :publish_to_social_network
