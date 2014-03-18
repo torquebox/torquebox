@@ -4,7 +4,7 @@ feature "basic rack at non-root context" do
 
   torquebox('--dir' => "#{apps_dir}/rack/basic",
           '--context-path' => '/basic-rack',
-          '--port' => '8081')
+          '--port' => '8081', '-E' => 'production')
 
   it "should work for basic requests" do
     visit "/basic-rack"
@@ -88,7 +88,8 @@ feature "basic rack at non-root context" do
 end
 
 feature "basic rack at root context" do
-  torquebox('--dir' => "#{apps_dir}/rack/basic", '--context-path' => '/')
+  torquebox('--dir' => "#{apps_dir}/rack/basic", '--context-path' => '/',
+            '-E' => 'production')
 
   it "should have correct path information" do
     visit "/plaintext"
@@ -100,7 +101,7 @@ feature "basic rack at root context" do
 end
 
 feature "basic rack with rackup" do
-  rackup(:dir => "#{apps_dir}/rack/basic")
+  rackup(:dir => "#{apps_dir}/rack/basic", '-E' => 'production')
 
   it "should work for basic requests" do
     visit "/"

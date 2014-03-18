@@ -2,7 +2,9 @@ require 'spec_helper'
 
 feature 'basic rails4 test' do
 
-  torquebox('--dir' => "#{apps_dir}/rails4/basic", '--context-path' => '/basic-rails4')
+  torquebox('--dir' => "#{apps_dir}/rails4/basic",
+            '--context-path' => '/basic-rails4',
+            '-E' => 'production')
 
   it 'should do a basic get' do
     visit '/basic-rails4'
