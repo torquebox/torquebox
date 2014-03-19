@@ -48,6 +48,9 @@ public class JobScheduler extends BaseJobScheduler implements JobFactory {
         JobDetail jobDetail = bundle.getJobDetail();
 
         ComponentResolver resolver = this.componentResolvers.get(jobDetail.getKey());
+        if (resolver == null) {
+            log.errorf("JobScheduler.newJob found no ComponentResolver for %s", jobDetail.getKey());
+        }
         RubyJobProxy rubyJob = new RubyJobProxy(this.rubyRuntimePoolInjector.getValue(), resolver, jobDetail);
 
         return rubyJob;
@@ -59,6 +62,7 @@ public class JobScheduler extends BaseJobScheduler implements JobFactory {
     }
 
     public void addComponentResolver(JobKey key, ComponentResolver resolver) {
+        log.tracef("JobScheduler.addComponentResolver for %s with resolver %s", key, resolver);
         this.componentResolvers.put(key, resolver);
     }
 
