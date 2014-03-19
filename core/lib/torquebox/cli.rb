@@ -57,14 +57,14 @@ module TorqueBox
 
       parser.separator ""
       parser.separator "Common options:"
-      parser.on '-q', '--quiet', 'Only write errors to the output' do
-        options[:log_level] = 'ERROR'
+      parser.on '-q', '--quiet', 'Log only errors' do
+        options[:verbosity] = :quiet
       end
-      parser.on '-v', '--verbose', 'Be verbose - use twice for even more output' do
-        if options[:log_level] = 'DEBUG'
-          options[:log_level] = 'TRACE'
+      parser.on '-v', '--verbose', 'Log more - use twice for even more' do
+        if options[:verbosity] == :verbose
+          options[:verbosity] = :really_verbose
         else
-          options[:log_level] = 'DEBUG'
+          options[:verbosity] = :verbose
         end
       end
       parser.on_tail('-h', '--help', 'Show this message') do
@@ -76,10 +76,6 @@ module TorqueBox
         exit 1
       end
       parser.parse!(argv)
-
-      if options.has_key?(:log_level)
-        org.projectodd.wunderboss.WunderBoss.log_level = options.delete(:log_level)
-      end
 
       if extension
         extension.run(argv, options)

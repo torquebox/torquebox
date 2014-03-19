@@ -35,6 +35,8 @@ module TorqueBox
           options[:rackup] = argv.shift
         end
 
+        set_log_level(options.delete(:verbosity))
+
         if options[:root]
           org.projectodd.wunderboss.WunderBoss.put_option('root', options[:root])
           options[:static_dir] = File.join(options[:root], 'public')
@@ -58,6 +60,16 @@ module TorqueBox
           end
           sleep
         end
+      end
+
+      def set_log_level(verbosity)
+        log_level = case verbosity
+                    when :quiet then 'ERROR'
+                    when :verbose then 'DEBUG'
+                    when :really_verbose then 'TRACE'
+                    else 'INFO'
+                    end
+        org.projectodd.wunderboss.WunderBoss.log_level = log_level
       end
     end
   end

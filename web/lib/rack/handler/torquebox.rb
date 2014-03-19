@@ -6,6 +6,16 @@ module Rack
     module TorqueBox
 
       def self.run(app, options={})
+        log_level = 'INFO'
+        if options[:Quiet]
+          log_level = 'ERROR'
+        elsif options[:Verbose]
+          log_level = 'DEBUG'
+        elsif options[:ReallyVerbose]
+          log_level = 'TRACE'
+        end
+        org.projectodd.wunderboss.WunderBoss.log_level = log_level
+
         server_options = {
           :host => options[:Host],
           :port => options[:Port],
@@ -31,7 +41,10 @@ module Rack
         defaults = ::TorqueBox::Web::Server::DEFAULT_CREATE_OPTIONS
         {
           "Host=HOST" => "Hostname to listen on (default: #{defaults[:host]})",
-          "Port=PORT" => "Port to listen on (default: #{defaults[:port]})"
+          "Port=PORT" => "Port to listen on (default: #{defaults[:port]})",
+          "Quiet" => "Log only errors",
+          "Verbose" => "Log more",
+          "ReallyVerbose" => "Log a lot"
         }
       end
     end

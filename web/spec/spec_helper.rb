@@ -93,7 +93,7 @@ def torquebox(options)
       :app_dir => options['--dir'],
       :context_path => options['--context-path'] || '/',
       :port => options['--port'] || '8080',
-      :command => "#{File.join(bin_dir, 'torquebox')} run #{args}"
+      :command => "#{File.join(bin_dir, 'torquebox')} run -q #{args}"
     }
     return options
   end
@@ -108,7 +108,7 @@ def rackup(options)
       :app_dir => app_dir,
       :context_path => '/',
       :port => options['--port'] || '9292',
-      :command => "-S rackup -s torquebox #{args} #{app_dir}/config.ru"
+      :command => "-S rackup -s torquebox #{args} -O Quiet #{app_dir}/config.ru"
     }
   end
 end

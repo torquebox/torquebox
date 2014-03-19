@@ -3,8 +3,8 @@ require 'spec_helper'
 feature "basic rack at non-root context" do
 
   torquebox('--dir' => "#{apps_dir}/rack/basic",
-          '--context-path' => '/basic-rack',
-          '--port' => '8081', '-E' => 'production')
+            '--context-path' => '/basic-rack',
+            '--port' => '8081', '-E' => 'production')
 
   it "should work for basic requests" do
     visit "/basic-rack"
