@@ -23,19 +23,6 @@ require 'torquebox/codecs'
 module TorqueBox
   module Infinispan
 
-    # @api private
-    class ContainerTransactionManagerLookup
-      begin
-        include org.infinispan.transaction.lookup.TransactionManagerLookup
-      rescue NameError
-        # Not running inside TorqueBox
-      end
-
-      def getTransactionManager
-        TorqueBox.fetch('transaction-manager')
-      end
-    end
-
     # @api public
     class Cache
 
@@ -47,6 +34,7 @@ module TorqueBox
         java_import org.infinispan.transaction::LockingMode
         java_import org.infinispan.eviction::EvictionStrategy
         java_import org.projectodd.polyglot.cache.as::CacheService
+        java_import org.torquebox.cache.gem.ContainerTransactionManagerLookup
         INFINISPAN_AVAILABLE = true
       rescue NameError => e
         INFINISPAN_AVAILABLE = false
@@ -363,7 +351,7 @@ module TorqueBox
       
       def transaction_manager_lookup
         @tm ||= if TorqueBox.fetch('transaction-manager')
-                  ContainerTransactionManagerLookup.new 
+                  ContainerTransactionManagerLookup.new(TorqueBox.fetch('transaction-manager'))
                 else
                   org.infinispan.transaction.lookup.GenericTransactionManagerLookup.new
                 end
