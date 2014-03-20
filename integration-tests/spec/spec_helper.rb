@@ -99,6 +99,7 @@ def integ_jruby_launcher
 end
 
 def integ_jruby(command)
+  ENV['JAVA_OPTS'] = '-XX:+TieredCompilation -XX:TieredStopAtLevel=1'
   jruby_version = case RUBY_VERSION
                   when /^1\.8\./ then ' --1.8'
                   when /^1\.9\./ then ' --1.9'
