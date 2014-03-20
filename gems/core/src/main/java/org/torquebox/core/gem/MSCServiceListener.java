@@ -36,10 +36,16 @@ public class MSCServiceListener extends AbstractServiceListener<Object> {
 
     @Override
     public void transition(ServiceController<? extends Object> controller, Transition transition) {
-        if (transition.getAfter() == Substate.UP ||
-            (transition.getAfter() != Substate.START_REQUESTED &&
-             transition.getAfter() != Substate.START_INITIATING &&
-             transition.getAfter() != Substate.STARTING)) {
+        Substate after = transition.getAfter();
+        if (after == Substate.UP ||
+            after == Substate.CANCELLED ||
+            after == Substate.WONT_START ||
+            after == Substate.PROBLEM ||
+            after == Substate.START_FAILED ||
+            after == Substate.STOP_REQUESTED ||
+            after == Substate.STOPPING ||
+            after == Substate.REMOVING ||
+            after == Substate.REMOVED) {
             // we've either started or are not going to start (start
             // failed, shutting down
             notifyAsStartedOrProblem();
