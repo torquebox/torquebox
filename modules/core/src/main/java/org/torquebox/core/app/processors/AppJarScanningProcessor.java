@@ -25,6 +25,7 @@ import java.util.List;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.projectodd.polyglot.core.processors.BaseAppJarScanningProcessor;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 
 public class AppJarScanningProcessor extends BaseAppJarScanningProcessor {
 
@@ -42,6 +43,9 @@ public class AppJarScanningProcessor extends BaseAppJarScanningProcessor {
     };
 
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+        if (DeploymentUtils.isUnitRootless( phaseContext.getDeploymentUnit() )) {
+            return;
+        }
         super.deploy( phaseContext );
     }
     

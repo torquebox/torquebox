@@ -37,6 +37,7 @@ import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.projectodd.polyglot.core.as.DeploymentNotifier;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.runtime.BasicRubyRuntimePoolMBean;
@@ -66,6 +67,9 @@ public class RuntimePoolInstaller implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
         List<PoolMetaData> allAttachments = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
 
         for (PoolMetaData each : allAttachments) {

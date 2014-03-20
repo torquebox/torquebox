@@ -23,8 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.logging.Logger;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.projectodd.polyglot.core.util.TimeInterval;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 import org.torquebox.web.rack.RackMetaData;
@@ -34,6 +37,14 @@ public class WebYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
     public WebYamlParsingProcessor() {
         setSectionName( "web" );
         setSupportsStandalone( false );
+    }
+
+    @Override
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+        if (DeploymentUtils.isUnitRootless( phaseContext.getDeploymentUnit() )) {
+            return;
+        }
+        super.deploy( phaseContext );
     }
 
     @SuppressWarnings("unchecked")

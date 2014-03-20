@@ -25,6 +25,7 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.runtime.PoolMetaData;
 import org.torquebox.jobs.ScheduledJobMetaData;
@@ -42,6 +43,9 @@ public class JobsRuntimePoolProcessor implements DeploymentUnitProcessor {
 
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
 
         List<PoolMetaData> allMetaData = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
         PoolMetaData jobsPool = PoolMetaData.extractNamedMetaData( allMetaData, "jobs" );

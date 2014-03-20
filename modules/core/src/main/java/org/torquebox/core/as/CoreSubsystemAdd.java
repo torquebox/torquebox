@@ -22,7 +22,6 @@ package org.torquebox.core.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.projectodd.polyglot.core.processors.RootedDeploymentProcessor.rootSafe;
 
 import java.io.IOException;
 import java.util.Hashtable;
@@ -122,35 +121,34 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 0, new DescriptorRootMountProcessor( "-knob.yml" ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 0, new ArchiveStructureProcessor( ".knob" ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 800, new AppKnobYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 810, rootSafe( new AppJarScanningProcessor() ) );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 900, rootSafe( new RubyApplicationRecognizer() ) );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 810, new AppJarScanningProcessor() );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 900, new RubyApplicationRecognizer() );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 910, new TorqueBoxYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 920, new TorqueBoxRbProcessor() );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 930, rootSafe( new ApplicationYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 930, new ApplicationYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 940, new EnvironmentYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 950, rootSafe( new PoolingYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 960, rootSafe( new RubyYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 970, rootSafe( new RubyApplicationDefaultsProcessor() ) );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 950, new PoolingYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 960, new RubyYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 970, new RubyApplicationDefaultsProcessor() );
         if (DataSourceServices.enabled) {
             processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 980, new DatabaseYamlParsingProcessor() );
         }
 
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.PARSE, 100, new ApplicationExploder() );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.PARSE, 4000, rootSafe( new BaseRubyRuntimeInstaller() ) );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.PARSE, 4000, new BaseRubyRuntimeInstaller() );
 
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, 0, rootSafe( new CoreDependenciesProcessor() ) );
-        // processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 10,
-        // rootSafe( new JdkDependenciesProcessor() ) );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 1000, rootSafe( new PredeterminedInjectableProcessor( registry ) ) );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 1001, rootSafe( new CorePredeterminedInjectableInstaller() ) );
-        processorTarget.addDeploymentProcessor(  CoreExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 1, rootSafe( new LoggingPropertiesWorkaroundProcessor() ) );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 110, rootSafe( new RubyNamespaceContextSelectorProcessor() ) );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 5000, rootSafe( new DatabaseProcessor() ) );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, 0, new CoreDependenciesProcessor() );
+        // processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 10, new JdkDependenciesProcessor() );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 1000, new PredeterminedInjectableProcessor( registry ) );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 1001, new CorePredeterminedInjectableInstaller() );
+        processorTarget.addDeploymentProcessor(  CoreExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 1, new LoggingPropertiesWorkaroundProcessor() );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 110, new RubyNamespaceContextSelectorProcessor() );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 5000, new DatabaseProcessor() );
 
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.INSTALL, 0, rootSafe( new RubyRuntimeFactoryInstaller() ) );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.INSTALL, 10, rootSafe( new RuntimePoolInstaller() ) );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.INSTALL, 20, rootSafe( new RuntimeRestartProcessor() ) );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.INSTALL, 9000, rootSafe( new RubyApplicationInstaller() ) );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.INSTALL, 0, new RubyRuntimeFactoryInstaller() );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.INSTALL, 10, new RuntimePoolInstaller() );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.INSTALL, 20, new RuntimeRestartProcessor() );
+        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.INSTALL, 9000, new RubyApplicationInstaller() );
     }
 
     protected void addCoreServices(final OperationContext context, ServiceVerificationHandler verificationHandler,

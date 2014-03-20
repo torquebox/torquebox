@@ -49,6 +49,7 @@ import org.jboss.metadata.web.spec.SessionConfigMetaData;
 import org.jboss.metadata.web.spec.WebFragmentMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
 import org.jboss.msc.service.ServiceName;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.projectodd.polyglot.web.servlet.FiveHundredServlet;
 import org.projectodd.polyglot.web.servlet.StaticResourceServlet;
 import org.torquebox.core.as.CoreServices;
@@ -92,8 +93,10 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
-
         RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
         RailsMetaData railsAppMetaData = unit.getAttachment( RailsMetaData.ATTACHMENT_KEY );
 

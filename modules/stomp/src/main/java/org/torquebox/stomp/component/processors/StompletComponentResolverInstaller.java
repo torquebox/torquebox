@@ -25,6 +25,7 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceName;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.component.processors.ComponentResolverHelper;
 import org.torquebox.stomp.RubyStompletMetaData;
 import org.torquebox.stomp.as.StompServices;
@@ -39,6 +40,9 @@ public class StompletComponentResolverInstaller implements DeploymentUnitProcess
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
         List<RubyStompletMetaData> allMetaData = unit.getAttachmentList(RubyStompletMetaData.ATTACHMENTS_KEY);
 
         for (RubyStompletMetaData each : allMetaData) {

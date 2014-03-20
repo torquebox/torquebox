@@ -26,6 +26,7 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.runtime.BundlerAwareRuntimePreparer;
 import org.torquebox.core.runtime.RubyLoadPathMetaData;
@@ -41,6 +42,9 @@ public class RailsRuntimeProcessor implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
         RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
         RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
         RailsMetaData railsAppMetaData = unit.getAttachment( RailsMetaData.ATTACHMENT_KEY );

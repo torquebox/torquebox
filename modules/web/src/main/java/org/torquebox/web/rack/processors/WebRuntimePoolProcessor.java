@@ -26,6 +26,7 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.msc.service.ServiceRegistry;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.runtime.PoolMetaData;
 import org.torquebox.web.as.HttpConnectorStartService;
@@ -37,6 +38,9 @@ public class WebRuntimePoolProcessor implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
         
         if ( ! unit.hasAttachment( RackMetaData.ATTACHMENT_KEY ) ) {
             return;

@@ -63,21 +63,6 @@ public class ServicesYamlParsingProcessorTest extends AbstractDeploymentProcesso
         
         assertEquals( 2, allMetaData.size() );
     }
-    
-    @Test
-    public void testRootless() throws Exception {
-        try {
-            clearDeployers();
-            appendDeployer( new AppKnobYamlParsingProcessor() );
-            appendDeployer( new ServicesYamlParsingProcessor() );
-            deployResourceAs( "rootless-services-knob.yml", "rootless-services-knob.yml" );
-            fail( "Rootless services knob deployment should have failed." );
-        } catch (DeploymentUnitProcessingException e) {
-            assertEquals( "Error processing deployment rootless-services-knob.yml: The section services " +
-                    "requires an app root to be specified, but none has been provided.",
-                    e.getMessage() );
-        }
-    }
 
     @Test
     public void testNamedServiceYml() throws Exception {

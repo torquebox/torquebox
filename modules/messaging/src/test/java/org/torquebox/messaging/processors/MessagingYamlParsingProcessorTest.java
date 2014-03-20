@@ -83,14 +83,6 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
         assertTrue( allMetaData.isEmpty() );
     }
 
-    @Test(expected=DeploymentException.class)
-    public void testRootlessMessagingConfig() throws Exception {
-        clearDeployers();
-        appendDeployer( new AppKnobYamlParsingProcessor() );
-        appendDeployer( new MessagingYamlParsingProcessor() );
-        deployResourceAs( "rootless-messaging-knob.yml", "rootless-messaging-knob.yml" );
-    }
-
     @Test
     public void testSingleMessagingConfig() throws Exception {
         List<MessageProcessorMetaData> allMetaData = getMetaData( "single-messaging.yml" );

@@ -64,6 +64,7 @@ import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jruby.Ruby;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.datasource.DataSourceInfoList;
@@ -119,6 +120,10 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
 
         RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
 

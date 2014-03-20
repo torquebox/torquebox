@@ -34,6 +34,7 @@ import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.value.ImmediateValue;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.app.RubyApplication;
 import org.torquebox.core.app.RubyApplicationMBean;
@@ -47,6 +48,9 @@ public class RubyApplicationInstaller implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
         final RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
         
         if ( rubyAppMetaData == null ) {

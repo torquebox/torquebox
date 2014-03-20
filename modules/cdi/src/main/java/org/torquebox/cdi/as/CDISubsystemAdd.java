@@ -22,7 +22,6 @@ package org.torquebox.cdi.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.projectodd.polyglot.core.processors.RootedDeploymentProcessor.rootSafe;
 
 import java.util.List;
 
@@ -47,8 +46,8 @@ class CDISubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        processorTarget.addDeploymentProcessor( CDIExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 11, rootSafe( new CDIStructureProcessor() ) );
-        processorTarget.addDeploymentProcessor( CDIExtension.SUBSYSTEM_NAME, Phase.INSTALL, Phase.INSTALL_WELD_BEAN_MANAGER + 1, rootSafe( new HackWeldBeanManagerServiceProcessor() ) );
+        processorTarget.addDeploymentProcessor( CDIExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 11, new CDIStructureProcessor() );
+        processorTarget.addDeploymentProcessor( CDIExtension.SUBSYSTEM_NAME, Phase.INSTALL, Phase.INSTALL_WELD_BEAN_MANAGER + 1, new HackWeldBeanManagerServiceProcessor() );
     }
 
     @Override

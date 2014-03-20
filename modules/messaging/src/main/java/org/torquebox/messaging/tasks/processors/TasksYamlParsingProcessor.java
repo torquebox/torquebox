@@ -24,7 +24,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 import org.torquebox.messaging.tasks.TaskMetaData;
 import org.yaml.snakeyaml.Yaml;
@@ -42,6 +45,14 @@ public class TasksYamlParsingProcessor extends AbstractSplitYamlParsingProcessor
 
     public TasksYamlParsingProcessor() {
         setSectionName( "tasks" );
+    }
+
+    @Override
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+        if (DeploymentUtils.isUnitRootless( phaseContext.getDeploymentUnit() )) {
+            return;
+        }
+        super.deploy( phaseContext );
     }
 
     @Override

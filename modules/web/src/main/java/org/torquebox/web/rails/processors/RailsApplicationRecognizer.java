@@ -31,6 +31,7 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.core.processors.FileLocatingProcessor;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.web.rack.RackMetaData;
 import org.torquebox.web.rails.RailsMetaData;
 
@@ -45,6 +46,9 @@ public class RailsApplicationRecognizer extends FileLocatingProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
         VirtualFile root = resourceRoot.getRoot();
 

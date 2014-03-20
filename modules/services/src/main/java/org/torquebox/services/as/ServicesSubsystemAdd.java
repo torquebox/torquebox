@@ -22,7 +22,6 @@ package org.torquebox.services.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.projectodd.polyglot.core.processors.RootedDeploymentProcessor.rootSafe;
 
 import java.util.List;
 
@@ -64,11 +63,11 @@ public class ServicesSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
 
-        processorTarget.addDeploymentProcessor( ServicesExtension.SUBSYSTEM_NAME, Phase.PARSE, 30, rootSafe( new ServicesYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( ServicesExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 0, rootSafe( new ServiceLoadPathProcessor() ) );
-        processorTarget.addDeploymentProcessor( ServicesExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 100, rootSafe( new ServiceRuntimePoolProcessor() ) );
-        processorTarget.addDeploymentProcessor( ServicesExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 120, rootSafe( new ServiceComponentResolverInstaller() ) );
-        processorTarget.addDeploymentProcessor( ServicesExtension.SUBSYSTEM_NAME, Phase.INSTALL, 0, rootSafe( new ServiceInstaller() ) );
+        processorTarget.addDeploymentProcessor( ServicesExtension.SUBSYSTEM_NAME, Phase.PARSE, 30, new ServicesYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( ServicesExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 0, new ServiceLoadPathProcessor() );
+        processorTarget.addDeploymentProcessor( ServicesExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 100, new ServiceRuntimePoolProcessor() );
+        processorTarget.addDeploymentProcessor( ServicesExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 120, new ServiceComponentResolverInstaller() );
+        processorTarget.addDeploymentProcessor( ServicesExtension.SUBSYSTEM_NAME, Phase.INSTALL, 0, new ServiceInstaller() );
 
     }
 

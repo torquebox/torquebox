@@ -29,6 +29,7 @@ import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.vfs.VirtualFile;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.component.ComponentEval;
 import org.torquebox.core.component.processors.ComponentResolverHelper;
@@ -41,6 +42,9 @@ public class RackApplicationComponentResolverInstaller implements DeploymentUnit
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
 
         ServiceName serviceName = WebServices.rackApplicationComponentResolver(unit);
         RubyAppMetaData rubyAppMetaData = unit.getAttachment(RubyAppMetaData.ATTACHMENT_KEY);

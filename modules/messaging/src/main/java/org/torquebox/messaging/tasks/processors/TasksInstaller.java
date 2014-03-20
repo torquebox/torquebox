@@ -26,6 +26,7 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.projectodd.polyglot.messaging.destinations.QueueMetaData;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.messaging.MessageProcessorMetaData;
@@ -49,6 +50,9 @@ public class TasksInstaller implements DeploymentUnitProcessor {
     
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
         RubyAppMetaData appMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
         
         if ( appMetaData == null ) {

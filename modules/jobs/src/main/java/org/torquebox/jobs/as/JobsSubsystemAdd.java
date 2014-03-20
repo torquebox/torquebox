@@ -40,7 +40,6 @@ import java.util.List;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.projectodd.polyglot.core.processors.RootedDeploymentProcessor.rootSafe;
 
 public class JobsSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
@@ -62,11 +61,11 @@ public class JobsSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.PARSE, 30, rootSafe( new JobsYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 0, rootSafe( new JobsLoadPathProcessor() ) );
-        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 100, rootSafe( new JobsRuntimePoolProcessor() ) );
-        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.INSTALL, 0, rootSafe( new JobSchedulerInstaller() ) );
-        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.INSTALL, 100, rootSafe(new JobSchedulizerInstaller() ) );
+        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.PARSE, 30, new JobsYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 0, new JobsLoadPathProcessor() );
+        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 100, new JobsRuntimePoolProcessor() );
+        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.INSTALL, 0, new JobSchedulerInstaller() );
+        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.INSTALL, 100, new JobSchedulizerInstaller() );
     }
 
     static ModelNode createOperation(ModelNode address) {

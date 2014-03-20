@@ -25,12 +25,16 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.weld.WeldDeploymentMarker;
 import org.projectodd.polyglot.core.as.ArchivedDeploymentMarker;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 
 public class CDIStructureProcessor implements DeploymentUnitProcessor {
 
     @Override
     public void deploy(final DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
         if ( ArchivedDeploymentMarker.isMarked( unit ) ) {
             WeldDeploymentMarker.mark( unit );
         }

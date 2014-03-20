@@ -23,6 +23,7 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.injection.analysis.Injectable;
@@ -37,6 +38,10 @@ public class PredeterminedInjectableProcessor implements DeploymentUnitProcessor
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
 
         if (unit.hasAttachment( RubyAppMetaData.ATTACHMENT_KEY )) {
             for (Injectable each : this.registry.getPredeterminedInjectables()) {

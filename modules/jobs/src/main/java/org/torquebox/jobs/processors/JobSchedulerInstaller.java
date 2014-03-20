@@ -28,6 +28,7 @@ import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.projectodd.polyglot.core.util.ClusterUtil;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.projectodd.polyglot.hasingleton.HASingleton;
 import org.projectodd.polyglot.jobs.BaseJobScheduler;
 import org.torquebox.core.app.RubyAppMetaData;
@@ -53,6 +54,9 @@ public class JobSchedulerInstaller implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
         RubyAppMetaData rubyAppMetaData = unit.getAttachment(RubyAppMetaData.ATTACHMENT_KEY);
 
         if (rubyAppMetaData == null) {

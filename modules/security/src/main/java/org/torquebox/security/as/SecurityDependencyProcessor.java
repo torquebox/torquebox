@@ -29,6 +29,7 @@ import org.jboss.as.server.deployment.module.ModuleSpecification;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoader;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 
 public class SecurityDependencyProcessor implements DeploymentUnitProcessor {
 
@@ -39,6 +40,9 @@ public class SecurityDependencyProcessor implements DeploymentUnitProcessor {
     public void deploy(DeploymentPhaseContext phaseContext)
             throws DeploymentUnitProcessingException {
         final DeploymentUnit deploymentUnit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( deploymentUnit )) {
+            return;
+        }
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
         final ModuleSpecification moduleSpecification = deploymentUnit.getAttachment( Attachments.MODULE_SPECIFICATION );
         moduleSpecification.addLocalDependency( new ModuleDependency( moduleLoader,

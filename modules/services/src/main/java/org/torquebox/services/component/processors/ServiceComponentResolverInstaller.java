@@ -27,6 +27,7 @@ import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
 import org.projectodd.polyglot.core.as.DeploymentNotifier;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.component.processors.ComponentResolverHelper;
 import org.torquebox.services.ServiceMetaData;
 import org.torquebox.services.as.ServicesServices;
@@ -43,6 +44,9 @@ public class ServiceComponentResolverInstaller implements DeploymentUnitProcesso
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
         List<ServiceMetaData> allServiceMetaData = unit.getAttachmentList(ServiceMetaData.ATTACHMENTS_KEY);
 
         for (ServiceMetaData serviceMetaData : allServiceMetaData) {

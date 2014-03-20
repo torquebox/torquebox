@@ -112,19 +112,4 @@ public class WebYamlParsingProcessorTest extends AbstractDeploymentProcessorTest
         assertEquals( "/tacos/and/bacon", rackMetaData.getContextPath() );
     }
 
-    @Test
-    public void testRootless() throws Exception {
-        try {
-            clearDeployers();
-            appendDeployer( new AppKnobYamlParsingProcessor() );
-            appendDeployer( new WebYamlParsingProcessor() );
-            deployResourceAs( "rootless-web-knob.yml", "rootless-web-knob.yml" );
-            fail( "Rootless web knob deployment should have failed." );
-        } catch (DeploymentUnitProcessingException e) {
-            assertEquals( "Error processing deployment rootless-web-knob.yml: The section web " +
-                    "requires an app root to be specified, but none has been provided.",
-                    e.getMessage() );
-        }
-    }
-
 }

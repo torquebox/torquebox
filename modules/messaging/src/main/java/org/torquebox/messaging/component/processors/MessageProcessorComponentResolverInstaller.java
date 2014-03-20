@@ -29,6 +29,7 @@ import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
 import org.projectodd.polyglot.core.as.DeploymentNotifier;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.component.processors.ComponentResolverHelper;
 import org.torquebox.messaging.MessageProcessorMetaData;
 import org.torquebox.messaging.as.MessagingServices;
@@ -42,6 +43,9 @@ public class MessageProcessorComponentResolverInstaller implements DeploymentUni
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
 
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
         List<MessageProcessorMetaData> allMetaData = unit.getAttachmentList(MessageProcessorMetaData.ATTACHMENTS_KEY);
 
         if (allMetaData == null || allMetaData.isEmpty()) {

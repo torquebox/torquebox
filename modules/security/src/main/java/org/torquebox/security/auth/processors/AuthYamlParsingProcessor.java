@@ -21,8 +21,11 @@ package org.torquebox.security.auth.processors;
 
 import java.util.Map;
 
+import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.logging.Logger;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 import org.torquebox.security.auth.AuthMetaData;
 
@@ -31,6 +34,14 @@ public class AuthYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
     public AuthYamlParsingProcessor() {
         setSectionName( "auth" );
         setSupportsStandalone( true );
+    }
+
+    @Override
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+        if (DeploymentUtils.isUnitRootless( phaseContext.getDeploymentUnit() )) {
+            return;
+        }
+        super.deploy( phaseContext );
     }
 
     @Override

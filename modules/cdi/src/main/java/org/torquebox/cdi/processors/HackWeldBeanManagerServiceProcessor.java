@@ -32,6 +32,7 @@ import org.jboss.as.weld.deployment.WeldAttachments;
 import org.jboss.as.weld.services.BeanManagerService;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.app.RubyAppMetaData;
 
 /**
@@ -48,6 +49,10 @@ public class HackWeldBeanManagerServiceProcessor implements DeploymentUnitProces
         final DeploymentUnit deploymentUnit = phaseContext.getDeploymentUnit();
         final DeploymentUnit topLevelDeployment = deploymentUnit.getParent() == null ? deploymentUnit : deploymentUnit.getParent();
         final ServiceTarget serviceTarget = phaseContext.getServiceTarget();
+
+        if (DeploymentUtils.isUnitRootless( deploymentUnit )) {
+            return;
+        }
         
         if (!WeldDeploymentMarker.isPartOfWeldDeployment( topLevelDeployment )) {
             return;

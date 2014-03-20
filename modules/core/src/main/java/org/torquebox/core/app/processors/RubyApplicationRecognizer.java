@@ -30,6 +30,7 @@ import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.core.as.DeploymentNotifier;
 import org.projectodd.polyglot.core.processors.FileLocatingProcessor;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.app.RubyAppMetaData;
 
 public class RubyApplicationRecognizer extends FileLocatingProcessor {
@@ -37,6 +38,9 @@ public class RubyApplicationRecognizer extends FileLocatingProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
         VirtualFile root = resourceRoot.getRoot();
 

@@ -138,21 +138,6 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertNotNull( jobOne.getGroup() );
 
     }
-    
-    @Test
-    public void testRootless() throws Exception {
-        try {
-            clearDeployers();
-            appendDeployer( new AppKnobYamlParsingProcessor() );
-            appendDeployer( new JobsYamlParsingProcessor() );
-            deployResourceAs( "rootless-jobs-knob.yml", "rootless-jobs-knob.yml" );
-            fail( "Rootless jobs knob deployment should have failed." );
-        } catch (DeploymentUnitProcessingException e) {
-            assertEquals( "Error processing deployment rootless-jobs-knob.yml: The section jobs " +
-                    "requires an app root to be specified, but none has been provided.",
-                    e.getMessage() );
-        }
-    }
 
     /**
      * Locate a RubyJobMetaData given a collection and a name to search for.

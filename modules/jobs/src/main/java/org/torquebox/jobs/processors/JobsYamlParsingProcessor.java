@@ -22,9 +22,11 @@ package org.torquebox.jobs.processors;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.logging.Logger;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.projectodd.polyglot.core.util.TimeInterval;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 import org.torquebox.core.util.StringUtils;
@@ -38,6 +40,14 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
 
     public JobsYamlParsingProcessor() {
         setSectionName( "jobs" );
+    }
+
+    @Override
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+        if (DeploymentUtils.isUnitRootless( phaseContext.getDeploymentUnit() )) {
+            return;
+        }
+        super.deploy( phaseContext );
     }
 
     @SuppressWarnings("unchecked")

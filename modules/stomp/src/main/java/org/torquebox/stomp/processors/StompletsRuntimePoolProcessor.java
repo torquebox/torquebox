@@ -25,6 +25,7 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.runtime.PoolMetaData;
 import org.torquebox.stomp.RubyStompletMetaData;
 
@@ -35,6 +36,9 @@ public class StompletsRuntimePoolProcessor implements DeploymentUnitProcessor {
 
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
 
         List<RubyStompletMetaData> allMetaData = unit.getAttachmentList( RubyStompletMetaData.ATTACHMENTS_KEY ); 
         if (allMetaData.isEmpty()) {

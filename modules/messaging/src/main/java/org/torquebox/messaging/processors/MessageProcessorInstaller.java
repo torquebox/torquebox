@@ -39,6 +39,7 @@ import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.projectodd.polyglot.hasingleton.HASingleton;
 import org.projectodd.polyglot.messaging.BaseMessageProcessorGroup;
 import org.projectodd.polyglot.messaging.destinations.AbstractDestinationMetaData;
@@ -72,6 +73,9 @@ public class MessageProcessorInstaller implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
         List<MessageProcessorMetaData> allMetaData = unit.getAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY );
 
         for (MessageProcessorMetaData mpMetaData : allMetaData) {

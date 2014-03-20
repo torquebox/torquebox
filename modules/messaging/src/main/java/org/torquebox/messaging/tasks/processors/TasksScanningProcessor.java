@@ -20,10 +20,12 @@
 package org.torquebox.messaging.tasks.processors;
 
 import org.jboss.as.server.deployment.AttachmentList;
+import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.core.processors.AbstractScanningProcessor;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.util.StringUtils;
 import org.torquebox.messaging.tasks.TaskMetaData;
 
@@ -41,6 +43,14 @@ public class TasksScanningProcessor extends AbstractScanningProcessor {
         addPath( "app/tasks/" );
         addPath( "tasks/" );
         setSuffixFilter( "_task.rb" );
+    }
+
+    @Override
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+        if (DeploymentUtils.isUnitRootless( phaseContext.getDeploymentUnit() )) {
+            return;
+        }
+        super.deploy( phaseContext );
     }
 
     @Override

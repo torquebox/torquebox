@@ -22,7 +22,6 @@ package org.torquebox.security.auth.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.projectodd.polyglot.core.processors.RootedDeploymentProcessor.rootSafe;
 
 import java.util.HashMap;
 import java.util.List;
@@ -82,10 +81,10 @@ public class AuthSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        processorTarget.addDeploymentProcessor( SecurityExtension.SUBSYSTEM_NAME, Phase.PARSE, 15, rootSafe( new AuthYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( SecurityExtension.SUBSYSTEM_NAME, Phase.PARSE, 20, rootSafe( new AuthDefaultsProcessor() ) );
-        processorTarget.addDeploymentProcessor( SecurityExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, 3, rootSafe( new SecurityDependencyProcessor() ) );
-        processorTarget.addDeploymentProcessor( SecurityExtension.SUBSYSTEM_NAME, Phase.INSTALL, 0, rootSafe( new AuthInstaller() ) );
+        processorTarget.addDeploymentProcessor( SecurityExtension.SUBSYSTEM_NAME, Phase.PARSE, 15, new AuthYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( SecurityExtension.SUBSYSTEM_NAME, Phase.PARSE, 20, new AuthDefaultsProcessor() );
+        processorTarget.addDeploymentProcessor( SecurityExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, 3, new SecurityDependencyProcessor() );
+        processorTarget.addDeploymentProcessor( SecurityExtension.SUBSYSTEM_NAME, Phase.INSTALL, 0, new AuthInstaller() );
     }
 
     protected void addTorqueBoxSecurityDomainService(final OperationContext context, ServiceVerificationHandler verificationHandler,

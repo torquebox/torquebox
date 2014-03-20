@@ -25,6 +25,7 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.security.auth.AuthMetaData;
 import org.torquebox.security.auth.AuthMetaData.TorqueBoxAuthConfig;
 
@@ -34,6 +35,9 @@ public class AuthDefaultsProcessor implements DeploymentUnitProcessor {
     public void deploy(DeploymentPhaseContext phaseContext)
             throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
 
         // Only initialize defaults if there already is an auth subsection
         if (!unit.hasAttachment( AuthMetaData.ATTACHMENT_KEY )) {

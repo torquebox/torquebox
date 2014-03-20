@@ -22,7 +22,6 @@ package org.torquebox.stomp.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.projectodd.polyglot.core.processors.RootedDeploymentProcessor.rootSafe;
 
 import java.util.List;
 
@@ -64,13 +63,13 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
    
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.PARSE, 31, rootSafe( new StompYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.PARSE, 1032, rootSafe( new StompApplicationDefaultsProcessor( true ) ) );
-        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 0, rootSafe( new StompletLoadPathProcessor() ) );
-        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 100, rootSafe( new StompletsRuntimePoolProcessor() ) );
-        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, 5, rootSafe( new StompDependenciesProcessor() ) );
-        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 120, rootSafe( new StompletComponentResolverInstaller() ) );
-        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.INSTALL, 101, rootSafe( new StompletInstaller() ) );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.PARSE, 31, new StompYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.PARSE, 1032, new StompApplicationDefaultsProcessor( true ) );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 0, new StompletLoadPathProcessor() );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 100, new StompletsRuntimePoolProcessor() );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, 5, new StompDependenciesProcessor() );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 120, new StompletComponentResolverInstaller() );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.INSTALL, 101, new StompletInstaller() );
     }
 
     static ModelNode createOperation(ModelNode address) {

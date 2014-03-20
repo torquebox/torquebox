@@ -22,7 +22,6 @@ package org.torquebox.messaging.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.projectodd.polyglot.core.processors.RootedDeploymentProcessor.rootSafe;
 
 import java.util.List;
 
@@ -86,25 +85,25 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget, ServiceTarget globalTarget) {
 
-        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 10, rootSafe( new BackgroundablePresetsProcessor() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 10, new BackgroundablePresetsProcessor() );
         processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 11, new QueuesYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 12, new TopicsYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 35, rootSafe( new MessagingYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 40, rootSafe( new TasksYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 41, rootSafe( new TasksScanningProcessor() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 35, new MessagingYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 40, new TasksYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 41, new TasksScanningProcessor() );
 
-        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, 3, rootSafe( new MessagingDependenciesProcessor() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, 3, new MessagingDependenciesProcessor() );
 
-        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 0, rootSafe( new MessagingLoadPathProcessor() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 0, new MessagingLoadPathProcessor() );
 
-        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 11, rootSafe( new ApplicationNamingContextBindingProcessor() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 11, new ApplicationNamingContextBindingProcessor() );
 
-        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 220, rootSafe( new TasksInstaller() ) );
-        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 320, rootSafe( new MessagingRuntimePoolProcessor() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 220, new TasksInstaller() );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 320, new MessagingRuntimePoolProcessor() );
         processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 420, new DestinationizerInstaller(globalTarget) );
 
-        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 120, rootSafe( new MessageProcessorComponentResolverInstaller() ) );
-        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 220, rootSafe( new MessageProcessorInstaller() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 120, new MessageProcessorComponentResolverInstaller() );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 220, new MessageProcessorInstaller() );
     }
 
     protected void addMessagingServices(final OperationContext context, ServiceVerificationHandler verificationHandler,

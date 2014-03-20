@@ -27,6 +27,7 @@ import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.core.processors.FileLocatingProcessor;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.web.rack.RackMetaData;
 
 public class RackApplicationRecognizer extends FileLocatingProcessor {
@@ -39,6 +40,9 @@ public class RackApplicationRecognizer extends FileLocatingProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        if (DeploymentUtils.isUnitRootless( unit )) {
+            return;
+        }
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
         VirtualFile root = resourceRoot.getRoot();
 
