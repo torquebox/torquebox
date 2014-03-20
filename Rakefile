@@ -6,6 +6,7 @@ GEMS = %w(core scheduling web)
     errors = []
     GEMS.each do |gem|
       puts ">>> Running #{task_name} for #{gem} gem"
+      ENV['JAVA_OPTS'] = '-XX:+TieredCompilation -XX:TieredStopAtLevel=1'
       success = system(%(cd #{gem} && #{$0} #{task_name}))
       unless success
         errors << gem
