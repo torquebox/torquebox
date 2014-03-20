@@ -1,4 +1,4 @@
-require 'torquebox'
+require 'torquebox-web'
 require 'rack/handler'
 
 module Rack
