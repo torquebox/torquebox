@@ -191,6 +191,7 @@
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rake</artifactId>
+      <version>${version.rake}</version>
       <type>gem</type>
       <scope>test</scope>
     </dependency>
