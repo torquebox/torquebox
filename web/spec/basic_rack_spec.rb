@@ -61,7 +61,7 @@ feature "basic rack at non-root context" do
       request = Net::HTTP::Post.new(uri.request_uri)
       request.form_data = {'field' => 'nothing'}
       response = http.request(request)
-      response.body.should include("<div id='posted'>field=nothing</div>")
+      response.body.should include(%Q{<div id='posted'>"field=nothing"</div>})
     end
   end
 
@@ -71,7 +71,7 @@ feature "basic rack at non-root context" do
       request = Net::HTTP::Post.new(uri.request_uri)
       request.form_data = {'field' => 'nothing'}
       response = http.request(request)
-      response.body.should include("<div id='posted'>field=nothing</div>")
+      response.body.should include(%Q{<div id='posted'>"field=nothing"</div>})
     end
   end
 
@@ -81,8 +81,15 @@ feature "basic rack at non-root context" do
       request = Net::HTTP::Post.new(uri.request_uri)
       request.form_data = {'field' => 'nothing'}
       response = http.request(request)
-      response.body.should include("<div id='posted'>field=nothing</div>")
+      response.body.should include(%Q{<div id='posted'>"field=nothing"</div>})
     end
+  end
+
+  it "should read multipart post bodies via gets" do
+    visit "/basic-rack/gets"
+    attach_file "uploadedfile", "#{apps_dir}/rack/basic/test.txt"
+    click_button "submit"
+    page.should have_content 'filename=\"test.txt\"\r\nContent-Type'
   end
 
 end

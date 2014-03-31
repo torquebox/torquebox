@@ -28,7 +28,14 @@ app = lambda { |env|
 <div id='request_uri'>#{env['REQUEST_URI']}</div>
 <div id='accept_header'>#{env['tb.accept_header']}</div>
 EOF
-  if env['REQUEST_METHOD'] == 'POST'
+  if env['REQUEST_METHOD'] == 'GET'
+    if env['PATH_INFO'] == '/gets'
+      body << "<form method='post' enctype='multipart/form-data'>"
+      body << "  <input type='file' name='uploadedfile'/>"
+      body << "  <input type='submit' id='submit'/>"
+      body << "</form>"
+    end
+  elsif env['REQUEST_METHOD'] == 'POST'
     input = env['rack.input']
     if env['PATH_INFO'] == '/gets'
       posted = ''
@@ -44,7 +51,7 @@ EOF
       posted = ""
       input.each { |str| posted << str}
     end
-    body << "<div id='posted'>#{posted}</div>"
+    body << "<div id='posted'>#{posted.inspect}</div>"
   end
   if env['PATH_INFO'] == '/long_body'
     body << 'foobarbaz' * 50000
