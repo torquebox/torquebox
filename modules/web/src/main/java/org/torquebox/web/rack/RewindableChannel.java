@@ -44,7 +44,7 @@ public class RewindableChannel extends FileChannel {
 
     protected FileChannel getTempFileChannel() throws java.io.IOException {
         if (tempFileChannel == null) {
-            File tmpDir = new File(System.getProperty("jboss.server.temp.dir"));
+            File tmpDir = new File(System.getProperty("jboss.server.temp.dir", System.getProperty("java.io.tmpdir")));
             tempFile = File.createTempFile("TorqueBoxRewindableChannel", null, tmpDir);
             tempFileRandom = new RandomAccessFile(tempFile, "rw");
             tempFileChannel = tempFileRandom.getChannel();

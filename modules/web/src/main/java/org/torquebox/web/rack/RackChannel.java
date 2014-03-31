@@ -91,6 +91,9 @@ public class RackChannel extends RubyObject {
                     }
                     readByte = byteBuffer.get(0);
                 }
+                if (readByte == 10) {
+                     stringBuffer.cat(10);
+                }
                 return stringBuffer;
             }
         } catch (IOException e) {
