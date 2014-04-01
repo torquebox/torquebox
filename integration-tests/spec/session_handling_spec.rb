@@ -140,6 +140,12 @@ if RUBY_VERSION >= '1.9'
       ruby:
         version: #{RUBY_VERSION[0,3]}
     END
+
     it_should_behave_like "session handling"
+
+    it "should not break with NullSessionHash" do
+      visit "/basic-rails/sessioning/null_session_hash"
+      find('#success')
+    end
   end
 end

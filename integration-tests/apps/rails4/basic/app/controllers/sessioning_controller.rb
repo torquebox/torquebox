@@ -46,4 +46,11 @@ class SessioningController < ApplicationController
     render :text => 'no session'
   end
 
+  def null_session_hash
+    ns = ActionController::RequestForgeryProtection::ProtectionMethods::NullSession.new(self)
+    ns.handle_unverified_request
+    request.session['foo'] = 'bar'
+    render :action => :get_value
+  end
+
 end

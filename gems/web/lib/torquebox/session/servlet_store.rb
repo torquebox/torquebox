@@ -90,18 +90,16 @@ module TorqueBox
           end
           initial_keys = session_data.keys
           session_data[:session_id] = session.getId()
-          session_data[:TORQUEBOX_INITIAL_KEYS] = initial_keys
+          session_data['TORQUEBOX_INITIAL_KEYS'] = initial_keys
         end
         session_data
       end
 
       def self.store_session_data(session, session_data)
-        hash = session_data.dup
-        # java session shouldn't be marshalled
-        hash.java_session = nil if hash.respond_to?(:java_session=)
-        initial_keys = hash[:TORQUEBOX_INITIAL_KEYS] || []
+        hash = session_data.to_hash
+        initial_keys = hash['TORQUEBOX_INITIAL_KEYS'] || []
         removed_keys = initial_keys - hash.keys
-        hash.delete(:TORQUEBOX_INITIAL_KEYS)
+        hash.delete('TORQUEBOX_INITIAL_KEYS')
         hash.delete_if do |key,value|
           # I don't think this guard is really necessary
           if ( Symbol === key or String === key)
