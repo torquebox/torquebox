@@ -43,7 +43,7 @@ remote_describe "transactions testing" do
   it "should publish a message when no error occurs" do
     response = nil
     thread = Thread.new {
-      response = @output.receive(:timeout => 10_000)
+      response = @output.receive(:timeout => 30_000)
     }
     @input.publish("anything")
     thread.join
@@ -52,7 +52,7 @@ remote_describe "transactions testing" do
 
   it "should retry delivery when an error is tossed" do
     @input.publish("This message should trigger 5 retries")
-    response = @output.receive(:timeout => 10_000)
+    response = @output.receive(:timeout => 30_000)
     response.should match /success.*\s5\s/
   end
 
@@ -71,7 +71,7 @@ remote_describe "transactions testing" do
     begin
       @input.publish("should receive from #{queue.name}")
       queue.publish("release")
-      response = @output.receive(:timeout => 5_000)
+      response = @output.receive(:timeout => 30_000)
       response.should == "got release"
     ensure
       queue.stop
