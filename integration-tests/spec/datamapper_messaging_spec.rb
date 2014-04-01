@@ -24,7 +24,13 @@ describe "torquebox-messaging with datamapper" do
   after(:all) do
     db = File.join(File.dirname(__FILE__), '..', 'apps', 'sinatra',
                    'datamapper-messaging', 'dm-messaging-test.db')
-    FileUtils.rm_f(db)
+    # On Linux this file tends to hang around because of some race
+    # condition between the app undeploying and us trying to delete it
+    while File.exist?(db)
+      FileUtils.rm_f(db)
+      sleep 0.1
+    end
+    puts "Exists? #{File.exist?(db)}"
   end
   
   it "should support always_backgrounded jobs on DataMapper::Resource" do
