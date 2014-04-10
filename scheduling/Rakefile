@@ -1,4 +1,13 @@
 require "#{File.dirname(__FILE__)}/../etc/tasks/torquebox"
 TorqueBox::RakeHelper.install_standard_tasks
 
+excluded_deps = ['jruby-complete',
+                 'log4j',
+                 'wunderboss-core',
+                 'wunderboss-ruby']
+
+TorqueBox::RakeHelper.install_java_tasks(:gemspec => 'torquebox-scheduling.gemspec',
+                                         :copy_deps => 'lib/wunderboss-jars',
+                                         :excluded_deps => excluded_deps)
+
 task :default => :spec
