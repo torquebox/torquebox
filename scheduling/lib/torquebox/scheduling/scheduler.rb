@@ -18,6 +18,14 @@ module TorqueBox
         scheduling_component.unschedule(id.to_s)
       end
 
+      def start
+        @scheduling_component.start
+      end
+
+      def stop
+        @scheduling_component.stop
+      end
+
       protected
 
       def initialize(name, options={})
