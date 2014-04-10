@@ -57,6 +57,7 @@ module TorqueBox
           config = JBundler::Config.new
           aether = JBundler::AetherRuby.new(config)
           aether.add_repository('bees-incremental', 'https://repository-projectodd.forge.cloudbees.com/incremental/')
+          aether.add_repository('jboss', 'http://repository.jboss.org/nexus/content/groups/public/')
           jars.each { |jar| aether.add_artifact(jar) }
           aether.resolve
           classpath = aether.classpath_array
