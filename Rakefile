@@ -54,4 +54,13 @@ task 'build' do
   end
 end
 
+task 'irb' do
+  GEMS.each do |gem|
+    $: << "#{gem}/lib"
+  end
+  require 'irb'
+  ARGV.clear
+  IRB.start
+end
+
 task :default => 'spec'
