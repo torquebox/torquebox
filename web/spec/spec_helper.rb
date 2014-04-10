@@ -93,7 +93,7 @@ def torquebox(options)
       :app_dir => options['--dir'],
       :context_path => options['--context-path'] || '/',
       :port => options['--port'] || '8080',
-      :command => "#{File.join(bin_dir, 'torquebox')} run -q #{args}"
+      :command => "#{File.join(bin_dir, 'torquebox')} run #{ENV['DEBUG'] ? '-v' : '-q'} #{args}"
     }
     return options
   end
