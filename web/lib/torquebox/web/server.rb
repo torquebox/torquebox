@@ -1,6 +1,9 @@
+require 'torquebox/option_utils'
+
 module TorqueBox
   module Web
     class Server
+      include TorqueBox::OptionUtils
 
       WB = org.projectodd.wunderboss.WunderBoss
       WBWeb = org.projectodd.wunderboss.web.Web
@@ -30,12 +33,14 @@ module TorqueBox
         :context_path => '/',
         :static_dir => 'public',
         :init => nil,
+        :destroy => nil,
         :rackup => 'config.ru',
         :rack_app => nil
       }
+
       def mount(options={})
         options = DEFAULT_MOUNT_OPTIONS.merge(options)
-        validate_options(options, DEFAULT_MOUNT_OPTIONS)
+        validate_options(options, enum_to_set(WBWeb::RegisterOption) + DEFAULT_MOUNT_OPTIONS.keys)
         @logger.debugf("Mounting context path %s with options %s on TorqueBox::Web::Server '%s'",
                        options[:context_path], options.inspect, @web_component.name)
         if options[:rack_app].nil?
@@ -78,7 +83,7 @@ module TorqueBox
       def initialize(name, options={})
         @logger = WB.logger('TorqueBox::Web::Server')
         options = DEFAULT_CREATE_OPTIONS.merge(options)
-        validate_options(options, DEFAULT_CREATE_OPTIONS)
+        validate_options(options, enum_to_set(WBWeb::CreateOption) + DEFAULT_CREATE_OPTIONS.keys)
         create_options = extract_options(options, WBWeb::CreateOption)
         web = WB.find_or_create_component(WBWeb.java_class, name,
                                           create_options)
@@ -87,29 +92,6 @@ module TorqueBox
         @web_component = web
       end
 
-      def validate_options(options, valid_options)
-        valid_keys = valid_options.keys
-        options.keys.each do |key|
-          unless valid_keys.include?(key)
-            raise ArgumentError.new("#{key} is not a valid option")
-          end
-        end
-      end
-
-      def extract_options(options, enum)
-        enum_values = enum.values.inject({}) do |hash, entry|
-          hash[entry.value] = entry
-          hash
-        end
-        extracted_options = {}
-        options.each_pair do |key, value|
-          key = key.to_s
-          if enum_values.include?(key)
-            extracted_options[enum_values[key]] = value
-          end
-        end
-        extracted_options
-      end
     end
   end
 end
