@@ -62,7 +62,17 @@ module TorqueBox
         @web_component.unregister(context_path)
       end
 
-      def mount_servlet
+      DEFAULT_MOUNT_SERVLET_OPTIONS = {
+        :context_path => '/'
+      }
+
+      def mount_servlet(servlet, options={})
+        options = DEFAULT_MOUNT_SERVLET_OPTIONS.merge(options);
+        validate_options(options, enum_to_set(WBWeb::RegisterOption) + DEFAULT_MOUNT_SERVLET_OPTIONS.keys)
+        @logger.debugf("Mounting servlet %s with options %s on TorqueBox::Web::Server '%s'",
+                       servlet, options.inspect, @web_component.name)
+        register_options = extract_options(options, WBWeb::RegisterOption)
+        @web_component.register_servlet(servlet, register_options)
       end
 
       def start
