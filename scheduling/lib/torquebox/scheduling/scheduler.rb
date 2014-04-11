@@ -37,6 +37,7 @@ module TorqueBox
         @logger.debugf("TorqueBox::Scheduling::Scheduler '%s' has component %s",
                        name, comp)
         @scheduling_component = comp
+        at_exit { stop }
       end
     end
   end

@@ -58,11 +58,6 @@ task 'irb' do
   GEMS.each do |gem|
     $: << "#{gem}/lib"
   end
-
-  File.open("/tmp/tbirbrc", "w") do |f|
-    f.write("IRB.conf[:AT_EXIT] << lambda {require 'torquebox-core';org.projectodd.wunderboss.WunderBoss.stop}\n")
-  end
-  ENV["IRBRC"] = "/tmp/tbirbrc"
   require 'irb'
   ARGV.clear
   IRB.start
