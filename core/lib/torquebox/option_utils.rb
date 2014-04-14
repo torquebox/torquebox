@@ -2,6 +2,8 @@ require 'set'
 
 module TorqueBox
   module OptionUtils
+    protected
+
     def validate_options(options, valid_keys)
       options.keys.each do |key|
         unless valid_keys.include?(key)

@@ -10,6 +10,7 @@ module TorqueBox
 
       def schedule(id, spec, &block)
         validate_options(spec, enum_to_set(WBScheduling::ScheduleOption))
+        spec = coerce_schedule_options(spec)
         scheduling_component.schedule(id.to_s, block,
                                       extract_options(spec, WBScheduling::ScheduleOption))
       end
@@ -39,6 +40,29 @@ module TorqueBox
         @scheduling_component = comp
         at_exit { stop }
       end
+
+      def coerce_schedule_options(options)
+        options = options.clone
+        [:at, :until].each do |k|
+          options[k] = as_date(options[k])
+        end
+
+        options.merge(options) do |k,v|
+          # ActiveSupport's durations use seconds as the base unit, so
+          # we have to detect that and convert to ms
+          v = v.in_milliseconds if defined?(ActiveSupport::Duration) && v.is_a?(ActiveSupport::Duration)
+          v.to_java
+        end
+      end
+
+      def as_date(val)
+        if val.is_a?(Integer)
+          Time.at(val)
+        else
+          val
+        end
+      end
+
     end
   end
 end

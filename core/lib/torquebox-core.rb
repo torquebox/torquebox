@@ -21,3 +21,4 @@ end
 
 require 'torquebox/cli'
 require 'torquebox/version'
+require 'torquebox/option_utils'
