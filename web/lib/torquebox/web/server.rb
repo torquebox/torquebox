@@ -93,7 +93,7 @@ module TorqueBox
       def initialize(name, options={})
         @logger = WB.logger('TorqueBox::Web::Server')
         options = DEFAULT_CREATE_OPTIONS.merge(options)
-        validate_options(options, enum_to_set(WBWeb::CreateOption) + DEFAULT_CREATE_OPTIONS.keys)
+        validate_options(options, DEFAULT_CREATE_OPTIONS.keys)
         create_options = extract_options(options, WBWeb::CreateOption)
         web = WB.find_or_create_component(WBWeb.java_class, name,
                                           create_options)
