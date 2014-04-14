@@ -42,15 +42,15 @@ module TorqueBox
       end
 
       def coerce_schedule_options(options)
-        options = options.clone
-        [:at, :until].each do |k|
-          options[k] = as_date(options[k])
-        end
-
-        options.merge(options) do |k,v|
+        options.clone.merge(options) do |k,v|
           # ActiveSupport's durations use seconds as the base unit, so
           # we have to detect that and convert to ms
           v = v.in_milliseconds if defined?(ActiveSupport::Duration) && v.is_a?(ActiveSupport::Duration)
+
+          v = as_date(v) if [:at, :until].include?(k)
+
+          v = !!v if k == :singleton
+
           v.to_java
         end
       end

@@ -40,4 +40,15 @@ describe "option coercion" do
     val = @scheduler.coerce_schedule_options(in: 5.seconds.in_milliseconds)[:in]
     val.should == 5000
   end
+
+  it "should coerce :singleton to an actual boolean" do
+    val = @scheduler.coerce_schedule_options(singleton: nil)[:singleton]
+    val.should == false
+    val = @scheduler.coerce_schedule_options(singleton: false)[:singleton]
+    val.should == false
+    val = @scheduler.coerce_schedule_options(singleton: :foo)[:singleton]
+    val.should == true
+    val = @scheduler.coerce_schedule_options(singleton: true)[:singleton]
+    val.should == true
+  end
 end
