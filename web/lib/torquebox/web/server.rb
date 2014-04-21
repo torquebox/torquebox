@@ -8,6 +8,8 @@ module TorqueBox
       WB = org.projectodd.wunderboss.WunderBoss
       WBWeb = org.projectodd.wunderboss.web.Web
       java_import org.projectodd.wunderboss.rack.RackHandler
+      java_import org.projectodd.sockjs.SockJsServer
+      java_import org.projectodd.sockjs.servlet.SockJsServlet
 
       attr_accessor :web_component
 
@@ -26,6 +28,10 @@ module TorqueBox
         mount_options = options.reject { |k, v| DEFAULT_CREATE_OPTIONS.has_key?(k) }
         server.mount(mount_options)
         server
+      end
+
+      def self.sockjs(context, options={})
+        find_or_create('default').sockjs(context, options)
       end
 
       DEFAULT_MOUNT_OPTIONS = {
@@ -73,6 +79,14 @@ module TorqueBox
                        servlet, options.inspect, @web_component.name)
         register_options = extract_options(options, WBWeb::RegisterOption)
         @web_component.register_servlet(servlet, register_options)
+      end
+
+      def sockjs(context, options={})
+        sockjs_server = SockJsServer.new
+        # TODO: handle options
+        servlet = SockJsServlet.new(sockjs_server)
+        mount_servlet(servlet, :context_path => context)
+        sockjs_server
       end
 
       def start
