@@ -12,23 +12,23 @@ module TorqueBox
       end
     end
 
-    def enum_to_hash(enum)
-      enum_values = enum.values.inject({}) do |hash, entry|
-        hash[entry.value.to_sym] = entry
+    def opts_to_hash(opts_class)
+      org.projectodd.wunderboss.Option.optsFor(opts_class).inject({}) do |hash, entry|
+        hash[entry.name.to_sym] = entry
         hash
       end
     end
 
-    def enum_to_set(enum)
-      Set.new(enum_to_hash(enum).keys)
+    def opts_to_set(opts_class)
+      Set.new(opts_to_hash(opts_class).keys)
     end
 
-    def extract_options(options, enum)
-      enum_hash = enum_to_hash(enum)
+    def extract_options(options, opts_class)
+      opts_hash = opts_to_hash(opts_class)
       extracted_options = {}
       options.each_pair do |key, value|
-        if enum_hash.include?(key)
-          extracted_options[enum_hash[key]] = value
+        if opts_hash.include?(key)
+          extracted_options[opts_hash[key]] = value
         end
       end
       extracted_options

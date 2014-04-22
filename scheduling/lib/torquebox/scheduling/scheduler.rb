@@ -9,7 +9,7 @@ module TorqueBox
       WBScheduling = org.projectodd.wunderboss.scheduling.Scheduling
 
       def schedule(id, spec, &block)
-        validate_options(spec, enum_to_set(WBScheduling::ScheduleOption))
+        validate_options(spec, opts_to_set(WBScheduling::ScheduleOption))
         spec = coerce_schedule_options(spec)
         scheduling_component.schedule(id.to_s, block,
                                       extract_options(spec, WBScheduling::ScheduleOption))
@@ -31,7 +31,7 @@ module TorqueBox
 
       def initialize(name, options={})
         @logger = WB.logger('TorqueBox::Scheduling::Scheduler')
-        validate_options(options, enum_to_set(WBScheduling::CreateOption))
+        validate_options(options, opts_to_set(WBScheduling::CreateOption))
         create_options = extract_options(options, WBScheduling::CreateOption)
         comp = WB.find_or_create_component(WBScheduling.java_class, name,
                                            create_options)

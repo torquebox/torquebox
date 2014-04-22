@@ -46,7 +46,7 @@ module TorqueBox
 
       def mount(options={})
         options = DEFAULT_MOUNT_OPTIONS.merge(options)
-        validate_options(options, enum_to_set(WBWeb::RegisterOption) + DEFAULT_MOUNT_OPTIONS.keys)
+        validate_options(options, opts_to_set(WBWeb::RegisterOption) + DEFAULT_MOUNT_OPTIONS.keys)
         @logger.debugf("Mounting context path %s with options %s on TorqueBox::Web::Server '%s'",
                        options[:context_path], options.inspect, @web_component.name)
         if options[:rack_app].nil?
@@ -74,7 +74,7 @@ module TorqueBox
 
       def mount_servlet(servlet, options={})
         options = DEFAULT_MOUNT_SERVLET_OPTIONS.merge(options);
-        validate_options(options, enum_to_set(WBWeb::RegisterOption) + DEFAULT_MOUNT_SERVLET_OPTIONS.keys)
+        validate_options(options, opts_to_set(WBWeb::RegisterOption) + DEFAULT_MOUNT_SERVLET_OPTIONS.keys)
         @logger.debugf("Mounting servlet %s with options %s on TorqueBox::Web::Server '%s'",
                        servlet, options.inspect, @web_component.name)
         register_options = extract_options(options, WBWeb::RegisterOption)
