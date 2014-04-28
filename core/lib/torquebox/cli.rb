@@ -40,6 +40,7 @@ module TorqueBox
       if extension
         command = argv.shift
         parser.banner = "Usage: torquebox #{command} #{extension.usage_parameters}"
+        parser.separator TorqueBox::CLI.extension_descriptions[command]
         parser.separator ""
         parser.separator "#{command} options:"
         extension.setup_parser(parser, options)
@@ -49,7 +50,8 @@ module TorqueBox
         parser.separator "Commands:"
         TorqueBox::CLI.extensions.keys.each do |command|
           description = TorqueBox::CLI.extension_descriptions[command]
-          parser.separator "    #{command}: #{description}"
+          command = "#{command}:".ljust(8)
+          parser.separator "    #{command} #{description}"
         end
         parser.separator "Installing additional torquebox gems may provide additional commands."
         parser.separator "'torquebox [command] -h' for additional help on each command"
@@ -87,10 +89,14 @@ module TorqueBox
   end
 end
 
-
 # Load all known CLI extensions
 # We only rescue LoadError in case the extension was found
 # but couldn't be loaded for some other reason
+begin
+  require 'torquebox/cli/fatjar'
+rescue LoadError
+  # ignore
+end
 begin
   require 'torquebox/web/cli'
 rescue LoadError
