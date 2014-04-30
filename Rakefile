@@ -54,6 +54,7 @@ task 'build' do
   end
 end
 
+desc 'Run an irb session with all torquebox libraries on the load path'
 task 'irb' do
   GEMS.each do |gem|
     $: << "#{gem}/lib"
