@@ -23,29 +23,42 @@ public class TorqueBoxMain {
     }
 
     public void run(String[] args) throws Throwable {
-        String root = extractJar();
-        System.setProperty("jruby.home", root + "/jruby");
-        List<URL> urlList = new ArrayList<URL>();
-        for (File each : new File(root + "/jruby/lib").listFiles()) {
-            if (each.getName().endsWith(".jar")) {
-                urlList.add(each.toURI().toURL());
-            }
-        }
-
         URLClassLoader wrappingLoader = null;
+        final String root = extractJar();
+        // JRuby's System.exit calls will bypass our finally block
+        // so register a shutdown hook to be sure we clean up
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                deleteRecursively(new File(root));
+            }
+        });
         try {
+            List<URL> urlList = new ArrayList<>();
+            String jrubyHome = locateJRubyHome(root);
+            File jrubyLib = new File(jrubyHome + "/lib");
+            if (jrubyLib.isDirectory()) {
+                System.setProperty("jruby.home", jrubyHome);
+                for (File each : jrubyLib.listFiles()) {
+                    if (each.getName().endsWith(".jar")) {
+                        urlList.add(each.toURI().toURL());
+                    }
+                }
+            } else {
+                // perhaps jruby is on the classpath already
+                try {
+                    Class.forName("org.jruby.Main");
+                } catch (ClassNotFoundException ignored) {
+                    throw new RuntimeException("Unable to locate JRuby. Include JRuby in the jar or set -Djruby.home or $JRUBY_HOME");
+                }
+            }
+
             wrappingLoader = URLClassLoader.newInstance(urlList.toArray(new URL[urlList.size()]));
             try {
                 Thread.currentThread().setContextClassLoader(wrappingLoader);
                 Class <?> jrubyMainClass = Class.forName("org.jruby.Main", true, wrappingLoader);
                 Method jrubyMainMethod = jrubyMainClass.getDeclaredMethod("main", String[].class);
                 jrubyMainMethod.invoke(jrubyMainClass, new Object[] {processArgs(root, args)});
-
-//                Class wunderBossClass = Class.forName("org.projectodd.wunderboss.WunderBoss");
-//                Method findLanguageMethod = wunderBossClass.getDeclaredMethod("findLanguage", String.class);
-//                Object language = findLanguageMethod.invoke(wunderBossClass, "ruby");
-//                Method evalMethod = language.getClass().getDeclaredMethod("eval", String.class);
-//                evalMethod.invoke(language, "require 'torquebox-core'; TorqueBox::CLI.new(ARGV)");
             } catch (InvocationTargetException e) {
                 // Unwrap exceptions so they don't have our reflection usage
                 // at the top of the stack
@@ -57,6 +70,7 @@ public class TorqueBoxMain {
             if (wrappingLoader != null) {
                 wrappingLoader.close();
             }
+            deleteRecursively(new File(root));
         }
     }
 
@@ -67,7 +81,6 @@ public class TorqueBoxMain {
         int from = "jar:file:".length();
         int to = mainUrl.indexOf("!/");
         String jarPath = mainUrl.substring(from, to);
-        System.err.println("!!! EXTRACTING JAR " + jarPath  + " to " + root);
 
         ZipInputStream zipStream = new ZipInputStream(new FileInputStream(jarPath));
         ZipEntry zipEntry = null;
@@ -97,17 +110,37 @@ public class TorqueBoxMain {
         return root;
     }
 
+    protected String locateJRubyHome(String root) {
+        File jrubyLib = new File(root + "/jruby/lib");
+        if (jrubyLib.isDirectory()) {
+            return root + "/jruby";
+        }
+        if (System.getProperty("jruby.home") != null) {
+            return System.getProperty("jruby.home");
+        }
+        if (System.getenv("JRUBY_HOME") != null) {
+            return System.getenv("JRUBY_HOME");
+        }
+        return null;
+    }
+
     protected String[] processArgs(String root, String[] args) {
         List<String> arguments = new ArrayList<>(Arrays.asList(args));
         if (!arguments.remove("jruby")) {
             arguments.add(0, "run");
             arguments.add(0, "torquebox");
             arguments.add(0, "-S");
-            arguments.add(0, "-rbundler/setup");
+            if (usesBundler(root)) {
+                arguments.add(0, "-rbundler/setup");
+            }
             arguments.add(0, "-C" + root + "/app");
         }
-        System.out.println("Calling JRuby with arguments: " + join(arguments, " "));
+        System.out.println("jruby " + join(arguments, " "));
         return arguments.toArray(new String[arguments.size()]);
+    }
+
+    protected boolean usesBundler(String root) {
+        return new File(root + "/app/Gemfile").exists();
     }
 
 
@@ -117,5 +150,13 @@ public class TorqueBoxMain {
             sb.append(i.next()).append(i.hasNext() ? separator : "");
         }
         return sb.toString();
+    }
+
+    protected static void deleteRecursively(File directory) {
+        if (directory.isDirectory()) {
+            for (File file : directory.listFiles())
+                deleteRecursively(file);
+        }
+        directory.delete();
     }
 }

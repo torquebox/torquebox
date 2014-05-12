@@ -21,7 +21,7 @@ public class JarBuilder {
         JarOutputStream jarStream = null;
         try {
             jarStream = new JarOutputStream(fileStream, manifest);
-            copyClass(jarStream, TorqueBoxMain.class);
+            copyMainClass(jarStream, TorqueBoxMain.class);
             for (Map.Entry<String, String> entry: entries.entrySet()) {
                 addEntry(jarStream, entry.getKey(), entry.getValue());
             }
@@ -32,10 +32,19 @@ public class JarBuilder {
         }
     }
 
-    protected static void copyClass(JarOutputStream jarStream, Class<?> clazz) throws IOException {
+    protected static void copyMainClass(JarOutputStream jarStream, Class<?> clazz) throws IOException {
         String clazzPath = clazz.getName().replace(".", "/") + ".class";
         InputStream clazzResource = clazz.getClassLoader().getResourceAsStream(clazzPath);
         addEntry(jarStream, clazzPath, clazzResource);
+        // Now load any anonymous classes defined in this class
+        for (int i = 1; i < 100; i++) {
+            clazzPath = clazz.getName().replace(".", "/") + "$" + i + ".class";
+            clazzResource = clazz.getClassLoader().getResourceAsStream(clazzPath);
+            if (clazzResource == null) {
+                break;
+            }
+            addEntry(jarStream, clazzPath, clazzResource);
+        }
     }
 
     protected static void addEntry(JarOutputStream jarStream, String name, String value) throws IOException {

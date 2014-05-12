@@ -49,7 +49,7 @@ module TorqueBox
           options['include_jruby'] = arg
         end
         parser.on('--[no-]bundle-gems',
-                  "Include Bundler gem dependencies (default: #{DEFAULT_OPTIONS['bundle_gems']})") do |arg|
+                  "Bundle gem dependencies in the jar (default: #{DEFAULT_OPTIONS['bundle_gems']})") do |arg|
           options['bundle_gems'] = arg
         end
         parser.on('--bundle-without GROUPS', Array,
@@ -67,8 +67,8 @@ module TorqueBox
         end
         zip_entries.merge!(app_files(jar_name))
         if options['bundle_gems']
-          tmp_dir = Dir.mktmpdir(nil, ".")
-          zip_entries.merge!(bundler_files(tmp_dir, options['bundle_without']))
+          tmpdir = Dir.mktmpdir(nil, ".")
+          zip_entries.merge!(bundler_files(tmpdir, options['bundle_without']))
         end
         if File.exists?(jar_name)
           @logger.infof("Removing %s", jar_name)
@@ -77,7 +77,7 @@ module TorqueBox
         @logger.infof("Writing %s", jar_name);
         org.torquebox.core.JarBuilder.create(jar_name, zip_entries)
       ensure
-        FileUtils.rm_rf(tmp_dir) if options['bundle_gems']
+        FileUtils.rm_rf(tmpdir) if options['bundle_gems']
       end
 
       def jruby_files
@@ -105,20 +105,20 @@ module TorqueBox
                      :exclude => jar_name)
       end
 
-      def bundler_files(tmp_dir, bundle_without)
+      def bundler_files(tmpdir, bundle_without)
         @logger.tracef("Adding bundler files to jar...")
         unless File.exists?(ENV['BUNDLE_GEMFILE'] || 'Gemfile')
-          $stderr.puts "No Gemfile found - skipping gem dependencies"
+          @logger.infof("No Gemfile found - skipping gem dependencies")
           return {}
         end
-        @logger.infof("Caching and bundling gem dependencies")
+        @logger.infof("Bundling gem dependencies")
         require 'bundler'
         gemfile = Bundler.default_gemfile
         lockfile = Bundler.default_lockfile
-        FileUtils.cp(gemfile, "#{tmp_dir}/")
-        FileUtils.cp(lockfile, "#{tmp_dir}/")
+        FileUtils.cp(gemfile, "#{tmpdir}/Gemfile")
+        FileUtils.cp(lockfile, "#{tmpdir}/Gemfile.lock")
         eval_in_new_ruby <<-EOS
-          Dir.chdir('#{tmp_dir}')
+          Dir.chdir('#{tmpdir}')
           require 'bundler/cli'
           Bundler::CLI.start(['cache', '--all'])
         EOS
@@ -127,12 +127,12 @@ module TorqueBox
           install_options += %W(--without #{bundle_without.join(' ')})
         end
         eval_in_new_ruby <<-EOS
-          Dir.chdir('#{tmp_dir}')
+          Dir.chdir('#{tmpdir}')
           require 'bundler/cli'
           Bundler::CLI.start(['install'] + #{install_options.inspect})
         EOS
         files = {}
-        files.merge!(files_to_jar(:file_prefix => tmp_dir,
+        files.merge!(files_to_jar(:file_prefix => tmpdir,
                                   :pattern => "/{**/*,.bundle/**/*}",
                                   :jar_prefix => "app"))
         Gem.default_path.each do |prefix|
