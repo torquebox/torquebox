@@ -80,6 +80,13 @@ module TorqueBox
       parser.parse!(argv)
 
       if extension
+        log_level = case options.delete(:verbosity)
+                    when :quiet then 'ERROR'
+                    when :verbose then 'DEBUG'
+                    when :really_verbose then 'TRACE'
+                    else 'INFO'
+                    end
+        TorqueBox::Logger.log_level = log_level
         extension.run(argv, options)
       else
         puts parser

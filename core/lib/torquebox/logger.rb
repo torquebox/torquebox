@@ -15,12 +15,17 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-Dir.glob("#{File.dirname(__FILE__)}/wunderboss-jars/*.jar") do |jar|
-  require jar
-end
+module TorqueBox
+  class Logger
+    class << self
+      attr_reader :log_level
 
-require 'torquebox-core.jar'
-require 'torquebox/cli'
-require 'torquebox/logger'
-require 'torquebox/option_utils'
-require 'torquebox/version'
+      def log_level=(level)
+        @log_level = level
+        org.projectodd.wunderboss.WunderBoss.log_level = level
+      end
+
+      log_level = 'INFO'
+    end
+  end
+end
