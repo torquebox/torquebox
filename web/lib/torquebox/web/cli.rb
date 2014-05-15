@@ -17,7 +17,7 @@ module TorqueBox
           options[:host] = arg
         end
         parser.on '--context-path PATH', 'Web context path to use (default: /)' do |arg|
-          options[:context_path] = arg
+          options[:path] = arg
         end
         parser.on '--dir DIR', 'Change directory before starting' do |arg|
           options[:root] = arg

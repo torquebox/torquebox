@@ -36,10 +36,8 @@ module TorqueBox
 
       DEFAULT_MOUNT_OPTIONS = {
         :root => '.',
-        :context_path => '/',
+        :path => '/',
         :static_dir => 'public',
-        :init => nil,
-        :destroy => nil,
         :rackup => 'config.ru',
         :rack_app => nil
       }
@@ -48,7 +46,7 @@ module TorqueBox
         options = DEFAULT_MOUNT_OPTIONS.merge(options)
         validate_options(options, opts_to_set(WBWeb::RegisterOption) + DEFAULT_MOUNT_OPTIONS.keys)
         @logger.debugf("Mounting context path %s with options %s on TorqueBox::Web::Server '%s'",
-                       options[:context_path], options.inspect, @web_component.name)
+                       options[:path], options.inspect, @web_component.name)
         if options[:rack_app].nil?
           require 'rack'
           rackup = File.join(options[:root], options[:rackup])
@@ -57,19 +55,19 @@ module TorqueBox
         if options[:init]
           options[:init] = options[:init].to_java(java.lang.Runnable)
         end
-        handler = RackHandler.new(options[:rack_app], options[:context_path])
+        handler = RackHandler.new(options[:rack_app], options[:path])
         register_options = extract_options(options, WBWeb::RegisterOption)
-        @logger.tracef("Registering handler at context path %s", options[:context_path])
+        @logger.tracef("Registering handler at context path %s", options[:path])
         @web_component.register_handler(handler, register_options)
         handler
       end
 
-      def unmount(context_path)
-        @web_component.unregister(context_path)
+      def unmount(path)
+        @web_component.unregister(path)
       end
 
       DEFAULT_MOUNT_SERVLET_OPTIONS = {
-        :context_path => '/'
+        :path => '/'
       }
 
       def mount_servlet(servlet, options={})
@@ -85,7 +83,7 @@ module TorqueBox
         sockjs_server = SockJsServer.new
         # TODO: handle options
         servlet = SockJsServlet.new(sockjs_server)
-        mount_servlet(servlet, :context_path => context)
+        mount_servlet(servlet, :path => context)
         sockjs_server
       end
 

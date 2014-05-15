@@ -91,7 +91,7 @@ def torquebox(options)
     args = options.to_a.flatten.join(' ')
     return {
       :app_dir => options['--dir'],
-      :context_path => options['--context-path'] || '/',
+      :path => options['--context-path'] || '/',
       :port => options['--port'] || '8080',
       :command => "#{File.join(bin_dir, 'torquebox')} run #{ENV['DEBUG'] ? '-v' : '-q'} #{args}"
     }
@@ -106,7 +106,7 @@ def rackup(options)
     args = options.to_a.flatten.join(' ')
     return {
       :app_dir => app_dir,
-      :context_path => '/',
+      :path => '/',
       :port => options['--port'] || '9292',
       :command => "-S rackup -s torquebox #{args} -O Quiet #{app_dir}/config.ru"
     }
@@ -115,7 +115,7 @@ end
 
 def __server_start(options)
   app_dir = options[:app_dir]
-  context_path = options[:context_path]
+  path = options[:path]
   port = options[:port]
   Capybara.app_host = "http://localhost:#{port}"
   ENV['BUNDLE_GEMFILE'] = "#{app_dir}/Gemfile"
@@ -152,7 +152,7 @@ def __server_start(options)
   booted = false
   timeout = 60
   while (Time.now - start) < timeout do
-    uri = URI.parse("#{Capybara.app_host}#{context_path}")
+    uri = URI.parse("#{Capybara.app_host}#{path}")
     begin
       response = Net::HTTP.get_response(uri)
       booted = true

@@ -52,11 +52,11 @@ describe TorqueBox::Web::Server do
       }.to raise_error(ArgumentError)
     end
 
-    it 'runs the init callback after registering' do
-      ran_init = false
-      init = lambda { ran_init = true }
-      @server.mount(:rack_app => @rack_app, :init => init)
-      expect(ran_init).to be_true
-    end
+    # it 'runs the init callback after registering' do
+    #   ran_init = false
+    #   init = lambda { ran_init = true }
+    #   @server.mount(:rack_app => @rack_app, :init => init)
+    #   expect(ran_init).to be_true
+    # end
   end
 end
