@@ -30,8 +30,8 @@ module TorqueBox
       # @option spec :until [Time, Fixnum] a specific time for the job to stop firing
       # @option spec :limit [Fixnum] limits the firings to a specific count
       # @option spec :cron [String] fires according to a
-      #  {http://quartz-scheduler.org/documentation/quartz-2.2.x/tutorials/tutorial-lesson-06 Quartz-style}
-      #  cron spec
+      #   {http://quartz-scheduler.org/documentation/quartz-2.2.x/tutorials/tutorial-lesson-06 Quartz-style}
+      #   cron spec
       # @option spec :singleton [true, false] (true) denotes the job's behavior in a cluster
       # @param block [Proc] A zero-arity block or proc that will be
       #   called on each job execution.
@@ -74,7 +74,7 @@ module TorqueBox
       #   default scheduler is named 'default'.
       # @param options [Hash] Options for scheduler creation.
       # @option options num_threads [Fixnum] (5) The size of the thread
-      #  pool for firing jobs
+      #   pool for firing jobs
       def self.find_or_create(name, options={})
         Scheduler.new(name, options)
       end
