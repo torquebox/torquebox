@@ -64,4 +64,10 @@ task 'irb' do
   IRB.start
 end
 
+desc 'Generate documentation via yardoc'
+task 'doc' do
+  require 'yard'
+  YARD::CLI::Yardoc.new.run("*/lib/**/*.rb")
+end
+
 task :default => 'spec'
