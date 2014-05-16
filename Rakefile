@@ -67,7 +67,7 @@ end
 desc 'Generate documentation via yardoc'
 task 'doc' do
   require 'yard'
-  YARD::CLI::Yardoc.new.run("*/lib/**/*.rb")
+  YARD::CLI::Yardoc.new.run("-m", "markdown", "*/lib/**/*.rb")
 end
 
 task :default => 'spec'

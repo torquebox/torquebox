@@ -3,31 +3,102 @@ module TorqueBox
     class Scheduler
       include TorqueBox::OptionUtils
 
-      attr_accessor :scheduling_component
+      # @return The raw java scheduler object.
+      attr_accessor :internal_scheduler
+
+      # Schedules a job to fire at some point(s) in the future.
+      #
+      # If called with the id of an already scheduled job, that job
+      # will be replaced.
+      #
+      # Time options (`:at`, `:until`) can be specified as `Time`
+      # objects or millis-since-epoch.
+      #
+      # Period options (`:in`, `:every`) are milliseconds, but can be
+      # generated with ActiveSupport's numeric additions (if your
+      # application uses ActiveSupport):
+      #
+      #     s.schedule(:foo, in: 5.minutes, every: 10.seconds) {
+      #       puts "Called!"
+      #     }
+      #
+      # @param id [String, Symbol] The identifier for the job.
+      # @param spec [Hash] Options specifying the firing schedule for the job.
+      # @option spec :in [Fixnum] a period (in millis) after which the job will fire
+      # @option spec :at [Time, Fixnum] a time after which the job will fire
+      # @option spec :every [Fixnum] the period (in millis) between firings
+      # @option spec :until [Time, Fixnum] a specific time for the job to stop firing
+      # @option spec :limit [Fixnum] limits the firings to a specific count
+      # @option spec :cron [String] fires according to a
+      #  {http://quartz-scheduler.org/documentation/quartz-2.2.x/tutorials/tutorial-lesson-06 Quartz-style}
+      #  cron spec
+      # @option spec :singleton [true, false] (true) denotes the job's behavior in a cluster
+      # @param block [Proc] A zero-arity block or proc that will be
+      #   called on each job execution.
+      # @return true if the call replaced an existing job with the same id
+      def schedule(id, spec, &block)
+        validate_options(spec, opts_to_set(WBScheduling::ScheduleOption))
+        spec = coerce_schedule_options(spec)
+        internal_scheduler.schedule(id.to_s, block,
+                                      extract_options(spec, WBScheduling::ScheduleOption))
+      end
+
+      # Unschedules the job with the given id.
+      #
+      # @param id [String, Symbol] The id of the job to unschedule
+      # @return true if a job was unscheduled, false otherwise
+      def unschedule(id)
+        internal_scheduler.unschedule(id.to_s)
+      end
+
+      # Starts the scheduler.
+      #
+      # The scheduler will automatically be started when a job is
+      # scheduled, so you may never need to call this.
+      def start
+        @internal_scheduler.start
+      end
+
+      # Stops the scheduler after unscheduling all of its jobs.
+      def stop
+        @internal_scheduler.stop
+      end
+
+      # Looks up the scheduler with the given name.
+      #
+      # If a scheduler with that name doesn't exist, it is created
+      # with the given options. The options are ignored when
+      # retrieving an existing scheduler.
+      #
+      # @param name [String, Symbol] The name of the scheduler. The
+      #   default scheduler is named 'default'.
+      # @param options [Hash] Options for scheduler creation.
+      # @option options num_threads [Fixnum] (5) The size of the thread
+      #  pool for firing jobs
+      def self.find_or_create(name, options={})
+        Scheduler.new(name, options)
+      end
+
+      # (see #schedule)
+      # This method schedules via the default scheduler.
+      def self.schedule(id, spec, &block)
+        scheduler.schedule(id, spec, &block)
+      end
+
+      # (see #unschedule)
+      # This method unschedules via the default scheduler.
+      def self.unschedule(id)
+        scheduler.unschedule(id)
+      end
+
+      protected
 
       WB = org.projectodd.wunderboss.WunderBoss
       WBScheduling = org.projectodd.wunderboss.scheduling.Scheduling
 
-      def schedule(id, spec, &block)
-        validate_options(spec, opts_to_set(WBScheduling::ScheduleOption))
-        spec = coerce_schedule_options(spec)
-        scheduling_component.schedule(id.to_s, block,
-                                      extract_options(spec, WBScheduling::ScheduleOption))
+      def self.scheduler
+        @scheduler ||= find_or_create("default")
       end
-
-      def unschedule(id)
-        scheduling_component.unschedule(id.to_s)
-      end
-
-      def start
-        @scheduling_component.start
-      end
-
-      def stop
-        @scheduling_component.stop
-      end
-
-      protected
 
       def initialize(name, options={})
         @logger = WB.logger('TorqueBox::Scheduling::Scheduler')
@@ -37,7 +108,7 @@ module TorqueBox
                                            create_options)
         @logger.debugf("TorqueBox::Scheduling::Scheduler '%s' has component %s",
                        name, comp)
-        @scheduling_component = comp
+        @internal_scheduler = comp
         at_exit { stop }
       end
 
