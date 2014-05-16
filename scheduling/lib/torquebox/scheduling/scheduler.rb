@@ -1,5 +1,11 @@
 module TorqueBox
   module Scheduling
+    # Provides an interface to a job scheduler.
+    #
+    # You can get access to the default or a custom configured
+    # scheduler via {.find_or_create}, and schedule against that
+    # instance, or use {.schedule} and {.unschedule} to interact with
+    # the default scheduler.
     class Scheduler
       include TorqueBox::OptionUtils
 
