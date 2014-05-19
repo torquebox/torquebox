@@ -15,12 +15,38 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-Dir.glob("#{File.dirname(__FILE__)}/wunderboss-jars/*.jar") do |jar|
-  require jar
+require "pathname"
+
+module TorqueBox
+
+  JAR_MARKER = "torquebox_jar_marker"
+  EXPLODED_JAR = !JRuby.classloader_resources(JAR_MARKER).empty?
+
+  class Jars
+    class << self
+      def register_and_require(jar)
+        path = Pathname.new(jar)
+        raise 'Jars must be registered using absolute paths' unless path.absolute?
+        jar = path.expand_path.to_s
+        @jars ||= []
+        @jars << jar
+        require jar unless EXPLODED_JAR
+      end
+
+      def list
+        @jars
+      end
+    end
+  end
 end
 
-require 'torquebox-core.jar'
+Dir.glob("#{File.dirname(__FILE__)}/wunderboss-jars/*.jar") do |jar|
+  TorqueBox::Jars.register_and_require(jar)
+end
+
+TorqueBox::Jars.register_and_require("#{File.dirname(__FILE__)}/torquebox-core.jar")
 require 'torquebox/cli'
+require 'torquebox/cli/fatjar'
 require 'torquebox/logger'
 require 'torquebox/option_utils'
 require 'torquebox/version'

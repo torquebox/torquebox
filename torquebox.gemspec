@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'torquebox-scheduling', TorqueBox::VERSION
   s.add_dependency 'torquebox-web', TorqueBox::VERSION
 
-  s.add_development_dependency('jbundler')
+  s.add_development_dependency('jbundler', '~> 0.5.4')
   s.add_development_dependency('rake')
   s.add_development_dependency('rake-compiler')
   s.add_development_dependency('rspec', '~> 2.14')

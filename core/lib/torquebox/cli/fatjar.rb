@@ -61,51 +61,82 @@ module TorqueBox
         options = DEFAULT_OPTIONS.merge(options)
         jar_name = options['jar_name']
         @logger.debugf("Creating jar with options %s", options.inspect)
-        zip_entries = {}
+
+        jar_builder = org.torquebox.core.JarBuilder.new
+        jar_builder.add_manifest_attribute("Main-Class", "org.torquebox.core.TorqueBoxMain")
+
+        app_properties = <<-EOS
+language=ruby
+extract_paths=app/:jruby/
+root=${extract_root}/app
+init=require "bundler/setup"; \
+require "torquebox-web"; \
+if org.projectodd.wunderboss.WunderBoss.options.get("wildfly-service").nil?; \
+  begin; \
+    TorqueBox::CLI.new(ARGV.unshift("run")); \
+  rescue SystemExit => e; \
+    status = e.respond_to?(:status) ? e.status : 0; \
+    java.lang.System.exit(status); \
+  end; \
+else; \
+  TorqueBox::Web::Server.run("default"); \
+end
+EOS
+        jar_builder.add_string("META-INF/app.properties", app_properties)
+        jar_builder.add_string(TorqueBox::JAR_MARKER, "")
+
         if options['include_jruby']
-          zip_entries.merge!(jruby_files)
+          add_jruby_files(jar_builder)
         end
-        zip_entries.merge!(app_files(jar_name))
+
+        add_app_files(jar_builder, jar_name)
+
         if options['bundle_gems']
-          tmpdir = Dir.mktmpdir(nil, ".")
-          zip_entries.merge!(bundler_files(tmpdir, options['bundle_without']))
+          tmpdir = Dir.mktmpdir("tmptorqueboxjar", ".")
+          add_bundler_files(jar_builder, tmpdir, options['bundle_without'])
         end
+
+        add_torquebox_files(jar_builder)
+
         if File.exists?(jar_name)
           @logger.infof("Removing %s", jar_name)
           FileUtils.rm_f(jar_name)
         end
         @logger.infof("Writing %s", jar_name);
-        org.torquebox.core.JarBuilder.create(jar_name, zip_entries)
+        jar_builder.create(jar_name)
       ensure
         FileUtils.rm_rf(tmpdir) if options['bundle_gems']
       end
 
-      def jruby_files
+      def add_jruby_files(jar_builder)
         @logger.tracef("Adding JRuby files to jar...")
-        files = {}
         rb_config = RbConfig::CONFIG
-        files.merge!(files_to_jar(:file_prefix => rb_config["prefix"],
-                                  :pattern => "/*",
-                                  :jar_prefix => "jruby"))
-        files.merge!(files_to_jar(:file_prefix => rb_config["libdir"],
-                                  :pattern => "/**/*",
-                                  :jar_prefix => "jruby/lib",
-                                  :exclude => "ruby/gems/shared"))
-        files.merge!(files_to_jar(:file_prefix => rb_config["bindir"],
-                                  :pattern => "/*",
-                                  :jar_prefix => "jruby/bin"))
-        files
+        add_files(jar_builder,
+                  :file_prefix => rb_config["prefix"],
+                  :pattern => "/*",
+                  :jar_prefix => "jruby")
+        add_files(jar_builder,
+                  :file_prefix => rb_config["libdir"],
+                  :pattern => "/**/*",
+                  :jar_prefix => "jruby/lib",
+                  :exclude => ["jruby.jar", "ruby/gems/shared"])
+        add_files(jar_builder,
+                  :file_prefix => rb_config["bindir"],
+                  :pattern => "/*",
+                  :jar_prefix => "jruby/bin")
+        jar_builder.shade_jar("#{rb_config['libdir']}/jruby.jar")
       end
 
-      def app_files(jar_name)
+      def add_app_files(jar_builder, jar_name)
         @logger.tracef("Adding application files to jar...")
-        files_to_jar(:file_prefix => Dir.pwd,
-                     :pattern => "/**/*",
-                     :jar_prefix => "app",
-                     :exclude => jar_name)
+        add_files(jar_builder,
+                  :file_prefix => Dir.pwd,
+                  :pattern => "/**/*",
+                  :jar_prefix => "app",
+                  :exclude => jar_name)
       end
 
-      def bundler_files(tmpdir, bundle_without)
+      def add_bundler_files(jar_builder, tmpdir, bundle_without)
         @logger.tracef("Adding bundler files to jar...")
         unless File.exists?(ENV['BUNDLE_GEMFILE'] || 'Gemfile')
           @logger.infof("No Gemfile found - skipping gem dependencies")
@@ -131,27 +162,34 @@ module TorqueBox
           require 'bundler/cli'
           Bundler::CLI.start(['install'] + #{install_options.inspect})
         EOS
-        files = {}
-        files.merge!(files_to_jar(:file_prefix => tmpdir,
-                                  :pattern => "/{**/*,.bundle/**/*}",
-                                  :jar_prefix => "app"))
+        add_files(jar_builder,
+                  :file_prefix => tmpdir,
+                  :pattern => "/{**/*,.bundle/**/*}",
+                  :jar_prefix => "app",
+                  :exclude => TorqueBox::Jars.list.map { |j| File.basename(j)  })
         Gem.default_path.each do |prefix|
-          files.merge!(files_to_jar(:file_prefix => prefix,
-                                    :pattern => "/**/bundler-#{Bundler::VERSION}{*,/**/*}",
-                                    :jar_prefix => "jruby/lib/ruby/gems/shared"))
+          add_files(jar_builder,
+                    :file_prefix => prefix,
+                    :pattern => "/**/bundler-#{Bundler::VERSION}{*,/**/*}",
+                    :jar_prefix => "jruby/lib/ruby/gems/shared")
         end
-        files
       end
 
-      def files_to_jar(options)
-        entries = {}
+      def add_torquebox_files(jar_builder)
+        TorqueBox::Jars.list.each do |jar|
+          jar_builder.shade_jar(jar)
+        end
+      end
+
+      def add_files(jar_builder, options)
         prefix = options[:file_prefix]
         Dir.glob("#{prefix}#{options[:pattern]}").each do |file|
           suffix = file.sub(prefix, '')
-          next if options[:exclude] && suffix.include?(options[:exclude])
-          entries[File.join(options[:jar_prefix], suffix)] = file
+          excludes = [options[:exclude]].compact.flatten
+          next if excludes.any? { |exclude| suffix.include?(exclude) }
+          next if suffix.include?("tmptorqueboxjar")
+          jar_builder.add_file(File.join(options[:jar_prefix], suffix), file)
         end
-        entries
       end
 
       def eval_in_new_ruby(script)

@@ -34,6 +34,7 @@ module TorqueBox
     end
 
     def initialize(argv)
+      require_torquebox_gems
       options = {}
       extension = TorqueBox::CLI.extensions[argv.first]
       parser = OptionParser.new
@@ -93,19 +94,18 @@ module TorqueBox
         exit 1
       end
     end
-  end
-end
 
-# Load all known CLI extensions
-# We only rescue LoadError in case the extension was found
-# but couldn't be loaded for some other reason
-begin
-  require 'torquebox/cli/fatjar'
-rescue LoadError
-  # ignore
-end
-begin
-  require 'torquebox/web/cli'
-rescue LoadError
-  # ignore
+    def require_torquebox_gems
+      # Ensure all other known TorqueBox gems are loaded so we can see their
+      # CLI extensions and jars
+      begin
+        require 'torquebox-web'
+      rescue LoadError
+      end
+      begin
+        require 'torquebox-scheduling'
+      rescue LoadError
+      end
+    end
+  end
 end
