@@ -115,6 +115,10 @@ http://phantomjs.org/download.html
     cd web
     SPEC=spec/basic_sinatra_spec.rb rake spec
 
+## Running specs with more verbose output
+
+    DEBUG=true rake spec
+
 ## Installing from source
 
     rake install
