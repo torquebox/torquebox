@@ -54,6 +54,7 @@ module TorqueBox
           command = "#{command}:".ljust(8)
           parser.separator "    #{command} #{description}"
         end
+        parser.separator ""
         parser.separator "Installing additional torquebox gems may provide additional commands."
         parser.separator "'torquebox [command] -h' for additional help on each command"
       end
