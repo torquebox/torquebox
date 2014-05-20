@@ -46,7 +46,7 @@ end
 
 TorqueBox::Jars.register_and_require("#{File.dirname(__FILE__)}/torquebox-core.jar")
 require 'torquebox/cli'
-require 'torquebox/cli/fatjar'
+require 'torquebox/cli/jar'
 require 'torquebox/logger'
 require 'torquebox/option_utils'
 require 'torquebox/version'

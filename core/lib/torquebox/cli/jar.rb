@@ -22,7 +22,7 @@ require 'torquebox-core'
 
 module TorqueBox
   class CLI
-    class FatJar
+    class Jar
 
       DEFAULT_OPTIONS = {
         'jar_name' => "#{File.basename(Dir.pwd)}.jar",
@@ -204,5 +204,5 @@ EOS
   end
 end
 
-TorqueBox::CLI.register_extension('fatjar', TorqueBox::CLI::FatJar.new,
-                                  'Create an executable "fatjar"')
+TorqueBox::CLI.register_extension('jar', TorqueBox::CLI::Jar.new,
+                                  'Create an executable and deployable jar from an application')

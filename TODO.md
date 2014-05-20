@@ -1,7 +1,5 @@
 
-## torquebox fatjar
-
-- rename to torquebox jar
+## torquebox jar
 
 - let users specify the extract directory? or just have them set
   java.io.tmpdir?
