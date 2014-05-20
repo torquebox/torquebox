@@ -37,7 +37,6 @@ module TorqueBox
 
         if options[:root]
           org.projectodd.wunderboss.WunderBoss.put_option('root', options[:root])
-          options[:static_dir] = File.join(options[:root], 'public')
         end
 
         # We always want direct control over starting / stopping
