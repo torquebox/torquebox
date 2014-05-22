@@ -271,7 +271,6 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
         config.setLoader( getClassLoader() );
         // config.setClassCache( getClassCache() );
-        config.setLoadServiceCreator( new NonLeakingLoadServiceCreator() );
         if (this.rubyVersion != null) {
             config.setCompatVersion( this.rubyVersion );
         }
