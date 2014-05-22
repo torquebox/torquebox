@@ -150,6 +150,7 @@ class Assembler
     tool.install_gem( 'rack' ) if @include_jruby
     tool.install_gem( 'bundler' ) if @include_jruby
     tool.update_gem_repo_index
+    tool.generate_windows_bat_files
   end
 
   def install_share

@@ -133,26 +133,22 @@ class AssemblyTool
         retry
       end
     end
-    generate_windows_bat_files( gem, opts, install_dir )
     copy_gem_to_repo(gem, update_index) if File.exist?( gem )
   end
 
-  def generate_windows_bat_files(gem, opts, install_dir)
-    # Completely hacked together from JRuby .bat templates and RubyGems
-    bin_dir = opts[:bin_dir] || Gem.bindir( install_dir )
-    installer = Gem::DependencyInstaller.new( opts )
-    tuple = installer.find_spec_by_name_and_version( gem ).first
-    spec = tuple.spec
-    source = tuple.source
-    local_spec = source.fetch_spec(spec.name_tuple)
-    local_spec.executables.each do |filename|
-      script_name = filename + ".bat"
-      script_path = File.join( bin_dir, File.basename( script_name ) )
-      File.open( script_path, 'wb', 0755 ) do |file|
+  def generate_windows_bat_files
+    puts "Generating Windows .bat files"
+    valid_extensions = ["", ".rb"]
+    bin_dir = "#{@jruby_dir}/bin"
+    Dir["#{bin_dir}/*"].each do |file|
+      basename = File.basename(file)
+      next unless valid_extensions.include?(File.extname(basename))
+      script_path = File.join(bin_dir, "#{basename}.bat")
+      File.open(script_path, 'wb', 0755) do |file|
         file.puts <<-TEXT.gsub( /^ {10}/,'' )
           @ECHO OFF
           IF NOT "%~f0" == "~f0" GOTO :WinNT
-          @"jruby" -S "#{filename}" %1 %2 %3 %4 %5 %6 %7 %8 %9
+          @"jruby" -S "#{basename}" %1 %2 %3 %4 %5 %6 %7 %8 %9
           GOTO :EOF
           :WinNT
           @"%~dp0jruby.exe" "%~dpn0" %*
