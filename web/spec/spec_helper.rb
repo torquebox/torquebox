@@ -153,7 +153,7 @@ def __server_start(options)
   }
   start = Time.now
   booted = false
-  timeout = 60
+  timeout = 90
   while (Time.now - start) < timeout do
     uri = URI.parse("#{Capybara.app_host}#{path}")
     begin
