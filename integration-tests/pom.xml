@@ -606,6 +606,7 @@
             <configuration>
               <jrubyJvmArgs>
                 -XX:MaxPermSize=256m -Xms64m -Xmx${rspec.max.heap}
+                -Djava.net.preferIPv4Stack=true
                 -Dmax.heap=${jboss.max.heap}
                 -Djboss.lazy=${jboss.lazy}
                 -Djruby.home=${project.basedir}/${integ.jruby.home}
