@@ -165,6 +165,7 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
         element = page.find_by_id('success')
         element.should_not be_nil
         seen_values << element.text
+        sleep 0.01
       end
     }
     10.times do
