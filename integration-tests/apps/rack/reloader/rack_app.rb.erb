@@ -3,13 +3,13 @@ require 'yaml'
 
 class RackApp
   def call(env)
-   request = Rack::Request.new(env)
+    request = Rack::Request.new(env)
+    service_version = TorqueBox.fetch('service:SimpleService').version rescue ''
 
-    result = [
-      200, {'Content-Type' => 'text/html'},
-      "<div id='success'><%= version %></div>",
-    ]
-
+    result = [200, {'Content-Type' => 'text/html'},
+              ["<div id='success'><%= version %></div>",
+               "<div id='service_version'>#{service_version}</div>"]
+             ]
     version = env['QUERY_STRING']
 
     unless version.nil? || version.empty?

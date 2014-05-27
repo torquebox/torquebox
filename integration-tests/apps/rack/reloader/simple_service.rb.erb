@@ -1,4 +1,6 @@
 class SimpleService
+  attr_reader :version
+
   def initialize
     @version = '<%= version %>'
     @response_queue = TorqueBox.fetch( '/queue/service_response' )

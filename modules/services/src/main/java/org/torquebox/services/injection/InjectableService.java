@@ -42,20 +42,17 @@ public class InjectableService implements Service<IRubyObject> {
 
     @Override
     public IRubyObject getValue() throws IllegalStateException, IllegalArgumentException {
-        return this.rubyService;
+        return this.service.getComponent().getRubyComponent();
     }
 
     @Override
     public void start(StartContext context) throws StartException {
-        this.rubyService = this.service.getComponent().getRubyComponent();
     }
 
     @Override
     public void stop(StopContext context) {
-        this.rubyService = null;
     }
 
     private RubyService service;
-    private IRubyObject rubyService;
 
 }

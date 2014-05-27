@@ -43,7 +43,12 @@ module TorqueBox
       value = service.value
       raise InjectionError.new("Injected service had no value - #{service_name}") if value.nil?
       value = value.convert(JRuby.runtime) if value.respond_to?(:convert)
-      TorqueBox::Registry.merge!(something.to_s => value)
+      if something.to_s.start_with?("service:")
+        # don't cache services to support zero-downtime deploys (TORQUE-1217)
+        return value
+      else
+        TorqueBox::Registry.merge!(something.to_s => value)
+      end
     end
     TorqueBox::Registry[something.to_s]
   end

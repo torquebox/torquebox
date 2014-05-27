@@ -192,6 +192,21 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
     threads.each(&:join)
   end
 
+  it 'should update service injectable' do
+    visit "/reloader-rack?#{uuid}"
+    element = page.find_by_id('service_version')
+    element.should_not be_nil
+    service_version = element.text
+    @service_queue.receive(:timeout => 1)
+    restart_runtime_with_jmx('services', "#{runtime_type}_runtime")
+    @service_queue.receive(:timeout => 30_000) # wait until restarted
+    visit "/reloader-rack?#{uuid}"
+    element = page.find_by_id('service_version')
+    element.should_not be_nil
+    new_service_version = element.text
+    new_service_version.should_not == service_version
+  end
+
   def restart_runtime_with_jmx(pool, app)
     # Sometimes the runtime reloading can trigger a full GC and
     # when that happens things pause and can occasionally error out
