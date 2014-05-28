@@ -18,6 +18,7 @@ versions = {
   :jruby_openssl  =>    '0.9.0',
   :haml           =>    '3.1.6',
   :json           =>    '1.7.4',
+  :execjs         =>    '2.0.2',
   :rails2x        =>    '2.3.14',
   :rails30        =>    '3.0.15',
   :rails31        =>    '3.1.7',
@@ -76,6 +77,7 @@ GemInstaller.with( versions ) do |installer|
   installer.install( 'jruby-openssl' )
   installer.install( 'haml'          )
   installer.install( 'json' )
+  installer.install( 'execjs' )
   installer.install( 'rails',         versions[:rails2x] )
   installer.install( 'rails',         versions[:rails30] )
   installer.install( 'rails',         versions[:rails31] )
