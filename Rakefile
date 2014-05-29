@@ -1,4 +1,4 @@
-GEMS = %w(core scheduling web)
+GEMS = %w(core messaging scheduling web)
 
 ['build', 'clean', 'install', 'release', 'spec'].each do |task_name|
   desc "Run #{task_name} for all gems"

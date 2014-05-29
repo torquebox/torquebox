@@ -15,8 +15,22 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'edn'
+
 module TorqueBox
-  VERSION = '4.0.0.alpha1.dev'
-  WUNDERBOSS_VERSION = '1.x.incremental.42'
-  #WUNDERBOSS_VERSION = '0.1.0-SNAPSHOT'
+  module Codecs
+    module EDN
+      class << self
+
+        def encode(data)
+          data.to_edn
+        end
+
+        def decode(data)
+          ::EDN.read(data) unless data.nil?
+        end
+
+      end
+    end
+  end
 end

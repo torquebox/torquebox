@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
-require "#{File.dirname(__FILE__)}/lib/torquebox/version"
+require "#{File.dirname(__FILE__)}/../core/lib/torquebox/version"
 
 Gem::Specification.new do |s|
-  s.name     = 'torquebox-core'
+  s.name     = 'torquebox-messaging'
   s.version  = TorqueBox::VERSION
   s.platform = 'java'
   s.summary  = 'TorqueBox Next Generation'
@@ -14,18 +14,17 @@ Gem::Specification.new do |s|
   s.license = 'LGPL3'
 
   s.require_paths = ["lib"]
-  s.bindir        = 'bin'
-  s.executables   = ['torquebox']
   s.files         = Dir['CHANGELOG.md', 'README.md', 'LICENSE',
                         'bin/**/*', 'lib/**/*']
 
-  s.add_dependency('edn', '~> 1.0')
+  s.add_dependency 'torquebox-core', TorqueBox::VERSION
 
   s.add_development_dependency('jbundler')
   s.add_development_dependency('rake')
   s.add_development_dependency('rake-compiler')
   s.add_development_dependency('rspec', '~> 2.14')
+  s.add_development_dependency('guard-rspec', '~> 4.2')
 
   s.requirements << "jar org.projectodd.wunderboss:wunderboss-ruby, #{TorqueBox::WUNDERBOSS_VERSION}"
-  s.requirements << "jar org.projectodd.wunderboss:wunderboss-wildfly, #{TorqueBox::WUNDERBOSS_VERSION}"
+  s.requirements << "jar org.projectodd.wunderboss:wunderboss-messaging, #{TorqueBox::WUNDERBOSS_VERSION}"
 end

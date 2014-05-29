@@ -7,7 +7,7 @@ module TorqueBox
     def validate_options(options, valid_keys)
       options.keys.each do |key|
         unless valid_keys.include?(key)
-          raise ArgumentError.new("#{key} is not a valid option")
+          fail ArgumentError.new("#{key} is not a valid option")
         end
       end
     end
@@ -21,6 +21,27 @@ module TorqueBox
 
     def opts_to_set(opts_class)
       Set.new(opts_to_hash(opts_class).keys)
+    end
+
+    def optset(*things)
+      set = Set.new
+      things.each do |thing|
+        if thing.kind_of?(Symbol)
+          set << thing
+        elsif thing.kind_of?(Enumerable)
+          set += thing
+        else
+          set += opts_to_set(thing)
+        end
+      end
+      set
+    end
+
+    def option_defaults(opts_class)
+      org.projectodd.wunderboss.Option.optsFor(opts_class).inject({}) do |hash, entry|
+        hash[entry.name.to_sym] = entry.defaultValue
+        hash
+      end
     end
 
     def extract_options(options, opts_class)

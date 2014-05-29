@@ -33,3 +33,4 @@ integration-tests/jboss-eap-*.zip
 pkg/
 **/lib/**/*.jar
 doc/
+Guardfile

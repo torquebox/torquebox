@@ -10,7 +10,7 @@ module TorqueBox
       include TorqueBox::OptionUtils
 
       # @return The raw java scheduler object.
-      attr_accessor :internal_scheduler
+      attr_reader :internal_scheduler
 
       # Schedules a job to fire at some point(s) in the future.
       #
@@ -88,13 +88,13 @@ module TorqueBox
       # (see #schedule)
       # This method schedules via the default scheduler.
       def self.schedule(id, spec, &block)
-        scheduler.schedule(id, spec, &block)
+        default_scheduler.schedule(id, spec, &block)
       end
 
       # (see #unschedule)
       # This method unschedules via the default scheduler.
       def self.unschedule(id)
-        scheduler.unschedule(id)
+        default_scheduler.unschedule(id)
       end
 
       protected
@@ -102,7 +102,7 @@ module TorqueBox
       WB = org.projectodd.wunderboss.WunderBoss
       WBScheduling = org.projectodd.wunderboss.scheduling.Scheduling
 
-      def self.scheduler
+      def self.default_scheduler
         @scheduler ||= find_or_create("default")
       end
 

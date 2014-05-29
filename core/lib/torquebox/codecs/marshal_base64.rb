@@ -15,8 +15,22 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'base64'
+
 module TorqueBox
-  VERSION = '4.0.0.alpha1.dev'
-  WUNDERBOSS_VERSION = '1.x.incremental.42'
-  #WUNDERBOSS_VERSION = '0.1.0-SNAPSHOT'
+  module Codecs
+    module MarshalBase64
+      class << self
+
+        def encode(data)
+          Base64.encode64(::Marshal.dump(data)) unless data.nil?
+        end
+
+        def decode(data)
+          ::Marshal.restore(Base64.decode64(data)) unless data.nil?
+        end
+
+      end
+    end
+  end
 end

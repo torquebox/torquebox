@@ -15,8 +15,37 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'base64'
+
 module TorqueBox
-  VERSION = '4.0.0.alpha1.dev'
-  WUNDERBOSS_VERSION = '1.x.incremental.42'
-  #WUNDERBOSS_VERSION = '0.1.0-SNAPSHOT'
+  module Codecs
+    module MarshalSmart
+      class << self
+
+        # @api private
+        MARSHAL_MARKER = "_|marshalled|_"
+
+        def encode(object)
+          case object
+          when String, Numeric, true, false, nil
+            object
+          else
+            if object.respond_to?(:java_object)
+              object
+            else
+              MARSHAL_MARKER + Base64.encode64(::Marshal.dump(object))
+            end
+          end
+        end
+
+        def decode(object)
+          if object.is_a?(String) && object.start_with?(MARSHAL_MARKER)
+            object = ::Marshal.load(Base64.decode64(object.sub(MARSHAL_MARKER, '')))
+          end
+          object
+        end
+
+      end
+    end
+  end
 end
