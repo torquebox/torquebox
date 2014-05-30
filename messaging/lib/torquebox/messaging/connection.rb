@@ -59,28 +59,24 @@ module TorqueBox
 
       # Creates a Queue from this connection.
       #
-      # The Queue instance will have this connection set as
-      #`:connection` in its `:default_options`.
+      # The Queue instance will use this connection for
+      # any of its methods that take a `:connection` option.
       #
       # @param (see Queue#initialize)
       # @return (see Queue#initialize)
       def queue(name, options={})
-        TorqueBox::Messaging::Queue.new(name,
-                                        options.merge(connection: self,
-                                                      default_options: {connection: self}))
+        TorqueBox::Messaging::Queue.new(name, options.merge(connection: self))
       end
 
       # Creates a Topic from this connection.
       #
-      # The Topic instance will have this connection set as
-      #`:connection` in its `:default_options`.
+      # The Topic instance will use this connection for
+      # any of its methods that take a `:connection` option.
       #
       # @param (see Topic#initialize)
       # @return (see Topic#initialize)
       def topic(name, options={})
-        TorqueBox::Messaging::Topic.new(name,
-                                        options.merge(connection: self,
-                                                      default_options: {connection: self}))
+        TorqueBox::Messaging::Topic.new(name, options.merge(connection: self))
       end
 
       # Closes this connection.

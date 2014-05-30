@@ -154,9 +154,10 @@ module TorqueBox
 
       protected
 
-      def initialize(internal_destination, default_options)
+      def initialize(internal_destination, options)
         @internal_destination = internal_destination
-        @default_options = default_options || {}
+        @default_options = options[:default_options] || {}
+        @default_options[:connection] ||= options[:connection]
       end
 
       def apply_default_options(options)
@@ -164,12 +165,14 @@ module TorqueBox
       end
 
       def coerce_connection_and_session(options)
+        options = options.dup
         options[:connection] = options[:connection].internal_connection if options[:connection]
         options[:session] = options[:session].internal_session if options[:session]
         options
       end
 
       def normalize_publish_options(options)
+        options = options.dup
         if options.has_key?(:priority)
           if PRIORITY_MAP[options[:priority]]
             options[:priority] = PRIORITY_MAP[options[:priority]]

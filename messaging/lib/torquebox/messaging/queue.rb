@@ -10,12 +10,14 @@ module TorqueBox
 
       # Creates a new queue reference.
       #
-      # This may be a reference to a remote or local (in-vm) queue. If
-      # a :connection is provided, the queue reference will be remote.
+      # This may be a reference to a remote or local (in-vm) queue.
       # Obtaining a reference to an in-vm queue will cause the queue
       # to be created within the broker if it does not already exist.
       # For remote queues, the queue must already exist in the remote
       # broker.
+      #
+      # If a connection is provided, it will be remembered and
+      # used by any method that takes a `:connection` option.
       #
       # @param name [String] The name of the queue.
       # @param options [Hash] Options for queue creation.
@@ -30,10 +32,10 @@ module TorqueBox
       # @return [Queue] The queue reference.
       def initialize(name, options={})
         validate_options(options, QUEUE_OPTIONS)
-        coerce_connection_and_session(options)
-        create_options = extract_options(options, WBMessaging::CreateQueueOption)
+        coerced_opts = coerce_connection_and_session(options)
+        create_options = extract_options(coerced_opts, WBMessaging::CreateQueueOption)
         super(default_broker.find_or_create_queue(name, create_options),
-              options[:default_options])
+              options)
       end
 
       # Valid options for {#request}.
