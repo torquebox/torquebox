@@ -41,6 +41,11 @@ public class RackHandler implements HttpHandler {
             IRubyObject rackResponse = rackApplication.callMethod(threadContext, "call", rackEnvHash);
             RackResponder rackResponder = new RackResponder(runtime, rackResponderClass, exchange);
             Helpers.invoke(threadContext, responseModule, RESPONSE_HANDLER_METHOD_NAME, rackResponse, rackResponder);
+        } catch (Exception ex) {
+            if (!exchange.isResponseStarted()) {
+                exchange.setResponseCode(500);
+            }
+            throw ex;
         } finally {
             if (inputChannel != null) {
                 inputChannel.close();
