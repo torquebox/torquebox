@@ -49,7 +49,7 @@ module TorqueBox
                        options[:path], options.inspect, @web_component.name)
         if options[:rack_app].nil?
           require 'rack'
-          rackup = File.join(options[:root], options[:rackup])
+          rackup = File.expand_path(options[:rackup], options[:root])
           options[:rack_app] = Rack::Builder.parse_file(rackup).first
         end
         if options[:init]
