@@ -69,7 +69,7 @@ module TorqueBox
 language=ruby
 extract_paths=app/:jruby/
 root=${extract_root}/app
-init=require "bundler/setup"; \
+init=require "vendor/bundle/bundler/setup"; \
 require "torquebox-web"; \
 if org.projectodd.wunderboss.WunderBoss.options.get("wildfly-service").nil?; \
   begin; \
@@ -148,12 +148,7 @@ EOS
         lockfile = Bundler.default_lockfile
         FileUtils.cp(gemfile, "#{tmpdir}/Gemfile")
         FileUtils.cp(lockfile, "#{tmpdir}/Gemfile.lock")
-        eval_in_new_ruby <<-EOS
-          Dir.chdir('#{tmpdir}')
-          require 'bundler/cli'
-          Bundler::CLI.start(['cache', '--all'])
-        EOS
-        install_options = %w(--local --path vendor/bundle --no-cache)
+        install_options = %w(--standalone --path vendor/bundle)
         unless bundle_without.empty?
           install_options += %W(--without #{bundle_without.join(' ')})
         end
@@ -167,12 +162,6 @@ EOS
                   :pattern => "/{**/*,.bundle/**/*}",
                   :jar_prefix => "app",
                   :exclude => TorqueBox::Jars.list.map { |j| File.basename(j)  })
-        Gem.default_path.each do |prefix|
-          add_files(jar_builder,
-                    :file_prefix => prefix,
-                    :pattern => "/**/bundler-#{Bundler::VERSION}{*,/**/*}",
-                    :jar_prefix => "jruby/lib/ruby/gems/shared")
-        end
       end
 
       def add_torquebox_files(jar_builder)
