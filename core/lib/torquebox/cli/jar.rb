@@ -93,7 +93,7 @@ EOS
 
         if options['bundle_gems']
           tmpdir = Dir.mktmpdir("tmptorqueboxjar", ".")
-          add_bundler_files(jar_builder, tmpdir, options['bundle_without'])
+          add_bundler_files(jar_builder, jar_name, tmpdir, options['bundle_without'])
         end
 
         add_torquebox_files(jar_builder)
@@ -136,7 +136,7 @@ EOS
                   :exclude => jar_name)
       end
 
-      def add_bundler_files(jar_builder, tmpdir, bundle_without)
+      def add_bundler_files(jar_builder, jar_name, tmpdir, bundle_without)
         @logger.tracef("Adding bundler files to jar...")
         unless File.exists?(ENV['BUNDLE_GEMFILE'] || 'Gemfile')
           @logger.infof("No Gemfile found - skipping gem dependencies")
@@ -144,10 +144,13 @@ EOS
         end
         @logger.infof("Bundling gem dependencies")
         require 'bundler'
-        gemfile = Bundler.default_gemfile
-        lockfile = Bundler.default_lockfile
-        FileUtils.cp(gemfile, "#{tmpdir}/Gemfile")
-        FileUtils.cp(lockfile, "#{tmpdir}/Gemfile.lock")
+
+        Dir.glob('*').each do |file|
+          next if file.include?("tmptorqueboxjar")
+          next if file.include?(jar_name)
+          FileUtils.cp_r(file, tmpdir)
+        end
+
         eval_in_new_ruby <<-EOS
           ENV['BUNDLE_GEMFILE'] = "#{tmpdir}/Gemfile"
           Dir.chdir('#{tmpdir}')
