@@ -149,6 +149,7 @@ EOS
         FileUtils.cp(gemfile, "#{tmpdir}/Gemfile")
         FileUtils.cp(lockfile, "#{tmpdir}/Gemfile.lock")
         eval_in_new_ruby <<-EOS
+          ENV['BUNDLE_GEMFILE'] = "#{tmpdir}/Gemfile"
           Dir.chdir('#{tmpdir}')
           require 'bundler/cli'
           Bundler::CLI.start(['cache', '--all'])
@@ -158,6 +159,7 @@ EOS
           install_options += %W(--without #{bundle_without.join(' ')})
         end
         eval_in_new_ruby <<-EOS
+          ENV['BUNDLE_GEMFILE'] = "#{tmpdir}/Gemfile"
           Dir.chdir('#{tmpdir}')
           require 'bundler/cli'
           Bundler::CLI.start(['install'] + #{install_options.inspect})
