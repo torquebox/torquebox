@@ -98,7 +98,21 @@ module TorqueBox
       end
 
       def install_bundler_tasks
-        Bundler::GemHelper.install_tasks
+        helper = Bundler::GemHelper.new
+
+        # this get's prepended to blunder's install task
+        task 'install' do
+          gemdir = `gem env gemdir`.strip
+          gem_name = "#{helper.gemspec.name}-#{helper.gemspec.version}-java.gem"
+          cached_gem = File.join(gemdir, 'cache', gem_name)
+          if File.exists?(cached_gem)
+            puts "Removing cached gem #{cached_gem}"
+            FileUtils.rm(cached_gem)
+          end
+        end
+
+        helper.install
+
       end
 
       def install_rspec_tasks
