@@ -18,7 +18,7 @@ GEMS = %w(core messaging scheduling web)
   end
 end
 
-require "#{File.dirname(__FILE__)}/etc/tasks/torquebox"
+require "#{File.dirname(__FILE__)}/tasks/torquebox"
 TorqueBox::RakeHelper.install_bundler_tasks
 TorqueBox::RakeHelper.install_clean_tasks
 
