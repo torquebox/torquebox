@@ -103,16 +103,21 @@ default.
     bundle install
     rake build
 
-## Running all specs
+## Running specs
+
+    rake spec
+
+## Running integration tests
 
 Make sure `phantomjs` is available on your $PATH -
 http://phantomjs.org/download.html
 
+    cd integration-tests
     rake spec
 
-## Running a single spec
+## Running a single integration test
 
-    cd web
+    cd integration-tests
     SPEC=spec/basic_sinatra_spec.rb rake spec
 
 ## Running specs with more verbose output

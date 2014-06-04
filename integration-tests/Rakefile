@@ -1,0 +1,3 @@
+require "#{File.dirname(__FILE__)}/../tasks/torquebox"
+TorqueBox::RakeHelper.install_rspec_tasks
+TorqueBox::RakeHelper.install_clean_tasks
