@@ -99,14 +99,13 @@ module TorqueBox
     def require_torquebox_gems
       # Ensure all other known TorqueBox gems are loaded so we can see their
       # CLI extensions and jars
-      begin
-        require 'torquebox-web'
-      rescue LoadError
-      end
-      begin
-        require 'torquebox-scheduling'
-      rescue LoadError
+      %w(torquebox-web torquebox-messaging torquebox-scheduling).each do |gem|
+        begin
+        require gem
+        rescue LoadError
+        end
       end
     end
+
   end
 end
