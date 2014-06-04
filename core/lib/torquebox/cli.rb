@@ -101,7 +101,7 @@ module TorqueBox
       # CLI extensions and jars
       %w(torquebox-web torquebox-messaging torquebox-scheduling).each do |gem|
         begin
-        require gem
+          require gem
         rescue LoadError
         end
       end
