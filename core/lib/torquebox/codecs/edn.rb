@@ -15,18 +15,31 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'edn'
-
 module TorqueBox
   module Codecs
     module EDN
       class << self
 
+        # @api private
+        def require_edn
+          # We don't ship our own edn, but can use it if the user
+          # installs it.
+          if !defined?(::EDN)
+            begin
+              require 'edn'
+            rescue LoadError => ex
+              raise RuntimeError.new("Unable to load the edn gem. Verify that is installed and in your Gemfile (if using Bundler)")
+            end
+          end
+        end
+
         def encode(data)
+          require_edn
           data.to_edn
         end
 
         def decode(data)
+          require_edn
           ::EDN.read(data) unless data.nil?
         end
 
