@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rake')
   s.add_development_dependency('rake-compiler')
   s.add_development_dependency('rspec', '~> 2.14')
-  s.add_development_dependency('edn', '~> 1.0')
 
   s.requirements << "jar org.projectodd.wunderboss:wunderboss-ruby, #{TorqueBox::WUNDERBOSS_VERSION}"
   s.requirements << "jar org.projectodd.wunderboss:wunderboss-wildfly, #{TorqueBox::WUNDERBOSS_VERSION}"
