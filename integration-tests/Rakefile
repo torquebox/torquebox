@@ -1,3 +1,27 @@
 require "#{File.dirname(__FILE__)}/../tasks/torquebox"
-TorqueBox::RakeHelper.install_rspec_tasks
 TorqueBox::RakeHelper.install_clean_tasks
+
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:real_spec) do |config|
+  config.pattern = './spec/*_spec.rb'
+end
+task(:real_spec).clear_comments
+
+namespace :spec do
+  desc 'Run integration tests using applications on disk'
+  task :disk do
+    puts '>>> Running integration tests from disk'
+    ENV['PACKAGING'] = nil
+    task(:real_spec).execute
+  end
+  desc 'Run integration tests using applications inside jars'
+  task :jar do
+    puts '>>> Running integration tests with jar packaging'
+    ENV['PACKAGING'] = 'jar'
+    task(:real_spec).execute
+  end
+end
+
+desc 'Run integration tests with all packaging variants'
+task :spec => ['spec:disk', 'spec:jar']
+
