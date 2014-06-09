@@ -86,17 +86,41 @@ def apps_dir
   File.join(File.dirname(__FILE__), '..', 'apps')
 end
 
+def jruby_jvm_opts
+  "-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1"
+end
+
 def torquebox(options)
+  run_in_jar = ENV['PACKAGING'] == 'jar'
+  app_dir = options['--dir']
+  if run_in_jar
+    jarfile = "#{app_dir}/#{File.basename(app_dir)}.jar"
+    before = lambda {
+      command = "cd #{app_dir} && #{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{File.join(bin_dir, 'torquebox')} jar -v"
+      jar_output = `#{command}`
+      puts jar_output if ENV['DEBUG']
+    }
+    after = lambda {
+      FileUtils.rm_f(jarfile)
+    }
+    command_prefix = "java -jar #{jarfile}"
+  else
+    before = nil
+    after = nil
+    command_prefix = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{File.join(bin_dir, 'torquebox')} run"
+  end
+  args = options.to_a.flatten.join(' ')
+  command = "#{command_prefix} #{ENV['DEBUG'] ? '-v' : '-q'} #{args}"
   metaclass = class << self; self; end
   metaclass.send(:define_method, :server_options) do
-    args = options.to_a.flatten.join(' ')
     return {
-      :app_dir => options['--dir'],
+      :app_dir => app_dir,
       :path => options['--context-path'] || '/',
       :port => options['--port'] || '8080',
-      :command => "#{File.join(bin_dir, 'torquebox')} run #{ENV['DEBUG'] ? '-v' : '-q'} #{args}"
+      :before => before,
+      :after => after,
+      :command => command
     }
-    return options
   end
 end
 
@@ -109,7 +133,7 @@ def rackup(options)
       :app_dir => app_dir,
       :path => '/',
       :port => options['--port'] || '9292',
-      :command => "-S rackup -s torquebox #{args} -O Quiet #{app_dir}/config.ru"
+      :command => "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' -S rackup -s torquebox #{args} -O Quiet #{app_dir}/config.ru"
     }
   end
 end
@@ -120,10 +144,12 @@ def __server_start(options)
   port = options[:port]
   Capybara.app_host = "http://localhost:#{port}"
   ENV['BUNDLE_GEMFILE'] = "#{app_dir}/Gemfile"
-  ENV['RUBYLIB'] = "#{CORE_DIR}/lib:#{WEB_DIR}/lib:#{app_dir}"
-  jruby_jvm_opts = "-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1"
-  command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{options[:command]}"
-  pid, stdin, stdout, stderr = IO.popen4(command)
+  if options[:before]
+    options[:before].call
+  end
+  @server_after = options[:after]
+  ENV['RUBYLIB'] = app_dir
+  pid, stdin, stdout, stderr = IO.popen4(options[:command])
   ENV['BUNDLE_GEMFILE'] = nil
   ENV['RUBYLIB'] = nil
   @server_pid = pid
@@ -180,5 +206,9 @@ def __server_stop
     @stdout_thread = nil
     @stderr_thread.join
     @stderr_thread = nil
+  end
+  if @server_after
+    @server_after.call
+    @server_after = nil
   end
 end

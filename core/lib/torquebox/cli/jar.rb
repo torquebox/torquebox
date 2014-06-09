@@ -16,6 +16,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'fileutils'
+require 'pathname'
 require 'rbconfig'
 require 'tmpdir'
 require 'torquebox-core'
@@ -139,34 +140,60 @@ EOS
       def add_bundler_files(jar_builder, jar_name, tmpdir, bundle_without)
         @logger.tracef("Adding bundler files to jar...")
         unless File.exists?(ENV['BUNDLE_GEMFILE'] || 'Gemfile')
-          @logger.infof("No Gemfile found - skipping gem dependencies")
+          @logger.info("No Gemfile found - skipping gem dependencies")
           return {}
         end
-        @logger.infof("Bundling gem dependencies")
+        @logger.info("Bundling gem dependencies")
         require 'bundler'
 
-        Dir.glob('*').each do |file|
-          next if file.include?("tmptorqueboxjar")
-          next if file.include?(jar_name)
-          FileUtils.cp_r(file, tmpdir)
+        if File.exists?('.bundle/config')
+          FileUtils.mkdir_p("#{tmpdir}/.bundle")
+          FileUtils.cp('.bundle/config', "#{tmpdir}/.bundle")
         end
 
-        eval_in_new_ruby <<-EOS
-          ENV['BUNDLE_GEMFILE'] = "#{tmpdir}/Gemfile"
-          Dir.chdir('#{tmpdir}')
-          require 'bundler/cli'
-          Bundler::CLI.start(['cache', '--all'])
-        EOS
-        install_options = %w(--local --path vendor/bundle --no-cache)
-        unless bundle_without.empty?
-          install_options += %W(--without #{bundle_without.join(' ')})
+        ###
+        # ditch copying to tmp dir:
+        # set BUNDLE_APP_CONFIG, remove vendor/cache unless it previously existed
+        ###
+
+        vendor_dir_exists = File.exists?('vendor')
+        cache_dir_exists = File.exists?('vendor/cache')
+        bundle_dir_exists = File.exists?('vendor/bundle')
+        already_cached = Dir.glob('vendor/cache/*.gem').count > 0
+        Bundler.settings.path
+        # TODO: Use Bundler.settings.path to check if already bundled,
+        # perhaps by looking for a relative path already_bundled =
+        already_bundled = Pathname.new(Bundler.settings.path).relative?
+
+        unless already_cached
+          eval_in_new_ruby <<-EOS
+            ENV['BUNDLE_APP_CONFIG'] = "#{tmpdir}/.bundle"
+            require 'bundler/cli'
+            Bundler::CLI.start(['cache', '--all'])
+          EOS
         end
-        eval_in_new_ruby <<-EOS
-          ENV['BUNDLE_GEMFILE'] = "#{tmpdir}/Gemfile"
-          Dir.chdir('#{tmpdir}')
-          require 'bundler/cli'
-          Bundler::CLI.start(['install'] + #{install_options.inspect})
-        EOS
+
+        unless already_bundled
+          install_options = %w(--local --path vendor/bundle --no-cache)
+          unless bundle_without.empty?
+            install_options += %W(--without #{bundle_without.join(' ')})
+          end
+          eval_in_new_ruby <<-EOS
+            ENV['BUNDLE_APP_CONFIG'] = "#{tmpdir}/.bundle"
+            require 'bundler/cli'
+            Bundler::CLI.start(['install'] + #{install_options.inspect})
+          EOS
+          FileUtils.mkdir_p("#{tmpdir}/vendor/bundle/jruby")
+          FileUtils.cp_r('vendor/bundle/jruby', "#{tmpdir}/vendor/bundle/")
+        end
+
+        unless already_cached
+          FileUtils.mkdir_p("#{tmpdir}/vendor/cache")
+          Dir.glob('vendor/cache/*.gem').each do |gem|
+            FileUtils.mv(gem, "#{tmpdir}/vendor/cache/")
+          end
+        end
+
         add_files(jar_builder,
                   :file_prefix => tmpdir,
                   :pattern => "/{**/*,.bundle/**/*}",
@@ -178,6 +205,10 @@ EOS
                     :pattern => "/**/bundler-#{Bundler::VERSION}{*,/**/*}",
                     :jar_prefix => "jruby/lib/ruby/gems/shared")
         end
+      ensure
+        FileUtils.rm_rf('vendor/bundle') unless bundle_dir_exists
+        FileUtils.rm_rf('vendor/cache') unless cache_dir_exists
+        FileUtils.rm_rf('vendor') unless vendor_dir_exists
       end
 
       def add_torquebox_files(jar_builder)
