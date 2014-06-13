@@ -54,4 +54,17 @@ feature 'basic rails4 test' do
     expect(page.driver.cookies['foo3'].value).to eq('bar3')
   end
 
+  it "should serve assets from app/assets" do
+    visit "/basic-rails4/assets/test.js?body=1"
+    page.source.should =~ /\/\/ taco/
+  end
+
+  it "should generate correct asset and link paths" do
+    visit "/basic-rails4"
+    image = page.find('img')
+    image['src'].should match(/\/basic-rails4\/assets\/rails\.png/)
+    link = page.find('a')
+    link['href'].should eql('/basic-rails4/')
+  end
+
 end

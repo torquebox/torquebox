@@ -21,12 +21,17 @@ $: << "#{CORE_DIR}/lib"
 $: << "#{WEB_DIR}/lib"
 require "#{CORE_DIR}/spec/spec_helper"
 
+require 'net/http'
+require 'rexml/document'
+require 'tmpdir'
+require 'uri'
+
 require 'torquebox-web'
 
 require 'capybara/poltergeist'
 require 'capybara/rspec'
-require 'net/http'
-require 'uri'
+require 'torquespec/torquespec'
+require 'torquespec/server'
 
 Capybara.app_host = "http://localhost:8080"
 Capybara.run_server = false
@@ -60,6 +65,42 @@ EOF
         raise ex
       end
     end
+    if wildfly?
+      require 'jbundler/aether'
+      config = JBundler::Config.new
+      aether = JBundler::AetherRuby.new(config)
+      aether.add_artifact("org.wildfly:wildfly-dist:zip:#{TorqueBox::WILDFLY_VERSION}")
+      aether.resolve
+      zip_path = aether.classpath_array.find { |dep| dep.include?('wildfly/wildfly-dist/') }
+      unzip_path = File.expand_path('../pkg', File.dirname(__FILE__))
+      wildfly_home = File.join(unzip_path, 'wildfly')
+      unless File.exists?(wildfly_home)
+        FileUtils.mkdir_p(unzip_path)
+        Dir.chdir(unzip_path) do
+          unzip(zip_path)
+          original_dir = File.expand_path(Dir['wildfly-*' ].first)
+          FileUtils.mv(original_dir, wildfly_home)
+        end
+        standalone_xml = "#{wildfly_home}/standalone/configuration/standalone.xml"
+        doc = REXML::Document.new(File.read(standalone_xml))
+        interfaces = doc.root.get_elements("//management-interfaces/*")
+        interfaces.each { |i| i.attributes.delete('security-realm')}
+        open(standalone_xml, 'w') do |file|
+          doc.write(file, 4)
+        end
+      end
+      FileUtils.rm_rf(Dir["#{wildfly_home}/standalone/log/*"])
+      FileUtils.rm_rf(Dir["#{wildfly_home}/standalone/deployments/*"])
+      TorqueSpec.configure do |config|
+        config.jboss_home = wildfly_home
+      end
+      $wildfly = TorqueSpec::Server.new
+      $wildfly.start(:wait => 120)
+    end
+  end
+
+  config.after(:suite) do
+    $wildfly.stop if $wildfly
   end
 
   config.before(:all) do
@@ -90,15 +131,41 @@ def jruby_jvm_opts
   "-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1"
 end
 
+def uberjar?
+  ENV['PACKAGING'] == 'jar'
+end
+
+def wildfly?
+  ENV['WILDFLY'] == 'true'
+end
+
+def unzip(path)
+  if windows?
+    `jar.exe xf #{path}`
+  else
+    `jar xf #{path}`
+  end
+end
+
+def windows?
+  RbConfig::CONFIG['host_os'] =~ /mswin/
+end
+
 def torquebox(options)
-  run_in_jar = ENV['PACKAGING'] == 'jar'
+  path = options['--context-path'] || '/'
   app_dir = options['--dir']
-  if run_in_jar
+  if uberjar?
     jarfile = "#{app_dir}/#{File.basename(app_dir)}.jar"
     before = lambda {
       command = "cd #{app_dir} && #{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{File.join(bin_dir, 'torquebox')} jar -v"
+      if wildfly?
+        name = path == '/' ? 'ROOT.jar' : "#{path.sub('/', '')}.jar"
+        command << " --name #{name}"
+        jarfile = "#{app_dir}/#{name}"
+      end
       jar_output = `#{command}`
       puts jar_output if ENV['DEBUG']
+      $wildfly.deploy(jarfile) if wildfly?
     }
     after = lambda {
       FileUtils.rm_f(jarfile)
@@ -115,7 +182,7 @@ def torquebox(options)
   metaclass.send(:define_method, :server_options) do
     return {
       :app_dir => app_dir,
-      :path => options['--context-path'] || '/',
+      :path => path,
       :port => options['--port'] || '8080',
       :before => before,
       :after => after,
@@ -141,7 +208,7 @@ end
 def __server_start(options)
   app_dir = options[:app_dir]
   path = options[:path]
-  port = options[:port]
+  port = wildfly? ? '8080' : options[:port]
   Capybara.app_host = "http://localhost:#{port}"
   ENV['BUNDLE_GEMFILE'] = "#{app_dir}/Gemfile"
   if options[:before]
@@ -149,32 +216,36 @@ def __server_start(options)
   end
   @server_after = options[:after]
   ENV['RUBYLIB'] = app_dir
-  pid, stdin, stdout, stderr = IO.popen4(options[:command])
-  ENV['BUNDLE_GEMFILE'] = nil
-  ENV['RUBYLIB'] = nil
-  @server_pid = pid
+  if wildfly?
+    # app already depoyed in the before callback
+  else
+    pid, stdin, stdout, stderr = IO.popen4(options[:command])
+    ENV['BUNDLE_GEMFILE'] = nil
+    ENV['RUBYLIB'] = nil
+    @server_pid = pid
 
-  stdin.close
-  stdout.sync = true
-  stderr.sync = true
-  error_seen = false
-  @stdout_thread = Thread.new(stdout) { |stdout_io|
-    begin
-      while true
-        STDOUT.write(stdout_io.readpartial(1024))
+    stdin.close
+    stdout.sync = true
+    stderr.sync = true
+    error_seen = false
+    @stdout_thread = Thread.new(stdout) { |stdout_io|
+      begin
+        while true
+          STDOUT.write(stdout_io.readpartial(1024))
+        end
+      rescue EOFError
       end
-    rescue EOFError
-    end
-  }
-  @stderr_thread = Thread.new(stderr) { |stderr_io|
-    begin
-      while true
-        STDERR.write(stderr_io.readpartial(1024))
-        error_seen = true
+    }
+    @stderr_thread = Thread.new(stderr) { |stderr_io|
+      begin
+        while true
+          STDERR.write(stderr_io.readpartial(1024))
+          error_seen = true
+        end
+      rescue EOFError
       end
-    rescue EOFError
-    end
-  }
+    }
+  end
   start = Time.now
   booted = false
   timeout = 90
@@ -195,6 +266,9 @@ def __server_start(options)
 end
 
 def __server_stop
+  if wildfly? && @jarfile
+    $wildfly.undeploy(@jarfile)
+  end
   if @server_pid
     begin
       Process.kill 'INT', @server_pid

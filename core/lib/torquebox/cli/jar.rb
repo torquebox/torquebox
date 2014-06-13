@@ -189,9 +189,7 @@ EOS
 
         unless already_cached
           FileUtils.mkdir_p("#{tmpdir}/vendor/cache")
-          Dir.glob('vendor/cache/*.gem').each do |gem|
-            FileUtils.mv(gem, "#{tmpdir}/vendor/cache/")
-          end
+          FileUtils.cp_r('vendor/cache', "#{tmpdir}/vendor/")
         end
 
         add_files(jar_builder,
