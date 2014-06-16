@@ -249,18 +249,24 @@ def __server_start(options)
   start = Time.now
   booted = false
   timeout = 90
+  last_exception = nil
   while (Time.now - start) < timeout do
     uri = URI.parse("#{Capybara.app_host}#{path}")
     begin
       response = Net::HTTP.get_response(uri)
       booted = true
       break
-    rescue Exception
+    rescue Exception => ex
+      last_exception = ex
       sleep 0.2 # sleep and retry
     end
     break if error_seen
   end
   if !booted
+    if last_exception && ENV['DEBUG']
+      puts ex.inspect
+      puts ex.backtrace
+    end
     raise "Application #{app_dir} failed to start within #{timeout} seconds"
   end
 end
