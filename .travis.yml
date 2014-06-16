@@ -3,9 +3,12 @@ language: ruby
 rvm:
   - jruby-19mode
 
+env: DEBUG=true
+
 install: bundle install
 
 before_script: bundle exec rake build
+
 script:
   - rake spec
   - cd integration-tests && rake spec
