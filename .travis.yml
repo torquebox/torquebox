@@ -3,6 +3,10 @@ language: ruby
 rvm:
   - jruby-19mode
 
+jdk:
+  - openjdk7
+  - oraclejdk7
+
 env: DEBUG=true
 
 install: bundle install
