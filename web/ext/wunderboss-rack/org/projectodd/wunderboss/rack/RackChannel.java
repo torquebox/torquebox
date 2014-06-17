@@ -11,6 +11,7 @@ import org.jruby.runtime.ObjectAllocator;
 import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.jruby.util.ByteList;
+import org.jruby.util.IOInputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -120,6 +121,7 @@ public class RackChannel extends RubyObject {
                 byteBuffer.limit((int) bytesRemaining);
             }
             bytesRead = inputChannel.read(byteBuffer);
+            totalBytesRead += bytesRead;
             if (bytesRead > 0) {
                 bytes = byteBufferToBytes(byteBuffer, bytesRead);
                 stringBuffer.cat(bytes);
@@ -149,6 +151,12 @@ public class RackChannel extends RubyObject {
     public IRubyObject rewind(ThreadContext context) throws IOException {
         inputChannel.position(0);
         return getRuntime().getNil();
+    }
+
+    @JRubyMethod(name="io=")
+    public void setIO(IRubyObject rubyIO) {
+        InputStream inputStream = new IOInputStream(rubyIO);
+        inputChannel = new RewindableChannel(inputStream);
     }
 
     public void close() throws IOException {
