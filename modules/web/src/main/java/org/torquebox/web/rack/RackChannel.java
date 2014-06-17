@@ -135,6 +135,7 @@ public class RackChannel extends RubyObject {
                 byteBuffer.limit((int) bytesRemaining);
             }
             bytesRead = inputChannel.read(byteBuffer);
+            totalBytesRead += bytesRead;
             if (bytesRead > 0) {
                 bytes = byteBufferToBytes(byteBuffer, bytesRead);
                 stringBuffer.cat(bytes);

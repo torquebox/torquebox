@@ -21,6 +21,7 @@ package org.torquebox.web.rack;
 
 import org.jruby.Ruby;
 import org.jruby.RubyClass;
+import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.test.ruby.AbstractRubyTestCase;
@@ -43,6 +44,18 @@ public class RackChannelTest extends AbstractRubyTestCase {
         RackChannel channel = new RackChannel(ruby, rackChannelClass, new ByteArrayInputStream(input.getBytes()));
         assertEquals("foo\n", channel.gets(ruby.getCurrentContext()).asJavaString());
         assertEquals("bar", channel.gets(ruby.getCurrentContext()).asJavaString());
+    }
+
+    @Test
+    public void testBytesToReadRespectedIfOver4096() throws Exception {
+        StringBuilder builder = new StringBuilder("foo\nbar");
+        for (int i = 0; i < 1000; i++) {
+            builder.append("foo\nbar");
+        }
+        String input = builder.toString();
+        RackChannel channel = new RackChannel(ruby, rackChannelClass, new ByteArrayInputStream(input.getBytes()));
+        IRubyObject result = channel.read(ruby.getCurrentContext(), new IRubyObject[] { ruby.evalScriptlet("4097") });
+        assertEquals(4097, result.toString().length());
     }
 
     private Ruby ruby;
