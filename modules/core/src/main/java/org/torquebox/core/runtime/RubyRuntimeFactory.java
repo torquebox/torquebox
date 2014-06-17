@@ -267,7 +267,12 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         TorqueBoxRubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
         Map<String, String> environment = createEnvironment();
-        config.processArguments( prepareJRubyOpts( environment ) );
+        List<String> argv = prepareJRubyOpts(environment);
+        if (this.profileApi) {
+            log.info( "JRuby Profile API enabled." );
+            argv.add("--profile.api");
+        }
+        config.processArguments(argv.toArray(new String[argv.size()]));
 
         config.setLoader( getClassLoader() );
         // config.setClassCache( getClassCache() );
@@ -279,13 +284,6 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         }
         config.setDebug( this.debug );
         config.setInteractive( this.interactive );
-
-        if (this.profileApi) {
-            log.info( "JRuby Profile API enabled." );
-            List<String> argv = new ArrayList<String>( Arrays.asList( config.getArgv() ) );
-            argv.add( "--profile.api" );
-            config.setArgv( argv.toArray( new String[0] ) );
-        }
 
         String jrubyHome = this.jrubyHome;
 
@@ -477,7 +475,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     }
 
     private static final List<String> excludedJrubyOptions = Arrays.asList( "--sample", "--client", "--server", "--manage", "--headless" );
-    protected String[] prepareJRubyOpts(Map<String, String> environment) {
+    protected List<String> prepareJRubyOpts(Map<String, String> environment) {
         String jrubyOpts = environment.get( "JRUBY_OPTS" );
         List<String> options = StringUtils.parseCommandLineOptions( jrubyOpts );
         // Remove any -Xa.b or -Xa.b.c options since those are expected
@@ -489,7 +487,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
                 iterator.remove();
             }
         }
-        return options.toArray( new String[]{} );
+        return options;
     }
 
     /**
