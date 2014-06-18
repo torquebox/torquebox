@@ -19,6 +19,7 @@ require 'torquebox/kernel'
 require 'torquebox/injectors'
 require 'torquebox/transactions'
 require 'torquebox/codecs'
+require 'torquebox-cache'
 
 module TorqueBox
   module Infinispan
