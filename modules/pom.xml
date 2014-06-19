@@ -106,7 +106,7 @@
             </property>
             <property>
               <name>gem.path</name>
-              <value>${project.build.directory}/rubygems</value>
+              <value>${project.build.directory}/rubygems:${project.build.directory}/rubygems-test:${project.build.directory}/rubygems-provided</value>
             </property>
           </systemProperties>
         </configuration>

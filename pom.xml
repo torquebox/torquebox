@@ -556,6 +556,8 @@
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
         <version>${version.snakeyaml}</version>
+        <!-- jruby shades snakeyaml -->
+        <scope>provided</scope>
       </dependency>
 
       <dependency>
@@ -672,7 +674,7 @@
   <properties>
     <ruby.compat.version>1.8</ruby.compat.version>
     <version.polyglot>1.20.0</version.polyglot>
-    <version.jruby-maven-plugins>1.0.0-rc4</version.jruby-maven-plugins> 
+    <version.jruby-maven-plugins>1.0.2</version.jruby-maven-plugins> 
     <version.junit>4.7</version.junit>
     <version.jmock>2.5.1</version.jmock>
     <version.mockito>1.8.4</version.mockito>
@@ -683,7 +685,7 @@
     <version.jboss.reloaded>0.1.2</version.jboss.reloaded>
 
     <version.jruby>1.7.12</version.jruby>
-    <version.snakeyaml>1.5</version.snakeyaml>
+    <version.snakeyaml>1.13</version.snakeyaml>
     <version.rack>1.1.0</version.rack>
 
     <version.rails2>2.3.14</version.rails2>

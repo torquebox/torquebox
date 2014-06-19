@@ -1,2 +1,3 @@
 source "file://#{File.dirname(__FILE__)}/../../../../build/assembly/target/stage/gem-repo"
+gem 'rspec'
 gem 'torquebox'

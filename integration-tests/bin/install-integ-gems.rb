@@ -15,6 +15,7 @@ ENV['GEM_PATH'] = ENV['GEM_HOME']
 require File.dirname(__FILE__) + '/../lib/gem_installer.rb'
 
 versions = {
+  :rspec          =>    java.lang::System.getProperty("version.rspec"),
   :jruby_openssl  =>    '0.9.0',
   :haml           =>    '3.1.6',
   :json           =>    '1.7.4',
@@ -74,6 +75,7 @@ versions = {
 #GemInstaller.into( File.dirname(__FILE__) + '/../target/integ-dist/jruby/lib/ruby/gems/1.8', versions ) do |installer|
 
 GemInstaller.with( versions ) do |installer|
+  installer.install( 'rspec' )
   installer.install( 'jruby-openssl' )
   installer.install( 'haml'          )
   installer.install( 'json' )
