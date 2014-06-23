@@ -18,7 +18,8 @@ tmp
 package-cache
 release.properties
 TAGS
-./Gemfile.lock
+Gemfile.lock
+!integration-tests/apps/**/Gemfile.lock
 **/vendor/**/Gemfile.lock
 .rakeTasks
 .repository
