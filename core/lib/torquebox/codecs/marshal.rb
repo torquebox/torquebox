@@ -15,21 +15,24 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+java_import org.projectodd.wunderboss.codecs.StringCodec
 
 module TorqueBox
   module Codecs
-    module Marshal
-      class << self
+    class Marshal < StringCodec
 
-        def encode(data)
-          ::Marshal.dump(data) unless data.nil?
-        end
-
-        def decode(data)
-          ::Marshal.restore(data) unless data.nil?
-        end
-
+      def initialize
+        super("marshal", "application/ruby-marshal")
       end
+
+      def encode(data)
+        ::Marshal.dump(data) unless data.nil?
+      end
+
+      def decode(data)
+        ::Marshal.restore(data) unless data.nil?
+      end
+
     end
   end
 end

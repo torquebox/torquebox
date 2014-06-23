@@ -17,35 +17,39 @@
 
 require 'base64'
 
+java_import org.projectodd.wunderboss.codecs.StringCodec
+
 module TorqueBox
   module Codecs
-    module MarshalSmart
-      class << self
+    class MarshalSmart < StringCodec
 
-        # @api private
-        MARSHAL_MARKER = "_|marshalled|_"
+      def initialize
+        super("marshal_smart", "application/ruby-marshal-smart")
+      end
 
-        def encode(object)
-          case object
-          when String, Numeric, true, false, nil
+      # @api private
+      MARSHAL_MARKER = "_|marshalled|_"
+
+      def encode(object)
+        case object
+        when String, Numeric, true, false, nil
+          object
+        else
+          if object.respond_to?(:java_object)
             object
           else
-            if object.respond_to?(:java_object)
-              object
-            else
-              MARSHAL_MARKER + Base64.encode64(::Marshal.dump(object))
-            end
+            MARSHAL_MARKER + Base64.encode64(::Marshal.dump(object))
           end
         end
-
-        def decode(object)
-          if object.is_a?(String) && object.start_with?(MARSHAL_MARKER)
-            object = ::Marshal.load(Base64.decode64(object.sub(MARSHAL_MARKER, '')))
-          end
-          object
-        end
-
       end
+
+      def decode(object)
+        if object.is_a?(String) && object.start_with?(MARSHAL_MARKER)
+          object = ::Marshal.load(Base64.decode64(object.sub(MARSHAL_MARKER, '')))
+        end
+        object
+      end
+
     end
   end
 end

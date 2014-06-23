@@ -26,29 +26,22 @@ require 'torquebox/codecs/text'
 require 'torquebox/codecs/json' rescue nil
 require 'torquebox/codecs/edn' rescue nil
 
+java_import org.projectodd.wunderboss.codecs.Codecs
+java_import org.projectodd.wunderboss.codecs.None
+
 module TorqueBox
   module Codecs
     class << self
 
-      def register_codec(name, content_type, codec)
-        @codecs ||= {}
-        @content_types ||= {}
-        @codecs[name] = codec
-        @content_types[content_type] = name
-        @content_types[name] = content_type
+      def add(codec)
+        java_codecs.add(codec)
+        self
       end
 
       def [](key)
-        codec = @codecs[key]
-        if codec
-          if codec.respond_to?(:call)
-            codec.call
-          else
-            codec
-          end
-        else
-          raise "Unsupported codec #{key}"
-        end
+        java_codecs.for_content_type(key.to_s) ||
+          java_codecs.for_name(key.to_s) ||
+          fail("Unsupported codec #{key}")
       end
 
       def encode(data, encoding)
@@ -59,55 +52,16 @@ module TorqueBox
         self[encoding].decode(data)
       end
 
-      def name_for_content_type(content_type)
-        @content_types[content_type]
+      def java_codecs
+        @codecs ||= org.projectodd.wunderboss.codecs.Codecs.new
       end
-
-      alias_method :content_type_for_name, :name_for_content_type
-
-      def binary_content?(encoding)
-        codec = self[encoding]
-        if codec.respond_to?(:binary_content?)
-          codec.binary_content?
-        else
-          false
-        end
-      end
-
     end
   end
 end
 
-TorqueBox::Codecs.register_codec(:edn,
-                                 'application/edn',
-                                 lambda do
-                                   # This is only so any issues requiring the edn codec bubble
-                                   # up when it gets used
-                                   require 'torquebox/codecs/edn' unless defined?(TorqueBox::Codecs::EDN)
-                                   TorqueBox::Codecs::EDN
-                                 end)
-
-TorqueBox::Codecs.register_codec(:json,
-                                 'application/json',
-                                 lambda do
-                                   # This is only so any issues requiring the json codec bubble
-                                   # up when it gets used
-                                   require 'torquebox/codecs/json' unless defined?(TorqueBox::Codecs::JSON)
-                                   TorqueBox::Codecs::JSON
-                                 end)
-
-TorqueBox::Codecs.register_codec(:marshal,
-                                 'application/ruby-marshal',
-                                 TorqueBox::Codecs::Marshal)
-
-TorqueBox::Codecs.register_codec(:marshal_base64,
-                                 'application/ruby-marshal-base64',
-                                 TorqueBox::Codecs::MarshalBase64)
-
-TorqueBox::Codecs.register_codec(:marshal_smart,
-                                 'application/ruby-marshal-smart',
-                                 TorqueBox::Codecs::MarshalSmart)
-
-TorqueBox::Codecs.register_codec(:text,
-                                 'text/plain',
-                                 TorqueBox::Codecs::Text)
+TorqueBox::Codecs.add(TorqueBox::Codecs::EDN.new)
+TorqueBox::Codecs.add(TorqueBox::Codecs::JSON.new)
+TorqueBox::Codecs.add(TorqueBox::Codecs::Marshal.new)
+TorqueBox::Codecs.add(TorqueBox::Codecs::MarshalBase64.new)
+TorqueBox::Codecs.add(TorqueBox::Codecs::MarshalSmart.new)
+TorqueBox::Codecs.add(TorqueBox::Codecs::Text.new)

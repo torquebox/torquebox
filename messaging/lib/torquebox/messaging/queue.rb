@@ -81,8 +81,8 @@ module TorqueBox
         options = coerce_connection_and_session(options)
         options = normalize_publish_options(options)
         encoding = options[:encoding] || Messaging.default_encoding
-        future = @internal_destination.request(Codecs.encode(message, encoding),
-                                               Codecs.content_type_for_name(encoding),
+        future = @internal_destination.request(message,
+                                               Codecs[encoding],
                                                extract_options(options, WBQueue::RequestOption))
         timeout = options[:timeout] || 0
         result = if timeout == 0
@@ -95,7 +95,7 @@ module TorqueBox
                    end
                  end
         msg = if result
-                Message.new(result).decode
+                result.body
               else
                 options[:timeout_val]
               end
@@ -135,11 +135,10 @@ module TorqueBox
         options = apply_default_options(options)
         options = coerce_connection_and_session(options)
         handler = MessageHandler.new do |message|
-          msg = Message.new(message)
-          Codecs.encode(block.call(options.fetch(:decode, true) ? msg.decode : msg),
-                        msg.encoding)
+          block.call(options.fetch(:decode, true) ? message.body : message)
         end
         @internal_destination.respond(handler,
+                                      Codecs.java_codecs,
                                       extract_options(options, WBQueue::RespondOption))
       end
 

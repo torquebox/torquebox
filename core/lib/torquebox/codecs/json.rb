@@ -15,47 +15,50 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+java_import org.projectodd.wunderboss.codecs.StringCodec
 
 module TorqueBox
   module Codecs
-    module JSON
-      class << self
+    class JSON < StringCodec
 
-        # @api private
-        def require_json
-          # We can't ship our own json, as it may collide with the gem
-          # requirement for the app.
-          if !defined?( ::JSON )
-            begin
-              require 'json'
-            rescue LoadError => ex
-              raise RuntimeError.new( "Unable to load the json gem. Verify that is installed and in your Gemfile (if using Bundler)" )
-            end
-          end
-        end
-
-        def encode(data)
-          require_json
-          begin
-            if ( data.respond_to?( :as_json ) )
-              data = data.as_json
-            end
-            ::JSON.fast_generate( data ) unless data.nil?
-          rescue ::JSON::GeneratorError
-            ::JSON.dump(data)
-          end
-        end
-
-        def decode(data)
-          require_json
-          begin
-            ::JSON.parse( data, :symbolize_names => true ) unless data.nil?
-          rescue ::JSON::ParserError
-            ::JSON.load(data)
-          end
-        end
-
+      def initialize
+        super("json", "application/json")
       end
+
+      # @api private
+      def require_json
+        # We can't ship our own json, as it may collide with the gem
+        # requirement for the app.
+        if !defined?( ::JSON )
+          begin
+            require 'json'
+          rescue LoadError => ex
+            raise RuntimeError.new( "Unable to load the json gem. Verify that is installed and in your Gemfile (if using Bundler)" )
+          end
+        end
+      end
+
+      def encode(data)
+        require_json
+        begin
+          if ( data.respond_to?( :as_json ) )
+            data = data.as_json
+          end
+          ::JSON.fast_generate( data ) unless data.nil?
+        rescue ::JSON::GeneratorError
+          ::JSON.dump(data)
+        end
+      end
+
+      def decode(data)
+        require_json
+        begin
+          ::JSON.parse( data, :symbolize_names => true ) unless data.nil?
+        rescue ::JSON::ParserError
+          ::JSON.load(data)
+        end
+      end
+
     end
   end
 end

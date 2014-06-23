@@ -67,10 +67,10 @@ module TorqueBox
         options = apply_default_options(options)
         options = coerce_connection_and_session(options)
         handler = MessageHandler.new do |message|
-          msg = Message.new(message)
-          block.call(options.fetch(:decode, true) ? msg.decode : msg)
+          block.call(options.fetch(:decode, true) ? message.body : message)
         end
         @internal_destination.subscribe(name, handler,
+                                        Codecs.java_codecs,
                                         extract_options(options, WBTopic::SubscribeOption))
       end
 

@@ -17,20 +17,24 @@
 
 require 'base64'
 
+java_import org.projectodd.wunderboss.codecs.StringCodec
+
 module TorqueBox
   module Codecs
-    module MarshalBase64
-      class << self
+    class MarshalBase64 < StringCodec
 
-        def encode(data)
-          Base64.encode64(::Marshal.dump(data)) unless data.nil?
-        end
-
-        def decode(data)
-          ::Marshal.restore(Base64.decode64(data)) unless data.nil?
-        end
-
+      def initialize
+        super("marshal_base64", "application/ruby-marshal-base64")
       end
+
+      def encode(data)
+        Base64.encode64(::Marshal.dump(data)) unless data.nil?
+      end
+
+      def decode(data)
+        ::Marshal.restore(Base64.decode64(data)) unless data.nil?
+      end
+
     end
   end
 end

@@ -2,7 +2,6 @@ require 'torquebox/messaging/connection'
 require 'torquebox/messaging/destination'
 require 'torquebox/messaging/queue'
 require 'torquebox/messaging/topic'
-require 'torquebox/messaging/message'
 require 'torquebox/messaging/session'
 
 module TorqueBox

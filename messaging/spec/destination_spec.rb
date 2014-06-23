@@ -17,7 +17,7 @@ describe "Destination" do
       queue.publish([1,2], encoding: :edn)
       msg = queue.receive(decode: false)
       msg.content_type.should == "application/edn"
-      msg.decode.should == [1,2]
+      msg.body.should == [1,2]
     end
 
     it "should have a default encoding of :marshal" do
@@ -69,7 +69,7 @@ describe "Destination" do
       it 'should return an undecoded message when :decode is false' do
         queue = TorqueBox::Messaging::Queue.new("recv", durable: false)
         queue.publish('hi')
-        queue.receive(decode: false).should be_a(TorqueBox::Messaging::Message)
+        queue.receive(decode: false).should be_a(org.projectodd.wunderboss.messaging.Message)
       end
 
       it 'should take a block' do
@@ -105,7 +105,7 @@ describe "Destination" do
       queue = TorqueBox::Messaging::Queue.new("listen", durable: false)
       latch = CountDownLatch.new(1)
       listener = queue.listen(decode: false) do |m|
-        m.should be_a(TorqueBox::Messaging::Message)
+        m.should be_a(org.projectodd.wunderboss.messaging.Message)
         latch.count_down
       end
       queue.publish('hi')

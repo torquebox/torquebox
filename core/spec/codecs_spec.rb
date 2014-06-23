@@ -1,5 +1,4 @@
-require 'torquebox/codecs'
-require 'torquebox/codecs/json'
+require 'spec_helper'
 
 def define_JSON
   klass = Class.new {
@@ -9,12 +8,18 @@ def define_JSON
   Object.const_set(:JSON, klass)
 end
 
-class FooCodec
-  def self.encode(_)
+java_import org.projectodd.wunderboss.codecs.StringCodec
+
+class FooCodec < StringCodec
+  def initialize
+    super("foo", "text/foo")
+  end
+
+  def encode(_)
     'foo_encode'
   end
 
-  def self.decode(_)
+  def decode(_)
     'foo_decode'
   end
 end
@@ -33,12 +38,7 @@ describe TorqueBox::Codecs do
     end
 
     it "should have the proper content-type" do
-      TorqueBox::Codecs.content_type_for_name(:json).should == 'application/json'
-      TorqueBox::Codecs.name_for_content_type('application/json').should == :json
-    end
-
-    it "should not be binary" do
-      TorqueBox::Codecs.binary_content?(:json).should == false
+      TorqueBox::Codecs['application/json'].should == TorqueBox::Codecs[:json]
     end
 
     context "requiring json" do
@@ -47,17 +47,17 @@ describe TorqueBox::Codecs do
       end
 
       it "should raise if json isn't available" do
-        TorqueBox::Codecs::JSON.should_receive(:require).with('json').and_raise(LoadError.new)
+        TorqueBox::Codecs[:json].should_receive(:require).with('json').and_raise(LoadError.new)
         lambda { TorqueBox::Codecs.encode('abc', :json) }.should raise_error( RuntimeError )
       end
 
       it "should not raise if json is available" do
-        TorqueBox::Codecs::JSON.should_receive(:require).with('json') { define_JSON }
+        TorqueBox::Codecs[:json].should_receive(:require).with('json') { define_JSON }
         lambda { TorqueBox::Codecs.encode('abc', :json ) }.should_not raise_error
       end
 
       it "should only require json once" do
-        TorqueBox::Codecs::JSON.should_receive(:require).once.with('json') { define_JSON }
+        TorqueBox::Codecs[:json].should_receive(:require).once.with('json') { define_JSON }
         TorqueBox::Codecs.encode('abc', :json)
         TorqueBox::Codecs.encode('abc', :json)
       end
@@ -70,12 +70,7 @@ describe TorqueBox::Codecs do
     end
 
     it "should have the proper content-type" do
-      TorqueBox::Codecs.content_type_for_name(:edn).should == 'application/edn'
-      TorqueBox::Codecs.name_for_content_type('application/edn').should == :edn
-    end
-
-    it "should not be binary" do
-      TorqueBox::Codecs.binary_content?(:edn).should == false
+      TorqueBox::Codecs['application/edn'].should == TorqueBox::Codecs[:edn]
     end
   end
 
@@ -85,15 +80,9 @@ describe TorqueBox::Codecs do
     end
 
     it "should have the proper content-type" do
-      TorqueBox::Codecs.content_type_for_name(:text).should == 'text/plain'
-      TorqueBox::Codecs.name_for_content_type('text/plain').should == :text
-    end
-
-    it "should not be binary" do
-      TorqueBox::Codecs.binary_content?(:text).should == false
+      TorqueBox::Codecs['text/plain'].should == TorqueBox::Codecs[:text]
     end
   end
-
 
   context "marshal" do
     it "should decode what it encodes" do
@@ -106,12 +95,7 @@ describe TorqueBox::Codecs do
     end
 
     it "should have the proper content-type" do
-      TorqueBox::Codecs.content_type_for_name(:marshal).should == 'application/ruby-marshal'
-      TorqueBox::Codecs.name_for_content_type('application/ruby-marshal').should == :marshal
-    end
-
-    it "should not be binary" do
-      TorqueBox::Codecs.binary_content?(:marshal).should == false
+      TorqueBox::Codecs['application/ruby-marshal'].should == TorqueBox::Codecs[:marshal]
     end
   end
 
@@ -126,12 +110,7 @@ describe TorqueBox::Codecs do
     end
 
     it "should have the proper content-type" do
-      TorqueBox::Codecs.content_type_for_name(:marshal_base64).should == 'application/ruby-marshal-base64'
-      TorqueBox::Codecs.name_for_content_type('application/ruby-marshal-base64').should == :marshal_base64
-    end
-
-    it "should not be binary" do
-      TorqueBox::Codecs.binary_content?(:marshal_base64).should == false
+      TorqueBox::Codecs['application/ruby-marshal-base64'].should == TorqueBox::Codecs[:marshal_base64]
     end
   end
 
@@ -146,23 +125,17 @@ describe TorqueBox::Codecs do
     end
 
     it "should have the proper content-type" do
-      TorqueBox::Codecs.content_type_for_name(:marshal_smart).should == 'application/ruby-marshal-smart'
-      TorqueBox::Codecs.name_for_content_type('application/ruby-marshal-smart').should == :marshal_smart
-    end
-
-    it "should not be binary" do
-      TorqueBox::Codecs.binary_content?(:marshal_smart).should == false
+      TorqueBox::Codecs['application/ruby-marshal-smart'].should == TorqueBox::Codecs[:marshal_smart]
     end
   end
 
   context "a custom codec" do
     it "should be registerable and findable" do
-      TorqueBox::Codecs.register_codec(:foo, 'text/foo', FooCodec)
+      TorqueBox::Codecs.add(FooCodec.new)
       TorqueBox::Codecs.encode('whatever', :foo).should == 'foo_encode'
       TorqueBox::Codecs.decode('whatever', :foo).should == 'foo_decode'
 
-      TorqueBox::Codecs.content_type_for_name(:foo).should == 'text/foo'
-      TorqueBox::Codecs.name_for_content_type('text/foo').should == :foo
+      TorqueBox::Codecs['text/foo'].should == TorqueBox::Codecs[:foo]
     end
   end
 end

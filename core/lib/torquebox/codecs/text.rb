@@ -15,20 +15,24 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+java_import org.projectodd.wunderboss.codecs.StringCodec
+
 module TorqueBox
   module Codecs
-    module Text
-      class << self
+    class Text < StringCodec
 
-        def encode(data)
-          data.to_s
-        end
-
-        def decode(data)
-          data
-        end
-
+      def initialize
+        super("text", "text/plain")
       end
+
+      def encode(data)
+        data.to_s
+      end
+
+      def decode(data)
+        data
+      end
+
     end
   end
 end
