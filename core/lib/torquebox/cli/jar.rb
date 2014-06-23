@@ -70,7 +70,8 @@ module TorqueBox
 language=ruby
 extract_paths=app/:jruby/
 root=${extract_root}/app
-init=require "bundler/setup"; \
+init=ENV['BUNDLE_GEMFILE'] = nil; \
+require "bundler/setup"; \
 require "torquebox-web"; \
 if org.projectodd.wunderboss.WunderBoss.options.get("wildfly-service").nil?; \
   begin; \
