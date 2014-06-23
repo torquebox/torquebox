@@ -36,6 +36,7 @@ Basic::Application.configure do
   config.assets.compile = true
   config.assets.debug = true
   config.assets.digest = false
+  config.assets.js_compressor = nil
 
   # Version of your assets, change this if you want to expire all your assets.
   config.assets.version = '1.0'
