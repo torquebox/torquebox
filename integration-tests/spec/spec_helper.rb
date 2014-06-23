@@ -267,6 +267,9 @@ def __server_start(options)
       puts ex.inspect
       puts ex.backtrace
     end
+    if ENV['DEBUG'] && @server_pid
+      puts `jstack #{@server_pid}`
+    end
     raise "Application #{app_dir} failed to start within #{timeout} seconds"
   end
 end
