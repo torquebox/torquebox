@@ -92,7 +92,7 @@ describe "Destination" do
         latch.count_down
       end
       queue.publish('hi')
-      latch.await(1, TimeUnit::SECONDS).should be_true
+      latch.await(1, TimeUnit::SECONDS).should be true
       listener.close
     end
 
@@ -109,7 +109,7 @@ describe "Destination" do
         latch.count_down
       end
       queue.publish('hi')
-      latch.await(1, TimeUnit::SECONDS).should be_true
+      latch.await(1, TimeUnit::SECONDS).should be true
       listener.close
     end
   end

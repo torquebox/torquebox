@@ -69,7 +69,7 @@ describe "Queue" do
         queue.request("ham") do |m|
           m.should == 'application/ruby-marshal'
           true
-        end.should be_true
+        end.should be true
         listener.close
       end
     end
