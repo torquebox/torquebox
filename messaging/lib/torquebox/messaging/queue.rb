@@ -1,4 +1,5 @@
 java_import java.util.concurrent.TimeUnit
+java_import org.projectodd.wunderboss.messaging.ConcreteReply
 
 module TorqueBox
   module Messaging
@@ -135,7 +136,8 @@ module TorqueBox
         options = apply_default_options(options)
         options = coerce_connection_and_session(options)
         handler = MessageHandler.new do |message|
-          block.call(options.fetch(:decode, true) ? message.body : message)
+          ConcreteReply.new(block.call(options.fetch(:decode, true) ? message.body : message),
+                            nil)
         end
         @internal_destination.respond(handler,
                                       Codecs.java_codecs,
