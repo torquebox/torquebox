@@ -31,6 +31,15 @@ module TorqueBox
       # @option options :host [String] The host of a remote broker.
       # @option options :port [Number] (nil, 5445 if :host provided)
       #   The port of a remote broker.
+      # @option options :reconnect_attempts [Number] (0) Total number
+      #   of reconnect attempts to make before giving up (-1 for unlimited).
+      # @option options :reconnect_retry_interval [Number] (2000) The
+      #   period in milliseconds between subsequent reconnection attempts.
+      # @option options :reconnect_max_retry_interval [Number] (2000)
+      #   The max retry interval that will be used.
+      # @option options :reconnect_retry_interval_multiplier [Number]
+      #   (1.0) A multiplier to apply to the time since the last retry
+      #   to compute the time to the next retry.
       # @return [Connection]
       def initialize(options={}, &block)
         validate_options(options, CONNECTION_OPTIONS)
