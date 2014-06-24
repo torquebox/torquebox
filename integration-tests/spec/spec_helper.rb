@@ -248,7 +248,7 @@ def __server_start(options)
   end
   start = Time.now
   booted = false
-  timeout = 90
+  timeout = 180
   last_exception = nil
   while (Time.now - start) < timeout do
     uri = URI.parse("#{Capybara.app_host}#{path}")
