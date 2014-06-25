@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe 'AddressOptions' do
+describe 'AddressSettings' do
   before(:each) do
     # create a queue to start HQ
     @queue = random_queue
-    @opts = TorqueBox::Messaging::HornetQ::AddressOptions.new(@queue)
+    @opts = TorqueBox::Messaging::HornetQ::AddressSettings.new(@queue)
   end
 
   it "should properly convert the match argument" do
@@ -73,7 +73,7 @@ describe 'AddressOptions' do
     end
 
     begin
-      opts = TorqueBox::Messaging::HornetQ::AddressOptions.new(queue)
+      opts = TorqueBox::Messaging::HornetQ::AddressSettings.new(queue)
       opts.dead_letter_address = dlq
       opts.max_delivery_attempts = 2
       queue.publish(:boomer)
@@ -84,4 +84,27 @@ describe 'AddressOptions' do
     end
   end
 
+  describe 'destination_controller' do
+
+    before(:all) do
+      @queue = random_queue
+      @topic = random_topic
+    end
+
+    it "should return a JMSQueueControl for a Queue and type :jms" do
+      ctl = TorqueBox::Messaging::HornetQ.destination_controller(@queue)
+      ctl.class.ancestors.should include(org.hornetq.api.jms.management.JMSQueueControl)
+    end
+
+    it "should return a QueueControl for a Queue and type :core" do
+      ctl = TorqueBox::Messaging::HornetQ.destination_controller(@queue, :core)
+      ctl.class.ancestors.should include(org.hornetq.api.core.management.QueueControl)
+    end
+
+    it "should return a TopicControl for a Topic, regardless of type" do
+      ctl = TorqueBox::Messaging::HornetQ.destination_controller(@topic)
+      ctl.class.ancestors.should include(org.hornetq.api.jms.management.TopicControl)
+    end
+
+  end
 end

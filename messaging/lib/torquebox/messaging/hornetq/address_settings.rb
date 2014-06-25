@@ -7,27 +7,26 @@ module TorqueBox
       #
       # This provides programatic access to options that are normally set
       # in the xml configuration.
-      class AddressOptions
+      class AddressSettings
         include TorqueBox::Messaging::Helpers
         extend Forwardable
 
-        # Creates and registers address options.
+        # Creates and registers address settings.
         #
         # Creating a new AddressOptions for a match that you have set
         # options for already will replace those prior options.
         #
-        # @param match_or_dest must be either a Destination or a fully
+        # @param match_or_dest must be either a {Destination} or a fully
         #   qualified jms destination name (prefixed with 'jms.queue.'
         #   or 'jms.topic.'). It may contain HornetQ wildcard matchers
         #   (see
         #   http://docs.jboss.org/hornetq/2.3.0.Final/docs/user-manual/html/wildcard-syntax.html)
         def initialize(match_or_dest)
-          fail RuntimeError.new("The current broker isn't a HornetQ broker") if !default_broker.respond_to?(:jms_server_manager)
+          server_manager = HornetQ.server_manager
           import_hornetq
 
-          @address_settings = AddressSettings.new
-          default_broker.jms_server_manager.
-            add_address_settings(normalize_destination_match(match_or_dest), @address_settings)
+          @address_settings = org.hornetq.core.settings.impl.AddressSettings.new
+          server_manager.add_address_settings(normalize_destination_match(match_or_dest), @address_settings)
         end
 
         # Specifies what should happen when an address reaches
@@ -66,10 +65,10 @@ module TorqueBox
         # http://docs.jboss.org/hornetq/2.3.0.Final/docs/user-manual/html/undelivered-messages.html#undelivered-messages.configuring
         #
         # @param address ('jms.queue.DLQ') The address to use. It can
-        #   either be a Destination object or a fully-qualified
+        #   either be a {Destination} object or a fully-qualified
         #   destination name.
         def dead_letter_address=(address)
-          @address_settings.dead_letter_address = SimpleString.new(jms_name(address))
+          @address_settings.dead_letter_address = SimpleString.new(HornetQ.jms_name(address))
         end
 
         # If set, any messages with a :ttl that expires before
@@ -77,10 +76,10 @@ module TorqueBox
         # http://docs.jboss.org/hornetq/2.3.0.Final/docs/user-manual/html/message-expiry.html#message-expiry.configuring
         #
         # @param address ('jms.queue.ExpiryQueue') The address to use. It can
-        #   either be a Destination object or a fully-qualified
+        #   either be a {Destination} object or a fully-qualified
         #   destination name.
         def expiry_address=(address)
-          @address_settings.expiry_address = SimpleString.new(jms_name(address))
+          @address_settings.expiry_address = SimpleString.new(HornetQ.jms_name(address))
         end
 
         # If true, only the most recent message
@@ -193,7 +192,7 @@ module TorqueBox
         protected
 
         def normalize_destination_match(match_or_dest)
-          if (match = jms_name(match_or_dest)) != match_or_dest
+          if (match = HornetQ.jms_name(match_or_dest)) != match_or_dest
             match
           elsif match_or_dest == "#" ||
               /^jms\.(queue|topic)\./ =~ match_or_dest
@@ -203,16 +202,7 @@ module TorqueBox
           end
         end
 
-        def jms_name(dest)
-          if dest.respond_to?(:internal_destination)
-            dest.internal_destination.jms_name
-          else
-            dest
-          end
-        end
-
         def import_hornetq
-          java_import org.hornetq.core.settings.impl.AddressSettings
           java_import org.hornetq.core.settings.impl.AddressFullMessagePolicy
           java_import org.hornetq.api.core.SimpleString
         end

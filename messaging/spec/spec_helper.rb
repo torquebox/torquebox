@@ -15,6 +15,10 @@ def random_queue
   TorqueBox::Messaging::Queue.new(SecureRandom.uuid, durable: false)
 end
 
+def random_topic
+  TorqueBox::Messaging::Topic.new(SecureRandom.uuid)
+end
+
 RSpec.configure do |config|
   config.after(:suite) do
     GetBroker.send(:default_broker).stop
