@@ -86,7 +86,7 @@ module TorqueBox
       #   matching message properties
       # @option options :decode [true, false] (true) If true, the
       #   decoded message body is returned. Otherwise, the
-      #   base {Message} object is returned.
+      #   base message object is returned.
       # @option options :connection [Connection] a connection to use;
       #   caller expected to close
       # @option options :session [Session] a session to use; caller
@@ -125,7 +125,7 @@ module TorqueBox
       #   matching message properties
       # @option options :decode [true, false] If true, the decoded
       #   message body is passed to the block. Otherwise, the
-      #   base {Message} object is passed.
+      #   base message object is passed.
       # @option options :connection [Connection] a connection to use;
       #   caller expected to close.
       # @return A listener object that can be stopped by

@@ -124,7 +124,7 @@ module TorqueBox
       #   matching message properties
       # @option options :decode [true, false] If true, the decoded
       #   message body is passed to the block. Otherwise, the
-      #   base {Message} object is passed.
+      #   base message object is passed.
       # @option options :ttl [Number] (60000) The time for the
       #   response message to live, in millis.
       # @option options :connection [Connection] a connection to use;

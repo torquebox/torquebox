@@ -57,7 +57,7 @@ module TorqueBox
       # @param options [Hash] Options for the subscription.
       # @option options :decode [true, false] If true, the decoded
       #   message body is passed to the block. Otherwise, the
-      #   base {Message} object is passed.
+      #   base message object is passed.
       # @option options :connection [Connection] a connection to use;
       #   caller expected to close.
       # @return A listener object that can be stopped by
