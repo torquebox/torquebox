@@ -3,6 +3,7 @@ require 'torquebox/messaging/destination'
 require 'torquebox/messaging/queue'
 require 'torquebox/messaging/topic'
 require 'torquebox/messaging/session'
+require 'torquebox/messaging/hornetq'
 
 module TorqueBox
   module Messaging

@@ -7,7 +7,7 @@ describe "Queue" do
   it "should apply any default options" do
     queue = TorqueBox::Messaging::Queue.new("def-opt", durable: false, default_options: {encoding: :json})
     listener = queue.respond(decode: false) { |m| m.content_type }
-    queue.request("ham").should == "application/json"
+    queue.request("ham", timeout: 1_000, timeout_val: :timeout).should == "application/json"
     listener.close
   end
 
@@ -17,7 +17,7 @@ describe "Queue" do
       listener = queue.respond do |m|
         m.upcase
       end
-      queue.request("hi").should == "HI"
+      queue.request("hi", timeout: 1_000, timeout_val: :timeout).should == "HI"
       listener.close
     end
 
@@ -27,7 +27,7 @@ describe "Queue" do
         listener = queue.respond do |m|
           m.upcase
         end
-        queue.request("ham") do |m|
+        queue.request("ham", timeout: 1_000, timeout_val: :timeout) do |m|
           m.should == 'HAM'
           m + ' biscuit'
         end.should == "HAM biscuit"
@@ -43,7 +43,7 @@ describe "Queue" do
       it 'should take an encoding' do
         queue = TorqueBox::Messaging::Queue.new("req-resp", durable: false)
         listener = queue.respond(decode: false) { |m| m.content_type }
-        queue.request("ham", encoding: :edn).should == "application/edn"
+        queue.request("ham", encoding: :edn, timeout: 1_000, timeout_val: :timeout).should == "application/edn"
         listener.close
       end
 
@@ -52,7 +52,7 @@ describe "Queue" do
         begin
           queue = TorqueBox::Messaging::Queue.new("req-resp-default-encoding", durable: false)
           listener = queue.respond(decode: false) { |m| m.content_type }
-          queue.request("ham").should == "application/edn"
+          queue.request("ham", timeout: 1_000, timeout_val: :timeout).should == "application/edn"
           listener.close
         ensure
           TorqueBox::Messaging.default_encoding = :marshal
@@ -66,7 +66,7 @@ describe "Queue" do
         listener = queue.respond(decode: false) do |m|
           m.content_type
         end
-        queue.request("ham") do |m|
+        queue.request("ham", timeout: 1_000, timeout_val: :timeout) do |m|
           m.should == 'application/ruby-marshal'
           true
         end.should be true
