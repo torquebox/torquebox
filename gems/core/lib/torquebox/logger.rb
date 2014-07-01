@@ -54,7 +54,6 @@ module TorqueBox
     org.jboss.logging::Logger
   rescue ::NameError
     Logger = FallbackLogger
-    return
   end
 
   class Logger
@@ -134,5 +133,5 @@ module TorqueBox
       [ args[0] || (block && block.call) ].compact
     end
 
-  end
+  end unless defined?(TorqueBox::Logger)
 end
