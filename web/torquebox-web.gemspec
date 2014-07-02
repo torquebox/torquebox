@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.homepage = 'http://torquebox.org/torqbox'
 
   s.required_ruby_version = '>= 1.9.3'
-  s.license = 'LGPL3'
+  s.license = 'Apache-2.0'
 
   s.require_paths = ["lib"]
   s.files         = Dir['CHANGELOG.md', 'README.md', 'LICENSE',
