@@ -152,18 +152,10 @@ EOS
           FileUtils.cp('.bundle/config', "#{tmpdir}/.bundle")
         end
 
-        ###
-        # ditch copying to tmp dir:
-        # set BUNDLE_APP_CONFIG, remove vendor/cache unless it previously existed
-        ###
-
         vendor_dir_exists = File.exists?('vendor')
         cache_dir_exists = File.exists?('vendor/cache')
         bundle_dir_exists = File.exists?('vendor/bundle')
         already_cached = Dir.glob('vendor/cache/*.gem').count > 0
-        Bundler.settings.path
-        # TODO: Use Bundler.settings.path to check if already bundled,
-        # perhaps by looking for a relative path already_bundled =
         already_bundled = Pathname.new(Bundler.settings.path).relative?
 
         unless already_cached
