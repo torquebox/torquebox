@@ -162,6 +162,7 @@ ALREADY_BUNDLED = []
 def bundle_install(app_dir)
   if !ALREADY_BUNDLED.include?(app_dir) && File.exists?("#{app_dir}/Gemfile")
     eval_in_new_ruby <<-EOS
+      ENV['BUNDLE_GEMFILE'] = nil
       Dir.chdir('#{app_dir}')
       require 'bundler/cli'
       Bundler::CLI.start(['install'])
