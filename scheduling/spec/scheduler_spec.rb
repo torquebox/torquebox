@@ -29,8 +29,17 @@ describe "Scheduler" do
 
     it "should take a string or symbol for the id" do
       @scheduler.schedule(:foo, {}) {}
-      (@scheduler.schedule(:foo, {}) {}).should == true
-      (@scheduler.schedule("foo", {}) {}).should == true
+      job = @scheduler.schedule(:foo, {}) {}
+      job.should be_replacement
+      job = @scheduler.schedule("foo", {}) {}
+      job.should be_replacement
+    end
+
+    it "should return a job object that can unschedule" do
+      job = @scheduler.schedule(:jobbie, {}) {}
+      job.should respond_to(:unschedule)
+      @scheduler.send(:default_scheduler).should_receive(:unschedule).with(:jobbie)
+      job.unschedule
     end
   end
 end

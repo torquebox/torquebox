@@ -13,3 +13,4 @@
 # limitations under the License.
 
 require 'torquebox/scheduling/scheduler'
+require 'torquebox/scheduling/job'

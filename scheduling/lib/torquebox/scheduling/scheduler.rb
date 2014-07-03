@@ -55,12 +55,13 @@ module TorqueBox
       # @option spec :singleton [true, false] (true) denotes the job's behavior in a cluster
       # @param block [Proc] A zero-arity block or proc that will be
       #   called on each job execution.
-      # @return true if the call replaced an existing job with the same id
+      # @return [Job] An object that allows you to unschedule the job.
       def schedule(id, spec, &block)
         validate_options(spec, opts_to_set(WBScheduling::ScheduleOption))
         spec = coerce_schedule_options(spec)
-        internal_scheduler.schedule(id.to_s, block,
-                                      extract_options(spec, WBScheduling::ScheduleOption))
+        replacement = internal_scheduler.schedule(id.to_s, block,
+                                                  extract_options(spec, WBScheduling::ScheduleOption))
+        Job.new(self, id, replacement)
       end
 
       # Unschedules the job with the given id.
