@@ -148,9 +148,32 @@ def windows?
   RbConfig::CONFIG['host_os'] =~ /mswin/
 end
 
+def eval_in_new_ruby(script)
+  ruby = org.jruby.Ruby.new_instance
+  if !ENV['DEBUG']
+    dev_null = PLATFORM =~ /mswin/ ? 'NUL' : '/dev/null'
+    ruby.evalScriptlet("$stdout = File.open('#{dev_null}', 'w')")
+  end
+  ruby.evalScriptlet(script)
+  ruby.tearDown(false)
+end
+
+ALREADY_BUNDLED = []
+def bundle_install(app_dir)
+  if !ALREADY_BUNDLED.include?(app_dir) && File.exists?("#{app_dir}/Gemfile")
+    eval_in_new_ruby <<-EOS
+      Dir.chdir('#{app_dir}')
+      require 'bundler/cli'
+      Bundler::CLI.start(['install'])
+    EOS
+    ALREADY_BUNDLED << app_dir
+  end
+end
+
 def torquebox(options)
   path = options['--context-path'] || '/'
   app_dir = options['--dir']
+  bundle_install(app_dir)
   if uberjar?
     jarfile = "#{app_dir}/#{File.basename(app_dir)}.jar"
     before = lambda {

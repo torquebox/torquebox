@@ -1,7 +1,0 @@
-lib/atomic_reference.jar
-/nbproject
-ext/*.bundle
-ext/*.so
-ext/*.jar
-pkg
-*.gem
