@@ -34,5 +34,6 @@ schema.rb
 integration-tests/jboss-eap-*.zip
 pkg/
 **/lib/**/*.jar
+**/lib/*.jar
 doc/
 Guardfile
