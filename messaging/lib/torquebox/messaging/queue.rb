@@ -98,6 +98,7 @@ module TorqueBox
         encoding = options[:encoding] || Messaging.default_encoding
         future = @internal_destination.request(message,
                                                Codecs[encoding],
+                                               Codecs.java_codecs,
                                                extract_options(options, WBQueue::RequestOption))
         timeout = options[:timeout] || 0
         result = if timeout == 0
