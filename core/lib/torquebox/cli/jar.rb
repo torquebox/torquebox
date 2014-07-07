@@ -144,10 +144,7 @@ EOS
         @logger.info("Bundling gem dependencies")
         require 'bundler'
 
-        if File.exists?('.bundle/config')
-          FileUtils.mkdir_p("#{tmpdir}/.bundle")
-          FileUtils.cp('.bundle/config', "#{tmpdir}/.bundle")
-        end
+        copy_bundle_config(tmpdir)
 
         vendor_dir_exists = File.exists?('vendor')
         cache_dir_exists = File.exists?('vendor/cache')
@@ -155,32 +152,13 @@ EOS
         already_cached = Dir.glob('vendor/cache/*.gem').count > 0
         already_bundled = Pathname.new(Bundler.settings.path).relative?
 
-        unless already_cached
-          eval_in_new_ruby <<-EOS
-            ENV['BUNDLE_APP_CONFIG'] = "#{tmpdir}/.bundle"
-            require 'bundler/cli'
-            Bundler::CLI.start(['cache', '--all'])
-          EOS
-        end
+        lockfile = Bundler.default_lockfile
+        original_lockfile = File.exists?(lockfile) ? File.read(lockfile) : nil
 
-        unless already_bundled
-          install_options = %w(--local --path vendor/bundle --no-cache)
-          unless bundle_without.empty?
-            install_options += %W(--without #{bundle_without.join(' ')})
-          end
-          eval_in_new_ruby <<-EOS
-            ENV['BUNDLE_APP_CONFIG'] = "#{tmpdir}/.bundle"
-            require 'bundler/cli'
-            Bundler::CLI.start(['install'] + #{install_options.inspect})
-          EOS
-          FileUtils.mkdir_p("#{tmpdir}/vendor/bundle/jruby")
-          FileUtils.cp_r('vendor/bundle/jruby', "#{tmpdir}/vendor/bundle/")
-        end
-
-        unless already_cached
-          FileUtils.mkdir_p("#{tmpdir}/vendor/cache")
-          FileUtils.cp_r('vendor/cache', "#{tmpdir}/vendor/")
-        end
+        cache_gems(tmpdir) unless already_cached
+        bundle_gems(tmpdir, bundle_without) unless already_bundled
+        copy_cached_gems(tmpdir) unless already_cached
+        copy_and_restore_lockfile(tmpdir, lockfile, original_lockfile)
 
         add_files(jar_builder,
                   :file_prefix => tmpdir,
@@ -197,6 +175,50 @@ EOS
         FileUtils.rm_rf('vendor/bundle') unless bundle_dir_exists
         FileUtils.rm_rf('vendor/cache') unless cache_dir_exists
         FileUtils.rm_rf('vendor') unless vendor_dir_exists
+      end
+
+      def copy_bundle_config(tmpdir)
+        if File.exists?('.bundle/config')
+          FileUtils.mkdir_p("#{tmpdir}/.bundle")
+          FileUtils.cp('.bundle/config', "#{tmpdir}/.bundle")
+        end
+      end
+
+      def cache_gems(tmpdir)
+        eval_in_new_ruby <<-EOS
+          ENV['BUNDLE_APP_CONFIG'] = "#{tmpdir}/.bundle"
+          require 'bundler/cli'
+          Bundler::CLI.start(['cache', '--all'])
+        EOS
+      end
+
+      def bundle_gems(tmpdir, bundle_without)
+        install_options = %w(--local --path vendor/bundle --no-cache)
+        unless bundle_without.empty?
+          install_options += %W(--without #{bundle_without.join(' ')})
+        end
+        eval_in_new_ruby <<-EOS
+          ENV['BUNDLE_APP_CONFIG'] = "#{tmpdir}/.bundle"
+          require 'bundler/cli'
+          Bundler::CLI.start(['install'] + #{install_options.inspect})
+        EOS
+        FileUtils.mkdir_p("#{tmpdir}/vendor/bundle/jruby")
+        FileUtils.cp_r('vendor/bundle/jruby', "#{tmpdir}/vendor/bundle/")
+      end
+
+      def copy_cached_gems(tmpdir)
+        FileUtils.mkdir_p("#{tmpdir}/vendor/cache")
+        FileUtils.cp_r('vendor/cache', "#{tmpdir}/vendor/")
+      end
+
+      def copy_and_restore_lockfile(tmpdir, lockfile, original_lockfile)
+        new_lockfile = File.exists?(lockfile) ? File.read(lockfile) : nil
+        FileUtils.cp(lockfile, "#{tmpdir}/Gemfile.lock") if new_lockfile
+        if original_lockfile.nil? && !new_lockfile.nil?
+          FileUtils.rm_f(lockfile)
+        elsif original_lockfile != new_lockfile
+          File.open(lockfile, 'w') { |f| f.write(original_lockfile) }
+        end
       end
 
       def add_torquebox_files(jar_builder)
