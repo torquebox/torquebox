@@ -8,6 +8,9 @@ end
 task(:real_spec).clear_comments
 
 namespace :spec do
+  desc 'Run all integration test variants'
+  task :all => ['disk', 'jar', 'wildfly:jar']
+
   desc 'Run integration tests using applications on disk'
   task :disk do
     puts '>>> Running integration tests from disk'
@@ -33,12 +36,10 @@ namespace :spec do
   end
 end
 
-desc 'Run integration tests with all packaging variants'
+desc 'Alias for spec:disk'
 task :spec do
   if ENV['PACKAGING'].nil?
     task('spec:disk').invoke
-    task('spec:jar').invoke
-    task('spec:wildfly:jar').invoke
   else
     task(:real_spec).invoke
   end

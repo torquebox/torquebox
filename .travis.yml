@@ -15,7 +15,7 @@ before_script: bundle exec rake build
 
 script:
   - rake spec
-  - cd integration-tests && rake spec
+  - cd integration-tests && rake spec:all
 
 branches:
   only:

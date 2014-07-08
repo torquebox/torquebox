@@ -110,7 +110,12 @@ default.
 ## Running integration tests
 
 Make sure `phantomjs` is available on your $PATH -
-http://phantomjs.org/download.html
+http://phantomjs.org/download.html.
+
+The first time you run the integration tests may take longer as
+bundler gets invoked for each test application to install its
+dependencies. Subsequent runs with the same JRuby installation should
+be faster.
 
     cd integration-tests
     rake spec
@@ -123,6 +128,14 @@ http://phantomjs.org/download.html
 ## Running specs with more verbose output
 
     DEBUG=true rake spec
+
+## Running all integration test variants (disk, jar, wildfly)
+
+There are several variants of integration tests. Each runs the same
+applications and same specs, but packaged in different ways. This
+takes quite a bit longer, but is what CI runs.
+
+    rake spec:all
 
 ## Installing from source
 
