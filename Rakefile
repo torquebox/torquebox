@@ -1,3 +1,5 @@
+task :default => 'spec'
+
 GEMS = %w(core messaging scheduling web)
 
 ['build', 'clean', 'install', 'release', 'spec'].each do |task_name|
@@ -70,4 +72,17 @@ task 'doc' do
   YARD::CLI::Yardoc.new.run()
 end
 
-task :default => 'spec'
+# purposely no description so it's hidden from rake -T
+task 'update_version' do
+  new_version = ENV['VERSION']
+  unless new_version
+    $stderr.puts "Error: You must specify a new version - VERSION=123 rake update_version"
+    exit 1
+  end
+  version_path = File.join(File.dirname(__FILE__), 'core', 'lib', 'torquebox', 'version.rb')
+  require version_path
+  current_version = TorqueBox::VERSION
+  contents = File.read(version_path)
+  contents.sub!(current_version, new_version)
+  File.open(version_path, 'w') { |f| f.write(contents) }
+end
