@@ -1,6 +1,6 @@
 task :default => 'spec'
 
-GEMS = %w(core messaging scheduling web)
+GEMS = %w(core messaging scheduling web caching)
 
 ['build', 'clean', 'install', 'release', 'spec'].each do |task_name|
   desc "Run #{task_name} for all gems"
