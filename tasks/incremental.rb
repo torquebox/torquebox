@@ -34,7 +34,7 @@ module TorqueBox
           FileUtils.mkdir_p("pkg/gem-repo/gems")
           dav.mkcol("#{base_url}/gems")
           Dir.chdir("pkg/gem-repo") do
-            puts `wget -nv -r -nH --cut-dirs=2 --no-parent --reject "index.html*" #{base_url}/gems/`
+            puts `wget -nv -r -nH --cut-dirs=2 --no-parent --reject "index.html*" #{base_url}/gems/ 2>&1`
           end
 
           Dir.glob("**/pkg/torquebox*.gem").each do |gem_path|
@@ -123,6 +123,8 @@ module TorqueBox
           stdout_thr.join
           stderr_thr.join
         end
+        puts response
+        puts error
         lines = error.split("\n").find { |e| e =~ /^< HTTP\/1.1/ }
         status_line = (error.split("\n").find { |e| e =~ /^< HTTP\/1.1/ }) || ""
         status  = 500
