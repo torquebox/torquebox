@@ -123,8 +123,6 @@ module TorqueBox
           stdout_thr.join
           stderr_thr.join
         end
-        puts response
-        puts error
         lines = error.split("\n").find { |e| e =~ /^< HTTP\/1.1/ }
         status_line = (error.split("\n").find { |e| e =~ /^< HTTP\/1.1/ }) || ""
         status  = 500
