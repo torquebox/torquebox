@@ -59,7 +59,7 @@ module TorqueBox
     class DAV
 
       def initialize(credentials_path)
-        #load_credentials(credentials_path)
+        load_credentials(credentials_path)
       end
 
       def load_credentials(credentials_path)
