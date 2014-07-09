@@ -76,7 +76,7 @@ end
 task 'update_version' do
   new_version = ENV['VERSION']
   unless new_version
-    $stderr.puts "Error: You must specify a new version - VERSION=123 rake update_version"
+    $stderr.puts "Error: You must specify the new version via $VERSION"
     exit 1
   end
   version_path = File.join(File.dirname(__FILE__), 'core', 'lib', 'torquebox', 'version.rb')
@@ -86,3 +86,7 @@ task 'update_version' do
   contents.sub!(current_version, new_version)
   File.open(version_path, 'w') { |f| f.write(contents) }
 end
+
+
+require "#{File.dirname(__FILE__)}/tasks/incremental"
+TorqueBox::IncrementalTasks.install
