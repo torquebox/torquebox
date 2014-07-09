@@ -2,6 +2,8 @@ require 'active_support/cache/torque_box_store'
 require 'logger'
 
 java_import org.infinispan.configuration.cache::CacheMode
+java_import java.util.concurrent::TimeUnit
+
 include ActiveSupport::Cache
 
 describe ActiveSupport::Cache::TorqueBoxStore do
@@ -112,11 +114,11 @@ describe ActiveSupport::Cache::TorqueBoxStore do
       database.should_receive(:town).once {
         # Trigger the read latch so the other thread can read the cached value
         read_latch.count_down
-        write_latch.await(15, java.util.concurrent.TimeUnit::SECONDS)
+        write_latch.await(15, TimeUnit::SECONDS)
         "NoPantsville"
       }
       other_thread = Thread.new {
-        read_latch.await(15, java.util.concurrent.TimeUnit::SECONDS)
+        read_latch.await(15, TimeUnit::SECONDS)
         @cache.fetch("town", fetch_options) {
           database.town
         }.should == "Pantsville"
