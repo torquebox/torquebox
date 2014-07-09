@@ -24,19 +24,13 @@ module ActiveSupport
     # @api public
     class TorqueBoxStore < Store
 
-      SECONDS = java.util.concurrent.TimeUnit::SECONDS
-
       def initialize(options = {})
+        if (ttl = options.delete(:expires_in))
+          options[:ttl] = ttl.in_milliseconds
+        end
+        @name = options.delete(:name) || '__torquebox_store__'
         super(options)
         cache
-      end
-
-      def name
-        options[:name] || TORQUEBOX_APP_NAME
-      end
-
-      def clustering_mode
-        cache.clustering_mode
       end
 
       # Clear the entire cache. Be careful with this method since it could
@@ -62,7 +56,8 @@ module ActiveSupport
         value = current.value.to_i
 
         new_entry = Entry.new( value+amount, options )
-        if cache.replace(key, current, new_entry)
+        m = cache.java_method(:replace, [java.lang.Object, java.lang.Object, java.lang.Object])
+        if m.call(key, current, new_entry)
           return new_entry.value
         else
           raise "Concurrent modification, old value was #{value}"
@@ -86,7 +81,7 @@ module ActiveSupport
       protected
 
       def defaults
-        {:name=>'__torque_box_store__', :mode => :invalidation, :sync => false}
+        {:mode => :invalidation_async}
       end
 
       # Return the keys in the cache; potentially very expensive depending on configuration
@@ -114,7 +109,7 @@ module ActiveSupport
       private
 
       def cache
-        @cache ||= TorqueBox::Caching::Cache.new( defaults.merge(options) )
+        @cache ||= TorqueBox::Caching.cache(@name, defaults.merge(options))
       end
     end
   end
