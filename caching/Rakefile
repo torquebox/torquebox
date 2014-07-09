@@ -2,6 +2,7 @@ require "#{File.dirname(__FILE__)}/../tasks/torquebox"
 TorqueBox::RakeHelper.install_standard_tasks
 
 excluded_deps = [/^jboss-logging/, # don't exclude slf4j-jboss-logging
+                 'jgroups',
                  'jruby-complete',
                  'log4j',
                  'wunderboss-core',
