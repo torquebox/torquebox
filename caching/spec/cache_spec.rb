@@ -16,11 +16,6 @@
 
 require 'spec_helper'
 
-def replace(cache, key, old, v)
-  method = cache.java_method(:replace, [java.lang.Object, java.lang.Object, java.lang.Object])
-  method.call(key, old, v)
-end
-
 describe TorqueBox::Caching do
   before :each do
     @cache = TorqueBox::Caching.cache('foo-cache')
@@ -101,7 +96,7 @@ describe TorqueBox::Caching do
     new_value     = '{value:2}'
     @cache.put(key, current_value)
     @cache.get(key).should == current_value
-    replace(@cache, key, current_value, new_value)
+    @cache.replace(key, current_value, new_value)
     @cache.get(key).should == new_value
   end
   
@@ -111,7 +106,7 @@ describe TorqueBox::Caching do
     new_value     = Snuffleuffagus.new(2, 'bar')
     @cache.put(key, current_value)
     @cache.get(key).should == current_value
-    replace(@cache, key, current_value, new_value)
+    @cache.replace(key, current_value, new_value)
     @cache.get(key).name.should == new_value.name
   end
 
@@ -121,7 +116,7 @@ describe TorqueBox::Caching do
     new_value     = '{value:2}'
     @cache.put(key, current_value)
     @cache.get(key).should == current_value
-    replace(@cache, key, 'something else', new_value)
+    @cache.replace(key, 'something else', new_value)
     @cache.get(key).should == current_value
   end
 
@@ -131,7 +126,7 @@ describe TorqueBox::Caching do
     new_value     = Snuffleuffagus.new(2, 'bar')
     @cache.put(key, current_value)
     @cache.get(key).should == current_value
-    replace(@cache, key, new_value, new_value)
+    @cache.replace(key, new_value, new_value)
     @cache.get(key).should == current_value
   end
 
@@ -145,11 +140,11 @@ describe TorqueBox::Caching do
   it "should increment a sequence" do
     name = "My Sequence Name"
     @cache.put(name, 0)
-    replace(@cache, name, 0, 1).should be true
+    @cache.replace(name, 0, 1).should be true
     @cache.get(name).should == 1
-    replace(@cache, name, 1, 2).should be true
+    @cache.replace(name, 1, 2).should be true
     @cache.get(name).should == 2
-    replace(@cache, name, 42, 3).should be false
+    @cache.replace(name, 42, 3).should be false
   end
 
   it "should store and retrieve false values" do

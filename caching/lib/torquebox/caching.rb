@@ -13,6 +13,7 @@
 # limitations under the License.
 
 require 'torquebox/codecs'
+require 'torquebox/caching/cache'
 
 module TorqueBox
   module Caching
@@ -27,7 +28,7 @@ module TorqueBox
       def cache(name, options={})
         validate_options(options, VALID_OPTIONS)
         cache = component.find_or_create(name, extract_options(options, Caching::CreateOption))
-        component.encodedWith(Codecs[options.fetch(:encoding, :marshal_smart)], cache)
+        Cache.new(component.encodedWith(Codecs[options.fetch(:encoding, :marshal_smart)], cache))
       end
 
       def stop(name)

@@ -53,8 +53,7 @@ module ActiveSupport
         value = current.value.to_i
 
         new_entry = Entry.new( value+amount, options )
-        m = cache.java_method(:replace, [java.lang.Object, java.lang.Object, java.lang.Object])
-        if m.call(key, current, new_entry)
+        if cache.replace(key, current, new_entry)
           return new_entry.value
         else
           raise "Concurrent modification, old value was #{value}"
@@ -93,8 +92,7 @@ module ActiveSupport
 
       # Write an entry to the cache implementation. Subclasses must implement this method.
       def write_entry(key, entry, options = {})
-        previous_value = options[:unless_exist] ? cache.put_if_absent( key, entry ) : cache.put( key, entry )
-        previous_value unless previous_value.nil?
+        options[:unless_exist] ? cache.put_if_absent( key, entry ) : cache.put( key, entry )
       end
 
       # Delete an entry from the cache implementation. Subclasses must implement this method.
