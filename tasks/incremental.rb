@@ -32,6 +32,7 @@ module TorqueBox
           dav = DAV.new(credentials_path)
 
           FileUtils.mkdir_p("pkg/gem-repo/gems")
+          dav.mkcol("#{base_url}")
           dav.mkcol("#{base_url}/gems")
           Dir.chdir("pkg/gem-repo") do
             puts `wget -nv -r -nH --cut-dirs=2 --no-parent --reject "index.html*" #{base_url}/gems/ 2>&1`
