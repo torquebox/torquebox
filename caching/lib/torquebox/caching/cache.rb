@@ -14,6 +14,8 @@
 
 require 'forwardable'
 
+java_import java.util.concurrent::TimeUnit
+
 module TorqueBox
   module Caching
     class Cache
@@ -23,8 +25,13 @@ module TorqueBox
         @cache = a_real_cache
       end
 
-      def replace(key, old, v)
-        replacer.call(key, old, v)
+      def replace(key, old=nil, v)
+        ttl = idle = -1         # TODO: how to best pass these?
+        if old.nil? 
+          replace2.call(key, v, ttl, TimeUnit::MILLISECONDS, idle, TimeUnit::MILLISECONDS)
+        else
+          replace3.call(key, old, v, ttl, TimeUnit::MILLISECONDS, idle, TimeUnit::MILLISECONDS)
+        end
       end
       
       def clear
@@ -43,8 +50,22 @@ module TorqueBox
 
       private
 
-      def replacer
-        @replacer ||= @cache.java_method(:replace, [java.lang.Object, java.lang.Object, java.lang.Object])
+      def replace2
+        @replace2 ||= @cache.java_method(:replace, [java.lang.Object,
+                                                    java.lang.Object,
+                                                    Java::long,
+                                                    java.util.concurrent.TimeUnit,
+                                                    Java::long,
+                                                    java.util.concurrent.TimeUnit])
+      end
+      def replace3
+        @replace3 ||= @cache.java_method(:replace, [java.lang.Object,
+                                                    java.lang.Object,
+                                                    java.lang.Object,
+                                                    Java::long,
+                                                    java.util.concurrent.TimeUnit,
+                                                    Java::long,
+                                                    java.util.concurrent.TimeUnit])
       end
     end
   end

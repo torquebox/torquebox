@@ -111,13 +111,22 @@ describe TorqueBox::Caching do
     @cache.clear.should == @cache
   end
 
+  it "should replace any value" do
+    @cache.replace(:a, 1).should be_nil
+    @cache.should be_empty
+    @cache.put(:a, 1)
+    @cache[:a].should == 1
+    @cache.replace(:a, 2)
+    @cache[:a].should == 2
+  end
+
   it "should replace existing string values" do
     key = 'thekey'
     current_value = '{value:1}'
     new_value     = '{value:2}'
     @cache.put(key, current_value)
     @cache.get(key).should == current_value
-    @cache.replace(key, current_value, new_value)
+    @cache.replace(key, current_value, new_value).should be true
     @cache.get(key).should == new_value
   end
   
@@ -127,7 +136,7 @@ describe TorqueBox::Caching do
     new_value     = Snuffleuffagus.new(2, 'bar')
     @cache.put(key, current_value)
     @cache.get(key).should == current_value
-    @cache.replace(key, current_value, new_value)
+    @cache.replace(key, current_value, new_value).should be true
     @cache.get(key).name.should == new_value.name
   end
 
@@ -137,7 +146,7 @@ describe TorqueBox::Caching do
     new_value     = '{value:2}'
     @cache.put(key, current_value)
     @cache.get(key).should == current_value
-    @cache.replace(key, 'something else', new_value)
+    @cache.replace(key, 'something else', new_value).should be false
     @cache.get(key).should == current_value
   end
 
@@ -147,7 +156,7 @@ describe TorqueBox::Caching do
     new_value     = Snuffleuffagus.new(2, 'bar')
     @cache.put(key, current_value)
     @cache.get(key).should == current_value
-    @cache.replace(key, new_value, new_value)
+    @cache.replace(key, new_value, new_value).should be false
     @cache.get(key).should == current_value
   end
 
