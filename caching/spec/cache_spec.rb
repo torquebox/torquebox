@@ -29,6 +29,11 @@ describe TorqueBox::Caching do
     @cache.name.should == 'foo-cache'
   end
 
+  it "should have access to the real cache" do
+    @cache.cache.should be_a(java.util::Map)
+    @cache.cache.should be_a(org.infinispan::Cache)
+  end
+
   it "should have a size" do
     @cache.size.should == 0
     @cache.put('foo', 'bar');
@@ -71,13 +76,22 @@ describe TorqueBox::Caching do
     @cache.put(:b, 2)
     @cache.put(:c, 3)
     @cache.values.sort.should eql([1, 2, 3])
+    @cache.entry_set.size.should == 3
   end
 
-  it "should allow removal of a key/value" do
+  it "should allow removal of a key" do
     @cache.put('foo', 'bar')
     @cache.keys.length.should == 1
-    @cache.remove('foo').should be_truthy
+    @cache.remove('foo').should == 'bar'
     @cache.keys.length.should == 0
+  end
+
+  it "should allow removal of a key mapped to specific value" do
+    @cache.put('foo', 'bar')
+    @cache.remove('foo', 'baz').should be false
+    @cache.size.should == 1
+    @cache.remove('foo', 'bar').should be true
+    @cache.size.should == 0
   end
 
   it "should only insert on put_if_absent if the key is not already in the cache" do
@@ -87,7 +101,14 @@ describe TorqueBox::Caching do
   end
 
   it "should clear" do
+    @cache.should be_empty
+    @cache['foo'] = 'bar'
+    @cache.should_not be_empty
     @cache.clear.should be_empty
+    @cache.should be_empty
+    @cache.clear[:a] = 1
+    @cache.should_not be_empty
+    @cache.clear.should == @cache
   end
 
   it "should replace existing string values" do
@@ -188,7 +209,7 @@ describe TorqueBox::Caching do
   describe "with JTA transactions" do
 
     it "should be non-transactional by default" do
-      @cache.cache_configuration.transaction.transaction_mode.should == org.infinispan.transaction.TransactionMode::NON_TRANSACTIONAL
+      @cache.configuration.transaction.transaction_mode.should == org.infinispan.transaction.TransactionMode::NON_TRANSACTIONAL
       # begin
       #   cache.transaction do
       #     cache.put "key1", "G"
@@ -204,17 +225,17 @@ describe TorqueBox::Caching do
 
     it "should support transactional mode" do
       cache = TorqueBox::Caching.cache('transactional-cache', :transactional => true )
-      cache.cache_configuration.transaction.transaction_mode.should == org.infinispan.transaction.TransactionMode::TRANSACTIONAL
+      cache.configuration.transaction.transaction_mode.should == org.infinispan.transaction.TransactionMode::TRANSACTIONAL
       TorqueBox::Caching.stop('transactional-cache')
     end
 
     it "should use optimisitic locking mode by default" do
-      @cache.cache_configuration.transaction.locking_mode.should == org.infinispan.transaction.LockingMode::OPTIMISTIC
+      @cache.configuration.transaction.locking_mode.should == org.infinispan.transaction.LockingMode::OPTIMISTIC
     end
 
     it "should support pessimistic locking mode" do
       cache = TorqueBox::Caching.cache('transactional-cache', :transactional => true, :locking => :pessimistic )
-      cache.cache_configuration.transaction.locking_mode.should == org.infinispan.transaction.LockingMode::PESSIMISTIC
+      cache.configuration.transaction.locking_mode.should == org.infinispan.transaction.LockingMode::PESSIMISTIC
       TorqueBox::Caching.stop('transactional-cache')
     end
 

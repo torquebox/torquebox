@@ -26,11 +26,20 @@ module TorqueBox
       def replace(key, old, v)
         replacer.call(key, old, v)
       end
+      
+      def clear
+        @cache.clear
+        self
+      end
 
-      def_delegators :@cache, :clear, :size, :put, :get, :name,
+      def_delegators :@cache, :size, :put, :put_all, :get, :name,
                               :[], :[]=, :keys, :values, :remove,
                               :put_if_absent, :evict, :contains_key?,
-                              :cache_configuration
+                              :entry_set, :empty?
+
+      def_delegator :@cache, :cache_configuration, :configuration
+
+      attr_accessor :cache
 
       private
 
