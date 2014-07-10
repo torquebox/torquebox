@@ -21,17 +21,34 @@ module TorqueBox
     class Cache
       extend Forwardable
 
-      def initialize(a_real_cache)
+      def initialize(a_real_cache, options={})
         @cache = a_real_cache
+        @options = options
       end
 
-      def replace(key, old=nil, v)
-        ttl = idle = -1         # TODO: how to best pass these?
-        if old.nil? 
-          replace2.call(key, v, ttl, TimeUnit::MILLISECONDS, idle, TimeUnit::MILLISECONDS)
-        else
-          replace3.call(key, old, v, ttl, TimeUnit::MILLISECONDS, idle, TimeUnit::MILLISECONDS)
-        end
+      def put(key, value, options={})
+        opts = defaults(options)
+        putter.call(key, value, opts[:ttl], TimeUnit::MILLISECONDS, opts[:idle], TimeUnit::MILLISECONDS)
+      end
+      
+      def put_all(map, options={})
+        opts = defaults(options)
+        putaller.call(map, opts[:ttl], TimeUnit::MILLISECONDS, opts[:idle], TimeUnit::MILLISECONDS)
+      end
+      
+      def put_if_absent(key, value, options={})
+        opts = defaults(options)
+        putiffer.call(key, value, opts[:ttl], TimeUnit::MILLISECONDS, opts[:idle], TimeUnit::MILLISECONDS)
+      end
+      
+      def replace(key, value, options={})
+        opts = defaults(options)
+        replace2.call(key, value, opts[:ttl], TimeUnit::MILLISECONDS, opts[:idle], TimeUnit::MILLISECONDS)
+      end
+      
+      def compare_and_set(key, old_value, new_value, options={})
+        opts = defaults(options)
+        replace3.call(key, old_value, new_value, opts[:ttl], TimeUnit::MILLISECONDS, opts[:idle], TimeUnit::MILLISECONDS)
       end
       
       def clear
@@ -39,16 +56,18 @@ module TorqueBox
         self
       end
 
-      def_delegators :@cache, :size, :put, :put_all, :get, :name,
-                              :[], :[]=, :keys, :values, :remove,
-                              :put_if_absent, :evict, :contains_key?,
-                              :entry_set, :empty?
+      def_delegators :@cache, :size, :get, :name, :[], :[]=, :keys, :values, :remove,
+                              :evict, :contains_key?, :entry_set, :empty?
 
       def_delegator :@cache, :cache_configuration, :configuration
 
       attr_accessor :cache
 
       private
+
+      def defaults(options)
+        {ttl: -1, idle: -1}.merge(@options).merge(options)
+      end
 
       def replace2
         @replace2 ||= @cache.java_method(:replace, [java.lang.Object,
@@ -58,6 +77,7 @@ module TorqueBox
                                                     Java::long,
                                                     java.util.concurrent.TimeUnit])
       end
+
       def replace3
         @replace3 ||= @cache.java_method(:replace, [java.lang.Object,
                                                     java.lang.Object,
@@ -67,6 +87,33 @@ module TorqueBox
                                                     Java::long,
                                                     java.util.concurrent.TimeUnit])
       end
+
+      def putter
+        @putter ||= @cache.java_method(:put, [java.lang.Object,
+                                              java.lang.Object,
+                                              Java::long,
+                                              java.util.concurrent.TimeUnit,
+                                              Java::long,
+                                              java.util.concurrent.TimeUnit])
+      end
+
+      def putaller
+        @putaller ||= @cache.java_method(:putAll, [java.util.Map,
+                                                   Java::long,
+                                                   java.util.concurrent.TimeUnit,
+                                                   Java::long,
+                                                   java.util.concurrent.TimeUnit])
+      end
+
+      def putiffer
+        @putiffer ||= @cache.java_method(:putIfAbsent, [java.lang.Object,
+                                                        java.lang.Object,
+                                                        Java::long,
+                                                        java.util.concurrent.TimeUnit,
+                                                        Java::long,
+                                                        java.util.concurrent.TimeUnit])
+      end
+
     end
   end
 end

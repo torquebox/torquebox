@@ -53,7 +53,7 @@ module ActiveSupport
         value = current.value.to_i
 
         new_entry = Entry.new( value+amount, options )
-        if cache.replace(key, current, new_entry)
+        if cache.compare_and_set(key, current, new_entry)
           return new_entry.value
         else
           raise "Concurrent modification, old value was #{value}"

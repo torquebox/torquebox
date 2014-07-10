@@ -126,7 +126,7 @@ describe TorqueBox::Caching do
     new_value     = '{value:2}'
     @cache.put(key, current_value)
     @cache.get(key).should == current_value
-    @cache.replace(key, current_value, new_value).should be true
+    @cache.compare_and_set(key, current_value, new_value).should be true
     @cache.get(key).should == new_value
   end
   
@@ -136,7 +136,7 @@ describe TorqueBox::Caching do
     new_value     = Snuffleuffagus.new(2, 'bar')
     @cache.put(key, current_value)
     @cache.get(key).should == current_value
-    @cache.replace(key, current_value, new_value).should be true
+    @cache.compare_and_set(key, current_value, new_value).should be true
     @cache.get(key).name.should == new_value.name
   end
 
@@ -146,7 +146,7 @@ describe TorqueBox::Caching do
     new_value     = '{value:2}'
     @cache.put(key, current_value)
     @cache.get(key).should == current_value
-    @cache.replace(key, 'something else', new_value).should be false
+    @cache.compare_and_set(key, 'something else', new_value).should be false
     @cache.get(key).should == current_value
   end
 
@@ -156,7 +156,7 @@ describe TorqueBox::Caching do
     new_value     = Snuffleuffagus.new(2, 'bar')
     @cache.put(key, current_value)
     @cache.get(key).should == current_value
-    @cache.replace(key, new_value, new_value).should be false
+    @cache.compare_and_set(key, new_value, new_value).should be false
     @cache.get(key).should == current_value
   end
 
@@ -170,11 +170,11 @@ describe TorqueBox::Caching do
   it "should increment a sequence" do
     name = "My Sequence Name"
     @cache.put(name, 0)
-    @cache.replace(name, 0, 1).should be true
+    @cache.compare_and_set(name, 0, 1).should be true
     @cache.get(name).should == 1
-    @cache.replace(name, 1, 2).should be true
+    @cache.compare_and_set(name, 1, 2).should be true
     @cache.get(name).should == 2
-    @cache.replace(name, 42, 3).should be false
+    @cache.compare_and_set(name, 42, 3).should be false
   end
 
   it "should store and retrieve false values" do
@@ -208,11 +208,18 @@ describe TorqueBox::Caching do
     @cache.get(:mynumber).should == 1.0
   end
 
-  it "should expire entries based on provided expiry durations" do
+  it "should expire entries based on constructor ttl" do
     cache = TorqueBox::Caching.cache('expiring-cache', :ttl => 100)
     cache.put("foo", "bar")
     sleep 1
     cache.get("foo").should be_nil
+  end
+
+  it "should expire entries based on method ttl" do
+    @cache.put("foo", "bar", :ttl => 100)
+    @cache["foo"].should == "bar"
+    sleep 1
+    @cache["foo"].should be_nil
   end
 
   describe "with JTA transactions" do
