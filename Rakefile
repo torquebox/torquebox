@@ -68,8 +68,17 @@ end
 
 desc 'Generate documentation via yardoc'
 task 'doc' do
+  require 'fileutils'
   require 'yard'
-  YARD::CLI::Yardoc.new.run()
+  version_path = File.join(File.dirname(__FILE__), 'core', 'lib', 'torquebox', 'version.rb')
+  require version_path
+
+  FileUtils.mkdir_p('pkg')
+  readme = File.read('README.md')
+  readme.sub!(/^# TorqueBox/, "# TorqueBox #{TorqueBox::VERSION}")
+  File.open('pkg/README.md', 'w') { |f| f.write(readme) }
+  YARD::CLI::Yardoc.new.run('--title', "TorqueBox #{TorqueBox::VERSION}",
+                            '-r', 'pkg/README.md')
 end
 
 # purposely no description so it's hidden from rake -T
