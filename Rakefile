@@ -80,6 +80,9 @@ task 'doc' do
   YARD::CLI::Yardoc.new.run('--title', "TorqueBox #{TorqueBox::VERSION}",
                             '-r', 'pkg/README.md')
 end
+task 'clean' do
+  FileUtils.rm_rf('doc')
+end
 
 # purposely no description so it's hidden from rake -T
 task 'update_version' do
