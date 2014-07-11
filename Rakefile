@@ -78,10 +78,9 @@ task 'doc' do
   readme.sub!(/^# TorqueBox/, "# TorqueBox #{TorqueBox::VERSION}")
   File.open('pkg/README.md', 'w') { |f| f.write(readme) }
   YARD::CLI::Yardoc.new.run('--title', "TorqueBox #{TorqueBox::VERSION}",
-                            '-r', 'pkg/README.md')
-end
-task 'clean' do
-  FileUtils.rm_rf('doc')
+                            '-r', 'pkg/README.md',
+                            '-o', 'pkg/doc')
+  FileUtils.rm_f('pkg/README.md')
 end
 
 # purposely no description so it's hidden from rake -T
