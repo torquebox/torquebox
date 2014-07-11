@@ -27,28 +27,23 @@ module TorqueBox
       end
 
       def put(key, value, options={})
-        opts = defaults(options)
-        putter.call(key, value, opts[:ttl], TimeUnit::MILLISECONDS, opts[:idle], TimeUnit::MILLISECONDS)
+        put_m.call(*[key, value] + expiry(options))
       end
       
       def put_all(map, options={})
-        opts = defaults(options)
-        putaller.call(map, opts[:ttl], TimeUnit::MILLISECONDS, opts[:idle], TimeUnit::MILLISECONDS)
+        putall_m.call(*[map] + expiry(options))
       end
       
       def put_if_absent(key, value, options={})
-        opts = defaults(options)
-        putiffer.call(key, value, opts[:ttl], TimeUnit::MILLISECONDS, opts[:idle], TimeUnit::MILLISECONDS)
+        putif_m.call(*[key, value] + expiry(options))
       end
       
       def replace(key, value, options={})
-        opts = defaults(options)
-        replace2.call(key, value, opts[:ttl], TimeUnit::MILLISECONDS, opts[:idle], TimeUnit::MILLISECONDS)
+        replace_m.call(*[key, value] + expiry(options))
       end
       
       def compare_and_set(key, old_value, new_value, options={})
-        opts = defaults(options)
-        replace3.call(key, old_value, new_value, opts[:ttl], TimeUnit::MILLISECONDS, opts[:idle], TimeUnit::MILLISECONDS)
+        cas_m.call(*[key, old_value, new_value] + expiry(options))
       end
       
       def clear
@@ -63,55 +58,61 @@ module TorqueBox
 
       attr_accessor :cache
 
+
       private
 
       def defaults(options)
         {ttl: -1, idle: -1}.merge(@options).merge(options)
       end
 
-      def replace2
-        @replace2 ||= @cache.java_method(:replace, [java.lang.Object,
-                                                    java.lang.Object,
-                                                    Java::long,
-                                                    java.util.concurrent.TimeUnit,
-                                                    Java::long,
-                                                    java.util.concurrent.TimeUnit])
+      def expiry(options)
+        m = defaults(options)
+        [m[:ttl], TimeUnit::MILLISECONDS, m[:idle], TimeUnit::MILLISECONDS]
       end
 
-      def replace3
-        @replace3 ||= @cache.java_method(:replace, [java.lang.Object,
-                                                    java.lang.Object,
-                                                    java.lang.Object,
-                                                    Java::long,
-                                                    java.util.concurrent.TimeUnit,
-                                                    Java::long,
-                                                    java.util.concurrent.TimeUnit])
+      def replace_m
+        @replace_m ||= @cache.java_method(:replace, [java.lang.Object,
+                                                     java.lang.Object,
+                                                     Java::long,
+                                                     java.util.concurrent.TimeUnit,
+                                                     Java::long,
+                                                     java.util.concurrent.TimeUnit])
       end
 
-      def putter
-        @putter ||= @cache.java_method(:put, [java.lang.Object,
-                                              java.lang.Object,
-                                              Java::long,
-                                              java.util.concurrent.TimeUnit,
-                                              Java::long,
-                                              java.util.concurrent.TimeUnit])
+      def cas_m
+        @cas_m ||= @cache.java_method(:replace, [java.lang.Object,
+                                                 java.lang.Object,
+                                                 java.lang.Object,
+                                                 Java::long,
+                                                 java.util.concurrent.TimeUnit,
+                                                 Java::long,
+                                                 java.util.concurrent.TimeUnit])
       end
 
-      def putaller
-        @putaller ||= @cache.java_method(:putAll, [java.util.Map,
+      def put_m
+        @put_m ||= @cache.java_method(:put, [java.lang.Object,
+                                             java.lang.Object,
+                                             Java::long,
+                                             java.util.concurrent.TimeUnit,
+                                             Java::long,
+                                             java.util.concurrent.TimeUnit])
+      end
+
+      def putall_m
+        @putall_m ||= @cache.java_method(:putAll, [java.util.Map,
                                                    Java::long,
                                                    java.util.concurrent.TimeUnit,
                                                    Java::long,
                                                    java.util.concurrent.TimeUnit])
       end
 
-      def putiffer
-        @putiffer ||= @cache.java_method(:putIfAbsent, [java.lang.Object,
-                                                        java.lang.Object,
-                                                        Java::long,
-                                                        java.util.concurrent.TimeUnit,
-                                                        Java::long,
-                                                        java.util.concurrent.TimeUnit])
+      def putif_m
+        @putif_m ||= @cache.java_method(:putIfAbsent, [java.lang.Object,
+                                                       java.lang.Object,
+                                                       Java::long,
+                                                       java.util.concurrent.TimeUnit,
+                                                       Java::long,
+                                                       java.util.concurrent.TimeUnit])
       end
 
     end
