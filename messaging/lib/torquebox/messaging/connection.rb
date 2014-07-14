@@ -88,7 +88,7 @@ module TorqueBox
       # @param (see Queue#initialize)
       # @return (see Queue#initialize)
       def queue(name, options={})
-        TorqueBox::Messaging::Queue.new(name, options.merge(connection: self))
+        TorqueBox::Messaging.queue(name, options.merge(connection: self))
       end
 
       # Creates a Topic from this connection.
@@ -99,7 +99,7 @@ module TorqueBox
       # @param (see Topic#initialize)
       # @return (see Topic#initialize)
       def topic(name, options={})
-        TorqueBox::Messaging::Topic.new(name, options.merge(connection: self))
+        TorqueBox::Messaging.topic(name, options.merge(connection: self))
       end
 
       # Closes this connection.

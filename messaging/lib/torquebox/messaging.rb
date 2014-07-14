@@ -28,5 +28,54 @@ module TorqueBox
     def self.default_encoding=(enc)
       @default_encoding = enc
     end
+
+    # Creates a new queue reference.
+    #
+    # This may be a reference to a remote or local (in-vm) queue.
+    # Obtaining a reference to an in-vm queue will cause the queue
+    # to be created within the broker if it does not already exist.
+    # For remote queues, the queue must already exist in the remote
+    # broker.
+    #
+    # If a connection is provided, it will be remembered and
+    # used by any method that takes a `:connection` option.
+    #
+    # @param name [String] The name of the queue.
+    # @param options [Hash] Options for queue creation.
+    # @option options :connection [Connection] A connection to a
+    #   remote broker to use; caller expected to close.
+    # @option options :durable [true, false] (true) Whether messages
+    #   persist across restarts.
+    # @option options :selector [String] A JMS (SQL 92) expression
+    #   to filter published messages.
+    # @option options :default_options [Hash] A set of default
+    #   options to apply to any operations on this queue.
+    # @return [Queue] The queue reference.
+    def self.queue(name, options={})
+      Queue.new(name, options)
+    end
+
+    # Creates a new topic reference.
+    #
+    # This may be a reference to a remote or local (in-vm) topic.
+    # Obtaining a reference to an in-vm topic will cause the topic
+    # to be created within the broker if it does not already exist.
+    # For remote topics, the topic must already exist in the remote
+    # broker.
+    #
+    # If a connection is provided, it will be remembered and
+    # used by any method that takes a `:connection` option.
+    #
+    # @param name [String] The name of the topic.
+    # @param options [Hash] Options for topic creation.
+    # @option options :connection [Connection] A connection to a
+    #   remote broker to use; caller expected to close.
+    # @option options :default_options [Hash] A set of default
+    #   options to apply to any operations on this topic.
+    # @return [Topic] The topic reference.
+    def self.topic(name, options={})
+      Topic.new(name, options)
+    end
+
   end
 end

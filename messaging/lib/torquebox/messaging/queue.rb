@@ -18,40 +18,12 @@ java_import org.projectodd.wunderboss.messaging.ConcreteReply
 module TorqueBox
   module Messaging
     # Represents a messaging queue.
+    #
+    # Obtain a queue object by calling {TorqueBox::Messaging.queue}.
     class Queue < Destination
 
       # Valid options for Queue creation.
       QUEUE_OPTIONS = optset(WBMessaging::CreateQueueOption, :default_options)
-
-      # Creates a new queue reference.
-      #
-      # This may be a reference to a remote or local (in-vm) queue.
-      # Obtaining a reference to an in-vm queue will cause the queue
-      # to be created within the broker if it does not already exist.
-      # For remote queues, the queue must already exist in the remote
-      # broker.
-      #
-      # If a connection is provided, it will be remembered and
-      # used by any method that takes a `:connection` option.
-      #
-      # @param name [String] The name of the queue.
-      # @param options [Hash] Options for queue creation.
-      # @option options :connection [Connection] A connection to a
-      #   remote broker to use; caller expected to close.
-      # @option options :durable [true, false] (true) Whether messages
-      #   persist across restarts.
-      # @option options :selector [String] A JMS (SQL 92) expression
-      #   to filter published messages.
-      # @option options :default_options [Hash] A set of default
-      #   options to apply to any operations on this queue.
-      # @return [Queue] The queue reference.
-      def initialize(name, options={})
-        validate_options(options, QUEUE_OPTIONS)
-        coerced_opts = coerce_connection_and_session(options)
-        create_options = extract_options(coerced_opts, WBMessaging::CreateQueueOption)
-        super(default_broker.find_or_create_queue(name, create_options),
-              options)
-      end
 
       # Valid options for {#request}.
       REQUEST_OPTIONS = optset(PUBLISH_OPTIONS, :timeout, :timeout_val)
@@ -157,6 +129,16 @@ module TorqueBox
         @internal_destination.respond(handler,
                                       Codecs.java_codecs,
                                       extract_options(options, WBQueue::RespondOption))
+      end
+
+      protected
+
+      def initialize(name, options={})
+        validate_options(options, QUEUE_OPTIONS)
+        coerced_opts = coerce_connection_and_session(options)
+        create_options = extract_options(coerced_opts, WBMessaging::CreateQueueOption)
+        super(default_broker.find_or_create_queue(name, create_options),
+              options)
       end
 
     end

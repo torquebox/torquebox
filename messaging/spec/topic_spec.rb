@@ -20,8 +20,8 @@ java_import java.util.concurrent.TimeUnit
 describe "Topic" do
   describe 'subscribe' do
     it 'should work' do
-      topic = TorqueBox::Messaging::Topic.new("subscribe")
-      responseq = TorqueBox::Messaging::Queue.new("subscribe-responseq", durable: false)
+      topic = TorqueBox::Messaging.topic("subscribe")
+      responseq = TorqueBox::Messaging.queue("subscribe-responseq", durable: false)
       subscribe = lambda { topic.subscribe('my-sub') { |m| responseq.publish(m.upcase) } }
       listener = subscribe.call
       topic.publish('hi')
@@ -36,8 +36,8 @@ describe "Topic" do
 
   describe 'unsubscribe' do
     it 'should work' do
-      topic = TorqueBox::Messaging::Topic.new("subscribe")
-      responseq = TorqueBox::Messaging::Queue.new("subscribe-responseq", durable: false)
+      topic = TorqueBox::Messaging.topic("subscribe")
+      responseq = TorqueBox::Messaging.queue("subscribe-responseq", durable: false)
       subscribe = lambda { topic.subscribe('my-sub') { |m| responseq.publish(m.upcase) } }
       listener = subscribe.call
       topic.publish('hi')

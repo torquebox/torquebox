@@ -26,11 +26,11 @@ class GetBroker
 end
 
 def random_queue
-  TorqueBox::Messaging::Queue.new(SecureRandom.uuid, durable: false)
+  TorqueBox::Messaging.queue(SecureRandom.uuid, durable: false)
 end
 
 def random_topic
-  TorqueBox::Messaging::Topic.new(SecureRandom.uuid)
+  TorqueBox::Messaging.topic(SecureRandom.uuid)
 end
 
 RSpec.configure do |config|

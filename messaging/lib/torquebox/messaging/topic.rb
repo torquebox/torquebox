@@ -15,36 +15,12 @@
 module TorqueBox
   module Messaging
     # Represents a messaging topic.
+    #
+    # Obtain a topic object by calling {TorqueBox::Messaging.topic}.
     class Topic < Destination
 
       # Valid options for topic creation.
       TOPIC_OPTIONS = optset(WBMessaging::CreateTopicOption, :default_options)
-
-      # Creates a new topic reference.
-      #
-      # This may be a reference to a remote or local (in-vm) topic.
-      # Obtaining a reference to an in-vm topic will cause the topic
-      # to be created within the broker if it does not already exist.
-      # For remote topics, the topic must already exist in the remote
-      # broker.
-      #
-      # If a connection is provided, it will be remembered and
-      # used by any method that takes a `:connection` option.
-      #
-      # @param name [String] The name of the topic.
-      # @param options [Hash] Options for topic creation.
-      # @option options :connection [Connection] A connection to a
-      #   remote broker to use; caller expected to close.
-      # @option options :default_options [Hash] A set of default
-      #   options to apply to any operations on this topic.
-      # @return [Topic] The topic reference.
-      def initialize(name, options={})
-        validate_options(options, TOPIC_OPTIONS)
-        coerced_opts = coerce_connection_and_session(options)
-        create_options = extract_options(coerced_opts, WBMessaging::CreateTopicOption)
-        super(default_broker.find_or_create_topic(name, create_options),
-              options)
-      end
 
       # Valid options for {#subscribe}.
       SUBSCRIBE_OPTIONS = optset(WBTopic::SubscribeOption)
@@ -110,6 +86,17 @@ module TorqueBox
         @internal_destination.unsubscribe(name,
                                           extract_options(options, WBTopic::UnsubscribeOption))
       end
+
+      protected
+
+      def initialize(name, options={})
+        validate_options(options, TOPIC_OPTIONS)
+        coerced_opts = coerce_connection_and_session(options)
+        create_options = extract_options(coerced_opts, WBMessaging::CreateTopicOption)
+        super(default_broker.find_or_create_topic(name, create_options),
+              options)
+      end
+
     end
   end
 end
