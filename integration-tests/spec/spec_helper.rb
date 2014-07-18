@@ -191,6 +191,7 @@ def torquebox(options)
       $wildfly.deploy(jarfile) if wildfly?
     }
     after = lambda {
+      $wildfly.undeploy(jarfile) if wildfly?
       FileUtils.rm_f(jarfile)
     }
     command_prefix = "java -jar #{jarfile}"
