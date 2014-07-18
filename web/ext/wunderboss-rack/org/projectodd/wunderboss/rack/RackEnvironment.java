@@ -95,13 +95,14 @@ public class RackEnvironment {
 
         // Don't use request.getPathInfo because that gets decoded by the container
         String pathInfo = exchange.getRequestURI();
+        String resolvedPath = exchange.getResolvedPath();
 
         // strip contextPath and servletPath from pathInfo
-        if (pathInfo.startsWith(contextPath) && !contextPath.equals("/")) {
-            pathInfo = pathInfo.substring(contextPath.length());
+        if (pathInfo.startsWith(resolvedPath) && !resolvedPath.equals("/")) {
+            pathInfo = pathInfo.substring(resolvedPath.length());
         }
 
-        String scriptName = contextPath;
+        String scriptName = exchange.getResolvedPath();
         // SCRIPT_NAME should be an empty string for the root
         if (scriptName.equals("/")) {
             scriptName = "";

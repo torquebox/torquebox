@@ -103,6 +103,7 @@ EOS
         end
         @logger.infof("Writing %s", jar_name);
         jar_builder.create(jar_name)
+        jar_name
       ensure
         FileUtils.rm_rf(tmpdir) if options['bundle_gems']
       end
@@ -132,7 +133,7 @@ EOS
                   :file_prefix => Dir.pwd,
                   :pattern => "/**/*",
                   :jar_prefix => "app",
-                  :exclude => jar_name)
+                  :exclude => [jar_name, jar_name.sub('.jar', '.war')])
       end
 
       def add_bundler_files(jar_builder, tmpdir, bundle_without)
@@ -251,4 +252,4 @@ EOS
 end
 
 TorqueBox::CLI.register_extension('jar', TorqueBox::CLI::Jar.new,
-                                  'Create an executable and deployable jar from an application')
+                                  'Create an executable jar from an application')

@@ -50,7 +50,7 @@ module TorqueBox
 
       DEFAULT_MOUNT_OPTIONS = {
         :root => '.',
-        :path => WB.options.get('default-context-path', '/'),
+        :path => '/',
         :static_dir => 'public',
         :rackup => 'config.ru',
         :rack_app => nil
@@ -61,7 +61,10 @@ module TorqueBox
         validate_options(options, opts_to_set(WBWeb::RegisterOption) + DEFAULT_MOUNT_OPTIONS.keys)
         @logger.debugf("Mounting context path %s with options %s on TorqueBox::Web::Server '%s'",
                        options[:path], options.inspect, @web_component.name)
-        ENV["RAILS_RELATIVE_URL_ROOT"] = options[:path]
+        servlet_context = WB.options.get("servlet-context-path", "")
+        relative_root = servlet_context + options[:path]
+        relative_root.chop! if relative_root.end_with?("/")
+        ENV["RAILS_RELATIVE_URL_ROOT"] = relative_root
         if options[:rack_app].nil?
           require 'rack'
           rackup = File.expand_path(options[:rackup], options[:root])

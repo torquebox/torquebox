@@ -178,11 +178,13 @@ def torquebox(options)
   if uberjar?
     jarfile = "#{app_dir}/#{File.basename(app_dir)}.jar"
     before = lambda {
-      command = "cd #{app_dir} && #{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{File.join(bin_dir, 'torquebox')} jar -v"
+      command = "cd #{app_dir} && #{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{File.join(bin_dir, 'torquebox')}"
       if wildfly?
-        name = path == '/' ? 'ROOT.jar' : "#{path.sub('/', '')}.jar"
-        command << " --name #{name}"
+        name = path == '/' ? 'ROOT.war' : "#{path.sub('/', '')}.war"
+        command << " war -v --name #{name}"
         jarfile = "#{app_dir}/#{name}"
+      else
+        command << " jar -v"
       end
       jar_output = `#{command}`
       puts jar_output if ENV['DEBUG']
