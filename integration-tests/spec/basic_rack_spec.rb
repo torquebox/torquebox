@@ -121,15 +121,17 @@ feature "basic rack at root context" do
   end
 end
 
-feature "basic rack with rackup" do
-  rackup(:dir => "#{apps_dir}/rack/basic", '-E' => 'production')
+unless uberjar?
+  feature "basic rack with rackup" do
+    rackup(:dir => "#{apps_dir}/rack/basic", '-E' => 'production')
 
-  it "should work for basic requests" do
-    visit "/"
-    page.should have_content('it worked')
-    page.find("#success")[:class].strip.should == 'basic-rack'
-    page.find("#script_name").text.strip.should == ''
-    page.find("#path_info").text.strip.should == '/'
-    page.find("#request_uri").text.strip.should == '/'
+    it "should work for basic requests" do
+      visit "/"
+      page.should have_content('it worked')
+      page.find("#success")[:class].strip.should == 'basic-rack'
+      page.find("#script_name").text.strip.should == ''
+      page.find("#path_info").text.strip.should == '/'
+      page.find("#request_uri").text.strip.should == '/'
+    end
   end
 end
