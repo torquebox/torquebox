@@ -78,7 +78,7 @@ EOF
           original_dir = File.expand_path(Dir['wildfly-*' ].first)
           FileUtils.mv(original_dir, wildfly_home)
         end
-        standalone_xml = "#{wildfly_home}/standalone/configuration/standalone.xml"
+        standalone_xml = "#{wildfly_home}/standalone/configuration/standalone-full.xml"
         doc = REXML::Document.new(File.read(standalone_xml))
         interfaces = doc.root.get_elements("//management-interfaces/*")
         interfaces.each { |i| i.attributes.delete('security-realm')}
@@ -114,6 +114,15 @@ EOF
     end
   end
 
+end
+
+module TorqueSpec
+  module AS7
+    alias_method :old_start_command, :start_command
+    def start_command
+      old_start_command << " --server-config=standalone-full.xml"
+    end
+  end
 end
 
 def bin_dir
