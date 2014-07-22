@@ -82,6 +82,8 @@ EOF
         doc = REXML::Document.new(File.read(standalone_xml))
         interfaces = doc.root.get_elements("//management-interfaces/*")
         interfaces.each { |i| i.attributes.delete('security-realm')}
+        hornetq = doc.root.get_elements("//hornetq-server").first
+        hornetq.add_element('journal-type').text = 'NIO'
         open(standalone_xml, 'w') do |file|
           doc.write(file, 4)
         end
