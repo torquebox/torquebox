@@ -12,9 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "spec_helper"
 
-module TorqueBox
-  VERSION = '4.0.0.alpha1.dev'
-  WUNDERBOSS_VERSION = '1.x.incremental.96'
-  WILDFLY_VERSION = '8.1.0.Final'
+if embedded_from_disk?
+  feature "embedded sockjs example" do
+    embedded("main.rb", :dir => "#{apps_dir}/embedded/sockjs_echo")
+
+    it "should register the rack app" do
+      visit "/"
+      page.should have_content("sockjs echo example")
+    end
+
+    it "should register the sockjs endpoint" do
+      visit "/echo"
+      page.should have_content("Welcome to SockJS!")
+    end
+  end
 end

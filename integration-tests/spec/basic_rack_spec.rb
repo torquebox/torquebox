@@ -121,7 +121,7 @@ feature "basic rack at root context" do
   end
 end
 
-unless uberjar?
+if embedded_from_disk?
   feature "basic rack with rackup" do
     rackup(:dir => "#{apps_dir}/rack/basic", '-E' => 'production')
 

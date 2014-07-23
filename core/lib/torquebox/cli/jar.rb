@@ -78,7 +78,7 @@ if org.projectodd.wunderboss.WunderBoss.options.get("wildfly-service").nil?; \
     java.lang.System.exit(status); \
   end; \
 else; \
-  TorqueBox::Web::Server.run("default"); \
+  TorqueBox::Web.run; \
 end
 EOS
         jar_builder.add_string("META-INF/app.properties", app_properties)

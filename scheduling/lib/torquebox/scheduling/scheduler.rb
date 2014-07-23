@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 module TorqueBox
   module Scheduling
     # Provides an interface to a job scheduler.

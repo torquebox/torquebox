@@ -147,6 +147,14 @@ def wildfly?
   ENV['WILDFLY'] == 'true'
 end
 
+def embedded?
+  !wildfly?
+end
+
+def embedded_from_disk?
+  embedded? && !uberjar?
+end
+
 def unzip(path)
   if windows?
     `jar.exe xf #{path}`
@@ -241,8 +249,23 @@ def rackup(options)
   end
 end
 
+def embedded(command, options)
+  metaclass = class << self; self; end
+  metaclass.send(:define_method, :server_options) do
+    app_dir = options.delete(:dir)
+    return {
+      :app_dir => app_dir,
+      :chdir => app_dir,
+      :path => '/',
+      :port => options['--port'] || '8080',
+      :command => "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{command}"
+    }
+  end
+end
+
 def __server_start(options)
   app_dir = options[:app_dir]
+  chdir = options[:chdir]
   path = options[:path]
   port = wildfly? ? '8080' : options[:port]
   Capybara.app_host = "http://localhost:#{port}"
@@ -255,6 +278,10 @@ def __server_start(options)
   if wildfly?
     # app already depoyed in the before callback
   else
+    if chdir
+      @old_pwd = Dir.pwd
+      Dir.chdir(chdir)
+    end
     pid, stdin, stdout, stderr = IO.popen4(options[:command])
     ENV['BUNDLE_GEMFILE'] = nil
     ENV['RUBYLIB'] = nil
@@ -313,6 +340,10 @@ end
 def __server_stop
   if wildfly? && @jarfile
     $wildfly.undeploy(@jarfile)
+  end
+  if @old_pwd
+    Dir.chdir(@old_pwd)
+    @old_pwd = nil
   end
   if @server_pid
     begin

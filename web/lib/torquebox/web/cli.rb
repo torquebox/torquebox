@@ -17,6 +17,7 @@ require 'torquebox-web'
 
 module TorqueBox
   module Web
+    # @api private
     class CLI
 
       attr_reader :options
@@ -57,7 +58,7 @@ module TorqueBox
         options[:auto_start] = false
 
         @options = options
-        @server = ::TorqueBox::Web::Server.run('default', options)
+        @server = ::TorqueBox::Web.run(options)
         unless ENV['TORQUEBOX_CLI_SPECS']
           @server.start
           thread = Thread.current

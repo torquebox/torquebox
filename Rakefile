@@ -79,7 +79,8 @@ task 'doc' do
   File.open('pkg/README.md', 'w') { |f| f.write(readme) }
   YARD::CLI::Yardoc.new.run('--title', "TorqueBox #{TorqueBox::VERSION}",
                             '-r', 'pkg/README.md',
-                            '-o', 'pkg/doc')
+                            '-o', 'pkg/doc',
+                            '--hide-api', 'private')
   FileUtils.rm_f('pkg/README.md')
 end
 

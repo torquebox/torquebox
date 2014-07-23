@@ -16,7 +16,10 @@ require "pathname"
 
 module TorqueBox
 
+  # @api private
   JAR_MARKER = "torquebox_jar_marker"
+
+  # @api private
   EXPLODED_JAR = !JRuby.classloader_resources(JAR_MARKER).empty?
 
   class Jars
