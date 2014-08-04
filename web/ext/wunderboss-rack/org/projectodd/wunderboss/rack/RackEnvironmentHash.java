@@ -61,9 +61,9 @@ public class RackEnvironmentHash extends RubyHash {
                 if (keyBytes.length > 5 && keyBytes[0] == 'H'
                         && keyBytes[1] == 'T' && keyBytes[2] == 'T'
                         && keyBytes[3] == 'P' && keyBytes[4] == '_') {
-                    // this HttpString ctor has misleading variable names -
-                    // it's a copy from/to, not offset/length
-                    HttpString httpString = new HttpString(keyBytes, 5, keyBytes.length);
+
+                    String key = new String(keyBytes, 5, keyBytes.length - 5);
+                    HttpString httpString = new HttpString(toCamelCase(key));
                     fillHeaderKey(httpString, keyBytes);
                 } else {
                     fillRackKey((RubyString) rubyKey);
@@ -174,6 +174,24 @@ public class RackEnvironmentHash extends RubyHash {
             c -= 32;
         }
         return c;
+    }
+
+    public static String toCamelCase(final String init) {
+        if (init==null) {
+            return null;
+        }
+        final StringBuilder ret = new StringBuilder(init.length());
+        for (final String word : init.split("_")) {
+            if (!word.isEmpty()) {
+                ret.append(toUpperCase(word.charAt(0)));
+                ret.append(word.substring(1).toLowerCase());
+            }
+            if (!(ret.length()==init.length())) {
+                ret.append("-");
+            }
+        }
+
+        return ret.toString();
     }
 
     private static String getRemoteAddr(final HttpServerExchange exchange) {
