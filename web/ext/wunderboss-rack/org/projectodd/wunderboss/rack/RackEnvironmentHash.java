@@ -57,14 +57,21 @@ public class RackEnvironmentHash extends RubyHash {
     private synchronized void fillKey(final IRubyObject rubyKey) {
         if (!filledEntireHash) {
             if (rubyKey instanceof RubyString && !containsKey(rubyKey)) {
-                byte[] keyBytes = ((RubyString) rubyKey).getBytes();
-                if (keyBytes.length > 5 && keyBytes[0] == 'H'
-                        && keyBytes[1] == 'T' && keyBytes[2] == 'T'
-                        && keyBytes[3] == 'P' && keyBytes[4] == '_') {
+                byte[] rubyKeyBytes = ((RubyString) rubyKey).getBytes();
+                if (rubyKeyBytes.length > 5 && rubyKeyBytes[0] == 'H'
+                        && rubyKeyBytes[1] == 'T' && rubyKeyBytes[2] == 'T'
+                        && rubyKeyBytes[3] == 'P' && rubyKeyBytes[4] == '_') {
+                    byte[] httpKeyBytes = rubyKeyBytes.clone();
+                    // Rack uses underscores in headers, HTTP uses dashes
+                    for (int i = 5; i < httpKeyBytes.length; i++) {
+                        if (httpKeyBytes[i] == '_') {
+                            httpKeyBytes[i] = '-';
+                        }
+                    }
                     // this HttpString ctor has misleading variable names -
                     // it's a copy from/to, not offset/length
-                    HttpString httpString = new HttpString(keyBytes, 5, keyBytes.length);
-                    fillHeaderKey(httpString, keyBytes);
+                    HttpString httpString = new HttpString(httpKeyBytes, 5, httpKeyBytes.length);
+                    fillHeaderKey(httpString, rubyKeyBytes);
                 } else {
                     fillRackKey((RubyString) rubyKey);
                 }
