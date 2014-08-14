@@ -1,3 +1,6 @@
 -m markdown
 --no-private
+-o pkg/doc
+--hide-api private
+--plugin doctest
 */lib/**/*.rb

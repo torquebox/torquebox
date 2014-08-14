@@ -56,6 +56,13 @@ task 'build' do
   end
 end
 
+# Run yard-doctest to test all our @example tags
+task 'spec' do
+  jruby_command = File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
+  success = system(%(#{jruby_command} -r 'bundler/setup' -S yard doctest '*/lib/**/*.rb'))
+  fail unless success
+end
+
 desc 'Run an irb session with all torquebox libraries on the load path'
 task 'irb' do
   GEMS.each do |gem|
@@ -78,9 +85,7 @@ task 'doc' do
   readme.sub!(/^# TorqueBox/, "# TorqueBox #{TorqueBox::VERSION}")
   File.open('pkg/README.md', 'w') { |f| f.write(readme) }
   YARD::CLI::Yardoc.new.run('--title', "TorqueBox #{TorqueBox::VERSION}",
-                            '-r', 'pkg/README.md',
-                            '-o', 'pkg/doc',
-                            '--hide-api', 'private')
+                            '-r', 'pkg/README.md')
   FileUtils.rm_f('pkg/README.md')
 end
 
