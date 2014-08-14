@@ -19,6 +19,7 @@ package org.torquebox.core;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -153,11 +154,15 @@ public class JarBuilder {
             String jarPath = value.substring(0, value.indexOf("!/"));
             writeShadedEntry(jarOutput, name, jarPath);
         } else {
-            FileInputStream fileStream = new FileInputStream(value);
             try {
-                writeCurrentEntry(jarOutput, fileStream);
-            } finally {
-                fileStream.close();
+                FileInputStream fileStream = new FileInputStream(value);
+                try {
+                    writeCurrentEntry(jarOutput, fileStream);
+                } finally {
+                    fileStream.close();
+                }
+            } catch (FileNotFoundException ex) {
+                System.err.println("Omitting file '" + value + "' from the archive - it could not be read.");
             }
         }
     }
