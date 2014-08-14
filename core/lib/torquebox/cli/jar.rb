@@ -224,6 +224,7 @@ EOS
 
       def add_torquebox_files(jar_builder)
         TorqueBox::Jars.list.each do |jar|
+          @logger.debugf("Shading jar %s", jar)
           jar_builder.shade_jar(jar)
         end
       end
