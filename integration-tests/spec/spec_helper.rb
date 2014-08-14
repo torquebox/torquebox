@@ -207,6 +207,7 @@ def torquebox(options)
       end
       jar_output = `#{command}`
       puts jar_output if ENV['DEBUG']
+      puts `jar -tf #{jarfile} | grep -i torquebox` if ENV['DEBUG']
       $wildfly.deploy(jarfile) if wildfly?
     }
     after = lambda {
