@@ -56,13 +56,6 @@ task 'build' do
   end
 end
 
-# Run yard-doctest to test all our @example tags
-task 'spec' do
-  jruby_command = File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
-  success = system(%(#{jruby_command} -r 'bundler/setup' -S yard doctest '*/lib/**/*.rb'))
-  fail unless success
-end
-
 desc 'Run an irb session with all torquebox libraries on the load path'
 task 'irb' do
   GEMS.each do |gem|
@@ -88,6 +81,17 @@ task 'doc' do
                             '-r', 'pkg/README.md')
   FileUtils.rm_f('pkg/README.md')
 end
+
+# Run yard-doctest to test all our @example tags
+namespace 'doc' do
+  desc 'Run specs for all doc @example blocks'
+  task 'spec' do
+    jruby_command = File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
+    success = system(%(#{jruby_command} -r 'bundler/setup' -S yard doctest '*/lib/**/*.rb'))
+    fail unless success
+  end
+end
+task 'spec' => 'doc:spec'
 
 # purposely no description so it's hidden from rake -T
 task 'update_version' do
