@@ -2,14 +2,14 @@ task :default => 'spec'
 
 GEMS = %w(core messaging scheduling web caching)
 
-['build', 'clean', 'install', 'release', 'spec'].each do |task_name|
+%W('build', 'clean', 'install', 'release', 'spec').each do |task_name|
   desc "Run #{task_name} for all gems"
   task task_name do
     errors = []
     GEMS.each do |gem|
       puts ">>> Running #{task_name} for #{gem} gem"
       ENV['JAVA_OPTS'] = '-XX:+TieredCompilation -XX:TieredStopAtLevel=1'
-      success = system(%(cd #{gem} && #{$0} #{task_name}))
+      success = system(%(cd #{gem} && #{$PROGRAM_NAME} #{task_name}))
       unless success
         errors << gem
         break
@@ -59,7 +59,7 @@ end
 desc 'Run an irb session with all torquebox libraries on the load path'
 task 'irb' do
   GEMS.each do |gem|
-    $: << "#{gem}/lib"
+    $LOAD_PATH << "#{gem}/lib"
   end
   require 'irb'
   ARGV.clear

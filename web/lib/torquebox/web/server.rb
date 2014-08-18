@@ -81,11 +81,11 @@ module TorqueBox
     #   TorqueBox::Web.run(:host => '0.0.0.0', :port => 8080)
     #   TorqueBox::Web.run(:server => 'another', :host => '127.0.0.1',
     #                      :port => 8081, :root => 'admin_console/')
-    def self.run(options={})
+    def self.run(options = {})
       server_name = options.delete(:server) { 'default' }
-      server_options = options.reject { |k, v| DEFAULT_MOUNT_OPTIONS.has_key?(k) }
+      server_options = options.reject { |k, v| DEFAULT_MOUNT_OPTIONS.key?(k) }
       server = server(server_name, server_options)
-      mount_options = options.reject { |k, v| DEFAULT_SERVER_OPTIONS.has_key?(k) }
+      mount_options = options.reject { |k, v| DEFAULT_SERVER_OPTIONS.key?(k) }
       server.mount(mount_options)
       server
     end
@@ -95,7 +95,7 @@ module TorqueBox
     # @!macro server_options
     #
     # @return [Server]
-    def self.server(name, options={})
+    def self.server(name, options = {})
       Server.new(name, options)
     end
 
@@ -117,9 +117,10 @@ module TorqueBox
       # Mount a Rack application under a specific context path on this server.
       #
       # @!macro mount_options
-      def mount(options={})
+      def mount(options = {})
         options = DEFAULT_MOUNT_OPTIONS.merge(options)
-        validate_options(options, opts_to_set(WBWeb::RegisterOption) + DEFAULT_MOUNT_OPTIONS.keys)
+        valid_keys = opts_to_set(WBWeb::RegisterOption) + DEFAULT_MOUNT_OPTIONS.keys
+        validate_options(options, valid_keys)
         @logger.debugf("Mounting context path %s with options %s on TorqueBox::Web::Server '%s'",
                        options[:path], options.inspect, @web_component.name)
         servlet_context = WB.options.get("servlet-context-path", "")
@@ -155,9 +156,10 @@ module TorqueBox
       # @param servlet [javax.servlet.Servlet] the servlet to mount
       #
       # @!macro mount_servlet_options
-      def mount_servlet(servlet, options={})
-        options = DEFAULT_MOUNT_SERVLET_OPTIONS.merge(options);
-        validate_options(options, opts_to_set(WBWeb::RegisterOption) + DEFAULT_MOUNT_SERVLET_OPTIONS.keys)
+      def mount_servlet(servlet, options = {})
+        options = DEFAULT_MOUNT_SERVLET_OPTIONS.merge(options)
+        valid_keys = opts_to_set(WBWeb::RegisterOption) + DEFAULT_MOUNT_SERVLET_OPTIONS.keys
+        validate_options(options, valid_keys)
         @logger.debugf("Mounting servlet %s with options %s on TorqueBox::Web::Server '%s'",
                        servlet, options.inspect, @web_component.name)
         register_options = extract_options(options, WBWeb::RegisterOption)
@@ -174,7 +176,7 @@ module TorqueBox
       # Mount a SockJS endpoint under a specific context path on this server
       #
       # @!macro mount_servlet_options
-      def sockjs(options={})
+      def sockjs(options = {})
         sockjs_server = SockJsServer.new
         # TODO: handle options
         servlet = SockJsServlet.new(sockjs_server)
@@ -199,7 +201,7 @@ module TorqueBox
 
       protected
 
-      def initialize(name, options={})
+      def initialize(name, options = {})
         @logger = WB.logger('TorqueBox::Web::Server')
         options = DEFAULT_SERVER_OPTIONS.merge(options)
         validate_options(options, DEFAULT_SERVER_OPTIONS.keys)

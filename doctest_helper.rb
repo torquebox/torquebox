@@ -6,7 +6,7 @@ TorqueBox::Logger.log_level = 'ERROR'
 TorqueBox::Web::DEFAULT_SERVER_OPTIONS[:auto_start] = false
 
 # Fake out a default rack app so config.ru files aren't looked for
-TorqueBox::Web::DEFAULT_MOUNT_OPTIONS[:rack_app] = lambda {|env| [200, {}, []]}
+TorqueBox::Web::DEFAULT_MOUNT_OPTIONS[:rack_app] = lambda { |env| [200, {}, []] }
 
 YARD::Doctest.configure do |doctest|
   doctest.after do

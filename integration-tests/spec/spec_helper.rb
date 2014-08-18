@@ -14,8 +14,8 @@
 
 CORE_DIR = "#{File.dirname(__FILE__)}/../../core"
 WEB_DIR = "#{File.dirname(__FILE__)}/../../web"
-$: << "#{CORE_DIR}/lib"
-$: << "#{WEB_DIR}/lib"
+$LOAD_PATH << "#{CORE_DIR}/lib"
+$LOAD_PATH << "#{WEB_DIR}/lib"
 require "#{CORE_DIR}/spec/spec_helper"
 
 require 'net/http'
@@ -71,17 +71,17 @@ EOF
       zip_path = aether.classpath_array.find { |dep| dep.include?('wildfly/wildfly-dist/') }
       unzip_path = File.expand_path('../pkg', File.dirname(__FILE__))
       wildfly_home = File.join(unzip_path, 'wildfly')
-      unless File.exists?(wildfly_home)
+      unless File.exist?(wildfly_home)
         FileUtils.mkdir_p(unzip_path)
         Dir.chdir(unzip_path) do
           unzip(zip_path)
-          original_dir = File.expand_path(Dir['wildfly-*' ].first)
+          original_dir = File.expand_path(Dir['wildfly-*'].first)
           FileUtils.mv(original_dir, wildfly_home)
         end
         standalone_xml = "#{wildfly_home}/standalone/configuration/standalone-full.xml"
         doc = REXML::Document.new(File.read(standalone_xml))
         interfaces = doc.root.get_elements("//management-interfaces/*")
-        interfaces.each { |i| i.attributes.delete('security-realm')}
+        interfaces.each { |i| i.attributes.delete('security-realm') }
         hornetq = doc.root.get_elements("//hornetq-server").first
         hornetq.add_element('journal-type').text = 'NIO'
         open(standalone_xml, 'w') do |file|
@@ -90,21 +90,21 @@ EOF
       end
       FileUtils.rm_rf(Dir["#{wildfly_home}/standalone/log/*"])
       FileUtils.rm_rf(Dir["#{wildfly_home}/standalone/deployments/*"])
-      TorqueSpec.configure do |config|
-        config.jboss_home = wildfly_home
+      TorqueSpec.configure do |torquespec_config|
+        torquespec_config.jboss_home = wildfly_home
       end
-      $wildfly = TorqueSpec::Server.new
-      $wildfly.start(:wait => 120)
+      Thread.current[:wildfly] = TorqueSpec::Server.new
+      wildfly_server.start(:wait => 120)
     end
   end
 
   config.after(:suite) do
-    $wildfly.stop if $wildfly
+    wildfly_server.stop if wildfly_server
   end
 
   config.before(:all) do
     if self.class.respond_to?(:server_options)
-      __server_start(self.class.server_options)
+      server_start(self.class.server_options)
     end
 
     org.projectodd.wunderboss.WunderBoss.log_level = 'ERROR'
@@ -112,7 +112,7 @@ EOF
 
   config.after(:all) do
     if self.class.respond_to?(:server_options)
-      __server_stop
+      server_stop
     end
   end
 
@@ -155,6 +155,10 @@ def embedded_from_disk?
   embedded? && !uberjar?
 end
 
+def wildfly_server
+  Thread.current[:wildfly]
+end
+
 def unzip(path)
   if windows?
     `jar.exe xf #{path}`
@@ -169,7 +173,7 @@ end
 
 def eval_in_new_ruby(script)
   ruby = org.jruby.Ruby.new_instance
-  if !ENV['DEBUG']
+  unless ENV['DEBUG']
     dev_null = PLATFORM =~ /mswin/ ? 'NUL' : '/dev/null'
     ruby.evalScriptlet("$stdout = File.open('#{dev_null}', 'w')")
   end
@@ -179,7 +183,7 @@ end
 
 ALREADY_BUNDLED = []
 def bundle_install(app_dir)
-  if !ALREADY_BUNDLED.include?(app_dir) && File.exists?("#{app_dir}/Gemfile")
+  if !ALREADY_BUNDLED.include?(app_dir) && File.exist?("#{app_dir}/Gemfile")
     eval_in_new_ruby <<-EOS
       ENV['BUNDLE_GEMFILE'] = nil
       Dir.chdir('#{app_dir}')
@@ -195,30 +199,12 @@ def torquebox(options)
   app_dir = options['--dir']
   bundle_install(app_dir)
   if uberjar?
-    jarfile = "#{app_dir}/#{File.basename(app_dir)}.jar"
-    before = lambda {
-      command = "cd #{app_dir} && #{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{File.join(bin_dir, 'torquebox')}"
-      if wildfly?
-        name = path == '/' ? 'ROOT.war' : "#{path.sub('/', '')}.war"
-        command << " war -v --name #{name}"
-        jarfile = "#{app_dir}/#{name}"
-      else
-        command << " jar -v"
-      end
-      jar_output = `#{command}`
-      puts jar_output if ENV['DEBUG']
-      $wildfly.deploy(jarfile) if wildfly?
-    }
-    after = lambda {
-      $wildfly.undeploy(jarfile) if wildfly?
-      FileUtils.rm_f(jarfile)
-      FileUtils.rm_f("#{app_dir}/#{File.basename(app_dir)}.jar")
-    }
-    command_prefix = "java -jar #{jarfile}"
+    before, after, command_prefix = torquebox_uberjar(app_dir, path)
   else
     before = nil
     after = nil
-    command_prefix = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{File.join(bin_dir, 'torquebox')} run"
+    command_prefix = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' "\
+      "#{File.join(bin_dir, 'torquebox')} run"
   end
   args = options.to_a.flatten.join(' ')
   command = "#{command_prefix} #{ENV['DEBUG'] ? '-v' : '-q'} #{args}"
@@ -235,16 +221,43 @@ def torquebox(options)
   end
 end
 
+def torquebox_uberjar(app_dir, path)
+  jarfile = "#{app_dir}/#{File.basename(app_dir)}.jar"
+  before = lambda do
+    command = "cd #{app_dir} && #{jruby_command} #{jruby_jvm_opts} "\
+    "-r 'bundler/setup' #{File.join(bin_dir, 'torquebox')}"
+    if wildfly?
+      name = path == '/' ? 'ROOT.war' : "#{path.sub('/', '')}.war"
+      command << " war -v --name #{name}"
+      jarfile = "#{app_dir}/#{name}"
+    else
+      command << " jar -v"
+    end
+    jar_output = `#{command}`
+    puts jar_output if ENV['DEBUG']
+    wildfly_server.deploy(jarfile) if wildfly?
+  end
+  after = lambda do
+    wildfly_server.undeploy(jarfile) if wildfly?
+    FileUtils.rm_f(jarfile)
+    FileUtils.rm_f("#{app_dir}/#{File.basename(app_dir)}.jar")
+  end
+  command_prefix = "java -jar #{jarfile}"
+  [before, after, command_prefix]
+end
+
 def rackup(options)
   metaclass = class << self; self; end
   metaclass.send(:define_method, :server_options) do
     app_dir = options.delete(:dir)
     args = options.to_a.flatten.join(' ')
+    command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' "\
+      "-S rackup -s torquebox #{args} -O Quiet #{app_dir}/config.ru"
     return {
       :app_dir => app_dir,
       :path => '/',
       :port => options['--port'] || '9292',
-      :command => "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' -S rackup -s torquebox #{args} -O Quiet #{app_dir}/config.ru"
+      :command => command
     }
   end
 end
@@ -263,83 +276,88 @@ def embedded(command, options)
   end
 end
 
-def __server_start(options)
+def server_start(options)
   app_dir = options[:app_dir]
   chdir = options[:chdir]
-  path = options[:path]
   port = wildfly? ? '8080' : options[:port]
   Capybara.app_host = "http://localhost:#{port}"
   ENV['BUNDLE_GEMFILE'] = "#{app_dir}/Gemfile"
-  if options[:before]
-    options[:before].call
-  end
+  options[:before].call if options[:before]
   @server_after = options[:after]
   ENV['RUBYLIB'] = app_dir
-  if wildfly?
-    # app already depoyed in the before callback
-  else
+  error_seen = Java::JavaUtilConcurrentAtomic::AtomicBoolean.new
+  unless wildfly?
     if chdir
       @old_pwd = Dir.pwd
       Dir.chdir(chdir)
     end
     pid, stdin, stdout, stderr = IO.popen4(options[:command])
-    ENV['BUNDLE_GEMFILE'] = nil
-    ENV['RUBYLIB'] = nil
+    ENV['BUNDLE_GEMFILE'] = ENV['RUBYLIB'] = nil
     @server_pid = pid
-
-    stdin.close
-    stdout.sync = true
-    stderr.sync = true
-    error_seen = false
-    @stdout_thread = Thread.new(stdout) { |stdout_io|
-      begin
-        while true
-          STDOUT.write(stdout_io.readpartial(1024))
-        end
-      rescue EOFError
-      end
-    }
-    @stderr_thread = Thread.new(stderr) { |stderr_io|
-      begin
-        while true
-          STDERR.write(stderr_io.readpartial(1024))
-          error_seen = true
-        end
-      rescue EOFError
-      end
-    }
+    @stdout_thread, @stderr_thread = pump_server_streams(stdin, stdout,
+                                                         stderr, error_seen)
   end
+  uri = URI.parse("#{Capybara.app_host}#{options[:path]}")
+  booted, last_exception = wait_for_boot(uri, 180, error_seen)
+  handle_boot_failure(last_exception, app_dir, timeout) unless booted
+end
+
+def pump_server_streams(stdin, stdout, stderr, error_seen)
+  stdin.close
+  stdout.sync = true
+  stderr.sync = true
+  stdout_thread = Thread.new(stdout) do |stdout_io|
+    begin
+      loop do
+        STDOUT.write(stdout_io.readpartial(1024))
+      end
+    rescue EOFError
+    end
+  end
+  stderr_thread = Thread.new(stderr) do |stderr_io|
+    begin
+      loop do
+        STDERR.write(stderr_io.readpartial(1024))
+        error_seen.set(true)
+      end
+    rescue EOFError
+    end
+  end
+  [stdout_thread, stderr_thread]
+end
+
+def wait_for_boot(uri, timeout, error_seen)
   start = Time.now
   booted = false
-  timeout = 180
   last_exception = nil
-  while (Time.now - start) < timeout do
-    uri = URI.parse("#{Capybara.app_host}#{path}")
+  while (Time.now - start) < timeout
     begin
-      response = Net::HTTP.get_response(uri)
+      Net::HTTP.get_response(uri)
       booted = true
       break
     rescue Exception => ex
       last_exception = ex
       sleep 0.2 # sleep and retry
     end
-    break if error_seen
+    break if error_seen.get
   end
-  if !booted
-    if last_exception && ENV['DEBUG']
-      puts ex.inspect
-      puts ex.backtrace
-    end
-    if ENV['DEBUG'] && @server_pid
-      puts `jstack #{@server_pid}`
-    end
-    raise "Application #{app_dir} failed to start within #{timeout} seconds"
-  end
+  [booted, last_exception]
 end
 
-def __server_stop
+def handle_boot_failure(last_exception, app_dir, timeout)
+  if last_exception && ENV['DEBUG']
+    puts last_exception.inspect
+    puts last_exception.backtrace
+  end
+  if ENV['DEBUG'] && @server_pid
+    puts `jstack #{@server_pid}`
+  end
+  raise "Application #{app_dir} failed to start within #{timeout} seconds"
+end
+
+def server_stop
   if wildfly? && @jarfile
-    $wildfly.undeploy(@jarfile)
+    wildfly_server.undeploy(@jarfile)
   end
   if @old_pwd
     Dir.chdir(@old_pwd)

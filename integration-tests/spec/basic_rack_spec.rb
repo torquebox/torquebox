@@ -63,7 +63,7 @@ feature "basic rack at non-root context" do
     uri = URI.parse("#{Capybara.app_host}/basic-rack/")
     Net::HTTP.start(uri.host, uri.port) do |http|
       accept = 'text/html;q=0.9,*/*;q=0.7'
-      response = http.get(uri.request_uri, {'Accept' => accept})
+      response = http.get(uri.request_uri, 'Accept' => accept)
       response.code.should == "200"
       response.body.should include("<div id='accept_header'>#{accept}</div>")
     end
@@ -73,9 +73,9 @@ feature "basic rack at non-root context" do
     uri = URI.parse("#{Capybara.app_host}/basic-rack/gets")
     Net::HTTP.start(uri.host, uri.port) do |http|
       request = Net::HTTP::Post.new(uri.request_uri)
-      request.form_data = {'field' => 'nothing'}
+      request.form_data = { 'field' => 'nothing' }
       response = http.request(request)
-      response.body.should include(%Q{<div id='posted'>"field=nothing"</div>})
+      response.body.should include(%(<div id='posted'>"field=nothing"</div>))
     end
   end
 
@@ -83,9 +83,9 @@ feature "basic rack at non-root context" do
     uri = URI.parse("#{Capybara.app_host}/basic-rack/read")
     Net::HTTP.start(uri.host, uri.port) do |http|
       request = Net::HTTP::Post.new(uri.request_uri)
-      request.form_data = {'field' => 'nothing'}
+      request.form_data = { 'field' => 'nothing' }
       response = http.request(request)
-      response.body.should include(%Q{<div id='posted'>"field=nothing"</div>})
+      response.body.should include(%(<div id='posted'>"field=nothing"</div>))
     end
   end
 
@@ -93,9 +93,9 @@ feature "basic rack at non-root context" do
     uri = URI.parse("#{Capybara.app_host}/basic-rack/each")
     Net::HTTP.start(uri.host, uri.port) do |http|
       request = Net::HTTP::Post.new(uri.request_uri)
-      request.form_data = {'field' => 'nothing'}
+      request.form_data = { 'field' => 'nothing' }
       response = http.request(request)
-      response.body.should include(%Q{<div id='posted'>"field=nothing"</div>})
+      response.body.should include(%(<div id='posted'>"field=nothing"</div>))
     end
   end
 

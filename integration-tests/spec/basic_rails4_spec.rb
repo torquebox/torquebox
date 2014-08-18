@@ -70,13 +70,13 @@ feature 'basic rails4 test' do
 
   it "should serve assets from app/assets" do
     visit "/basic-rails4/assets/test.js?body=1"
-    page.source.should =~ /\/\/ taco/
+    page.source.should =~ %r{// taco}
   end
 
   it "should generate correct asset and link paths" do
     visit "/basic-rails4"
     image = page.find('img')
-    image['src'].should match(/\/basic-rails4\/assets\/rails\.png/)
+    image['src'].should match(%r{/basic-rails4/assets/rails\.png})
     link = page.find('a')
     link['href'].should eql('/basic-rails4/')
   end

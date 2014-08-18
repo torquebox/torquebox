@@ -78,7 +78,7 @@ feature "basic sinatra test" do
       100.times do |i|
         http.request(Net::HTTP::Get.new(uri.request_uri))
         request = Net::HTTP::Post.new(uri.request_uri)
-        request.form_data = {'field' => 'nothing'}
+        request.form_data = { 'field' => 'nothing' }
         response = http.request(request)
         response.body.should include("<div id='success'>you posted nothing</div>")
       end
