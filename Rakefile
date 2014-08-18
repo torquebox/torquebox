@@ -2,7 +2,7 @@ task :default => 'spec'
 
 GEMS = %w(core messaging scheduling web caching)
 
-%W('build', 'clean', 'install', 'release', 'spec').each do |task_name|
+%W(build clean install release spec).each do |task_name|
   desc "Run #{task_name} for all gems"
   task task_name do
     errors = []
