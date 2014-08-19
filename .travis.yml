@@ -14,8 +14,9 @@ install: bundle install
 before_script: bundle exec rake build
 
 script:
-  - rake spec
-  - cd integration-tests && rake spec:all
+  - bundle exec rake rubocop
+  - bundle exec rake spec
+  - cd integration-tests && bundle exec rake spec:all
 
 branches:
   only:
