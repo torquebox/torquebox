@@ -13,7 +13,7 @@
 # limitations under the License.
 
 CORE_DIR = "#{File.dirname(__FILE__)}/../../core"
-$: << "#{CORE_DIR}/lib"
+$LOAD_PATH << "#{CORE_DIR}/lib"
 require "#{CORE_DIR}/spec/spec_helper"
 
 require 'torquebox-messaging'
@@ -26,7 +26,7 @@ class GetBroker
 end
 
 def random_queue
-  TorqueBox::Messaging.queue(SecureRandom.uuid, durable: false)
+  TorqueBox::Messaging.queue(SecureRandom.uuid, :durable => false)
 end
 
 def random_topic

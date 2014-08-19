@@ -27,7 +27,7 @@ module TorqueBox
     end
 
     def opts_to_hash(opts_class)
-      org.projectodd.wunderboss.Option.optsFor(opts_class).inject({}) do |hash, entry|
+      org.projectodd.wunderboss.Option.optsFor(opts_class).reduce({}) do |hash, entry|
         hash[entry.name.to_sym] = entry
         hash
       end
@@ -40,9 +40,9 @@ module TorqueBox
     def optset(*things)
       set = Set.new
       things.each do |thing|
-        if thing.kind_of?(Symbol)
+        if thing.is_a?(Symbol)
           set << thing
-        elsif thing.kind_of?(Enumerable)
+        elsif thing.is_a?(Enumerable)
           set += thing
         else
           set += opts_to_set(thing)
@@ -52,7 +52,7 @@ module TorqueBox
     end
 
     def option_defaults(opts_class)
-      org.projectodd.wunderboss.Option.optsFor(opts_class).inject({}) do |hash, entry|
+      org.projectodd.wunderboss.Option.optsFor(opts_class).reduce({}) do |hash, entry|
         hash[entry.name.to_sym] = entry.defaultValue
         hash
       end

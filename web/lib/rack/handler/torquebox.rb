@@ -19,7 +19,7 @@ module Rack
   module Handler
     module TorqueBox
 
-      def self.run(app, options={})
+      def self.run(app, options = {})
         log_level = 'INFO'
         if options[:Quiet]
           log_level = 'ERROR'

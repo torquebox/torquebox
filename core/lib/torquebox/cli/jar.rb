@@ -22,48 +22,14 @@ module TorqueBox
   class CLI
     class Jar
 
-      DEFAULT_OPTIONS = {
+      DEFAULTS = {
         'jar_name' => "#{File.basename(Dir.pwd)}.jar",
         'include_jruby' => true,
         'bundle_gems' => true,
-        'bundle_without' => ['development', 'test', 'assets']
+        'bundle_without' => %W(development test assets)
       }
 
-      def initialize
-        @logger = org.projectodd.wunderboss.WunderBoss.logger('TorqueBox')
-      end
-
-      def usage_parameters
-        "[options]"
-      end
-
-      def setup_parser(parser, options)
-        parser.on('--name NAME',
-                  "Name of the jar file (default: #{DEFAULT_OPTIONS['jar_name']})") do |arg|
-          options['jar_name'] = arg
-        end
-        parser.on('--[no-]include-jruby',
-                  "Include JRuby in the jar (default: #{DEFAULT_OPTIONS['include_jruby']})") do |arg|
-          options['include_jruby'] = arg
-        end
-        parser.on('--[no-]bundle-gems',
-                  "Bundle gem dependencies in the jar (default: #{DEFAULT_OPTIONS['bundle_gems']})") do |arg|
-          options['bundle_gems'] = arg
-        end
-        parser.on('--bundle-without GROUPS', Array,
-                  "Bundler groups to skip (default: #{DEFAULT_OPTIONS['bundle_without'].join(', ')})") do |arg|
-        end
-      end
-
-      def run(argv, options)
-        options = DEFAULT_OPTIONS.merge(options)
-        jar_name = options['jar_name']
-        @logger.debugf("Creating jar with options %s", options.inspect)
-
-        jar_builder = org.torquebox.core.JarBuilder.new
-        jar_builder.add_manifest_attribute("Main-Class", "org.torquebox.core.TorqueBoxMain")
-
-        app_properties = <<-EOS
+      APP_PROPERTIES = <<-EOS
 language=ruby
 extract_paths=app/:jruby/
 root=${extract_root}/app
@@ -81,7 +47,43 @@ else; \
   TorqueBox::Web.run; \
 end
 EOS
-        jar_builder.add_string("META-INF/app.properties", app_properties)
+
+      def initialize
+        @logger = org.projectodd.wunderboss.WunderBoss.logger('TorqueBox')
+      end
+
+      def usage_parameters
+        "[options]"
+      end
+
+      def setup_parser(parser, options)
+        parser.on('--name NAME',
+                  "Name of the jar file (default: #{DEFAULTS['jar_name']})") do |arg|
+          options['jar_name'] = arg
+        end
+        parser.on('--[no-]include-jruby',
+                  "Include JRuby in the jar (default: #{DEFAULTS['include_jruby']})") do |arg|
+          options['include_jruby'] = arg
+        end
+        bundle_gems_default = DEFAULTS['bundle_gems']
+        parser.on('--[no-]bundle-gems',
+                  "Bundle gem dependencies in the jar (default: #{bundle_gems_default})") do |arg|
+          options['bundle_gems'] = arg
+        end
+        bundle_without_default = DEFAULTS['bundle_without'].join(', ')
+        parser.on('--bundle-without GROUPS', Array,
+                  "Bundler groups to skip (default: #{bundle_without_default})") do |arg|
+        end
+      end
+
+      def run(_argv, options)
+        options = DEFAULTS.merge(options)
+        jar_name = options['jar_name']
+        @logger.debugf("Creating jar with options %s", options.inspect)
+
+        jar_builder = org.torquebox.core.JarBuilder.new
+        jar_builder.add_manifest_attribute("Main-Class", "org.torquebox.core.TorqueBoxMain")
+        jar_builder.add_string("META-INF/app.properties", APP_PROPERTIES)
         jar_builder.add_string(TorqueBox::JAR_MARKER, "")
 
         if options['include_jruby']
@@ -97,11 +99,11 @@ EOS
 
         add_torquebox_files(jar_builder)
 
-        if File.exists?(jar_name)
+        if File.exist?(jar_name)
           @logger.infof("Removing %s", jar_name)
           FileUtils.rm_f(jar_name)
         end
-        @logger.infof("Writing %s", jar_name);
+        @logger.infof("Writing %s", jar_name)
         jar_builder.create(jar_name)
         jar_name
       ensure
@@ -138,7 +140,7 @@ EOS
 
       def add_bundler_files(jar_builder, tmpdir, bundle_without)
         @logger.tracef("Adding bundler files to jar...")
-        unless File.exists?(ENV['BUNDLE_GEMFILE'] || 'Gemfile')
+        unless File.exist?(ENV['BUNDLE_GEMFILE'] || 'Gemfile')
           @logger.info("No Gemfile found - skipping gem dependencies")
           return {}
         end
@@ -147,14 +149,14 @@ EOS
 
         copy_bundle_config(tmpdir)
 
-        vendor_dir_exists = File.exists?('vendor')
-        cache_dir_exists = File.exists?('vendor/cache')
-        bundle_dir_exists = File.exists?('vendor/bundle')
+        vendor_dir_exists = File.exist?('vendor')
+        cache_dir_exists = File.exist?('vendor/cache')
+        bundle_dir_exists = File.exist?('vendor/bundle')
         already_cached = Dir.glob('vendor/cache/*.gem').count > 0
         already_bundled = Pathname.new(Bundler.settings.path).relative?
 
         lockfile = Bundler.default_lockfile
-        original_lockfile = File.exists?(lockfile) ? File.read(lockfile) : nil
+        original_lockfile = File.exist?(lockfile) ? File.read(lockfile) : nil
 
         cache_gems(tmpdir) unless already_cached
         bundle_gems(tmpdir, bundle_without) unless already_bundled
@@ -179,7 +181,7 @@ EOS
       end
 
       def copy_bundle_config(tmpdir)
-        if File.exists?('.bundle/config')
+        if File.exist?('.bundle/config')
           FileUtils.mkdir_p("#{tmpdir}/.bundle")
           FileUtils.cp('.bundle/config', "#{tmpdir}/.bundle")
         end
@@ -194,7 +196,7 @@ EOS
       end
 
       def bundle_gems(tmpdir, bundle_without)
-        install_options = %w(--local --path vendor/bundle --no-cache)
+        install_options = %W(--local --path vendor/bundle --no-cache)
         unless bundle_without.empty?
           install_options += %W(--without #{bundle_without.join(' ')})
         end
@@ -213,7 +215,7 @@ EOS
       end
 
       def copy_and_restore_lockfile(tmpdir, lockfile, original_lockfile)
-        new_lockfile = File.exists?(lockfile) ? File.read(lockfile) : nil
+        new_lockfile = File.exist?(lockfile) ? File.read(lockfile) : nil
         FileUtils.cp(lockfile, "#{tmpdir}/Gemfile.lock") if new_lockfile
         if original_lockfile.nil? && !new_lockfile.nil?
           FileUtils.rm_f(lockfile)
@@ -242,7 +244,7 @@ EOS
 
       def eval_in_new_ruby(script)
         ruby = org.jruby.Ruby.new_instance
-        if !['DEBUG', 'TRACE'].include?(TorqueBox::Logger.log_level)
+        unless %W(DEBUG TRACE).include?(TorqueBox::Logger.log_level)
           dev_null = PLATFORM =~ /mswin/ ? 'NUL' : '/dev/null'
           ruby.evalScriptlet("$stdout = File.open('#{dev_null}', 'w')")
         end

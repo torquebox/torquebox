@@ -64,7 +64,7 @@ module TorqueBox
       # @option options :session [Session] a session to use; caller
       #   expected to close
       # @return [void]
-      def publish(message, options={})
+      def publish(message, options = {})
         validate_options(options, PUBLISH_OPTIONS)
         options = apply_default_options(options)
         options = normalize_publish_options(options)
@@ -107,7 +107,7 @@ module TorqueBox
       #   expected to close
       # @return The message, or the return value of the block if a
       #   block is given.
-      def receive(options={}, &block)
+      def receive(options = {}, &block)
         validate_options(options, RECEIVE_OPTIONS)
         options = apply_default_options(options)
         options = coerce_connection_and_session(options)
@@ -144,7 +144,7 @@ module TorqueBox
       #   caller expected to close.
       # @return A listener object that can be stopped by
       #   calling .close on it.
-      def listen(options={}, &block)
+      def listen(options = {}, &block)
         validate_options(options, LISTEN_OPTIONS)
         options = apply_default_options(options)
         options = coerce_connection_and_session(options)
@@ -187,13 +187,14 @@ module TorqueBox
 
       def normalize_publish_options(options)
         options = options.dup
-        if options.has_key?(:priority)
+        if options.key?(:priority)
           if PRIORITY_MAP[options[:priority]]
             options[:priority] = PRIORITY_MAP[options[:priority]]
           elsif (0..9) === options[:priority].to_i
             options[:priority] = options[:priority].to_i
           else
-            fail ArgumentError.new(":priority must in the range 0..9, or one of #{PRIORITY_MAP.keys.collect {|k| ":#{k}"}.join(',')}")
+            priorities = PRIORITY_MAP.keys.map { |k| ":#{k }" }.join(',')
+            fail ArgumentError.new(":priority must in the range 0..9, or one of #{priorities}")
           end
         end
         options

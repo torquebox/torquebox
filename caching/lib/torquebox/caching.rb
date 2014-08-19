@@ -25,7 +25,7 @@ module TorqueBox
       java_import org.projectodd.wunderboss.caching::Caching
       VALID_OPTIONS = optset(Caching::CreateOption, :encoding)
 
-      def cache(name, options={})
+      def cache(name, options = {})
         validate_options(options, VALID_OPTIONS)
         cache = component.find_or_create(name, extract_options(options, Caching::CreateOption))
         codec = Codecs[options.fetch(:encoding, :marshal_smart)]
@@ -40,7 +40,7 @@ module TorqueBox
         !!component.find(name)
       end
 
-      def builder(options={})
+      def builder(options = {})
         config = org.projectodd.wunderboss.caching::Config
         config.builder(Options.new(extract_options(options, Caching::CreateOption)))
       end

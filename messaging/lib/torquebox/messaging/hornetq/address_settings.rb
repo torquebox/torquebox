@@ -212,7 +212,9 @@ module TorqueBox
               /^jms\.(queue|topic)\./ =~ match_or_dest
             match_or_dest
           else
-            fail ArgumentError.new("#{match_or_dest} isn't a valid match. See the docs for TorqueBox::Messaging::HornetQ::AddressOptions")
+            error_message = "#{match_or_dest} isn't a valid match. See the "\
+                            "docs for TorqueBox::Messaging::HornetQ::AddressOptions"
+            fail ArgumentError.new(error_message)
           end
         end
 

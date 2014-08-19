@@ -21,38 +21,38 @@ module TorqueBox
     class Cache
       extend Forwardable
 
-      def initialize(a_real_cache, options={})
+      def initialize(a_real_cache, options = {})
         @cache = a_real_cache
         @options = options
       end
 
-      def put(key, value, options={})
+      def put(key, value, options = {})
         put_m.call(*[key, value] + expiry(options))
       end
-      
-      def put_all(map, options={})
+
+      def put_all(map, options = {})
         putall_m.call(*[map] + expiry(options))
       end
-      
-      def put_if_absent(key, value, options={})
+
+      def put_if_absent(key, value, options = {})
         putif_m.call(*[key, value] + expiry(options))
       end
-      
-      def replace(key, value, options={})
+
+      def replace(key, value, options = {})
         replace_m.call(*[key, value] + expiry(options))
       end
-      
-      def compare_and_set(key, old_value, new_value, options={})
+
+      def compare_and_set(key, old_value, new_value, options = {})
         cas_m.call(*[key, old_value, new_value] + expiry(options))
       end
-      
+
       def clear
         @cache.clear
         self
       end
 
       def_delegators :@cache, :size, :get, :name, :[], :[]=, :keys, :values, :remove,
-                              :evict, :contains_key?, :entry_set, :empty?
+                     :evict, :contains_key?, :entry_set, :empty?
 
       def_delegator :@cache, :cache_configuration, :configuration
 
@@ -62,7 +62,7 @@ module TorqueBox
       private
 
       def defaults(options)
-        {ttl: -1, idle: -1}.merge(@options).merge(options)
+        { :ttl => -1, :idle => -1 }.merge(@options).merge(options)
       end
 
       def expiry(options)

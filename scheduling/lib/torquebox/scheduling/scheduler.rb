@@ -97,7 +97,7 @@ module TorqueBox
       # @param options [Hash] Options for scheduler creation.
       # @option options num_threads [Fixnum] (5) The size of the thread
       #   pool for firing jobs
-      def self.find_or_create(name, options={})
+      def self.find_or_create(name, options = {})
         Scheduler.new(name, options)
       end
 
@@ -122,7 +122,7 @@ module TorqueBox
         @scheduler ||= find_or_create("default")
       end
 
-      def initialize(name, options={})
+      def initialize(name, options = {})
         @logger = WB.logger('TorqueBox::Scheduling::Scheduler')
         validate_options(options, opts_to_set(WBScheduling::CreateOption))
         create_options = extract_options(options, WBScheduling::CreateOption)
@@ -135,7 +135,7 @@ module TorqueBox
       end
 
       def coerce_schedule_options(options)
-        options.clone.merge(options) do |k,v|
+        options.clone.merge(options) do |k, v|
           # ActiveSupport's durations use seconds as the base unit, so
           # we have to detect that and convert to ms
           v = v.in_milliseconds if defined?(ActiveSupport::Duration) && v.is_a?(ActiveSupport::Duration)

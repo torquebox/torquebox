@@ -40,7 +40,7 @@ EOS
         war_builder.add_string('WEB-INF/web.xml', web_xml)
         war_builder.add_file("WEB-INF/lib/#{jar_name}", jar_name)
 
-        if File.exists?(war_name)
+        if File.exist?(war_name)
           @logger.infof("Removing %s", war_name)
           FileUtils.rm_f(war_name)
         end

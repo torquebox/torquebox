@@ -62,7 +62,7 @@ module TorqueBox
       #   return when a timeout occurs.
       # @return The message, or the return value of the block if a
       #   block is given.
-      def request(message, options={}, &block)
+      def request(message, options = {}, &block)
         validate_options(options, REQUEST_OPTIONS)
         options = apply_default_options(options)
         options = coerce_connection_and_session(options)
@@ -118,7 +118,7 @@ module TorqueBox
       #   caller expected to close
       # @return A listener object that can be stopped by
       #   calling .close on it.
-      def respond(options={}, &block)
+      def respond(options = {}, &block)
         validate_options(options, RESPOND_OPTIONS)
         options = apply_default_options(options)
         options = coerce_connection_and_session(options)
@@ -133,7 +133,7 @@ module TorqueBox
 
       protected
 
-      def initialize(name, options={})
+      def initialize(name, options = {})
         validate_options(options, QUEUE_OPTIONS)
         coerced_opts = coerce_connection_and_session(options)
         create_options = extract_options(coerced_opts, WBMessaging::CreateQueueOption)

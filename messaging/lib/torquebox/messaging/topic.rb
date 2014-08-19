@@ -53,7 +53,7 @@ module TorqueBox
       #   caller expected to close.
       # @return A listener object that can be stopped by
       #   calling .close on it.
-      def subscribe(name, options={}, &block)
+      def subscribe(name, options = {}, &block)
         validate_options(options, SUBSCRIBE_OPTIONS)
         options = apply_default_options(options)
         options = coerce_connection_and_session(options)
@@ -80,7 +80,7 @@ module TorqueBox
       # @option options :connection [Connection] a connection to use;
       #   caller expected to close.
       # @return [void]
-      def unsubscribe(name, options={})
+      def unsubscribe(name, options = {})
         validate_options(options, UNSUBSCRIBE_OPTIONS)
         options = apply_default_options(options)
         options = coerce_connection_and_session(options)
@@ -90,7 +90,7 @@ module TorqueBox
 
       protected
 
-      def initialize(name, options={})
+      def initialize(name, options = {})
         validate_options(options, TOPIC_OPTIONS)
         coerced_opts = coerce_connection_and_session(options)
         create_options = extract_options(coerced_opts, WBMessaging::CreateTopicOption)

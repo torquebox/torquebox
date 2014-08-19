@@ -20,13 +20,11 @@ require 'rake/clean'
 module Rake
   module Cleaner
     module_function
-    def cleanup(file_name, opts={})
-      begin
-        # rm_r -> rm_rf here
-        rm_rf file_name, opts
-      rescue StandardError => ex
-        puts "Failed to remove #{file_name}: #{ex}"
-      end
+    def cleanup(file_name, opts = {})
+      # monkey-patch rm_r to rm_rf here
+      rm_rf file_name, opts
+    rescue StandardError => ex
+      puts "Failed to remove #{file_name}: #{ex}"
     end
   end
 end
@@ -46,42 +44,27 @@ module TorqueBox
       #
       # @param options Optional parameters (a Hash), including:
       # @option options [String] :source The directory containing java code to compile, if any
-      # @option options [String] :gemspec The path to a gemspec file containing requirements entries for any maven jars required for compilation
+      # @option options [String] :gemspec The path to a gemspec file containing
+      #                          requirements entries for any maven jars
+      #                          required for compilation
       # @option options [String] :copy_deps The path to copy maven dependencies to - nil means don't copy
-      # @option options [Array] :excluded_deps An array of maven dependencies to exclude from inclusion in the gem
-      def install_java_tasks(options={})
+      # @option options [Array] :excluded_deps An array of maven dependencies
+      #                         to exclude from inclusion in the gem
+      def install_java_tasks(options = {})
         #
         # Resolve maven dependencies using JBundler API
         # We don't use JBundler directly because that requires a separate
         # 'jbundle install' step to get started.
         #
         if options[:gemspec]
-          gemspec = eval(File.read(options[:gemspec]))
-          jars = []
-          gemspec.requirements.each do |requirements|
-            requirements.split(/\n/).each do |requirement|
-              if requirement =~ /^\s*jar\s/
-                coordinate = requirement.sub(/^\s*jar\s/, '')
-                coordinate = coordinate.split(',').map(&:strip).join(':')
-                jars << coordinate
-              end
-            end
-          end
-          require 'jbundler/aether'
-          config = JBundler::Config.new
-          aether = JBundler::AetherRuby.new(config)
-          aether.add_repository('bees-incremental', 'https://repository-projectodd.forge.cloudbees.com/incremental/')
-          aether.add_repository('jboss', 'http://repository.jboss.org/nexus/content/groups/public/')
-          jars.each { |jar| aether.add_artifact(jar) }
-          aether.resolve
-          classpath = aether.classpath_array
+          classpath = classpath_from_gemspec(options[:gemspec])
         else
           classpath = []
         end
 
         if options[:source]
           require 'rake/javaextensiontask'
-          ext_task = Rake::JavaExtensionTask.new(options[:source]) do |ext|
+          Rake::JavaExtensionTask.new(options[:source]) do |ext|
             ext.classpath = classpath
             ext.source_version = '1.7'
             ext.target_version = '1.7'
@@ -93,15 +76,13 @@ module TorqueBox
           task 'compile' => deps_dir
           excluded_deps = options[:excluded_deps] || []
           classpath.each do |path|
-            if path.end_with?('.jar')
-              jar = File.basename(path)
-              unless excluded_deps.any? { |excluded_dep| jar.match(excluded_dep) }
-                file "#{deps_dir}/#{jar}" do
-                  install path, "#{deps_dir}/#{jar}"
-                end
-                task 'compile' => "#{deps_dir}/#{jar}"
-              end
+            next unless path.end_with?('.jar')
+            jar = File.basename(path)
+            next if excluded_deps.any? { |excluded_dep| jar.match(excluded_dep) }
+            file "#{deps_dir}/#{jar}" do
+              install path, "#{deps_dir}/#{jar}"
             end
+            task 'compile' => "#{deps_dir}/#{jar}"
           end
           task 'clean' do
             FileUtils.rm_rf(File.join(Dir.pwd, deps_dir))
@@ -109,6 +90,27 @@ module TorqueBox
         end
         task 'build' => 'compile'
         task 'spec' => 'compile'
+      end
+
+      def classpath_from_gemspec(gemspec)
+        gemspec = eval(File.read(gemspec))
+        jars = []
+        gemspec.requirements.each do |requirements|
+          requirements.split(/\n/).each do |requirement|
+            next unless requirement =~ /^\s*jar\s/
+            coordinate = requirement.sub(/^\s*jar\s/, '')
+            coordinate = coordinate.split(',').map(&:strip).join(':')
+            jars << coordinate
+          end
+        end
+        require 'jbundler/aether'
+        config = JBundler::Config.new
+        aether = JBundler::AetherRuby.new(config)
+        aether.add_repository('bees-incremental', 'https://repository-projectodd.forge.cloudbees.com/incremental/')
+        aether.add_repository('jboss', 'http://repository.jboss.org/nexus/content/groups/public/')
+        jars.each { |jar| aether.add_artifact(jar) }
+        aether.resolve
+        aether.classpath_array
       end
 
       def install_bundler_tasks
@@ -119,7 +121,7 @@ module TorqueBox
           gemdir = `gem env gemdir`.strip
           gem_name = "#{helper.gemspec.name}-#{helper.gemspec.version}-java.gem"
           cached_gem = File.join(gemdir, 'cache', gem_name)
-          if File.exists?(cached_gem)
+          if File.exist?(cached_gem)
             puts "Removing cached gem #{cached_gem}"
             FileUtils.rm(cached_gem)
           end

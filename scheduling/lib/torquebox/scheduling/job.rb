@@ -38,6 +38,7 @@ module TorqueBox
       end
 
       protected
+
       def initialize(scheduler, id, replacement)
         @scheduler = scheduler
         @id = id

@@ -38,12 +38,15 @@ module TorqueBox
       #   {Topic}.
       # @param type [:core, :jms]
       def self.destination_controller(destination, type = :jms)
-        prefix = (destination.instance_of?(Queue) && type == :core ?
-                    "core.queue." : "")
-        server_manager.
-          getHornetQServer.
-          getManagementService.
-          getResource("#{prefix}#{jms_name(destination)}")
+        if destination.instance_of?(Queue) && type == :core
+          prefix = "core.queue."
+        else
+          prefix = ""
+        end
+        server_manager
+          .getHornetQServer
+          .getManagementService
+          .getResource("#{prefix}#{jms_name(destination)}")
       end
 
       protected
@@ -57,7 +60,9 @@ module TorqueBox
       end
 
       def self.server_manager
-        fail RuntimeError.new("The current broker isn't a HornetQ broker") if !default_broker.respond_to?(:jms_server_manager)
+        unless default_broker.respond_to?(:jms_server_manager)
+          fail RuntimeError.new("The current broker isn't a HornetQ broker")
+        end
         default_broker.jms_server_manager
       end
     end

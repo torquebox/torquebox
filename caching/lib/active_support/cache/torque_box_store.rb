@@ -32,27 +32,27 @@ module ActiveSupport
 
       # Clear the entire cache. Be careful with this method since it could
       # affect other processes if shared cache is being used.
-      def clear(options = nil)
+      def clear(_options = nil)
         cache.clear
       end
 
       # Delete all entries with keys matching the pattern.
-      def delete_matched( matcher, options = nil )
+      def delete_matched(matcher, options = nil)
         options = merged_options(options)
-        pattern = key_matcher( matcher, options )
-        keys.each { |key| delete( key, options ) if key =~ pattern }
+        pattern = key_matcher(matcher, options)
+        keys.each { |key| delete(key, options) if key =~ pattern }
       end
 
       # Increment an integer value in the cache; return new value
       def increment(name, amount = 1, options = nil)
-        options = merged_options( options )
+        options = merged_options(options)
 
         # Get the current entry
-        key = namespaced_key( name, options )
+        key = namespaced_key(name, options)
         current = read_entry(key, options)
         value = current.value.to_i
 
-        new_entry = Entry.new( value+amount, options )
+        new_entry = Entry.new(value + amount, options)
         if cache.compare_and_set(key, current, new_entry)
           return new_entry.value
         else
@@ -62,7 +62,7 @@ module ActiveSupport
 
       # Decrement an integer value in the cache; return new value
       def decrement(name, amount = 1, options = nil)
-        increment( name, -amount, options )
+        increment(name, -amount, options)
       end
 
       # Cleanup the cache by removing expired entries.
@@ -77,7 +77,7 @@ module ActiveSupport
       protected
 
       def defaults
-        {:mode => :invalidation_async}
+        { :mode => :invalidation_async }
       end
 
       # Return the keys in the cache; potentially very expensive depending on configuration
@@ -86,18 +86,18 @@ module ActiveSupport
       end
 
       # Read an entry from the cache implementation. Subclasses must implement this method.
-      def read_entry(key, options)
-        cache.get( key )
+      def read_entry(key, _options)
+        cache.get(key)
       end
 
       # Write an entry to the cache implementation. Subclasses must implement this method.
       def write_entry(key, entry, options = {})
-        options[:unless_exist] ? cache.put_if_absent( key, entry ) : cache.put( key, entry )
+        options[:unless_exist] ? cache.put_if_absent(key, entry) : cache.put(key, entry)
       end
 
       # Delete an entry from the cache implementation. Subclasses must implement this method.
-      def delete_entry(key, options) # :nodoc:
-        cache.remove( key ) && true
+      def delete_entry(key, _options) # :nodoc:
+        cache.remove(key) && true
       end
 
 

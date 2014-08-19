@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 require "#{File.dirname(__FILE__)}/../core/lib/torquebox/version"
 
 Gem::Specification.new do |s|

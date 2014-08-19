@@ -48,8 +48,8 @@ module TorqueBox
       # @param connection [Connection] A connection to use, caller
       #   expected to close.
       # @return [Session]
-      def initialize(mode=DEFAULT_MODE, connection=nil, &block)
-        create_options = extract_options({mode: coerce_mode(mode)},
+      def initialize(mode = DEFAULT_MODE, connection = nil, &block)
+        create_options = extract_options({ :mode => coerce_mode(mode) },
                                          WBConnection::CreateSessionOption)
         internal_connection = connection ? connection.internal_connection :
           default_broker.default_connection

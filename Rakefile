@@ -91,6 +91,7 @@ namespace 'doc' do
     fail unless success
   end
 end
+task 'doc:spec' => 'build'
 task 'spec' => 'doc:spec'
 
 # purposely no description so it's hidden from rake -T

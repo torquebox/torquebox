@@ -21,9 +21,11 @@ module TorqueBox
       def extensions
         @extensions ||= {}
       end
+
       def extension_descriptions
         @extension_descriptions ||= {}
       end
+
       def register_extension(command, extension, description)
         extensions[command] = extension
         extension_descriptions[command] = description
@@ -36,26 +38,52 @@ module TorqueBox
       extension = TorqueBox::CLI.extensions[argv.first]
       parser = OptionParser.new
       if extension
-        command = argv.shift
-        parser.banner = "Usage: torquebox #{command} #{extension.usage_parameters}"
-        parser.separator TorqueBox::CLI.extension_descriptions[command]
-        parser.separator ""
-        parser.separator "#{command} options:"
-        extension.setup_parser(parser, options)
+        setup_extension_parser(extension, argv.shift, parser, options)
       else
-        parser.banner = "Usage: torquebox [command] [options]"
-        parser.separator ""
-        parser.separator "Commands:"
-        TorqueBox::CLI.extensions.keys.each do |command|
-          description = TorqueBox::CLI.extension_descriptions[command]
-          command = "#{command}:".ljust(8)
-          parser.separator "    #{command} #{description}"
-        end
-        parser.separator ""
-        parser.separator "Installing additional torquebox gems may provide additional commands."
-        parser.separator "'torquebox [command] -h' for additional help on each command"
+        setup_usage_parser(parser)
       end
 
+      setup_common_parser(parser, options)
+      parser.parse!(argv)
+
+      if extension
+        log_level = case options.delete(:verbosity)
+                    when :quiet then 'ERROR'
+                    when :verbose then 'DEBUG'
+                    when :really_verbose then 'TRACE'
+                    else 'INFO'
+                    end
+        TorqueBox::Logger.log_level = log_level
+        extension.run(argv, options)
+      else
+        puts parser
+        exit 1
+      end
+    end
+
+    def setup_extension_parser(extension, command, parser, options)
+      parser.banner = "Usage: torquebox #{command} #{extension.usage_parameters}"
+      parser.separator TorqueBox::CLI.extension_descriptions[command]
+      parser.separator ""
+      parser.separator "#{command} options:"
+      extension.setup_parser(parser, options)
+    end
+
+    def setup_usage_parser(parser)
+      parser.banner = "Usage: torquebox [command] [options]"
+      parser.separator ""
+      parser.separator "Commands:"
+      TorqueBox::CLI.extensions.keys.each do |command|
+        description = TorqueBox::CLI.extension_descriptions[command]
+        command = "#{command}:".ljust(8)
+        parser.separator "    #{command} #{description}"
+      end
+      parser.separator ""
+      parser.separator "Installing additional torquebox gems may provide additional commands."
+      parser.separator "'torquebox [command] -h' for additional help on each command"
+    end
+
+    def setup_common_parser(parser, options)
       parser.separator ""
       parser.separator "Common options:"
       parser.on '-q', '--quiet', 'Log only errors' do
@@ -76,27 +104,12 @@ module TorqueBox
         puts "TorqueBox #{TorqueBox::VERSION}"
         exit 1
       end
-      parser.parse!(argv)
-
-      if extension
-        log_level = case options.delete(:verbosity)
-                    when :quiet then 'ERROR'
-                    when :verbose then 'DEBUG'
-                    when :really_verbose then 'TRACE'
-                    else 'INFO'
-                    end
-        TorqueBox::Logger.log_level = log_level
-        extension.run(argv, options)
-      else
-        puts parser
-        exit 1
-      end
     end
 
     def require_torquebox_gems
       # Ensure all other known TorqueBox gems are loaded so we can see their
       # CLI extensions and jars
-      %w(torquebox-web torquebox-messaging torquebox-scheduling torquebox-caching).each do |gem|
+      %W(torquebox-web torquebox-messaging torquebox-scheduling torquebox-caching).each do |gem|
         begin
           require gem
         rescue LoadError

@@ -51,7 +51,7 @@ module TorqueBox
     # @option options :default_options [Hash] A set of default
     #   options to apply to any operations on this queue.
     # @return [Queue] The queue reference.
-    def self.queue(name, options={})
+    def self.queue(name, options = {})
       Queue.new(name, options)
     end
 
@@ -73,7 +73,7 @@ module TorqueBox
     # @option options :default_options [Hash] A set of default
     #   options to apply to any operations on this topic.
     # @return [Topic] The topic reference.
-    def self.topic(name, options={})
+    def self.topic(name, options = {})
       Topic.new(name, options)
     end
 

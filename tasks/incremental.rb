@@ -46,7 +46,7 @@ module TorqueBox
           puts `#{Gem.ruby} -S gem generate_index -d pkg/gem-repo`
           Dir.chdir("pkg/gem-repo") do
             Dir.glob("**/*[^.gem]").each do |file|
-              if (File.directory?(file))
+              if File.directory?(file)
                 dav.mkcol("#{base_url}/#{file}")
               else
                 dav.put("#{base_url}/#{file}", file)
@@ -71,7 +71,7 @@ module TorqueBox
       end
 
       def mkcol(url)
-        status, message = curl(
+        curl(
           "--request MKCOL",
           "--header 'Content-Type: text/xml; charset=\"utf-8\"'",
           url
@@ -79,7 +79,7 @@ module TorqueBox
       end
 
       def put(url, file)
-        status, message = curl(
+        curl(
           "--upload-file",
           file,
           url
@@ -87,7 +87,7 @@ module TorqueBox
       end
 
       def delete(url)
-        status, message = curl(
+        curl(
           "--request DELETE",
           "--header 'Content-Type: text/xml; charset=\"utf-8\"'",
           url
@@ -95,7 +95,7 @@ module TorqueBox
       end
 
       def copy(src, dest, depth)
-        status, message = curl(
+        curl(
           "--request COPY",
           "--header 'Destination: #{dest}'",
           "--header 'Depth: #{depth}'",
@@ -112,23 +112,19 @@ module TorqueBox
         Open3.popen3(cmd) do |stdin, stdout, stderr|
           stdin.close
           stdout_thr = Thread.new(stdout) do |stream|
-            while !stream.eof?
-              response += stream.readline
-            end
+            response += stream.readline until stream.eof?
           end
           stderr_thr = Thread.new(stderr) do |stream|
-            while !stream.eof?
-              error += stream.readline
-            end
+            error += stream.readline until stream.eof?
           end
           stdout_thr.join
           stderr_thr.join
         end
-        lines = error.split("\n").find { |e| e =~ /^< HTTP\/1.1/ }
+        error.split("\n").find { |e| e =~ /^< HTTP\/1.1/ }
         status_line = (error.split("\n").find { |e| e =~ /^< HTTP\/1.1/ }) || ""
         status  = 500
         message = "Unknown"
-        if (status_line =~ /HTTP\/1.1 ([0-9][0-9][0-9]) (.*)$/)
+        if status_line =~ /HTTP\/1.1 ([0-9][0-9][0-9]) (.*)$/
           status = $1
           message = $2
         end

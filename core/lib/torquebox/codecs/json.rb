@@ -26,11 +26,12 @@ module TorqueBox
       def require_json
         # We can't ship our own json, as it may collide with the gem
         # requirement for the app.
-        if !defined?( ::JSON )
+        unless defined?(::JSON)
           begin
             require 'json'
-          rescue LoadError => ex
-            raise RuntimeError.new( "Unable to load the json gem. Verify that is installed and in your Gemfile (if using Bundler)" )
+          rescue LoadError
+            raise RuntimeError.new("Unable to load the json gem. Verify that "\
+                                   "is installed and in your Gemfile (if using Bundler)")
           end
         end
       end
@@ -38,10 +39,10 @@ module TorqueBox
       def encode(data)
         require_json
         begin
-          if ( data.respond_to?( :as_json ) )
+          if data.respond_to?(:as_json)
             data = data.as_json
           end
-          ::JSON.fast_generate( data ) unless data.nil?
+          ::JSON.fast_generate(data) unless data.nil?
         rescue ::JSON::GeneratorError
           ::JSON.dump(data)
         end
@@ -50,7 +51,7 @@ module TorqueBox
       def decode(data)
         require_json
         begin
-          ::JSON.parse( data, :symbolize_names => true ) unless data.nil?
+          ::JSON.parse(data, :symbolize_names => true) unless data.nil?
         rescue ::JSON::ParserError
           ::JSON.load(data)
         end

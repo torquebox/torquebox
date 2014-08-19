@@ -26,11 +26,12 @@ module TorqueBox
       def require_edn
         # We don't ship our own edn, but can use it if the user
         # installs it.
-        if !defined?(::EDN)
+        unless defined?(::EDN)
           begin
             require 'edn'
-          rescue LoadError => ex
-            raise RuntimeError.new("Unable to load the edn gem. Verify that is installed and in your Gemfile (if using Bundler)")
+          rescue LoadError
+            raise RuntimeError.new("Unable to load the edn gem. Verify that "\
+                                   "is installed and in your Gemfile (if using Bundler)")
           end
         end
       end

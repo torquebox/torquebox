@@ -44,4 +44,3 @@ task :spec do
     task(:real_spec).invoke
   end
 end
-

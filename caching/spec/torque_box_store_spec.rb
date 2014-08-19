@@ -9,7 +9,7 @@ include ActiveSupport::Cache
 describe ActiveSupport::Cache::TorqueBoxStore do
 
   before(:each) do
-    @cache = ActiveSupport::Cache::TorqueBoxStore.new()
+    @cache = ActiveSupport::Cache::TorqueBoxStore.new
   end
 
   after(:each) do
@@ -84,9 +84,7 @@ describe ActiveSupport::Cache::TorqueBoxStore do
 
     it "should fetch block values for missing keys" do
       @cache.fetch("city").should be_nil
-      @cache.fetch("city") {
-        "Duckburgh"
-      }.should == "Duckburgh"
+      @cache.fetch("city") { "Duckburgh" }.should == "Duckburgh"
       @cache.fetch("city").should == "Duckburgh"
     end
 
@@ -101,9 +99,7 @@ describe ActiveSupport::Cache::TorqueBoxStore do
       fetch_options = { :expires_in => 0.1.seconds, :race_condition_ttl => 30.seconds }
       # First fetch looks up from database and populates
       database.should_receive(:town).and_return("Pantsville")
-      @cache.fetch("town", fetch_options) {
-        database.town
-      }.should == "Pantsville"
+      @cache.fetch("town", fetch_options) { database.town }.should == "Pantsville"
       # Sleep until the entry is expired
       sleep(0.2)
       # Create a set of CountDownLatches to test :race_condition_ttl
@@ -111,23 +107,19 @@ describe ActiveSupport::Cache::TorqueBoxStore do
       read_latch = java.util.concurrent.CountDownLatch.new(1)
       write_latch = java.util.concurrent.CountDownLatch.new(1)
       # Read the cache from two threads but only one should hit our database
-      database.should_receive(:town).once {
+      database.should_receive(:town).once do
         # Trigger the read latch so the other thread can read the cached value
         read_latch.count_down
         write_latch.await(15, TimeUnit::SECONDS)
         "NoPantsville"
-      }
-      other_thread = Thread.new {
+      end
+      other_thread = Thread.new do
         read_latch.await(15, TimeUnit::SECONDS)
-        @cache.fetch("town", fetch_options) {
-          database.town
-        }.should == "Pantsville"
+        @cache.fetch("town", fetch_options) { database.town }.should == "Pantsville"
         # Trigger the write latch to update the cached value
         write_latch.count_down
-      }
-      @cache.fetch("town", fetch_options) {
-        database.town
-      }.should == "NoPantsville"
+      end
+      @cache.fetch("town", fetch_options) { database.town }.should == "NoPantsville"
       other_thread.join
       @cache.read("town").should == "NoPantsville"
     end
@@ -144,7 +136,7 @@ describe ActiveSupport::Cache::TorqueBoxStore do
     end
 
     it "should delete by regexp" do
-      @cache.delete_matched /g/
+      @cache.delete_matched(/g/)
       @cache.read("george").should be_nil
       @cache.read("ringo").should be_nil
       @cache.read("john").should == "guitar"
@@ -169,13 +161,13 @@ describe ActiveSupport::Cache::TorqueBoxStore do
     end
 
     it "should read multiple values" do
-      @cache.read_multi("john", "paul").should == {"john" => "guitar", "paul" => "bass"}
+      @cache.read_multi("john", "paul").should == { "john" => "guitar", "paul" => "bass" }
     end
 
   end
 
   describe "advanced" do
-    
+
     it "should support incrementation" do
       @cache.write("key", 42)
       @cache.read("key").should == 42

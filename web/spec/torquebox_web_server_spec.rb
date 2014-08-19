@@ -18,18 +18,18 @@ describe TorqueBox::Web do
 
   describe 'run' do
     it 'accepts create and mount options' do
-      expect {
+      expect do
         TorqueBox::Web.run(:server => uuid, :auto_start => false,
                            :rack_app => lambda {})
-      }.not_to raise_error
+      end.not_to raise_error
     end
   end
 
   describe 'server' do
     it 'warns on invalid options' do
-      expect {
+      expect do
         TorqueBox::Web.server(uuid, :foo => 'bar')
-      }.to raise_error(ArgumentError)
+      end.to raise_error(ArgumentError)
     end
 
     it 'has the same web component if passed the same name' do
@@ -59,9 +59,9 @@ describe TorqueBox::Web::Server do
     end
 
     it 'warns on invalid options' do
-      expect {
+      expect do
         @server.mount(:foo => 'bar')
-      }.to raise_error(ArgumentError)
+      end.to raise_error(ArgumentError)
     end
   end
 end

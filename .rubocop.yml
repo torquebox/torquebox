@@ -3,6 +3,9 @@ AllCops:
     - '*/pkg/**/*'
     - 'integration-tests/apps/**/*'
 
+Lint/Eval:
+  Enabled: false
+
 Lint/HandleExceptions:
   Enabled: false
 
@@ -15,16 +18,37 @@ Lint/UnusedBlockArgument:
 Lint/Void:
   Enabled: false
 
+Metrics/ClassLength:
+  Max: 250
+
 Metrics/CyclomaticComplexity:
-  Max: 8
+  Max: 10
 
 Metrics/LineLength:
-  Max: 100
+  Max: 110
 
 Metrics/MethodLength:
-  Max: 25
+  Max: 35
+
+Metrics/PerceivedComplexity:
+  Max: 10
+
+Style/CaseEquality:
+  Enabled: false
+
+Style/ColonMethodCall:
+  Enabled: false
+
+Style/CommentAnnotation:
+  Enabled: false
 
 Style/Documentation:
+  Enabled: false
+
+Style/DoubleNegation:
+  Enabled: false
+
+Style/EachWithObject:
   Enabled: false
 
 Style/EmptyLines:
@@ -35,6 +59,9 @@ Style/EmptyLinesAroundBody:
 
 Style/Encoding:
   EnforcedStyle: when_needed
+
+Style/FileName:
+  Enabled: false
 
 Style/GuardClause:
   Enabled: false
@@ -54,12 +81,24 @@ Style/NumericLiterals:
 Style/PercentQLiterals:
   EnforcedStyle: upper_case_q
 
+Style/PerlBackrefs:
+  Enabled: false
+
+Style/RaiseArgs:
+  Enabled: false
+
+Style/RescueModifier:
+  Enabled: false
+
 Style/SignalException:
   Enabled: false
 
 Style/StringLiterals:
   Enabled: false
   EnforcedStyle: double_quotes
+
+Style/TrivialAccessors:
+  Enabled: false
 
 Style/UnneededCapitalW:
   Enabled: false

@@ -36,7 +36,7 @@ describe TorqueBox::Caching do
 
   it "should have a size" do
     @cache.size.should == 0
-    @cache.put('foo', 'bar');
+    @cache.put('foo', 'bar')
     @cache.size.should == 1
   end
 
@@ -129,7 +129,7 @@ describe TorqueBox::Caching do
     @cache.compare_and_set(key, current_value, new_value).should be true
     @cache.get(key).should == new_value
   end
-  
+
   it "should replace existing ruby object values" do
     key = 'thekey'
     current_value = Snuffleuffagus.new(1, 'foo')
@@ -162,7 +162,7 @@ describe TorqueBox::Caching do
 
   it "should store java objects" do
     entry = java.util.HashMap.new
-    entry.put( "Snuffleuffagus", "{color: brown}" )
+    entry.put("Snuffleuffagus", "{color: brown}")
     @cache.put('Snuffleuffagus/1', entry)
     @cache.get('Snuffleuffagus/1').should_not be_nil
   end
@@ -240,7 +240,7 @@ describe TorqueBox::Caching do
     end
 
     it "should support transactional mode" do
-      cache = TorqueBox::Caching.cache('transactional-cache', :transactional => true )
+      cache = TorqueBox::Caching.cache('transactional-cache', :transactional => true)
       cache.configuration.transaction.transaction_mode.should == org.infinispan.transaction.TransactionMode::TRANSACTIONAL
       TorqueBox::Caching.stop('transactional-cache')
     end
@@ -250,7 +250,9 @@ describe TorqueBox::Caching do
     end
 
     it "should support pessimistic locking mode" do
-      cache = TorqueBox::Caching.cache('transactional-cache', :transactional => true, :locking => :pessimistic )
+      cache = TorqueBox::Caching.cache('transactional-cache',
+                                       :transactional => true,
+                                       :locking => :pessimistic)
       cache.configuration.transaction.locking_mode.should == org.infinispan.transaction.LockingMode::PESSIMISTIC
       TorqueBox::Caching.stop('transactional-cache')
     end
@@ -297,10 +299,10 @@ describe TorqueBox::Caching do
 
   describe "with persistence" do
 
-    def cache_on_disk(dir=nil, name=nil)
-      File.join(File.dirname(__FILE__), '..', 
+    def cache_on_disk(dir = nil, name = nil)
+      File.join(File.dirname(__FILE__), '..',
                 (dir || 'Infinispan-SingleFileStore'),
-                (name ? name+".dat" : ""))
+                (name ? name + ".dat" : ""))
     end
 
     before(:all) do
@@ -317,23 +319,25 @@ describe TorqueBox::Caching do
     end
 
     it "should persist the data with a default directory" do
-      cache = TorqueBox::Caching.cache('persisted-cache', :persist => true )
+      cache = TorqueBox::Caching.cache('persisted-cache', :persist => true)
       entry = java.util.HashMap.new
-      entry.put( "Hello", "world" )
+      entry.put("Hello", "world")
       cache.put('foo', entry)
       File.exist?(cache_on_disk(nil, 'persisted-cache')).should be true
     end
 
     it "should persist the data with a configured directory" do
-      cache = TorqueBox::Caching.cache('persisted-date-cache', :persist => cache_on_disk(@configured_dir).to_s )
+      cache = TorqueBox::Caching.cache('persisted-date-cache',
+                                       :persist => cache_on_disk(@configured_dir).to_s)
       entry = java.util.HashMap.new
-      entry.put( "Hello", "world" )
+      entry.put("Hello", "world")
       cache.put('foo', entry)
       File.exist?(cache_on_disk(@configured_dir, "persisted-date-cache")).should be true
     end
 
     it "should persist dates with a configured directory" do
-      cache = TorqueBox::Caching.cache('persisted-configured-date-cache', :persist => cache_on_disk(@date_cfg_dir).to_s )
+      cache = TorqueBox::Caching.cache('persisted-configured-date-cache',
+                                       :persist => cache_on_disk(@date_cfg_dir).to_s)
       entry = java.util.Date.new
       cache.put('foo', entry).should be_nil
       File.exist?(cache_on_disk(@date_cfg_dir, "persisted-configured-date-cache")).should be true
@@ -342,27 +346,27 @@ describe TorqueBox::Caching do
     it "should evict keys from the heap" do
       cache = TorqueBox::Caching.cache('foo-cache')
       cache.put("akey", "avalue")
-      cache.evict( "akey" )
+      cache.evict("akey")
       # when cache is in-memory only, the key should return nil
-      cache.get( "akey" ).should == nil
+      cache.get("akey").should be_nil
     end
 
     it "should only evict keys from the heap, not persistent storage" do
-      cache = TorqueBox::Caching.cache('evict-cache', :persist=>true)
+      cache = TorqueBox::Caching.cache('evict-cache', :persist => true)
       cache.put("akey", "avalue")
-      cache.evict( "akey" )
-      cache.get( "akey" ).should == "avalue"
+      cache.evict("akey")
+      cache.get("akey").should == "avalue"
     end
 
     it "should expire entries based on provided expiry durations" do
-      cache = TorqueBox::Caching.cache('expiring-cache', :persist=>true, :ttl => 100)
+      cache = TorqueBox::Caching.cache('expiring-cache', :persist => true, :ttl => 100)
       cache.put("foo", "bar")
       sleep 1
       cache.get("foo").should be_nil
     end
 
     it "should handle transactions" do
-      cache = TorqueBox::Caching.cache('foo-cache', :persist=>true)
+      cache = TorqueBox::Caching.cache('foo-cache', :persist => true)
       begin
         @cache.transaction do
           cache.put('Tommy', 'Dorsey')
@@ -387,7 +391,7 @@ describe TorqueBox::Caching do
     #   end
     #   cache.get('Tommy').should be_nil
     #   cache.get('Elvis').should be_nil
-    #   cache.transaction do 
+    #   cache.transaction do
     #     cache.put('Tommy', 'Dorsey')
     #     cache.put('Elvis', 'Presley')
     #   end
@@ -400,8 +404,8 @@ end
 
 class Snuffleuffagus
   attr_accessor :id, :name
-  
-  def initialize(id=1, name=:default)
+
+  def initialize(id = 1, name = :default)
     @id = id
     @name = name
   end

@@ -37,7 +37,8 @@ module TorqueBox
         parser.on '--dir DIR', 'Change directory before starting' do |arg|
           options[:root] = arg
         end
-        parser.on '-E', '--env ENVIRONMENT', 'Environment to run under (default: development)' do |arg|
+        parser.on('-E', '--env ENVIRONMENT',
+                  'Environment to run under (default: development)') do |arg|
           ENV['RACK_ENV'] = ENV['RAILS_ENV'] = arg
         end
         parser.on '-p', '--port PORT', 'HTTP port to listen on' do |arg|

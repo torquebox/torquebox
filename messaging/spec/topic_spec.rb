@@ -21,15 +21,15 @@ describe "Topic" do
   describe 'subscribe' do
     it 'should work' do
       topic = TorqueBox::Messaging.topic("subscribe")
-      responseq = TorqueBox::Messaging.queue("subscribe-responseq", durable: false)
+      responseq = TorqueBox::Messaging.queue("subscribe-responseq", :durable => false)
       subscribe = lambda { topic.subscribe('my-sub') { |m| responseq.publish(m.upcase) } }
       listener = subscribe.call
       topic.publish('hi')
-      responseq.receive(timeout: 1000).should == 'HI'
+      responseq.receive(:timeout => 1000).should == 'HI'
       listener.close
       topic.publish('hello')
       listener = subscribe.call
-      responseq.receive(timeout: 1000).should == 'HELLO'
+      responseq.receive(:timeout => 1000).should == 'HELLO'
       listener.close
     end
   end
@@ -37,16 +37,16 @@ describe "Topic" do
   describe 'unsubscribe' do
     it 'should work' do
       topic = TorqueBox::Messaging.topic("subscribe")
-      responseq = TorqueBox::Messaging.queue("subscribe-responseq", durable: false)
+      responseq = TorqueBox::Messaging.queue("subscribe-responseq", :durable => false)
       subscribe = lambda { topic.subscribe('my-sub') { |m| responseq.publish(m.upcase) } }
       listener = subscribe.call
       topic.publish('hi')
-      responseq.receive(timeout: 1000).should == 'HI'
+      responseq.receive(:timeout => 1000).should == 'HI'
       listener.close
       topic.unsubscribe('my-sub')
       topic.publish('failure')
       listener = subscribe.call
-      responseq.receive(timeout: 10, timeout_val: :success).should == :success
+      responseq.receive(:timeout => 10, :timeout_val => :success).should == :success
       listener.close
     end
   end

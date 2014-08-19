@@ -24,21 +24,21 @@ module WunderBoss
           rack_responder.response_code = status.to_i
 
           transfer_encoding_value = nil
-          headers.each { |key,value|
-            rack_responder.add_header(key, value);
+          headers.each do |key, value|
+            rack_responder.add_header(key, value)
             transfer_encoding_value = value if key == 'Transfer-Encoding'
-          }
+          end
 
           chunked = 'chunked' == transfer_encoding_value
           # body must respond to each and yield only String values
           # TODO: check body.to_path as a more efficient way to serve files
-          body.each { |chunk|
+          body.each do |chunk|
             output = chunked ? strip_term_markers(chunk) : chunk
             unless output.nil?
               rack_responder.write(output)
               rack_responder.flush if chunked
             end
-          }
+          end
         rescue NativeException => e
           # Don't needlessly raise errors because of client abort exceptions
           raise unless e.cause.toString =~ /(clientabortexception|broken pipe)/i

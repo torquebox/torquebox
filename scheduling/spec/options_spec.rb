@@ -15,8 +15,12 @@
 require 'spec_helper'
 require 'active_support/time'
 
-class TorqueBox::Scheduling::Scheduler
-  public :coerce_schedule_options
+module TorqueBox
+  module Scheduling
+    class Scheduler
+      public :coerce_schedule_options
+    end
+  end
 end
 
 describe "option coercion" do
@@ -41,28 +45,28 @@ describe "option coercion" do
   end
 
   it "should convert activesupport durations to ms" do
-    val = @scheduler.coerce_schedule_options(in: 5.seconds)[:in]
+    val = @scheduler.coerce_schedule_options(:in => 5.seconds)[:in]
     val.should == 5000
   end
 
   it "should leave numbers alone" do
-    val = @scheduler.coerce_schedule_options(in: 5)[:in]
+    val = @scheduler.coerce_schedule_options(:in => 5)[:in]
     val.should == 5
   end
 
   it "should leave a duration converted to millseconds alone" do
-    val = @scheduler.coerce_schedule_options(in: 5.seconds.in_milliseconds)[:in]
+    val = @scheduler.coerce_schedule_options(:in => 5.seconds.in_milliseconds)[:in]
     val.should == 5000
   end
 
   it "should coerce :singleton to an actual boolean" do
-    val = @scheduler.coerce_schedule_options(singleton: nil)[:singleton]
+    val = @scheduler.coerce_schedule_options(:singleton => nil)[:singleton]
     val.should == false
-    val = @scheduler.coerce_schedule_options(singleton: false)[:singleton]
+    val = @scheduler.coerce_schedule_options(:singleton => false)[:singleton]
     val.should == false
-    val = @scheduler.coerce_schedule_options(singleton: :foo)[:singleton]
+    val = @scheduler.coerce_schedule_options(:singleton => :foo)[:singleton]
     val.should == true
-    val = @scheduler.coerce_schedule_options(singleton: true)[:singleton]
+    val = @scheduler.coerce_schedule_options(:singleton => true)[:singleton]
     val.should == true
   end
 end

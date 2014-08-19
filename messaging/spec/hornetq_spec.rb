@@ -27,7 +27,7 @@ describe 'AddressSettings' do
       "jms.queue.#"         => "jms.queue.#",
       "jms.queue.foo.queue" => TorqueBox::Messaging.queue("foo.queue"),
       "jms.queue.foo-bar"   =>  TorqueBox::Messaging.queue("foo-bar")
-    }.each do |expected,given|
+    }.each do |expected, given|
       @opts.send(:normalize_destination_match, given).should == expected
     end
 
@@ -91,7 +91,7 @@ describe 'AddressSettings' do
       opts.dead_letter_address = dlq
       opts.max_delivery_attempts = 2
       queue.publish(:boomer)
-      dlq.receive(timeout: 1_000, timeout_val: :timeout).should == :boomer
+      dlq.receive(:timeout => 1_000, :timeout_val => :timeout).should == :boomer
       delivery_count.should == 2
     ensure
       listener.close

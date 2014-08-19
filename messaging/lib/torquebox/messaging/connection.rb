@@ -55,7 +55,7 @@ module TorqueBox
       #   (1.0) A multiplier to apply to the time since the last retry
       #   to compute the time to the next retry.
       # @return [Connection]
-      def initialize(options={}, &block)
+      def initialize(options = {}, &block)
         validate_options(options, CONNECTION_OPTIONS)
         create_options = extract_options(options, WBMessaging::CreateConnectionOption)
         @internal_connection = default_broker.create_connection(create_options)
@@ -76,7 +76,7 @@ module TorqueBox
       #
       # @param (see Session#initialize)
       # @return (see Session#initialize)
-      def create_session(mode=TorqueBox::Messaging::Session::DEFAULT_MODE, &block)
+      def create_session(mode = TorqueBox::Messaging::Session::DEFAULT_MODE, &block)
         TorqueBox::Messaging::Session.new(mode, self, &block)
       end
 
@@ -87,8 +87,8 @@ module TorqueBox
       #
       # @param (see Queue#initialize)
       # @return (see Queue#initialize)
-      def queue(name, options={})
-        TorqueBox::Messaging.queue(name, options.merge(connection: self))
+      def queue(name, options = {})
+        TorqueBox::Messaging.queue(name, options.merge(:connection => self))
       end
 
       # Creates a Topic from this connection.
@@ -98,8 +98,8 @@ module TorqueBox
       #
       # @param (see Topic#initialize)
       # @return (see Topic#initialize)
-      def topic(name, options={})
-        TorqueBox::Messaging.topic(name, options.merge(connection: self))
+      def topic(name, options = {})
+        TorqueBox::Messaging.topic(name, options.merge(:connection => self))
       end
 
       # Closes this connection.

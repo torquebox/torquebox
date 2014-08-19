@@ -22,8 +22,6 @@ module TorqueBox
         @log_level = level
         org.projectodd.wunderboss.WunderBoss.log_level = level
       end
-
-      log_level = 'INFO'
     end
   end
 end
