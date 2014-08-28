@@ -163,7 +163,7 @@ module TorqueBox
       #
       # @return [void]
       def stop
-        @internal_endpoint.stop
+        @internal_destination.stop
       end
 
       protected
