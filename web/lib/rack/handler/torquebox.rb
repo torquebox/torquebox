@@ -41,11 +41,11 @@ module Rack
         server.start
         thread = Thread.current
         Signal.trap("INT") do
-          server.stop
+          org.projectodd.wunderboss.WunderBoss.shutdown_and_reset
           thread.wakeup
         end
         Signal.trap("TERM") do
-          server.stop
+          org.projectodd.wunderboss.WunderBoss.shutdown_and_reset
           thread.wakeup
         end
         sleep
