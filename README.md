@@ -17,11 +17,18 @@ TorqueBox requires JRuby 1.7.x running on Java 7+ in Ruby 1.9 or 2.0
 mode. The code has only been tested on JRuby 1.7.6 and higher but
 should work on earlier versions.
 
+### Installation
+
+Until we have the first TorqueBox 4 release, you'll only be able to
+install incremental builds of TorqueBox 4 built by our CI server. Head
+to our [TorqueBox 4 Incremental Builds][4x_builds] page for a list of
+incremental builds and installation instructions.
+
 ### Running directly
 
 From inside your Rack application's root directory:
 
-    gem install torquebox
+    
     torquebox run
 
 ### Rails
@@ -152,3 +159,4 @@ takes quite a bit longer, but is what CI runs.
 [wunderboss]: https://github.com/projectodd/wunderboss
 [undertow]: http://undertow.io/
 [wildfly]: http://wildfly.org/
+[4x_builds]: http://torquebox.org/4x/builds/
