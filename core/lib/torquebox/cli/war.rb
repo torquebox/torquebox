@@ -42,9 +42,9 @@ module TorqueBox
       protected
 
       def read_base_xml(name)
-        java.lang.Thread.current_thread.
-          context_class_loader.
-          resource_as_string("base-xml/#{name}")
+        java.lang.Thread.current_thread
+          .context_class_loader
+          .resource_as_string("base-xml/#{name}")
       end
 
     end
