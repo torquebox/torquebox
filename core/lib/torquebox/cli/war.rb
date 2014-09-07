@@ -24,20 +24,11 @@ module TorqueBox
         jar_name = super(argv, jar_options)
         war_name = options['jar_name'] || "#{File.basename(Dir.pwd)}.war"
         war_builder = org.torquebox.core.JarBuilder.new
-        web_xml = <<-EOS
-<web-app xmlns="http://java.sun.com/xml/ns/javaee"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-      version="3.0">
-  <distributable />
-  <listener>
-    <listener-class>
-      org.projectodd.wunderboss.wildfly.ServletListener
-    </listener-class>
-  </listener>
-</web-app>
-EOS
-        war_builder.add_string('WEB-INF/web.xml', web_xml)
+
+        war_builder.add_string('WEB-INF/web.xml',
+                               read_base_xml('web.xml'))
+        war_builder.add_string('WEB-INF/jboss-deployment-structure.xml',
+                               read_base_xml('jboss-deployment-structure.xml'))
         war_builder.add_file("WEB-INF/lib/#{jar_name}", jar_name)
 
         if File.exist?(war_name)
@@ -47,6 +38,15 @@ EOS
         @logger.info("Writing %s", war_name)
         war_builder.create(war_name)
       end
+
+      protected
+
+      def read_base_xml(name)
+        java.lang.Thread.current_thread.
+          context_class_loader.
+          resource_as_string("base-xml/#{name}")
+      end
+
     end
   end
 end
