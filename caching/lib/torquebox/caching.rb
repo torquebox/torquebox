@@ -29,7 +29,7 @@ module TorqueBox
         validate_options(options, VALID_OPTIONS)
         cache = component.find_or_create(name, extract_options(options, Caching::CreateOption))
         codec = Codecs[options.fetch(:encoding, :marshal_smart)]
-        Cache.new(component.encodedWith(codec, cache), options)
+        Cache.new(component.withCodec(cache, codec), options)
       end
 
       def stop(name)

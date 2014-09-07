@@ -79,7 +79,7 @@ EOS
       def run(_argv, options)
         options = DEFAULTS.merge(options)
         jar_name = options['jar_name']
-        @logger.debugf("Creating jar with options %s", options.inspect)
+        @logger.debug("Creating jar with options %s", options.inspect)
 
         jar_builder = org.torquebox.core.JarBuilder.new
         jar_builder.add_manifest_attribute("Main-Class", "org.torquebox.core.TorqueBoxMain")
@@ -100,10 +100,10 @@ EOS
         add_torquebox_files(jar_builder)
 
         if File.exist?(jar_name)
-          @logger.infof("Removing %s", jar_name)
+          @logger.info("Removing %s", jar_name)
           FileUtils.rm_f(jar_name)
         end
-        @logger.infof("Writing %s", jar_name)
+        @logger.info("Writing %s", jar_name)
         jar_builder.create(jar_name)
         jar_name
       ensure
@@ -111,7 +111,7 @@ EOS
       end
 
       def add_jruby_files(jar_builder)
-        @logger.tracef("Adding JRuby files to jar...")
+        @logger.trace("Adding JRuby files to jar...")
         rb_config = RbConfig::CONFIG
         add_files(jar_builder,
                   :file_prefix => rb_config["prefix"],
@@ -130,7 +130,7 @@ EOS
       end
 
       def add_app_files(jar_builder, jar_name)
-        @logger.tracef("Adding application files to jar...")
+        @logger.trace("Adding application files to jar...")
         add_files(jar_builder,
                   :file_prefix => Dir.pwd,
                   :pattern => "/**/*",
@@ -139,7 +139,7 @@ EOS
       end
 
       def add_bundler_files(jar_builder, tmpdir, bundle_without)
-        @logger.tracef("Adding bundler files to jar...")
+        @logger.trace("Adding bundler files to jar...")
         unless File.exist?(ENV['BUNDLE_GEMFILE'] || 'Gemfile')
           @logger.info("No Gemfile found - skipping gem dependencies")
           return {}
@@ -226,7 +226,7 @@ EOS
 
       def add_torquebox_files(jar_builder)
         TorqueBox::Jars.list.each do |jar|
-          @logger.debugf("Shading jar %s", jar)
+          @logger.debug("Shading jar %s", jar)
           jar_builder.shade_jar(jar)
         end
       end

@@ -121,8 +121,8 @@ module TorqueBox
         options = DEFAULT_MOUNT_OPTIONS.merge(options)
         valid_keys = opts_to_set(WBWeb::RegisterOption) + DEFAULT_MOUNT_OPTIONS.keys
         validate_options(options, valid_keys)
-        @logger.debugf("Mounting context path %s with options %s on TorqueBox::Web::Server '%s'",
-                       options[:path], options.inspect, @web_component.name)
+        @logger.debug("Mounting context path %s with options %s on TorqueBox::Web::Server '%s'",
+                      options[:path], options.inspect, @web_component.name)
         servlet_context = WB.options.get("servlet-context-path", "")
         relative_root = servlet_context + options[:path]
         relative_root.chop! if relative_root.end_with?("/")
@@ -137,7 +137,7 @@ module TorqueBox
         end
         handler = RackHandler.new(options[:rack_app], options[:path])
         register_options = extract_options(options, WBWeb::RegisterOption)
-        @logger.tracef("Registering handler at context path %s", options[:path])
+        @logger.trace("Registering handler at context path %s", options[:path])
         @web_component.register_handler(handler, register_options)
         handler
       end
@@ -160,8 +160,8 @@ module TorqueBox
         options = DEFAULT_MOUNT_SERVLET_OPTIONS.merge(options)
         valid_keys = opts_to_set(WBWeb::RegisterOption) + DEFAULT_MOUNT_SERVLET_OPTIONS.keys
         validate_options(options, valid_keys)
-        @logger.debugf("Mounting servlet %s with options %s on TorqueBox::Web::Server '%s'",
-                       servlet, options.inspect, @web_component.name)
+        @logger.debug("Mounting servlet %s with options %s on TorqueBox::Web::Server '%s'",
+                      servlet, options.inspect, @web_component.name)
         register_options = extract_options(options, WBWeb::RegisterOption)
         @web_component.register_servlet(servlet, register_options)
       end
@@ -186,15 +186,15 @@ module TorqueBox
 
       # Start the server
       def start
-        @logger.infof("Starting TorqueBox::Web::Server '%s'",
-                      @web_component.name)
+        @logger.info("Starting TorqueBox::Web::Server '%s'",
+                     @web_component.name)
         @web_component.start
       end
 
       # Stop the server
       def stop
-        @logger.infof("Stopping TorqueBox::Web::Server '%s'",
-                      @web_component.name)
+        @logger.info("Stopping TorqueBox::Web::Server '%s'",
+                     @web_component.name)
         @web_component.stop
       end
 
@@ -208,8 +208,8 @@ module TorqueBox
         create_options = extract_options(options, WBWeb::CreateOption)
         web = WB.find_or_create_component(WBWeb.java_class, name,
                                           create_options)
-        @logger.debugf("TorqueBox::Web::Server '%s' has component %s",
-                       name, web)
+        @logger.debug("TorqueBox::Web::Server '%s' has component %s",
+                      name, web)
         @web_component = web
       end
 
