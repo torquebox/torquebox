@@ -22,13 +22,6 @@ module TorqueBox
   class CLI
     class Jar
 
-      DEFAULTS = {
-        'jar_name' => "#{File.basename(Dir.pwd)}.jar",
-        'include_jruby' => true,
-        'bundle_gems' => true,
-        'bundle_without' => %W(development test assets)
-      }
-
       APP_PROPERTIES = <<-EOS
 language=ruby
 extract_paths=app/:jruby/
@@ -56,29 +49,53 @@ EOS
         "[options]"
       end
 
+      def option_defaults
+        {
+          :destination => '.',
+          :jar_name => "#{File.basename(Dir.pwd)}.jar",
+          :include_jruby => true,
+          :bundle_gems => true,
+          :bundle_without => %W(development test assets)
+        }
+      end
+
+      def available_options
+        defaults = option_defaults
+        [{
+           :name => :destination,
+           :switch => '--destination PATH',
+           :description => "Destination directory for the jar file (default: #{defaults[:destination]})"
+         },{
+           :name => :jar_name,
+           :switch => '--name NAME',
+           :description => "Name of the jar file (default: #{defaults[:jar_name]})"
+         },{
+           :name => :include_jruby,
+           :switch => '--[no-]include-jruby',
+           :description => "Include JRuby in the jar (default: #{defaults[:include_jruby]})"
+         },{
+           :name => :bundle_gems,
+           :switch => '--[no-]bundle-gems',
+           :description => "Bundle gem dependencies in the jar (default: #{defaults[:bundle_gems]})"
+         },{
+           :name => :bundle_without,
+           :switch => '--bundle-without GROUPS',
+           :description => "Bundler groups to skip (default: #{defaults[:bundle_without]})",
+           :type => Array
+         }]
+      end
+
       def setup_parser(parser, options)
-        parser.on('--name NAME',
-                  "Name of the jar file (default: #{DEFAULTS['jar_name']})") do |arg|
-          options['jar_name'] = arg
-        end
-        parser.on('--[no-]include-jruby',
-                  "Include JRuby in the jar (default: #{DEFAULTS['include_jruby']})") do |arg|
-          options['include_jruby'] = arg
-        end
-        bundle_gems_default = DEFAULTS['bundle_gems']
-        parser.on('--[no-]bundle-gems',
-                  "Bundle gem dependencies in the jar (default: #{bundle_gems_default})") do |arg|
-          options['bundle_gems'] = arg
-        end
-        bundle_without_default = DEFAULTS['bundle_without'].join(', ')
-        parser.on('--bundle-without GROUPS', Array,
-                  "Bundler groups to skip (default: #{bundle_without_default})") do |arg|
+        available_options.each do |opt|
+          parser.on(*(opt.values_at(:switch, :type, :description).compact)) do |arg|
+            options[opt[:name]] = arg
+          end
         end
       end
 
       def run(_argv, options)
-        options = DEFAULTS.merge(options)
-        jar_name = options['jar_name']
+        options = option_defaults.merge(options)
+        jar_path = File.join(options[:destination], options[:jar_name])
         @logger.debug("Creating jar with options {}", options.inspect)
 
         jar_builder = org.torquebox.core.JarBuilder.new
@@ -86,28 +103,28 @@ EOS
         jar_builder.add_string("META-INF/app.properties", APP_PROPERTIES)
         jar_builder.add_string(TorqueBox::JAR_MARKER, "")
 
-        if options['include_jruby']
+        if options[:include_jruby]
           add_jruby_files(jar_builder)
         end
 
-        add_app_files(jar_builder, jar_name)
+        add_app_files(jar_builder, options[:jar_name])
 
-        if options['bundle_gems']
+        if options[:bundle_gems]
           tmpdir = Dir.mktmpdir("tmptorqueboxjar", ".")
-          add_bundler_files(jar_builder, tmpdir, options['bundle_without'])
+          add_bundler_files(jar_builder, tmpdir, options[:bundle_without])
         end
 
         add_torquebox_files(jar_builder)
 
-        if File.exist?(jar_name)
-          @logger.info("Removing {}", jar_name)
-          FileUtils.rm_f(jar_name)
+        if File.exist?(jar_path)
+          @logger.info("Removing {}", jar_path)
+          FileUtils.rm_f(jar_path)
         end
-        @logger.info("Writing {}", jar_name)
-        jar_builder.create(jar_name)
-        jar_name
+        @logger.info("Writing {}", jar_path)
+        jar_builder.create(jar_path)
+        jar_path
       ensure
-        FileUtils.rm_rf(tmpdir) if options['bundle_gems']
+        FileUtils.rm_rf(tmpdir) if options[:bundle_gems]
       end
 
       def add_jruby_files(jar_builder)
@@ -135,7 +152,7 @@ EOS
                   :file_prefix => Dir.pwd,
                   :pattern => "/**/*",
                   :jar_prefix => "app",
-                  :exclude => [jar_name, jar_name.sub('.jar', '.war')])
+                  :exclude => [%r{^/[^/]*\.(jar|war)}])
       end
 
       def add_bundler_files(jar_builder, tmpdir, bundle_without)
@@ -236,7 +253,13 @@ EOS
         Dir.glob("#{prefix}#{options[:pattern]}").each do |file|
           suffix = file.sub(prefix, '')
           excludes = [options[:exclude]].compact.flatten
-          next if excludes.any? { |exclude| suffix.include?(exclude) }
+          next if excludes.any? do |exclude|
+            if exclude.is_a?(Regexp)
+              exclude =~ suffix
+            else
+              suffix.include?(exclude)
+            end
+          end
           next if suffix.include?("tmptorqueboxjar")
           jar_builder.add_file(File.join(options[:jar_prefix], suffix), file)
         end

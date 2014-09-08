@@ -18,25 +18,45 @@ module TorqueBox
   class CLI
     class War < Jar
 
+      def option_defaults
+       super.merge({:war_name => "#{File.basename(Dir.pwd)}.war"})
+      end
+
+      def available_options
+        super
+          .reject {|v| v[:name] == :jar_name}
+          .unshift({
+                     :name => :war_name,
+                     :switch => '--name NAME',
+                     :description => "Name of the war file (default: #{option_defaults[:war_name]})"
+                   })
+      end
+
       def run(argv, options)
+        options = option_defaults.merge(options)
         jar_options = options.dup
-        jar_options.delete('jar_name')
-        jar_name = super(argv, jar_options)
-        war_name = options['jar_name'] || "#{File.basename(Dir.pwd)}.war"
-        war_builder = org.torquebox.core.JarBuilder.new
+        jar_options.delete(:destination)
+        jar_path = super(argv, jar_options)
+        begin
+          war_path = File.join(options[:destination], options[:war_name])
+          war_builder = org.torquebox.core.JarBuilder.new
 
-        war_builder.add_string('WEB-INF/web.xml',
-                               read_base_xml('web.xml'))
-        war_builder.add_string('WEB-INF/jboss-deployment-structure.xml',
-                               read_base_xml('jboss-deployment-structure.xml'))
-        war_builder.add_file("WEB-INF/lib/#{jar_name}", jar_name)
+          war_builder.add_string('WEB-INF/web.xml',
+                                 read_base_xml('web.xml'))
+          war_builder.add_string('WEB-INF/jboss-deployment-structure.xml',
+                                 read_base_xml('jboss-deployment-structure.xml'))
+          war_builder.add_file("WEB-INF/lib/#{File.basename(jar_path)}", jar_path)
 
-        if File.exist?(war_name)
-          @logger.info("Removing {}", war_name)
-          FileUtils.rm_f(war_name)
+          if File.exist?(war_path)
+            @logger.info("Removing {}", war_path)
+            FileUtils.rm_f(war_path)
+          end
+          @logger.info("Writing {}", war_path)
+          war_builder.create(war_path)
+        ensure
+          @logger.info("Removing {}", jar_path)
+          FileUtils.rm_f(jar_path)
         end
-        @logger.info("Writing {}", war_name)
-        war_builder.create(war_name)
       end
 
       protected
