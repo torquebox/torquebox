@@ -61,28 +61,34 @@ EOS
 
       def available_options
         defaults = option_defaults
-        [{
-           :name => :destination,
-           :switch => '--destination PATH',
-           :description => "Destination directory for the jar file (default: #{defaults[:destination]})"
-         },{
-           :name => :jar_name,
-           :switch => '--name NAME',
-           :description => "Name of the jar file (default: #{defaults[:jar_name]})"
-         },{
-           :name => :include_jruby,
-           :switch => '--[no-]include-jruby',
-           :description => "Include JRuby in the jar (default: #{defaults[:include_jruby]})"
-         },{
-           :name => :bundle_gems,
-           :switch => '--[no-]bundle-gems',
-           :description => "Bundle gem dependencies in the jar (default: #{defaults[:bundle_gems]})"
-         },{
-           :name => :bundle_without,
-           :switch => '--bundle-without GROUPS',
-           :description => "Bundler groups to skip (default: #{defaults[:bundle_without]})",
-           :type => Array
-         }]
+        [
+          {
+            :name => :destination,
+            :switch => '--destination PATH',
+            :description => "Destination directory for the jar file (default: #{defaults[:destination]})"
+          },
+          {
+            :name => :jar_name,
+            :switch => '--name NAME',
+            :description => "Name of the jar file (default: #{defaults[:jar_name]})"
+          },
+          {
+            :name => :include_jruby,
+            :switch => '--[no-]include-jruby',
+            :description => "Include JRuby in the jar (default: #{defaults[:include_jruby]})"
+          },
+          {
+            :name => :bundle_gems,
+            :switch => '--[no-]bundle-gems',
+            :description => "Bundle gem dependencies in the jar (default: #{defaults[:bundle_gems]})"
+          },
+          {
+            :name => :bundle_without,
+            :switch => '--bundle-without GROUPS',
+            :description => "Bundler groups to skip (default: #{defaults[:bundle_without]})",
+            :type => Array
+          }
+        ]
       end
 
       def setup_parser(parser, options)
@@ -107,7 +113,7 @@ EOS
           add_jruby_files(jar_builder)
         end
 
-        add_app_files(jar_builder, options[:jar_name])
+        add_app_files(jar_builder)
 
         if options[:bundle_gems]
           tmpdir = Dir.mktmpdir("tmptorqueboxjar", ".")
@@ -146,7 +152,7 @@ EOS
         jar_builder.shade_jar("#{rb_config['libdir']}/jruby.jar")
       end
 
-      def add_app_files(jar_builder, jar_name)
+      def add_app_files(jar_builder)
         @logger.trace("Adding application files to jar...")
         add_files(jar_builder,
                   :file_prefix => Dir.pwd,

@@ -19,17 +19,15 @@ module TorqueBox
     class War < Jar
 
       def option_defaults
-       super.merge({:war_name => "#{File.basename(Dir.pwd)}.war"})
+        super.merge(:war_name => "#{File.basename(Dir.pwd)}.war")
       end
 
       def available_options
         super
-          .reject {|v| v[:name] == :jar_name}
-          .unshift({
-                     :name => :war_name,
-                     :switch => '--name NAME',
-                     :description => "Name of the war file (default: #{option_defaults[:war_name]})"
-                   })
+          .reject { |v| v[:name] == :jar_name }
+          .unshift(:name => :war_name,
+                   :switch => '--name NAME',
+                   :description => "Name of the war file (default: #{option_defaults[:war_name]})")
       end
 
       def run(argv, options)
