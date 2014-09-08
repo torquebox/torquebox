@@ -12,22 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-java_import org.projectodd.wunderboss.codecs.StringCodec
+java_import org.projectodd.wunderboss.codecs.BytesCodec
 
 module TorqueBox
   module Codecs
-    class Marshal < StringCodec
+    class Marshal < BytesCodec
 
       def initialize
         super("marshal", "application/ruby-marshal")
       end
 
       def encode(data)
-        ::Marshal.dump(data) unless data.nil?
+        ::Marshal.dump(data).to_java_bytes unless data.nil?
       end
 
       def decode(data)
-        ::Marshal.restore(data) unless data.nil?
+        ::Marshal.restore(String.from_java_bytes(data)) unless data.nil?
       end
 
     end
