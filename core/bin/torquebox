@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+java.lang.System.set_property('logback.configurationFile',
+                              File.join(File.dirname(__FILE__), '..', 'lib', 'resources', 'logback-cli.xml'))
 
 require 'torquebox-core'
 
