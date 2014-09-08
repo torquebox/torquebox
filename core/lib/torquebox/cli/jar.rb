@@ -79,7 +79,7 @@ EOS
       def run(_argv, options)
         options = DEFAULTS.merge(options)
         jar_name = options['jar_name']
-        @logger.debug("Creating jar with options %s", options.inspect)
+        @logger.debug("Creating jar with options {}", options.inspect)
 
         jar_builder = org.torquebox.core.JarBuilder.new
         jar_builder.add_manifest_attribute("Main-Class", "org.torquebox.core.TorqueBoxMain")
@@ -100,10 +100,10 @@ EOS
         add_torquebox_files(jar_builder)
 
         if File.exist?(jar_name)
-          @logger.info("Removing %s", jar_name)
+          @logger.info("Removing {}", jar_name)
           FileUtils.rm_f(jar_name)
         end
-        @logger.info("Writing %s", jar_name)
+        @logger.info("Writing {}", jar_name)
         jar_builder.create(jar_name)
         jar_name
       ensure
@@ -226,7 +226,7 @@ EOS
 
       def add_torquebox_files(jar_builder)
         TorqueBox::Jars.list.each do |jar|
-          @logger.debug("Shading jar %s", jar)
+          @logger.debug("Shading jar {}", jar)
           jar_builder.shade_jar(jar)
         end
       end

@@ -32,10 +32,10 @@ module TorqueBox
         war_builder.add_file("WEB-INF/lib/#{jar_name}", jar_name)
 
         if File.exist?(war_name)
-          @logger.info("Removing %s", war_name)
+          @logger.info("Removing {}", war_name)
           FileUtils.rm_f(war_name)
         end
-        @logger.info("Writing %s", war_name)
+        @logger.info("Writing {}", war_name)
         war_builder.create(war_name)
       end
 

@@ -128,7 +128,7 @@ module TorqueBox
         create_options = extract_options(options, WBScheduling::CreateOption)
         comp = WB.find_or_create_component(WBScheduling.java_class, name,
                                            create_options)
-        @logger.debug("TorqueBox::Scheduling::Scheduler '%s' has component %s",
+        @logger.debug("TorqueBox::Scheduling::Scheduler '{}' has component {}",
                       name, comp)
         @internal_scheduler = comp
         at_exit { stop }
