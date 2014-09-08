@@ -63,7 +63,7 @@ module TorqueBox
       extracted_options = {}
       options.each_pair do |key, value|
         if opts_hash.include?(key)
-          extracted_options[opts_hash[key]] = value
+          extracted_options[opts_hash[key]] = value.is_a?(Symbol) ? value.to_s : value
         end
       end
       extracted_options
