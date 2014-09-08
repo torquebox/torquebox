@@ -45,6 +45,13 @@ module TorqueBox
       # @option options :host [String] The host of a remote broker.
       # @option options :port [Number] (nil, 5445 if :host provided)
       #   The port of a remote broker.
+      # @option options :username [String] The username for the remote
+      #   broker.
+      # @option options :password [String] The password for the remote
+      #   broker.
+      # @option options :remote_type [Symbol] (:hornetq_standalone)
+      #   When connecting to a HornetQ instance running inside
+      #   WildFly, this needs to be set to :hornetq_wildfly.
       # @option options :reconnect_attempts [Number] (0) Total number
       #   of reconnect attempts to make before giving up (-1 for unlimited).
       # @option options :reconnect_retry_interval [Number] (2000) The
