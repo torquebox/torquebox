@@ -112,6 +112,10 @@ public class JarBuilder {
         }
     }
 
+    public boolean hasEntry(String name) {
+        return this.entries.containsKey(name);
+    }
+
     @SuppressWarnings("unchecked")
     protected void addEntry(String name, Object value) {
         if (entries.containsKey(name)) {

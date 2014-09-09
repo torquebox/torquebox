@@ -256,6 +256,7 @@ EOS
 
       def add_files(jar_builder, options)
         prefix = options[:file_prefix]
+        prefix += '/' unless prefix.end_with?('/')
         Dir.glob("#{prefix}#{options[:pattern]}").each do |file|
           suffix = file.sub(prefix, '')
           excludes = [options[:exclude]].compact.flatten
@@ -267,7 +268,8 @@ EOS
             end
           end
           next if suffix.include?("tmptorqueboxjar")
-          jar_builder.add_file(File.join(options[:jar_prefix], suffix), file)
+          in_jar_name = options[:jar_prefix] ? File.join(options[:jar_prefix], suffix) : suffix
+          jar_builder.add_file(in_jar_name, file)
         end
       end
 

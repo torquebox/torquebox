@@ -28,6 +28,11 @@ module TorqueBox
           .unshift(:name => :war_name,
                    :switch => '--name NAME',
                    :description => "Name of the war file (default: #{option_defaults[:war_name]})")
+          .push(:name => :resource_paths,
+                :switch => '--resource-paths PATHS',
+                :description => "Paths whose contents will be included at the top-level of the war\
+ (default: none)",
+                :type => Array)
       end
 
       def run(argv, options)
@@ -39,10 +44,23 @@ module TorqueBox
           war_path = File.join(options[:destination], options[:war_name])
           war_builder = org.torquebox.core.JarBuilder.new
 
-          war_builder.add_string('WEB-INF/web.xml',
-                                 read_base_xml('web.xml'))
-          war_builder.add_string('WEB-INF/jboss-deployment-structure.xml',
-                                 read_base_xml('jboss-deployment-structure.xml'))
+          (options[:resource_paths] || []).each do |path|
+            @logger.info("Copying contents of {} to war", path)
+            add_files(war_builder,
+                      :file_prefix => path,
+                      :pattern => "**/*")
+          end
+
+          unless war_builder.has_entry('WEB-INF/web.xml')
+            war_builder.add_string('WEB-INF/web.xml',
+                                   read_base_xml('web.xml'))
+          end
+
+          unless war_builder.has_entry('WEB-INF/jboss-deployment-structure.xml')
+            war_builder.add_string('WEB-INF/jboss-deployment-structure.xml',
+                                   read_base_xml('jboss-deployment-structure.xml'))
+          end
+
           war_builder.add_file("WEB-INF/lib/#{File.basename(jar_path)}", jar_path)
 
           if File.exist?(war_path)
