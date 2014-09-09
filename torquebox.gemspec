@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('edn', '1.0.3')
   s.add_development_dependency('yard', '~> 0.8.7.4')
   s.add_development_dependency('yard-doctest', '~> 0.1.2')
+  s.add_development_dependency('kramdown', '~> 1.4.1')
   s.add_development_dependency('builder', '~> 3.2.2')
   s.add_development_dependency('rubocop', '~> 0.25.0')
 end

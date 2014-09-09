@@ -70,16 +70,34 @@ desc 'Generate documentation via yardoc'
 task 'doc' do
   require 'fileutils'
   require 'yard'
+  require 'yaml'
+
   version_path = File.join(File.dirname(__FILE__), 'core', 'lib', 'torquebox', 'version.rb')
   require version_path
+
+  files_to_clean = []
 
   FileUtils.mkdir_p('pkg')
   readme = File.read('README.md')
   readme.sub!(/^# TorqueBox/, "# TorqueBox #{TorqueBox::VERSION}")
   File.open('pkg/README.md', 'w') { |f| f.write(readme) }
+  files_to_clean << 'pkg/README.md'
+
+  guides = YAML.load_file('docs/guides.yml')
+  final_guides = guides.map do |f|
+    content = File.read("docs/#{f}.md")
+    guides.each do |guide|
+      content.gsub!("(#{guide}.md)", "(file.#{guide}.html)")
+    end
+    out_file = "pkg/#{f}.md"
+    File.open(out_file, 'w') { |out| out.write(content) }
+    files_to_clean << out_file
+    out_file
+  end
+
   YARD::CLI::Yardoc.new.run('--title', "TorqueBox #{TorqueBox::VERSION}",
-                            '-r', 'pkg/README.md')
-  FileUtils.rm_f('pkg/README.md')
+                            '-r', 'pkg/README.md', '-', *final_guides)
+  files_to_clean.map { |f| FileUtils.rm_f(f) }
 end
 
 # Run yard-doctest to test all our @example tags
