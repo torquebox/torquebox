@@ -1,4 +1,5 @@
 require 'torquebox-web'
+require 'torquebox/spec_helpers'
 
 # Serve the Rack app in the current directory
 server = TorqueBox::Web.run(:port => 8080, :auto_start => false)
@@ -11,3 +12,5 @@ server.sockjs(:path => '/echo').on_connection do |conn|
 end
 
 server.start
+
+TorqueBox::SpecHelpers.booted

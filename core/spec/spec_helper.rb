@@ -14,6 +14,7 @@
 
 require 'securerandom'
 require 'torquebox-core'
+require 'torquebox/spec_helpers'
 
 def jruby_command
   File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])

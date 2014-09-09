@@ -38,17 +38,7 @@ module Rack
         server = ::TorqueBox::Web.run(server_options)
         yield server if block_given?
 
-        server.start
-        thread = Thread.current
-        Signal.trap("INT") do
-          org.projectodd.wunderboss.WunderBoss.shutdown_and_reset
-          thread.wakeup
-        end
-        Signal.trap("TERM") do
-          org.projectodd.wunderboss.WunderBoss.shutdown_and_reset
-          thread.wakeup
-        end
-        sleep
+        server.run_from_cli
       end
 
       def self.valid_options

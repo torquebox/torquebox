@@ -61,17 +61,7 @@ module TorqueBox
         @options = options
         @server = ::TorqueBox::Web.run(options)
         unless ENV['TORQUEBOX_CLI_SPECS']
-          @server.start
-          thread = Thread.current
-          Signal.trap("INT") do
-            org.projectodd.wunderboss.WunderBoss.shutdown_and_reset
-            thread.wakeup
-          end
-          Signal.trap("TERM") do
-            org.projectodd.wunderboss.WunderBoss.shutdown_and_reset
-            thread.wakeup
-          end
-          sleep
+          @server.run_from_cli
         end
       end
     end

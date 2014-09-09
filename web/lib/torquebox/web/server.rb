@@ -13,6 +13,7 @@
 # limitations under the License.
 
 require 'torquebox/option_utils'
+require 'torquebox/spec_helpers'
 
 module TorqueBox
 
@@ -196,6 +197,23 @@ module TorqueBox
         @logger.info("Stopping TorqueBox::Web::Server '{}'",
                      @web_component.name)
         @web_component.stop
+      end
+
+      # @api private
+      def run_from_cli
+        # Handle starting the server and listening for signals to shutdown
+        start
+        TorqueBox::SpecHelpers.booted
+        thread = Thread.current
+        Signal.trap("INT") do
+          org.projectodd.wunderboss.WunderBoss.shutdown_and_reset
+          thread.wakeup
+        end
+        Signal.trap("TERM") do
+          org.projectodd.wunderboss.WunderBoss.shutdown_and_reset
+          thread.wakeup
+        end
+        sleep
       end
 
 

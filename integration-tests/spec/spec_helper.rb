@@ -14,8 +14,10 @@
 
 CORE_DIR = "#{File.dirname(__FILE__)}/../../core"
 WEB_DIR = "#{File.dirname(__FILE__)}/../../web"
+MESSAGING_DIR = "#{File.dirname(__FILE__)}/../../messaging"
 $LOAD_PATH << "#{CORE_DIR}/lib"
 $LOAD_PATH << "#{WEB_DIR}/lib"
+$LOAD_PATH << "#{MESSAGING_DIR}/lib"
 require "#{CORE_DIR}/spec/spec_helper"
 
 require 'net/http'
@@ -84,6 +86,7 @@ EOF
         interfaces.each { |i| i.attributes.delete('security-realm') }
         hornetq = doc.root.get_elements("//hornetq-server").first
         hornetq.add_element('journal-type').text = 'NIO'
+        hornetq.add_element('security-enabled').text = 'false'
         open(standalone_xml, 'w') do |file|
           doc.write(file, 4)
         end
@@ -199,7 +202,7 @@ def torquebox(options)
   app_dir = options['--dir']
   bundle_install(app_dir)
   if uberjar?
-    before, after, command_prefix = torquebox_uberjar(app_dir, path)
+    before, after, command_prefix = uberjar(app_dir, path)
   else
     before = nil
     after = nil
@@ -212,7 +215,6 @@ def torquebox(options)
   metaclass.send(:define_method, :server_options) do
     return {
       :app_dir => app_dir,
-      :path => path,
       :port => options['--port'] || '8080',
       :before => before,
       :after => after,
@@ -221,19 +223,22 @@ def torquebox(options)
   end
 end
 
-def torquebox_uberjar(app_dir, path)
+def uberjar(app_dir, path, main = nil)
   jarfile = "#{app_dir}/#{File.basename(app_dir)}.jar"
   before = lambda do
     command = "cd #{app_dir} && #{jruby_command} #{jruby_jvm_opts} "\
     "-r 'bundler/setup' #{File.join(bin_dir, 'torquebox')}"
     if wildfly?
       name = path == '/' ? 'ROOT.war' : "#{path.sub('/', '')}.war"
-      command << " war -v --name #{name}"
+      command << " war -v --name #{name} "
+      marker_key = TorqueBox::SpecHelpers.boot_marker_env_key
+      command << "--env #{marker_key}=#{ENV[marker_key]}"
       jarfile = "#{app_dir}/#{name}"
     else
       command << " jar -v"
     end
-    jar_output = `#{command}`
+    command << " --main #{main}" if main
+    jar_output = `#{command} 2>&1`
     puts jar_output if ENV['DEBUG']
     wildfly_server.deploy(jarfile) if wildfly?
   end
@@ -255,23 +260,31 @@ def rackup(options)
       "-S rackup -s torquebox #{args} -O Quiet #{app_dir}/config.ru"
     return {
       :app_dir => app_dir,
-      :path => '/',
       :port => options['--port'] || '9292',
       :command => command
     }
   end
 end
 
-def embedded(command, options)
+def embedded(main, options)
+  app_dir = options[:dir]
+  path = File.basename(app_dir)
+  if uberjar?
+    before, after, command = uberjar(app_dir, path, main)
+  else
+    before = nil
+    after = nil
+    command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{main}"
+  end
   metaclass = class << self; self; end
   metaclass.send(:define_method, :server_options) do
-    app_dir = options.delete(:dir)
     return {
       :app_dir => app_dir,
       :chdir => app_dir,
-      :path => '/',
-      :port => options['--port'] || '8080',
-      :command => "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{command}"
+      :port => options[:port] || '8080',
+      :before => before,
+      :after => after,
+      :command => command
     }
   end
 end
@@ -282,6 +295,7 @@ def server_start(options)
   port = wildfly? ? '8080' : options[:port]
   Capybara.app_host = "http://localhost:#{port}"
   ENV['BUNDLE_GEMFILE'] = "#{app_dir}/Gemfile"
+  TorqueBox::SpecHelpers.set_boot_marker
   options[:before].call if options[:before]
   @server_after = options[:after]
   ENV['RUBYLIB'] = app_dir
@@ -297,9 +311,7 @@ def server_start(options)
     @stdout_thread, @stderr_thread = pump_server_streams(stdin, stdout,
                                                          stderr, error_seen)
   end
-  uri = URI.parse("#{Capybara.app_host}#{options[:path]}")
-  booted, last_exception = wait_for_boot(uri, 180, error_seen)
-  handle_boot_failure(last_exception, app_dir, timeout) unless booted
+  wait_for_boot(app_dir, 180, error_seen)
 end
 
 def pump_server_streams(stdin, stdout, stderr, error_seen)
@@ -326,29 +338,19 @@ def pump_server_streams(stdin, stdout, stderr, error_seen)
   [stdout_thread, stderr_thread]
 end
 
-def wait_for_boot(uri, timeout, error_seen)
+def wait_for_boot(app_dir, timeout, error_seen)
   start = Time.now
-  booted = false
-  last_exception = nil
   while (Time.now - start) < timeout
-    begin
-      Net::HTTP.get_response(uri)
-      booted = true
-      break
-    rescue Exception => ex
-      last_exception = ex
-      sleep 0.2 # sleep and retry
-    end
+    booted = TorqueBox::SpecHelpers.booted?
+    break if booted
     break if error_seen.get
+    sleep 0.2 # sleep and retry
   end
-  [booted, last_exception]
+  handle_boot_failure(app_dir, timeout, error_seen) unless booted
 end
 
-def handle_boot_failure(last_exception, app_dir, timeout)
-  if last_exception && ENV['DEBUG']
-    puts last_exception.inspect
-    puts last_exception.backtrace
-  end
+def handle_boot_failure(app_dir, timeout, error_seen)
+  raise "Application failed to boot" if error_seen.get
   if ENV['DEBUG'] && @server_pid
     puts `jstack #{@server_pid}`
   end
@@ -379,4 +381,5 @@ def server_stop
     @server_after.call
     @server_after = nil
   end
+  TorqueBox::SpecHelpers.clear_boot_marker
 end

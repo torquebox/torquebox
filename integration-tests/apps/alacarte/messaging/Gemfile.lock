@@ -1,0 +1,21 @@
+PATH
+  remote: ../../../../core
+  specs:
+    torquebox-core (4.0.0.alpha1.dev-java)
+
+PATH
+  remote: ../../../../messaging
+  specs:
+    torquebox-messaging (4.0.0.alpha1.dev-java)
+      torquebox-core (= 4.0.0.alpha1.dev)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+
+PLATFORMS
+  java
+
+DEPENDENCIES
+  torquebox-core!
+  torquebox-messaging!

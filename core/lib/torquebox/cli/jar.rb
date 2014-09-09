@@ -22,24 +22,17 @@ module TorqueBox
   class CLI
     class Jar
 
-      APP_PROPERTIES = <<-EOS
-language=ruby
-extract_paths=app/:jruby/
-root=${extract_root}/app
-init=ENV['BUNDLE_GEMFILE'] = nil; \
-require "bundler/setup"; \
-require "torquebox-web"; \
-if org.projectodd.wunderboss.WunderBoss.options.get("wildfly-service").nil?; \
+      DEFAULT_INIT = "require 'torquebox-web'; \
+if org.projectodd.wunderboss.WunderBoss.options.get('wildfly-service').nil?; \
   begin; \
-    TorqueBox::CLI.new(ARGV.unshift("run")); \
+    TorqueBox::CLI.new(ARGV.unshift('run')); \
   rescue SystemExit => e; \
     status = e.respond_to?(:status) ? e.status : 0; \
     java.lang.System.exit(status); \
   end; \
 else; \
   TorqueBox::Web.run; \
-end
-EOS
+end;"
 
       def initialize
         @logger = org.projectodd.wunderboss.WunderBoss.logger('TorqueBox')
@@ -87,6 +80,11 @@ EOS
             :switch => '--bundle-without GROUPS',
             :description => "Bundler groups to skip (default: #{defaults[:bundle_without]})",
             :type => Array
+          },
+          {
+            :name => :main,
+            :switch => '--main MAIN',
+            :description => 'File to require to bootstrap the application (if not given, assumes a web app'
           }
         ]
       end
@@ -97,6 +95,16 @@ EOS
             options[opt[:name]] = arg
           end
         end
+        parser.on('--env ENV',
+                  'Environment variable to set (format: FOO=bar)') do |arg|
+          key, value = arg.split('=')
+          if key.nil? || value.nil?
+            $stderr.puts "Error: Environment variables must be separated by '='"
+            exit 1
+          end
+          options[:env] ||= {}
+          options[:env][key] = value
+        end
       end
 
       def run(_argv, options)
@@ -104,9 +112,16 @@ EOS
         jar_path = File.join(options[:destination], options[:jar_name])
         @logger.debug("Creating jar with options {}", options.inspect)
 
+        if options[:main]
+          init = "require '#{options[:main]}'"
+        else
+          init = DEFAULT_INIT
+        end
+
         jar_builder = org.torquebox.core.JarBuilder.new
         jar_builder.add_manifest_attribute("Main-Class", "org.torquebox.core.TorqueBoxMain")
-        jar_builder.add_string("META-INF/app.properties", APP_PROPERTIES)
+        app_properties = app_properties(options[:env] || {}, init)
+        jar_builder.add_string("META-INF/app.properties", app_properties)
         jar_builder.add_string(TorqueBox::JAR_MARKER, "")
 
         if options[:include_jruby]
@@ -130,7 +145,7 @@ EOS
         jar_builder.create(jar_path)
         jar_path
       ensure
-        FileUtils.rm_rf(tmpdir) if options[:bundle_gems]
+        FileUtils.rm_rf(tmpdir) if tmpdir
       end
 
       def add_jruby_files(jar_builder)
@@ -280,6 +295,23 @@ EOS
           ruby.evalScriptlet("$stdout = File.open('#{dev_null}', 'w')")
         end
         ruby.evalScriptlet(script)
+      end
+
+      def app_properties(env, init)
+        env_str = env.map do |key, value|
+          "ENV['#{key}']='#{value}';"
+        end.join(' ')
+        <<-EOS
+language=ruby
+extract_paths=app/:jruby/
+root=${extract_root}/app
+init=ENV['BUNDLE_GEMFILE'] = nil; \
+#{env_str} \
+require "bundler/setup"; \
+#{init}; \
+require "torquebox/spec_helpers"; \
+TorqueBox::SpecHelpers.booted
+EOS
       end
     end
   end
