@@ -19,7 +19,7 @@ Lint/Void:
   Enabled: false
 
 Metrics/ClassLength:
-  Max: 250
+  Max: 300
 
 Metrics/CyclomaticComplexity:
   Max: 10
@@ -70,6 +70,9 @@ Style/HashSyntax:
   EnforcedStyle: hash_rockets
 
 Style/IfUnlessModifier:
+  Enabled: false
+
+Style/IndentHash:
   Enabled: false
 
 Style/Lambda:

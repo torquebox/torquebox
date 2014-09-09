@@ -54,39 +54,37 @@ end;"
 
       def available_options
         defaults = option_defaults
-        [
-          {
-            :name => :destination,
-            :switch => '--destination PATH',
-            :description => "Destination directory for the jar file (default: #{defaults[:destination]})"
-          },
-          {
-            :name => :jar_name,
-            :switch => '--name NAME',
-            :description => "Name of the jar file (default: #{defaults[:jar_name]})"
-          },
-          {
-            :name => :include_jruby,
-            :switch => '--[no-]include-jruby',
-            :description => "Include JRuby in the jar (default: #{defaults[:include_jruby]})"
-          },
-          {
-            :name => :bundle_gems,
-            :switch => '--[no-]bundle-gems',
-            :description => "Bundle gem dependencies in the jar (default: #{defaults[:bundle_gems]})"
-          },
-          {
-            :name => :bundle_without,
-            :switch => '--bundle-without GROUPS',
-            :description => "Bundler groups to skip (default: #{defaults[:bundle_without]})",
-            :type => Array
-          },
-          {
-            :name => :main,
-            :switch => '--main MAIN',
-            :description => 'File to require to bootstrap the application (if not given, assumes a web app'
-          }
-        ]
+        [{
+           :name => :destination,
+           :switch => '--destination PATH',
+           :description => "Destination directory for the jar file (default: #{defaults[:destination]})"
+         },
+         {
+           :name => :jar_name,
+           :switch => '--name NAME',
+           :description => "Name of the jar file (default: #{defaults[:jar_name]})"
+         },
+         {
+           :name => :include_jruby,
+           :switch => '--[no-]include-jruby',
+           :description => "Include JRuby in the jar (default: #{defaults[:include_jruby]})"
+         },
+         {
+           :name => :bundle_gems,
+           :switch => '--[no-]bundle-gems',
+           :description => "Bundle gem dependencies in the jar (default: #{defaults[:bundle_gems]})"
+         },
+         {
+           :name => :bundle_without,
+           :switch => '--bundle-without GROUPS',
+           :description => "Bundler groups to skip (default: #{defaults[:bundle_without]})",
+           :type => Array
+         },
+         {
+           :name => :main,
+           :switch => '--main MAIN',
+           :description => 'File to require to bootstrap the application (if not given, assumes a web app'
+         }]
       end
 
       def setup_parser(parser, options)

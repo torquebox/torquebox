@@ -95,7 +95,9 @@ task 'doc:spec' => 'build'
 task 'spec' => 'doc:spec'
 
 require 'rubocop/rake_task'
-RuboCop::RakeTask.new(:rubocop)
+RuboCop::RakeTask.new(:rubocop) do |cop|
+  cop.options = %W(-D)
+end
 
 # purposely no description so it's hidden from rake -T
 task 'update_version' do
