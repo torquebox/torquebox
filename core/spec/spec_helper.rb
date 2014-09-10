@@ -16,6 +16,19 @@ require 'securerandom'
 require 'torquebox-core'
 require 'torquebox/spec_helpers'
 
+RSpec.configure do |config|
+  config.raise_errors_for_deprecations!
+  # TODO: Convert everything from old should format
+  # to new expect format and delete the expect_with and
+  # mock_with config below
+  config.expect_with :rspec do |c|
+    c.syntax = [:should, :expect]
+  end
+  config.mock_with :rspec do |c|
+    c.syntax = [:should, :expect]
+  end
+end
+
 def jruby_command
   File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
 end
