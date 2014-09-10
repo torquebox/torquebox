@@ -268,7 +268,7 @@ end
 
 def embedded(main, options)
   app_dir = options[:dir]
-  path = File.basename(app_dir)
+  path = '/'
   if uberjar?
     before, after, command = uberjar(app_dir, path, main)
   else

@@ -14,32 +14,30 @@
 
 require "spec_helper"
 
-if embedded_from_disk?
-  feature "embedded sockjs example" do
-    embedded("main.rb", :dir => "#{apps_dir}/embedded/sockjs_echo")
+feature "embedded sockjs example" do
+  embedded("main.rb", :dir => "#{apps_dir}/embedded/sockjs_echo")
 
-    it "should register the rack app" do
-      visit "/"
-      page.should have_content("sockjs echo example")
-    end
+  it "should register the rack app" do
+    visit "/"
+    page.should have_content("sockjs echo example")
+  end
 
-    it "should register the sockjs endpoint" do
-      visit "/echo"
-      page.should have_content("Welcome to SockJS!")
-    end
+  it "should register the sockjs endpoint" do
+    visit "/echo"
+    page.should have_content("Welcome to SockJS!")
+  end
 
-    it "should attempt websocket upgrade" do
-      uri = URI.parse("#{Capybara.app_host}/echo/websocket")
-      Net::HTTP.start(uri.host, uri.port) do |http|
-        request = Net::HTTP::Get.new(uri.request_uri)
-        request.add_field("Upgrade", "websocket")
-        request.add_field("Connection", "Upgrade")
-        request.add_field("Sec-WebSocket-Key", "x3JJHMbDL1EzLkh9GBhXDw==")
-        request.add_field("Sec-WebSocket-Version", "13")
-        response = http.request(request)
-        response.code.should == "101"
-        response["Sec-WebSocket-Accept"].should_not be_nil
-      end
+  it "should attempt websocket upgrade" do
+    uri = URI.parse("#{Capybara.app_host}/echo/websocket")
+    Net::HTTP.start(uri.host, uri.port) do |http|
+      request = Net::HTTP::Get.new(uri.request_uri)
+      request.add_field("Upgrade", "websocket")
+      request.add_field("Connection", "Upgrade")
+      request.add_field("Sec-WebSocket-Key", "x3JJHMbDL1EzLkh9GBhXDw==")
+      request.add_field("Sec-WebSocket-Version", "13")
+      response = http.request(request)
+      response.code.should == "101"
+      response["Sec-WebSocket-Accept"].should_not be_nil
     end
   end
 end
