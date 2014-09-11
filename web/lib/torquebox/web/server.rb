@@ -232,15 +232,21 @@ module TorqueBox
       end
 
     end
-    
+
     module Undertow
+
+      TUNING_OPTIONS = [:io_threads,
+                        :worker_threads,
+                        :buffer_size,
+                        :buffers_per_region,
+                        :direct_buffers?]
 
       # Exposes tuning options for an Undertow web server by returning
       # an options map that includes an Undertow::Builder instance
       # mapped to :configuration.
-      # 
+      #
       # It takes the same options as {TorqueBox::Web#run} plus the
-      # following: 
+      # following:
       #
       # @option options [Fixnum] :io_threads the number of IO threads
       #   defaults to available processors
@@ -264,7 +270,7 @@ module TorqueBox
         builder.setBufferSize(options[:buffer_size]) if options[:buffer_size]
         builder.setBuffersPerRegion(options[:buffers_per_region]) if options[:buffers_per_region]
         builder.setDirectBuffers(options[:direct_buffers?]) unless options[:direct_buffers?].nil?
-        result = options.reject { |k,v| [:io_threads, :worker_threads, :buffer_size, :buffers_per_region, :direct_buffers?].include?(k) }
+        result = options.reject { |k, v| TUNING_OPTIONS.include?(k) }
         result[:configuration] = builder
         result
       end

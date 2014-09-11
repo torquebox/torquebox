@@ -75,13 +75,13 @@ describe TorqueBox::Web::Undertow do
   end
 
   it 'should set correct builder fields' do
-    opts = TorqueBox::Web::Undertow.builder(host: "hostname",
-                                            port: 42,
-                                            io_threads: 1,
-                                            worker_threads: 2,
-                                            buffer_size: 3,
-                                            buffers_per_region: 4,
-                                            direct_buffers?: false)
+    opts = TorqueBox::Web::Undertow.builder(:host => "hostname",
+                                            :port => 42,
+                                            :io_threads => 1,
+                                            :worker_threads => 2,
+                                            :buffer_size => 3,
+                                            :buffers_per_region => 4,
+                                            :direct_buffers? => false)
     opts.keys.sort.should == [:configuration, :host, :port]
     config = opts[:configuration]
     value(config, :io_threads).should == 1
