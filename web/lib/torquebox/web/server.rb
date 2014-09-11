@@ -232,5 +232,43 @@ module TorqueBox
       end
 
     end
+    
+    module Undertow
+
+      # Exposes tuning options for an Undertow web server by returning
+      # an options map that includes an Undertow::Builder instance
+      # mapped to :configuration.
+      # 
+      # It takes the same options as {TorqueBox::Web#run} plus the
+      # following: 
+      #
+      # @option options [Fixnum] :io_threads the number of IO threads
+      #   defaults to available processors
+      # @option options [Fixnum] :worker_threads the number of worker
+      #   threads defaults to 8 * io_threads
+      # @option options [Fixnum] :buffer_size in bytes
+      # @option options [Fixnum] :buffers_per_region defaults to
+      #   either 10 or 20 if > 128Mb of RAM
+      # @option options [Boolean] :direct_buffers? defaults to true if
+      #   > 128Mb of RAM
+      #
+      # The return value is an options map with the :configuration
+      # option replacing the ones relevant to an Undertow::Builder
+      def self.builder(options = {})
+        builder = Java::io.undertow.Undertow.builder
+        host = options[:host] || "localhost"
+        port = options[:port] || 8080
+        builder.addHttpListener(port, host)
+        builder.setIoThreads(options[:io_threads]) if options[:io_threads]
+        builder.setWorkerThreads(options[:worker_threads]) if options[:worker_threads]
+        builder.setBufferSize(options[:buffer_size]) if options[:buffer_size]
+        builder.setBuffersPerRegion(options[:buffers_per_region]) if options[:buffers_per_region]
+        builder.setDirectBuffers(options[:direct_buffers?]) unless options[:direct_buffers?].nil?
+        result = options.reject { |k,v| [:io_threads, :worker_threads, :buffer_size, :buffers_per_region, :direct_buffers?].include?(k) }
+        result[:configuration] = builder
+        result
+      end
+
+    end
   end
 end

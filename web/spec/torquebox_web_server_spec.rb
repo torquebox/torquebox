@@ -65,3 +65,32 @@ describe TorqueBox::Web::Server do
     end
   end
 end
+
+describe TorqueBox::Web::Undertow do
+
+  def value(v, field)
+    f = v.java_class.declared_field(field)
+    f.accessible = true
+    f.value(v)
+  end
+
+  it 'should set correct builder fields' do
+    opts = TorqueBox::Web::Undertow.builder(host: "hostname",
+                                            port: 42,
+                                            io_threads: 1,
+                                            worker_threads: 2,
+                                            buffer_size: 3,
+                                            buffers_per_region: 4,
+                                            direct_buffers?: false)
+    opts.keys.sort.should == [:configuration, :host, :port]
+    config = opts[:configuration]
+    value(config, :io_threads).should == 1
+    value(config, :worker_threads).should == 2
+    value(config, :buffer_size).should == 3
+    value(config, :buffers_per_region).should == 4
+    value(config, :direct_buffers).should == false
+    listener = value(config, :listeners).first
+    value(listener, :host).should == "hostname"
+    value(listener, :port).should == 42
+  end
+end
