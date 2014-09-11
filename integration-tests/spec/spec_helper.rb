@@ -65,34 +65,7 @@ EOF
       end
     end
     if wildfly?
-      require 'jbundler/aether'
-      config = JBundler::Config.new
-      aether = JBundler::AetherRuby.new(config)
-      aether.add_artifact("org.wildfly:wildfly-dist:zip:#{TorqueBox::WILDFLY_VERSION}")
-      aether.resolve
-      zip_path = aether.classpath_array.find { |dep| dep.include?('wildfly/wildfly-dist/') }
-      unzip_path = File.expand_path('../pkg', File.dirname(__FILE__))
-      wildfly_home = File.join(unzip_path, 'wildfly')
-      unless File.exist?(wildfly_home)
-        FileUtils.mkdir_p(unzip_path)
-        Dir.chdir(unzip_path) do
-          unzip(zip_path)
-          original_dir = File.expand_path(Dir['wildfly-*'].first)
-          FileUtils.mv(original_dir, wildfly_home)
-        end
-        standalone_xml = "#{wildfly_home}/standalone/configuration/standalone-full.xml"
-        doc = REXML::Document.new(File.read(standalone_xml))
-        interfaces = doc.root.get_elements("//management-interfaces/*")
-        interfaces.each { |i| i.attributes.delete('security-realm') }
-        hornetq = doc.root.get_elements("//hornetq-server").first
-        hornetq.add_element('journal-type').text = 'NIO'
-        hornetq.add_element('security-enabled').text = 'false'
-        open(standalone_xml, 'w') do |file|
-          doc.write(file, 4)
-        end
-      end
-      FileUtils.rm_rf(Dir["#{wildfly_home}/standalone/log/*"])
-      FileUtils.rm_rf(Dir["#{wildfly_home}/standalone/deployments/*"])
+      wildfly_home = install_wildfly
       TorqueSpec.configure do |torquespec_config|
         torquespec_config.jboss_home = wildfly_home
       end
@@ -382,4 +355,36 @@ def server_stop
     @server_after = nil
   end
   TorqueBox::SpecHelpers.clear_boot_marker
+end
+
+def install_wildfly
+  require 'jbundler/aether'
+  config = JBundler::Config.new
+  aether = JBundler::AetherRuby.new(config)
+  aether.add_artifact("org.wildfly:wildfly-dist:zip:#{TorqueBox::WILDFLY_VERSION}")
+  aether.resolve
+  zip_path = aether.classpath_array.find { |dep| dep.include?('wildfly/wildfly-dist/') }
+  unzip_path = File.expand_path('../pkg', File.dirname(__FILE__))
+  wildfly_home = File.join(unzip_path, 'wildfly')
+  unless File.exist?(wildfly_home)
+    FileUtils.mkdir_p(unzip_path)
+    Dir.chdir(unzip_path) do
+      unzip(zip_path)
+      original_dir = File.expand_path(Dir['wildfly-*'].first)
+      FileUtils.mv(original_dir, wildfly_home)
+    end
+    standalone_xml = "#{wildfly_home}/standalone/configuration/standalone-full.xml"
+    doc = REXML::Document.new(File.read(standalone_xml))
+    interfaces = doc.root.get_elements("//management-interfaces/*")
+    interfaces.each { |i| i.attributes.delete('security-realm') }
+    hornetq = doc.root.get_elements("//hornetq-server").first
+    hornetq.add_element('journal-type').text = 'NIO'
+    hornetq.add_element('security-enabled').text = 'false'
+    open(standalone_xml, 'w') do |file|
+      doc.write(file, 4)
+    end
+  end
+  FileUtils.rm_rf(Dir["#{wildfly_home}/standalone/log/*"])
+  FileUtils.rm_rf(Dir["#{wildfly_home}/standalone/deployments/*"])
+  wildfly_home
 end
