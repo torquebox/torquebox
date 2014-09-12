@@ -28,11 +28,15 @@ module TorqueBox
     #   @option options [Boolean] :auto_start (true) whether to start the web
     #     server as soon as an application is deployed or wait until
     #     {Server#start} is called.
-
+    #   @option options [Undertow::Builder] :configuration if non-nil,
+    #     the web server will be configured entirely from this
+    #     instance, which may be conveniently created using
+    #     {TorqueBox::Web::Undertow#builder}
 
     DEFAULT_SERVER_OPTIONS = {
       :host => 'localhost',
       :port => 8080,
+      :configuration => nil,
       :auto_start => true
     }
 
@@ -246,10 +250,10 @@ module TorqueBox
 
       # Exposes tuning options for an Undertow web server by returning
       # an options map that includes an Undertow::Builder instance
-      # mapped to :configuration.
-      #
-      # It takes the same options as {TorqueBox::Web#run} plus the
-      # following:
+      # mapped to :configuration. It takes a superset of the options
+      # for {TorqueBox::Web#run} and the map it returns may be passed
+      # directly to run. Be sure to pass the desired :host and :port
+      # here, so that the proper listener will be created.
       #
       # @option options [Fixnum] :io_threads the number of IO threads
       #   defaults to available processors
