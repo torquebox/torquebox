@@ -44,3 +44,7 @@ task :spec do
     task(:real_spec).invoke
   end
 end
+
+task :clean do
+  Dir.glob("**/target") { |dir| FileUtils.rm_rf(dir) }
+end

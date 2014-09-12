@@ -13,6 +13,10 @@ Everything is dynamic.
 
 ## Messaging
 
+Message Processors -> [listen](TorqueBox/Messaging/Destination.html#listen-instance_method)
+
+Synchronous Message Processors -> [response](TorqueBox/Messaging/Queue.html#respond-instance_method)
+
 No Stomp.
 
 ## Scheduling
