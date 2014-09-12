@@ -202,7 +202,7 @@ module TorqueBox
 
       # @api private
       class MessageHandler
-        include org.projectodd.wunderboss.messaging.MessageHandler
+        include Java::OrgProjectoddWunderbossMessaging::MessageHandler
 
         def initialize(&block)
           @block = block
