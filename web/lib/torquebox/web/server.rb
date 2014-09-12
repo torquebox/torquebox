@@ -31,7 +31,8 @@ module TorqueBox
     #   @option options [Undertow::Builder] :configuration if non-nil,
     #     the web server will be configured entirely from this
     #     instance, which may be conveniently created using
-    #     {TorqueBox::Web::Undertow#builder}
+    #     {TorqueBox::Web::Undertow.builder}
+
 
     DEFAULT_SERVER_OPTIONS = {
       :host => 'localhost',
@@ -251,7 +252,7 @@ module TorqueBox
       # Exposes tuning options for an Undertow web server by returning
       # an options map that includes an Undertow::Builder instance
       # mapped to :configuration. It takes a superset of the options
-      # for {TorqueBox::Web#run} and the map it returns may be passed
+      # for {TorqueBox::Web.run} and the map it returns may be passed
       # directly to run. Be sure to pass the desired :host and :port
       # here, so that the proper listener will be created.
       #
