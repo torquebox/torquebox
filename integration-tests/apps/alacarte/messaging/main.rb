@@ -10,7 +10,7 @@ selector_queue = TorqueBox::Messaging.queue("queue/synchronous_with_selectors",
 backchannel = TorqueBox::Messaging.queue("queue/backchannel")
 
 simple_queue.listen do |message|
-  backchannel.publish("#{message[:tstamp]} // #{message[:cheese]}")
+  backchannel.publish("#{message[:tstamp].to_f} // #{message[:cheese]}")
 end
 
 responder = lambda do |message|

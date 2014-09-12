@@ -12,7 +12,7 @@ describe "messaging alacarte rack test" do
       queue.publish(:tstamp => tstamp, :cheese => "gouda")
       backchannel = connection.queue("queue/backchannel")
       release = backchannel.receive(:timeout => 120_000)
-      release.should == "#{tstamp} // gouda"
+      release.should == "#{tstamp.to_f} // gouda"
     end
   end
 
