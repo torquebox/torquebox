@@ -12,10 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'spec_helper'
 
-module TorqueBox
-  VERSION = '4.0.0.alpha1.dev'
-  WUNDERBOSS_VERSION = '1.x.incremental.117'
-  # WUNDERBOSS_VERSION = '0.2.0-SNAPSHOT'
-  WILDFLY_VERSION = '8.1.0.Final'
+feature "feature demo app" do
+
+  torquebox('--dir' => "#{apps_dir}/rack/feature-demo",
+            '--context-path' => '/',
+            '-E' => 'production')
+
+  it 'should work for sinatra demo' do
+    visit "/?it=worked"
+    page.should have_content('it=worked')
+  end
+
+  it 'should work for sockjs demo' do
+    visit "/sockjs.html"
+    page.should have_content('message "Welcome!"')
+    page.execute_script("inp.val('foobarbaz');form.submit();")
+    page.should have_content('message "foobarbaz"')
+  end
+
 end

@@ -1,0 +1,72 @@
+GIT
+  remote: git://github.com/torquebox/feature-demo.git
+  revision: 85f709ffe4a7e7fbfce056105726abed4727e629
+  specs:
+    torquebox-feature-demo (0.1.0)
+
+PATH
+  remote: ../../../../caching
+  specs:
+    torquebox-caching (4.0.0.alpha1.dev-java)
+      torquebox-core (= 4.0.0.alpha1.dev)
+
+PATH
+  remote: ../../../../core
+  specs:
+    torquebox-core (4.0.0.alpha1.dev-java)
+
+PATH
+  remote: ../../../../messaging
+  specs:
+    torquebox-messaging (4.0.0.alpha1.dev-java)
+      torquebox-core (= 4.0.0.alpha1.dev)
+
+PATH
+  remote: ../../../../scheduling
+  specs:
+    torquebox-scheduling (4.0.0.alpha1.dev-java)
+      torquebox-core (= 4.0.0.alpha1.dev)
+
+PATH
+  remote: ../../../../web
+  specs:
+    torquebox-web (4.0.0.alpha1.dev-java)
+      rack (>= 1.4.0, < 2.0)
+      torquebox-core (= 4.0.0.alpha1.dev)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    activesupport (4.1.4)
+      i18n (~> 0.6, >= 0.6.9)
+      json (~> 1.7, >= 1.7.7)
+      minitest (~> 5.1)
+      thread_safe (~> 0.1)
+      tzinfo (~> 1.1)
+    i18n (0.6.11)
+    json (1.8.1-java)
+    minitest (5.4.0)
+    rack (1.5.2)
+    rack-protection (1.5.3)
+      rack
+    sinatra (1.4.5)
+      rack (~> 1.4)
+      rack-protection (~> 1.4)
+      tilt (~> 1.3, >= 1.3.4)
+    thread_safe (0.3.4-java)
+    tilt (1.4.1)
+    tzinfo (1.2.1)
+      thread_safe (~> 0.1)
+
+PLATFORMS
+  java
+
+DEPENDENCIES
+  activesupport (~> 4.1.4)
+  sinatra (~> 1.4.5)
+  torquebox-caching!
+  torquebox-core!
+  torquebox-feature-demo (= 0.1.0)!
+  torquebox-messaging!
+  torquebox-scheduling!
+  torquebox-web!

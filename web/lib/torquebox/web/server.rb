@@ -93,10 +93,13 @@ module TorqueBox
 
     # Return a {Server} created from the given options
     #
+    # If a server of the given name already exists, that server
+    # is returned and the passed-in create options are ignored.
+    #
     # @!macro server_options
     #
     # @return [Server]
-    def self.server(name, options = {})
+    def self.server(name = 'default', options = {})
       Server.new(name, options)
     end
 
