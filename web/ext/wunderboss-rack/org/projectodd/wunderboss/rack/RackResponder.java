@@ -16,9 +16,6 @@
 
 package org.projectodd.wunderboss.rack;
 
-import io.undertow.server.HttpServerExchange;
-import io.undertow.util.Headers;
-import io.undertow.util.HttpString;
 import org.jruby.Ruby;
 import org.jruby.RubyClass;
 import org.jruby.RubyModule;
@@ -26,7 +23,6 @@ import org.jruby.RubyObject;
 import org.jruby.RubyString;
 import org.jruby.anno.JRubyMethod;
 import org.jruby.runtime.ObjectAllocator;
-import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.builtin.IRubyObject;
 
 import java.io.IOException;
@@ -54,14 +50,14 @@ public class RackResponder extends RubyObject {
         super(runtime, metaClass);
     }
 
-    public RackResponder(Ruby runtime, RubyClass metaClass, HttpServerExchange exchange) {
+    public RackResponder(Ruby runtime, RubyClass metaClass, RackAdapter rackAdapter) {
         super(runtime, metaClass);
-        this.exchange = exchange;
+        this.rackAdapter = rackAdapter;
     }
 
     @JRubyMethod(name = "response_code=")
     public IRubyObject setResponseCode(final IRubyObject status) {
-        exchange.setResponseCode((Integer) status.toJava((Integer.class)));
+        rackAdapter.setResponseCode((Integer) status.toJava((Integer.class)));
         return getRuntime().getNil();
     }
 
@@ -69,7 +65,6 @@ public class RackResponder extends RubyObject {
     public IRubyObject addHeader(final RubyString rubyKey, final RubyString rubyValues) {
         // HTTP headers are always US_ASCII so we take a couple of shortcuts
         // for converting them from RubyStrings to Java Strings
-        final HttpString key = new HttpString(rubyKey.getBytes());
         final byte[] byteValues = rubyValues.getBytes();
         final char[] charValues = new char[byteValues.length];
         int i;
@@ -80,34 +75,26 @@ public class RackResponder extends RubyObject {
             if (charValues[i] == '\n') {
                 String value = new String(charValues, offset, i - offset);
                 offset = i + 1;
-                addHeader(key, value);
+                rackAdapter.addResponseHeader(rubyKey.getBytes(), value);
             } else if (i == charValues.length - 1) {
                 String value = new String(charValues, offset, charValues.length - offset);
-                addHeader(key, value);
+                rackAdapter.addResponseHeader(rubyKey.getBytes(), value);
             }
         }
         return getRuntime().getNil();
     }
 
-    private void addHeader(final HttpString key, final String value) {
-        // Leave out the transfer-encoding header since the container takes
-        // care of chunking responses and adding that header
-        if (!Headers.TRANSFER_ENCODING.equals(key) && !"chunked".equals(value)) {
-            exchange.getResponseHeaders().add(key, value);
-        }
-    }
-
     @JRubyMethod(name = "write")
     public IRubyObject write(final RubyString string) throws IOException {
-        exchange.getOutputStream().write(string.getBytes());
+        rackAdapter.write(string.getBytes());
         return getRuntime().getNil();
     }
 
     @JRubyMethod(name = "flush")
     public IRubyObject flush() throws IOException {
-        exchange.getOutputStream().flush();
+        rackAdapter.flush();
         return getRuntime().getNil();
     }
 
-    private HttpServerExchange exchange;
+    private RackAdapter rackAdapter;
 }

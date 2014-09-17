@@ -10,6 +10,8 @@ class BasicMiddleware
     env['HTTP_foo']
     # Save off the accept header before Rack::Lint messes with it
     env['tb.accept_header'] = env['HTTP_ACCEPT']
+    # Ensure we have some object for retrieving sessions
+    fail unless env['java.servlet_request'] || env['undertow.exchange']
     @app.call(env)
   end
 end

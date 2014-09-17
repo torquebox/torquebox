@@ -16,9 +16,6 @@
 
 package org.projectodd.wunderboss.rack;
 
-import io.undertow.server.HttpServerExchange;
-import io.undertow.util.HeaderMap;
-import io.undertow.util.Headers;
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyArray;
@@ -30,8 +27,6 @@ import org.jruby.RubyString;
 import org.projectodd.wunderboss.ruby.RubyHelper;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,25 +79,18 @@ public class RackEnvironment {
         rackKeyMap.put(RubyHelper.toUsAsciiRubyString(runtime, key), value);
     }
 
-    public RubyHash getEnv(final HttpServerExchange exchange,
-                           final RackChannel inputChannel,
-                           final String contextPath) throws IOException {
+    public RubyHash getEnv(final RackAdapter rackAdapter,
+                           final RackChannel inputChannel) throws IOException {
         // TODO: Should we only use this faster RackEnvironmentHash if we detect
         // specific JRuby versions that we know are compatible?
-        final RackEnvironmentHash env = new RackEnvironmentHash(runtime, exchange, rackKeyMap);
+        final RackEnvironmentHash env = new RackEnvironmentHash(runtime, rackAdapter, rackKeyMap);
         env.lazyPut(RACK_KEY.RACK_INPUT, inputChannel, false);
         env.lazyPut(RACK_KEY.RACK_ERRORS, errors, false);
 
         // Don't use request.getPathInfo because that gets decoded by the container
-        String pathInfo = exchange.getRequestURI();
-        String resolvedPath = exchange.getResolvedPath();
+        String pathInfo = rackAdapter.getPathInfo();
 
-        // strip contextPath and servletPath from pathInfo
-        if (pathInfo.startsWith(resolvedPath) && !resolvedPath.equals("/")) {
-            pathInfo = pathInfo.substring(resolvedPath.length());
-        }
-
-        String scriptName = exchange.getResolvedPath();
+        String scriptName = rackAdapter.getScriptName();
         // SCRIPT_NAME should be an empty string for the root
         if (scriptName.equals("/")) {
             scriptName = "";
@@ -112,18 +100,18 @@ public class RackEnvironment {
         // into RackEnvironmentHash where their values are lazily computed
         // We should probably move everything over just to get all this code
         // in one place
-        env.lazyPut(RACK_KEY.REQUEST_METHOD, exchange.getRequestMethod(), true);
+        env.lazyPut(RACK_KEY.REQUEST_METHOD, rackAdapter.getRequestMethod(), true);
         env.lazyPut(RACK_KEY.SCRIPT_NAME, scriptName, false);
         env.lazyPut(RACK_KEY.PATH_INFO, pathInfo, false);
-        env.lazyPut(RACK_KEY.QUERY_STRING, exchange.getQueryString(), false);
+        env.lazyPut(RACK_KEY.QUERY_STRING, rackAdapter.getQueryString(), false);
         env.lazyPut(RACK_KEY.REQUEST_URI, scriptName + pathInfo, false);
-        env.lazyPut(RACK_KEY.URL_SCHEME, exchange.getRequestScheme(), true);
+        env.lazyPut(RACK_KEY.URL_SCHEME, rackAdapter.getScheme(), true);
         env.lazyPut(RACK_KEY.VERSION, rackVersion, false);
         env.lazyPut(RACK_KEY.MULTITHREAD, RubyBoolean.newBoolean(runtime, true), false);
         env.lazyPut(RACK_KEY.MULTIPROCESS, RubyBoolean.newBoolean(runtime, true), false);
         env.lazyPut(RACK_KEY.RUN_ONCE, RubyBoolean.newBoolean(runtime, false), false);
 
-        if ("https".equals(exchange.getRequestScheme())) {
+        if ("https".equals(rackAdapter.getScheme())) {
             env.lazyPut(RACK_KEY.HTTPS, "on", true);
         }
 

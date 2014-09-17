@@ -16,11 +16,6 @@
 
 package org.projectodd.wunderboss.rack;
 
-import io.undertow.server.HttpServerExchange;
-import io.undertow.util.HeaderMap;
-import io.undertow.util.HeaderValues;
-import io.undertow.util.Headers;
-import io.undertow.util.HttpString;
 import org.jruby.Ruby;
 import org.jruby.RubyArray;
 import org.jruby.RubyBoolean;
@@ -32,17 +27,14 @@ import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.projectodd.wunderboss.ruby.RubyHelper;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.util.Map;
 
 public class RackEnvironmentHash extends RubyHash {
 
-    public RackEnvironmentHash(final Ruby runtime, final HttpServerExchange exchange,
+    public RackEnvironmentHash(final Ruby runtime, final RackAdapter rackAdapter,
                                final Map<RubyString, RackEnvironment.RACK_KEY> rackKeyMap) {
         super(runtime);
-        this.exchange = exchange;
-        this.headers = exchange.getRequestHeaders();
+        this.rackAdapter = rackAdapter;
         this.rackKeyMap = rackKeyMap;
     }
 
@@ -68,10 +60,8 @@ public class RackEnvironmentHash extends RubyHash {
                             httpKeyBytes[i] = '-';
                         }
                     }
-                    // this HttpString ctor has misleading variable names -
-                    // it's a copy from/to, not offset/length
-                    HttpString httpString = new HttpString(httpKeyBytes, 5, httpKeyBytes.length);
-                    fillHeaderKey(httpString, rubyKeyBytes);
+                    rackAdapter.populateRackHeaderFromBytes(this, httpKeyBytes, 5,
+                            httpKeyBytes.length, rubyKeyBytes);
                 } else {
                     fillRackKey((RubyString) rubyKey);
                 }
@@ -83,10 +73,7 @@ public class RackEnvironmentHash extends RubyHash {
             for (RubyString key : rackKeyMap.keySet()) {
                 fillRackKey(key);
             }
-
-            for (HttpString headerName : headers.getHeaderNames()) {
-                fillHeaderKey(headerName, rackHeaderNameToBytes(headerName));
-            }
+            rackAdapter.populateRackHeaders(this);
             filledEntireHash = true;
         }
     }
@@ -97,18 +84,18 @@ public class RackEnvironmentHash extends RubyHash {
             switch(rackKey) {
                 case SERVER_NAME:
                     value = RubyHelper.toUnicodeRubyString(getRuntime(),
-                            exchange.getHostName());
+                            rackAdapter.getHostName());
                     break;
                 case SERVER_PORT:
                     value = RubyHelper.toUsAsciiRubyString(getRuntime(),
-                            exchange.getDestinationAddress().getPort() + "");
+                            rackAdapter.getPort() + "");
                     break;
                 case CONTENT_TYPE:
                     value = RubyHelper.toUsAsciiRubyString(getRuntime(),
-                            headers.getFirst(Headers.CONTENT_TYPE) + "");
+                            rackAdapter.getContentType());
                     break;
                 case CONTENT_LENGTH:
-                    final int contentLength = getContentLength(headers);
+                    final int contentLength = rackAdapter.getContentLength();
                     if (contentLength >= 0) {
                         value = RubyHelper.toUsAsciiRubyString(getRuntime(),
                                 contentLength + "");
@@ -116,16 +103,13 @@ public class RackEnvironmentHash extends RubyHash {
                     break;
                 case REMOTE_ADDR:
                     value = RubyHelper.toUnicodeRubyString(getRuntime(),
-                            getRemoteAddr(exchange));
+                            rackAdapter.getRemoteAddr());
                     break;
             }
             if (value == null) {
                 value = rackValues[rackKey.ordinal()];
             }
             if (value != null) {
-                if (value instanceof HttpString) {
-                    value = value.toString();
-                }
                 if (value instanceof String) {
                     boolean usAscii = usAsciiValues[rackKey.ordinal()];
                     RubyString rubyValue = usAscii ? RubyHelper.toUsAsciiRubyString(getRuntime(), (String) value) :
@@ -138,75 +122,10 @@ public class RackEnvironmentHash extends RubyHash {
             }
         }
     }
-    private synchronized void fillHeaderKey(final HttpString key, byte[] rubyKeyBytes) {
-        // RACK spec says not to create HTTP_CONTENT_TYPE or HTTP_CONTENT_LENGTH headers
-        if (!key.equals(Headers.CONTENT_TYPE) && !key.equals(Headers.CONTENT_LENGTH)) {
-            HeaderValues headerValues = headers.get(key);
-            if (headerValues != null) {
-                String headerValue = headerValues.get(0);
-                int valueIndex = 1;
-                while (valueIndex < headerValues.size()) {
-                    headerValue += "\n" + headerValues.get(valueIndex++);
-                }
-                RubyString rubyKey = RubyHelper.toUsAsciiRubyString(getRuntime(), rubyKeyBytes);
-                put(rubyKey, RubyHelper.toUnicodeRubyString(getRuntime(), headerValue));
-            }
-        }
-    }
-
-    private static byte[] rackHeaderNameToBytes(final HttpString headerName) {
-        // This is a more performant implemention of:
-        // "HTTP_" + headerName.toUpperCase().replace('-', '_');
-        byte[] envNameBytes = new byte[headerName.length() + 5];
-        envNameBytes[0] = 'H';
-        envNameBytes[1] = 'T';
-        envNameBytes[2] = 'T';
-        envNameBytes[3] = 'P';
-        envNameBytes[4] = '_';
-        for (int i = 5; i < envNameBytes.length; i++) {
-            envNameBytes[i] = (byte) rackHeaderize((char) headerName.byteAt(i - 5));
-        }
-        return envNameBytes;
-    }
-
-    private static char rackHeaderize(char c) {
-        if (c == '-') {
-            c = '_';
-        }
-        return toUpperCase(c);
-    }
-
-    private static char toUpperCase(char c) {
-        if (c >= 'a' && c <= 'z') {
-            c -= 32;
-        }
-        return c;
-    }
-
-    private static String getRemoteAddr(final HttpServerExchange exchange) {
-        InetSocketAddress sourceAddress = exchange.getSourceAddress();
-        if(sourceAddress == null) {
-            return "";
-        }
-        InetAddress address = sourceAddress.getAddress();
-        if(address == null) {
-            return "";
-        }
-        return address.getHostAddress();
-    }
-
-    private static int getContentLength(final HeaderMap headers) {
-        final String contentLengthStr = headers.getFirst(Headers.CONTENT_LENGTH);
-        if (contentLengthStr == null || contentLengthStr.isEmpty()) {
-            return -1;
-        }
-        return Integer.parseInt(contentLengthStr);
-    }
 
     private final Object[] rackValues = new Object[RackEnvironment.NUM_RACK_KEYS];
     private final boolean[] usAsciiValues = new boolean[RackEnvironment.NUM_RACK_KEYS];
-    private final HttpServerExchange exchange;
-    private final HeaderMap headers;
+    private final RackAdapter rackAdapter;
     private final Map<RubyString, RackEnvironment.RACK_KEY> rackKeyMap;
     private boolean filledEntireHash = false;
 

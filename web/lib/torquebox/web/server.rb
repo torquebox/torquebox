@@ -111,6 +111,7 @@ module TorqueBox
     class Server
       include TorqueBox::OptionUtils
       java_import org.projectodd.wunderboss.rack.RackHandler
+      java_import org.projectodd.wunderboss.rack.RackServlet
       java_import org.projectodd.sockjs.SockJsServer
       java_import org.projectodd.sockjs.servlet.SockJsServlet
 
@@ -144,10 +145,16 @@ module TorqueBox
         if options[:init]
           options[:init] = options[:init].to_java(java.lang.Runnable)
         end
-        handler = RackHandler.new(options[:rack_app], options[:path])
         register_options = extract_options(options, WBWeb::RegisterOption)
-        @logger.trace("Registering handler at context path {}", options[:path])
-        @web_component.register_handler(handler, register_options)
+        if WB.in_container
+          servlet = RackServlet.new(options[:rack_app])
+          @logger.trace("Registering servlet at context path {}", options[:path])
+          @web_component.register_servlet(servlet, register_options)
+        else
+          handler = RackHandler.new(options[:rack_app])
+          @logger.trace("Registering handler at context path {}", options[:path])
+          @web_component.register_handler(handler, register_options)
+        end
         handler
       end
 
