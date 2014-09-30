@@ -83,7 +83,7 @@ end;"
          {
            :name => :main,
            :switch => '--main MAIN',
-           :description => 'File to require to bootstrap the application (if not given, assumes a web app'
+           :description => 'File to require to bootstrap the application (if not given, assumes a web app)'
          }]
       end
 
@@ -93,15 +93,15 @@ end;"
             options[opt[:name]] = arg
           end
         end
-        parser.on('--env ENV',
-                  'Environment variable to set (format: FOO=bar)') do |arg|
+        parser.on('--envvar KEY=VALUE',
+                  'Environment variable to set') do |arg|
           key, value = arg.split('=')
           if key.nil? || value.nil?
             $stderr.puts "Error: Environment variables must be separated by '='"
             exit 1
           end
-          options[:env] ||= {}
-          options[:env][key] = value
+          options[:envvar] ||= {}
+          options[:envvar][key] = value
         end
       end
 
@@ -118,7 +118,7 @@ end;"
 
         jar_builder = org.torquebox.core.JarBuilder.new
         jar_builder.add_manifest_attribute("Main-Class", "org.torquebox.core.TorqueBoxMain")
-        app_properties = app_properties(options[:env] || {}, init)
+        app_properties = app_properties(options[:envvar] || {}, init)
         jar_builder.add_string("META-INF/app.properties", app_properties)
         jar_builder.add_string(TorqueBox::JAR_MARKER, "")
 

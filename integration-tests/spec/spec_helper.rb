@@ -205,7 +205,7 @@ def uberjar(app_dir, path, main = nil)
       name = path == '/' ? 'ROOT.war' : "#{path.sub('/', '')}.war"
       command << " war -v --name #{name} "
       marker_key = TorqueBox::SpecHelpers.boot_marker_env_key
-      command << "--env #{marker_key}=#{ENV[marker_key]}"
+      command << "--envvar #{marker_key}=#{ENV[marker_key]}"
       jarfile = "#{app_dir}/#{name}"
     else
       command << " jar -v"
@@ -331,9 +331,6 @@ def handle_boot_failure(app_dir, timeout, error_seen)
 end
 
 def server_stop
-  if wildfly? && @jarfile
-    wildfly_server.undeploy(@jarfile)
-  end
   if @old_pwd
     Dir.chdir(@old_pwd)
     @old_pwd = nil
