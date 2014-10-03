@@ -44,7 +44,15 @@ module TorqueBox
       end
 
       setup_common_parser(parser, options)
-      parser.parse!(argv)
+      begin
+        parser.parse!(argv)
+      rescue OptionParser::InvalidOption => e
+        puts e.message
+        puts
+        puts parser
+        exit 1
+      end
+
 
       if extension
         log_level = case options.delete(:verbosity)
