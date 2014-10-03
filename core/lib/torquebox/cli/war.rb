@@ -33,9 +33,9 @@ module TorqueBox
                 :description => "Paths whose contents will be included at the top-level of the war\
  (default: none)",
                 :type => Array)
-          .push(:name => :context_root,
-                :switch => '--context-root PATH',
-                :description => "Deploys the war to the given context root (default: the name of\
+          .push(:name => :context_path,
+                :switch => '--context-path PATH',
+                :description => "Deploys the war to the given context path (default: the name of\
  the war)")
           .push(:name => :virtual_host,
                 :switch => '--virtual-host HOST',
@@ -95,15 +95,15 @@ module TorqueBox
 
       def add_jboss_web_xml(war_builder, options)
         jboss_web = 'WEB-INF/jboss-web.xml'
-        context_root = options[:context_root]
+        context_path = options[:context_path]
         virtual_host = options[:virtual_host]
 
-        if context_root || virtual_host
+        if context_path || virtual_host
           if war_builder.has_entry(jboss_web)
-            @logger.warn("context-root or virtual-host specified, but a #{jboss_web} exists in\
+            @logger.warn("context-path or virtual-host specified, but a #{jboss_web} exists in\
  resource-paths. Ignoring options.")
           else
-            root_el = context_root ? "  <context-root>#{context_root}</context-root>\n" : ''
+            root_el = context_path ? "  <context-root>#{context_path}</context-root>\n" : ''
             host_el = virtual_host ? "  <virtual-host>#{virtual_host}</virtual-host>\n" : ''
             war_builder.add_string(jboss_web,
                                    "<jboss-web>\n#{root_el}#{host_el}</jboss-web>")
