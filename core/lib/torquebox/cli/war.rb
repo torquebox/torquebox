@@ -33,6 +33,14 @@ module TorqueBox
                 :description => "Paths whose contents will be included at the top-level of the war\
  (default: none)",
                 :type => Array)
+          .push(:name => :context_root,
+                :switch => '--context-root PATH',
+                :description => "Deploys the war to the given context root (default: the name of\
+ the war)")
+          .push(:name => :virtual_host,
+                :switch => '--virtual-host HOST',
+                :description => "Deploys the war to the named host defined in the WildFly config\
+ (default: none)")
       end
 
       def run(argv, options)
@@ -51,15 +59,9 @@ module TorqueBox
                       :pattern => "**/*")
           end
 
-          unless war_builder.has_entry('WEB-INF/web.xml')
-            war_builder.add_string('WEB-INF/web.xml',
-                                   read_base_xml('web.xml'))
-          end
-
-          unless war_builder.has_entry('WEB-INF/jboss-deployment-structure.xml')
-            war_builder.add_string('WEB-INF/jboss-deployment-structure.xml',
-                                   read_base_xml('jboss-deployment-structure.xml'))
-          end
+          add_web_xml(war_builder)
+          add_jboss_deployment_structure_xml(war_builder)
+          add_jboss_web_xml(war_builder, options)
 
           war_builder.add_file("WEB-INF/lib/#{File.basename(jar_path)}", jar_path)
 
@@ -76,6 +78,38 @@ module TorqueBox
       end
 
       protected
+
+      def add_web_xml(war_builder)
+        unless war_builder.has_entry('WEB-INF/web.xml')
+          war_builder.add_string('WEB-INF/web.xml',
+                                 read_base_xml('web.xml'))
+        end
+      end
+
+      def add_jboss_deployment_structure_xml(war_builder)
+        unless war_builder.has_entry('WEB-INF/jboss-deployment-structure.xml')
+          war_builder.add_string('WEB-INF/jboss-deployment-structure.xml',
+                                 read_base_xml('jboss-deployment-structure.xml'))
+        end
+      end
+
+      def add_jboss_web_xml(war_builder, options)
+        jboss_web = 'WEB-INF/jboss-web.xml'
+        context_root = options[:context_root]
+        virtual_host = options[:virtual_host]
+
+        if context_root || virtual_host
+          if war_builder.has_entry(jboss_web)
+            @logger.warn("context-root or virtual-host specified, but a #{jboss_web} exists in\
+ resource-paths. Ignoring options.")
+          else
+            root_el = context_root ? "  <context-root>#{context_root}</context-root>\n" : ''
+            host_el = virtual_host ? "  <virtual-host>#{virtual_host}</virtual-host>\n" : ''
+            war_builder.add_string(jboss_web,
+                                   "<jboss-web>\n#{root_el}#{host_el}</jboss-web>")
+          end
+        end
+      end
 
       def read_base_xml(name)
         java.lang.Thread.current_thread
