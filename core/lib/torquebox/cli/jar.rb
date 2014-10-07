@@ -31,7 +31,7 @@ if org.projectodd.wunderboss.WunderBoss.options.get('wildfly-service').nil?; \
     java.lang.System.exit(status); \
   end; \
 else; \
-  TorqueBox::Web.run; \
+  TorqueBox::Web.run(:rackup => '$$rackup$$'); \
 end;"
 
       def initialize
@@ -48,7 +48,8 @@ end;"
           :jar_name => "#{File.basename(Dir.pwd)}.jar",
           :include_jruby => true,
           :bundle_gems => true,
-          :bundle_without => %W(development test assets)
+          :bundle_without => %W(development test assets),
+          :rackup => 'config.ru'
         }
       end
 
@@ -89,7 +90,7 @@ end;"
 
       def setup_parser(parser, options)
         available_options.each do |opt|
-          parser.on(*(opt.values_at(:switch, :type, :description).compact)) do |arg|
+          parser.on(*(opt.values_at(:short, :switch, :type, :description).compact)) do |arg|
             options[opt[:name]] = arg
           end
         end
@@ -113,7 +114,7 @@ end;"
         if options[:main]
           init = "require '#{options[:main]}'"
         else
-          init = DEFAULT_INIT
+          init = DEFAULT_INIT.sub('$$rackup$$', options[:rackup])
         end
 
         jar_builder = org.torquebox.core.JarBuilder.new

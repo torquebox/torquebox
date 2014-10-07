@@ -173,9 +173,10 @@ end
 def torquebox(options)
   path = options['--context-path'] || '/'
   app_dir = options['--dir']
+  config_ru = options.keys.find { |k| k.end_with?('.ru') }
   bundle_install(app_dir)
   if uberjar?
-    before, after, command_prefix = uberjar(app_dir, path)
+    before, after, command_prefix = uberjar(app_dir, path, nil, config_ru)
   else
     before = nil
     after = nil
@@ -196,17 +197,13 @@ def torquebox(options)
   end
 end
 
-def uberjar(app_dir, path, main = nil)
+def uberjar(app_dir, path, main, config_ru)
   jarfile = "#{app_dir}/#{File.basename(app_dir)}.jar"
   before = lambda do
     command = "cd #{app_dir} && #{jruby_command} #{jruby_jvm_opts} "\
     "-r 'bundler/setup' #{File.join(bin_dir, 'torquebox')}"
     if wildfly?
-      name = path == '/' ? 'ROOT.war' : "#{path.sub('/', '')}.war"
-      command << " war -v --name #{name} "
-      marker_key = TorqueBox::SpecHelpers.boot_marker_env_key
-      command << "--envvar #{marker_key}=#{ENV[marker_key]}"
-      jarfile = "#{app_dir}/#{name}"
+      jarfile, command = uberwar(command, app_dir, path, config_ru)
     else
       command << " jar -v"
     end
@@ -222,6 +219,16 @@ def uberjar(app_dir, path, main = nil)
   end
   command_prefix = "java -jar #{jarfile}"
   [before, after, command_prefix]
+end
+
+def uberwar(command, app_dir, path, config_ru)
+  name = path == '/' ? 'ROOT.war' : "#{path.sub('/', '')}.war"
+  command << " war -v --name #{name}"
+  marker_key = TorqueBox::SpecHelpers.boot_marker_env_key
+  command << " --envvar #{marker_key}=#{ENV[marker_key]}"
+  command << " #{config_ru}" if config_ru
+  jarfile = "#{app_dir}/#{name}"
+  [jarfile, command]
 end
 
 def rackup(options)
@@ -243,7 +250,7 @@ def embedded(main, options)
   app_dir = options[:dir]
   path = '/'
   if uberjar?
-    before, after, command = uberjar(app_dir, path, main)
+    before, after, command = uberjar(app_dir, path, main, nil)
   else
     before = nil
     after = nil

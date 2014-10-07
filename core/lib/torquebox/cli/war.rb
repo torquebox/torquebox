@@ -18,6 +18,10 @@ module TorqueBox
   class CLI
     class War < Jar
 
+      def usage_parameters
+        "[options] [rackup_file]"
+      end
+
       def option_defaults
         super.merge(:war_name => "#{File.basename(Dir.pwd)}.war")
       end
@@ -41,10 +45,21 @@ module TorqueBox
                 :switch => '--virtual-host HOST',
                 :description => "Deploys the war to the named host defined in the WildFly config\
  (default: none)")
+          .push(:name => :env,
+                :switch => '--env ENVIRONMENT',
+                :short => '-E',
+                :description => "Environment to run under (default: development)")
       end
 
       def run(argv, options)
+        unless argv.empty?
+          options[:rackup] = argv.shift
+        end
         options = option_defaults.merge(options)
+        if options[:env]
+          options[:envvar]['RACK_ENV'] = options[:env]
+          options[:envvar]['RAILS_ENV'] = options[:env]
+        end
         jar_options = options.dup
         jar_options.delete(:destination)
         jar_path = super(argv, jar_options)

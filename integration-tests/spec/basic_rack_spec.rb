@@ -121,6 +121,25 @@ feature "basic rack at root context" do
   end
 end
 
+feature "basic rack with Rack::Deflater" do
+  torquebox('--dir' => "#{apps_dir}/rack/basic",
+            '--context-path' => '/basic-rack',
+            '-E' => 'production',
+            'deflate_config.ru' => nil)
+
+  it "should work" do
+    uri = URI.parse("#{Capybara.app_host}/basic-rack")
+    Net::HTTP.start(uri.host, uri.port) do |http|
+      request = Net::HTTP::Get.new(uri.request_uri)
+      request.add_field('Accept-Encoding', 'gzip,deflate')
+      response = http.request(request)
+      response.code.should == "200"
+      response['vary'].should == 'Accept-Encoding'
+      response['content-encoding'].should == 'gzip'
+    end
+  end
+end
+
 if embedded_from_disk?
   feature "basic rack with rackup" do
     rackup(:dir => "#{apps_dir}/rack/basic", '-E' => 'production')
