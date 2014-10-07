@@ -94,7 +94,7 @@ end;"
           end
         end
         parser.on('--envvar KEY=VALUE',
-                  'Environment variable to set') do |arg|
+                  'Specify an environment variable to set before running the app') do |arg|
           key, value = arg.split('=')
           if key.nil? || value.nil?
             $stderr.puts "Error: Environment variables must be separated by '='"
