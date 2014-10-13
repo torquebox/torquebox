@@ -37,7 +37,7 @@ describe TorqueBox::Web::CLI do
     @args += %W(-p 8765)
     TorqueBox::CLI.new(@args)
     options = TorqueBox::CLI.extensions['run'].options
-    options[:port].should == '8765'
+    options[:port].should == 8765
   end
 
   it 'should override rackup file' do

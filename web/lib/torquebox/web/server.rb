@@ -205,6 +205,10 @@ module TorqueBox
         @logger.info("Starting TorqueBox::Web::Server '{}'",
                      @web_component.name)
         @web_component.start
+        listeners.each do |listener|
+          @logger.info("Listening for {} requests on {}:{}",
+                       listener[:type], listener[:host], listener[:port])
+        end
       end
 
       # Stop the server
@@ -212,6 +216,28 @@ module TorqueBox
         @logger.info("Stopping TorqueBox::Web::Server '{}'",
                      @web_component.name)
         @web_component.stop
+      end
+
+      def listeners
+        if @web_component.respond_to?(:undertow)
+          declared_classes = Java::io.undertow.Undertow.java_class.to_java.declared_classes
+          listener_class = declared_classes.find { |c| c.name.include?('ListenerConfig') }
+          host_field = listener_class.get_declared_field('host')
+          host_field.accessible = true
+          port_field = listener_class.get_declared_field('port')
+          port_field.accessible = true
+          type_field = listener_class.get_declared_field('type');
+          type_field.accessible = true
+          undertow = @web_component.undertow
+          undertow.listeners.map do |listener|
+            host = host_field.get(listener)
+            port = port_field.get(listener)
+            type = type_field.get(listener)
+            {:host => host, :port => port, :type => type}
+          end
+        else
+          []
+        end
       end
 
       # @api private
@@ -237,6 +263,9 @@ module TorqueBox
       def initialize(name, options = {})
         @logger = WB.logger('TorqueBox::Web::Server')
         options = DEFAULT_SERVER_OPTIONS.merge(options)
+        unless options[:configuration]
+          options = Undertow.builder(options)
+        end
         validate_options(options, DEFAULT_SERVER_OPTIONS.keys)
         create_options = extract_options(options, WBWeb::CreateOption)
         web = WB.find_or_create_component(WBWeb.java_class, name,
@@ -277,8 +306,8 @@ module TorqueBox
       # option replacing the ones relevant to an Undertow::Builder
       def self.builder(options = {})
         builder = Java::io.undertow.Undertow.builder
-        host = options[:host] || "localhost"
-        port = options[:port] || 8080
+        host = options[:host] || DEFAULT_SERVER_OPTIONS[:host]
+        port = options[:port] || DEFAULT_SERVER_OPTIONS[:port]
         builder.addHttpListener(port, host)
         builder.setIoThreads(options[:io_threads]) if options[:io_threads]
         builder.setWorkerThreads(options[:worker_threads]) if options[:worker_threads]
@@ -292,4 +321,9 @@ module TorqueBox
 
     end
   end
+end
+
+# @api private
+class Java::IoUndertow::Undertow
+  field_reader :listeners
 end

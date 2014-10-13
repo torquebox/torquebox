@@ -41,7 +41,7 @@ module TorqueBox
                   'Environment to run under (default: development)') do |arg|
           ENV['RACK_ENV'] = ENV['RAILS_ENV'] = arg
         end
-        parser.on '-p', '--port PORT', 'HTTP port to listen on' do |arg|
+        parser.on '-p', '--port PORT', Integer, 'HTTP port to listen on' do |arg|
           options[:port] = arg
         end
       end
