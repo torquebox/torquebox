@@ -226,14 +226,14 @@ module TorqueBox
           host_field.accessible = true
           port_field = listener_class.get_declared_field('port')
           port_field.accessible = true
-          type_field = listener_class.get_declared_field('type');
+          type_field = listener_class.get_declared_field('type')
           type_field.accessible = true
           undertow = @web_component.undertow
           undertow.listeners.map do |listener|
             host = host_field.get(listener)
             port = port_field.get(listener)
             type = type_field.get(listener)
-            {:host => host, :port => port, :type => type}
+            { :host => host, :port => port, :type => type }
           end
         else
           []

@@ -36,6 +36,9 @@ Metrics/PerceivedComplexity:
 Style/CaseEquality:
   Enabled: false
 
+Style/ClassAndModuleChildren:
+  Enabled: false
+
 Style/ColonMethodCall:
   Enabled: false
 
