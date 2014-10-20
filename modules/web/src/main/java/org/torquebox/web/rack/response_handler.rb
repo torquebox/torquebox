@@ -50,7 +50,9 @@ module TorqueBox
           else
             out.write( body.to_java_bytes )
           end
-          servlet_response.flush_buffer
+          unless headers.fetch('X-Sendfile', nil)
+            servlet_response.flush_buffer
+          end
         rescue NativeException => e
           # Don't needlessly raise errors because of client abort exceptions
           raise unless e.cause.toString =~ /(clientabortexception|broken pipe)/i
