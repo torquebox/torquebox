@@ -19,6 +19,8 @@
       <groupId>rubygems</groupId>
       <artifactId>rake</artifactId>
       <type>gem</type>
+      <!-- Make sure the rake dep in our gemspec is liberal -->
+      <version>[0.8.7,)</version>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
