@@ -15,26 +15,39 @@
 require 'spec_helper'
 
 
-describe "Connection" do
+describe "Context" do
 
   it 'should work remotely' do
     # we have to trigger the local broker to start, and create a queue
     # there first
     TorqueBox::Messaging.queue('remote-conn', :durable => false)
-    TorqueBox::Messaging::Connection.new(:host => "localhost") do |c|
+    TorqueBox::Messaging::Context.new(:host => "localhost") do |c|
       q = c.queue('remote-conn')
       q.publish('hi')
       q.receive(:timeout => 1000).should == 'hi'
     end
   end
 
-  it "should be able to create sessions" do
-    TorqueBox::Messaging::Connection.new do |c|
-      q = TorqueBox::Messaging.queue("session", :durable => false)
-      c.create_session do |s|
-        q.publish("hi", :session => s)
-      end
-      q.receive(:timeout => 1000).should == 'hi'
+  it "should throw if a queue/topic is created on a non-remote context" do
+    TorqueBox::Messaging::Context.new do |c|
+      expect { c.queue("whatevs") }.to raise_error(/remote context/)
+      expect { c.topic("whatevs") }.to raise_error(/remote context/)
+    end
+  end
+
+  it "should throw if a listen is given a non-remote context" do
+    q = TorqueBox::Messaging.queue('foobar', :durable => false)
+
+    TorqueBox::Messaging::Context.new do |c|
+      expect { q.listen(:context => c) { |_| } }.to raise_error(/remote context/)
+    end
+  end
+
+  it "should throw if a respond is given a non-remote context" do
+    q = TorqueBox::Messaging.queue('foobar', :durable => false)
+
+    TorqueBox::Messaging::Context.new do |c|
+      expect { q.respond(:context => c) { |_| } }.to raise_error(/remote context/)
     end
   end
 

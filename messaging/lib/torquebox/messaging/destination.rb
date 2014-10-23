@@ -37,15 +37,15 @@ module TorqueBox
       }
 
       # Valid options for {#publish}.
-      PUBLISH_OPTIONS = optset(WBDestination::SendOption, :encoding)
+      PUBLISH_OPTIONS = optset(WBDestination::PublishOption, :encoding)
 
       # Send a message to this destination.
       #
       # The message can be any data that can be encoded using the
       # given :encoding.
       #
-      # If no connection is provided, the default shared connection is
-      # used. If no session is provided, a new one is opened and closed.
+      # If no context is provided, a new context will be created, then
+      # closed.
       #
       # @param message [Object] The message to send.
       # @param options [Hash] Options for message publication.
@@ -59,20 +59,18 @@ module TorqueBox
       #   undelivered messages survive restarts
       # @option options :properties [Hash] a hash to which selectors
       #   may be applied
-      # @option options :connection [Connection] a connection to use;
+      # @option options :context [Context] a context to use;
       #   caller expected to close
-      # @option options :session [Session] a session to use; caller
-      #   expected to close
       # @return [void]
       def publish(message, options = {})
         validate_options(options, PUBLISH_OPTIONS)
         options = apply_default_options(options)
         options = normalize_publish_options(options)
-        options = coerce_connection_and_session(options)
+        options = coerce_context(options)
         encoding = options[:encoding] || Messaging.default_encoding
-        @internal_destination.send(message,
-                                   Codecs[encoding],
-                                   extract_options(options, WBDestination::SendOption))
+        @internal_destination.publish(message,
+                                      Codecs[encoding],
+                                      extract_options(options, WBDestination::PublishOption))
       end
 
       # Valid options for {#receive}.
@@ -86,8 +84,8 @@ module TorqueBox
       # If a :selector is provided, then only messages having
       # properties matching that expression may be received.
       #
-      # If no connection is provided, the default shared connection is
-      # used. If no session is provided, a new one is opened and closed.
+      # If no context is provided, a new context will be created, then
+      # closed.
       #
       # @param options [Hash] Options for message receipt.
       # @option options :timeout [Number] (10000) Time in millis,
@@ -101,16 +99,14 @@ module TorqueBox
       # @option options :decode [true, false] (true) If true, the
       #   decoded message body is returned. Otherwise, the
       #   base message object is returned.
-      # @option options :connection [Connection] a connection to use;
+      # @option options :context [Context] a context to use;
       #   caller expected to close
-      # @option options :session [Session] a session to use; caller
-      #   expected to close
       # @return The message, or the return value of the block if a
       #   block is given.
       def receive(options = {}, &block)
         validate_options(options, RECEIVE_OPTIONS)
         options = apply_default_options(options)
-        options = coerce_connection_and_session(options)
+        options = coerce_context(options)
         result = @internal_destination.receive(Codecs.java_codecs,
                                                extract_options(options, WBDestination::ReceiveOption))
         msg = if result
@@ -129,8 +125,13 @@ module TorqueBox
       # If a :selector is provided, then only messages having
       # properties matching that expression will be received.
       #
-      # If no connection is provided, the default shared connection is
-      # used.
+      # If given a context, the context must be remote, and the mode
+      # of that context is ignored, since it is used solely to
+      # generate sub-contexts for each listener thread. Closing the
+      # given context will also close the listener.
+      #
+      # If no context is provided, a new context will be created, then
+      # closed.
       #
       # @param options [Hash] Options for the listener.
       # @option options :concurrency [Number] (1) The number of
@@ -140,14 +141,14 @@ module TorqueBox
       # @option options :decode [true, false] If true, the decoded
       #   message body is passed to the block. Otherwise, the
       #   base message object is passed.
-      # @option options :connection [Connection] a connection to use;
-      #   caller expected to close.
+      # @option options :context [Context] a *remote* context to
+      #   use; caller expected to close.
       # @return A listener object that can be stopped by
       #   calling .close on it.
       def listen(options = {}, &block)
         validate_options(options, LISTEN_OPTIONS)
         options = apply_default_options(options)
-        options = coerce_connection_and_session(options)
+        options = coerce_context(options)
         handler = MessageHandler.new do |message|
           block.call(options.fetch(:decode, true) ? message.body : message)
         end
@@ -171,17 +172,16 @@ module TorqueBox
       def initialize(internal_destination, options)
         @internal_destination = internal_destination
         @default_options = options[:default_options] || {}
-        @default_options[:connection] ||= options[:connection]
+        @default_options[:context] ||= options[:context]
       end
 
       def apply_default_options(options)
         @default_options.merge(options || {})
       end
 
-      def coerce_connection_and_session(options)
+      def coerce_context(options)
         options = options.dup
-        options[:connection] = options[:connection].internal_connection if options[:connection]
-        options[:session] = options[:session].internal_session if options[:session]
+        options[:context] = options[:context].internal_context if options[:context]
         options
       end
 
@@ -208,8 +208,8 @@ module TorqueBox
           @block = block
         end
 
-        def on_message(message, session)
-          @block.call(message, session)
+        def on_message(message, context)
+          @block.call(message, context)
         end
       end
 

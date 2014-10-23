@@ -37,9 +37,9 @@ module TorqueBox
       # If a selector is provided, then only messages having
       # properties matching that expression may be received.
       #
-      # If no connection is provided, a new connection is created for this
-      # subscriber. If a connection is provided, it must have its :client_id
-      # set (see Connection).
+      # If no context is provided, a new context is created for this
+      # subscriber. If a context is provided, it must have its :client_id
+      # set (see Context).
       #
       # Subscriptions should be torn down when no longer needed - (see
       # #unsubscribe).
@@ -49,14 +49,14 @@ module TorqueBox
       # @option options :decode [true, false] If true, the decoded
       #   message body is passed to the block. Otherwise, the
       #   base message object is passed.
-      # @option options :connection [Connection] a connection to use;
+      # @option options :context [Context] a context to use;
       #   caller expected to close.
       # @return A listener object that can be stopped by
       #   calling .close on it.
       def subscribe(name, options = {}, &block)
         validate_options(options, SUBSCRIBE_OPTIONS)
         options = apply_default_options(options)
-        options = coerce_connection_and_session(options)
+        options = coerce_context(options)
         handler = MessageHandler.new do |message|
           block.call(options.fetch(:decode, true) ? message.body : message)
         end
@@ -70,20 +70,20 @@ module TorqueBox
 
       # Tears down a durable topic subscription.
       #
-      # If no connection is provided, a new connection is created for
-      # this action. If a connection is provided, it must have its
+      # If no context is provided, a new context is created for
+      # this action. If a context is provided, it must have its
       # :client_id set to the same value used when creating the
       # subscription (see #subscribe).
       #
       # @param name [String] The name of the subscription.
       # @param options [Hash] Options for the subscription.
-      # @option options :connection [Connection] a connection to use;
+      # @option options :context [Context] a context to use;
       #   caller expected to close.
       # @return [void]
       def unsubscribe(name, options = {})
         validate_options(options, UNSUBSCRIBE_OPTIONS)
         options = apply_default_options(options)
-        options = coerce_connection_and_session(options)
+        options = coerce_context(options)
         @internal_destination.unsubscribe(name,
                                           extract_options(options, WBTopic::UnsubscribeOption))
       end
@@ -92,7 +92,7 @@ module TorqueBox
 
       def initialize(name, options = {})
         validate_options(options, TOPIC_OPTIONS)
-        coerced_opts = coerce_connection_and_session(options)
+        coerced_opts = coerce_context(options)
         create_options = extract_options(coerced_opts, WBMessaging::CreateTopicOption)
         super(default_broker.find_or_create_topic(name, create_options),
               options)

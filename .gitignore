@@ -36,3 +36,4 @@ pkg/
 **/lib/**/*.jar
 **/lib/*.jar
 Guardfile
+hornetq-data

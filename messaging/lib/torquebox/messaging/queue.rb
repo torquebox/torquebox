@@ -36,8 +36,8 @@ module TorqueBox
       # Can optionally be given block that will be called with
       # the message.
       #
-      # If no connection is provided, the default shared connection is
-      # used.
+      # If no context is provided, a new context will be created, then
+      # closed.
       #
       # @param message [Object] The message to send.
       # @param options [Hash] Options for message publication.
@@ -51,10 +51,8 @@ module TorqueBox
       #   undelivered messages survive restarts
       # @option options :properties [Hash] a hash to which selectors
       #   may be applied
-      # @option options :connection [Connection] a connection to use;
+      # @option options :context [Context] a context to use;
       #   caller expected to close
-      # @option options :session [Session] a session to use; caller
-      #   expected to close
       # @option options :timeout [Number] (0) Time in millis,
       #   after which the :timeout_val is returned. 0
       #   means wait forever.
@@ -65,7 +63,7 @@ module TorqueBox
       def request(message, options = {}, &block)
         validate_options(options, REQUEST_OPTIONS)
         options = apply_default_options(options)
-        options = coerce_connection_and_session(options)
+        options = coerce_context(options)
         options = normalize_publish_options(options)
         encoding = options[:encoding] || Messaging.default_encoding
         future = @internal_destination.request(message,
@@ -101,8 +99,13 @@ module TorqueBox
       # destination, and returns the result of the block call to the
       # requestor.
       #
-      # If no connection is provided, the default shared connection is
-      # used.
+      # If given a context, the context must be remote, and the mode
+      # of that context is ignored, since it is used solely to
+      # generate sub-contexts for each listener thread. Closing the
+      # given context will also close the listener.
+      #
+      # If no context is provided, a new context will be created, then
+      # closed when the responder is closed.
       #
       # @param options [Hash] Options for the listener.
       # @option options :concurrency [Number] (1) The number of
@@ -114,14 +117,14 @@ module TorqueBox
       #   base message object is passed.
       # @option options :ttl [Number] (60000) The time for the
       #   response message to live, in millis.
-      # @option options :connection [Connection] a connection to use;
-      #   caller expected to close
+      # @option options :context [Context] a *remote* context to
+      #   use; caller expected to close
       # @return A listener object that can be stopped by
       #   calling .close on it.
       def respond(options = {}, &block)
         validate_options(options, RESPOND_OPTIONS)
         options = apply_default_options(options)
-        options = coerce_connection_and_session(options)
+        options = coerce_context(options)
         handler = MessageHandler.new do |message|
           ConcreteReply.new(block.call(options.fetch(:decode, true) ? message.body : message),
                             nil)
@@ -135,7 +138,7 @@ module TorqueBox
 
       def initialize(name, options = {})
         validate_options(options, QUEUE_OPTIONS)
-        coerced_opts = coerce_connection_and_session(options)
+        coerced_opts = coerce_context(options)
         create_options = extract_options(coerced_opts, WBMessaging::CreateQueueOption)
         super(default_broker.find_or_create_queue(name, create_options),
               options)

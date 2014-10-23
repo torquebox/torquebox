@@ -7,25 +7,25 @@ describe "messaging alacarte rack test" do
 
   it "should work for simple listeners" do
     tstamp = Time.now
-    with_connection do |connection|
-      queue = connection.queue("queue/simple_queue")
+    with_context do |context|
+      queue = context.queue("queue/simple_queue")
       queue.publish(:tstamp => tstamp, :cheese => "gouda")
-      backchannel = connection.queue("queue/backchannel")
+      backchannel = context.queue("queue/backchannel")
       release = backchannel.receive(:timeout => 120_000)
       release.should == "#{tstamp.to_f} // gouda"
     end
   end
 
   it "should work for synchronous responders" do
-    with_connection do |connection|
-      queue = connection.queue("queue/synchronous_queue")
+    with_context do |context|
+      queue = context.queue("queue/synchronous_queue")
       queue.request("something").should == "Got something but I want bacon!"
     end
   end
 
   it "should work for synchronous responders with selectors" do
-    with_connection do |connection|
-      queue = connection.queue("queue/synchronous_with_selectors")
+    with_context do |context|
+      queue = context.queue("queue/synchronous_with_selectors")
       response = queue.request("bike", :properties => { "awesomeness" => 20 })
       response.should == "Got bike but I want bacon!"
 
@@ -36,12 +36,12 @@ describe "messaging alacarte rack test" do
     end
   end
 
-  def with_connection(&block)
+  def with_context(&block)
     type = wildfly? ? :hornetq_wildfly : :hornetq_standalone
     port = wildfly? ? 8080 : 5445
-    TorqueBox::Messaging::Connection.new(:host => "localhost",
-                                         :port => port,
-                                         :remote_type => type,
-                                         &block)
+    TorqueBox::Messaging::Context.new(:host => "localhost",
+                                      :port => port,
+                                      :remote_type => type,
+                                      &block)
   end
 end

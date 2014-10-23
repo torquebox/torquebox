@@ -22,8 +22,7 @@ module TorqueBox
       WBMessaging = org.projectodd.wunderboss.messaging.Messaging
       WBQueue = org.projectodd.wunderboss.messaging.Queue
       WBTopic = org.projectodd.wunderboss.messaging.Topic
-      WBConnection = org.projectodd.wunderboss.messaging.Connection
-      WBSession = org.projectodd.wunderboss.messaging.Session
+      WBContext = org.projectodd.wunderboss.messaging.Context
 
       protected
 

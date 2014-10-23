@@ -12,11 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'torquebox/messaging/connection'
+require 'torquebox/messaging/context'
 require 'torquebox/messaging/destination'
 require 'torquebox/messaging/queue'
 require 'torquebox/messaging/topic'
-require 'torquebox/messaging/session'
 require 'torquebox/messaging/hornetq'
 
 module TorqueBox
@@ -37,13 +36,14 @@ module TorqueBox
     # For remote queues, the queue must already exist in the remote
     # broker.
     #
-    # If a connection is provided, it will be remembered and
-    # used by any method that takes a `:connection` option.
+    # If a context is provided, it must be remote, and will be
+    # remembered and used by any method that takes a `:context`
+    # option.
     #
     # @param name [String] The name of the queue.
     # @param options [Hash] Options for queue creation.
-    # @option options :connection [Connection] A connection to a
-    #   remote broker to use; caller expected to close.
+    # @option options :context [Context] A context to a
+    #   *remote* broker to use; caller expected to close.
     # @option options :durable [true, false] (true) Whether messages
     #   persist across restarts.
     # @option options :selector [String] A JMS (SQL 92) expression
@@ -63,13 +63,14 @@ module TorqueBox
     # For remote topics, the topic must already exist in the remote
     # broker.
     #
-    # If a connection is provided, it will be remembered and
-    # used by any method that takes a `:connection` option.
+    # If a context is provided, it must be remote, and will be
+    # remembered and used by any method that takes a `:context`
+    # option.
     #
     # @param name [String] The name of the topic.
     # @param options [Hash] Options for topic creation.
-    # @option options :connection [Connection] A connection to a
-    #   remote broker to use; caller expected to close.
+    # @option options :context [Context] A context to a
+    #   *remote* broker to use; caller expected to close.
     # @option options :default_options [Hash] A set of default
     #   options to apply to any operations on this topic.
     # @return [Topic] The topic reference.

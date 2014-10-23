@@ -62,12 +62,12 @@ describe TorqueBox::Codecs do
 
       it "should raise if json isn't available" do
         TorqueBox::Codecs[:json].should_receive(:require).with('json').and_raise(LoadError.new)
-        lambda { TorqueBox::Codecs.encode('abc', :json) }.should raise_error(RuntimeError)
+        expect { TorqueBox::Codecs.encode('abc', :json) }.to raise_error(RuntimeError)
       end
 
       it "should not raise if json is available" do
         TorqueBox::Codecs[:json].should_receive(:require).with('json') { define_json }
-        lambda { TorqueBox::Codecs.encode('abc', :json) }.should_not raise_error
+        expect { TorqueBox::Codecs.encode('abc', :json) }.to_not raise_error
       end
 
       it "should only require json once" do

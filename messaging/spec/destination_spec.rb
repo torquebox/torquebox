@@ -52,9 +52,9 @@ describe "Destination" do
 
     it "should throw when given invalid options" do
       queue = TorqueBox::Messaging.queue("err", :durable => false)
-      lambda { queue.publish("hi", :ham => 'biscuit') }.should raise_error(ArgumentError)
-      lambda { queue.receive(:ham => 'biscuit') }.should raise_error(ArgumentError)
-      lambda { TorqueBox::Messaging.queue("err", :ham => :biscuit) }.should raise_error(ArgumentError)
+      expect { queue.publish("hi", :ham => 'biscuit') }.to raise_error(ArgumentError)
+      expect { queue.receive(:ham => 'biscuit') }.to raise_error(ArgumentError)
+      expect { TorqueBox::Messaging.queue("err", :ham => :biscuit) }.to raise_error(ArgumentError)
     end
 
     describe 'receive' do
@@ -109,7 +109,7 @@ describe "Destination" do
 
     it "should throw when given invalid options" do
       queue = TorqueBox::Messaging.queue("err", :durable => false)
-      lambda { queue.listen(:ham => 'biscuit') { |m| } }.should raise_error(ArgumentError)
+      expect { queue.listen(:ham => 'biscuit') { |m| } }.to raise_error(ArgumentError)
     end
 
     it 'should pass the message when :decode is false' do

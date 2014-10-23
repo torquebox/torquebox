@@ -32,14 +32,14 @@ describe 'AddressSettings' do
     end
 
     ["jms.#", "*", "foo"].each do |match|
-      lambda do
+      expect do
         @opts.send(:normalize_destination_match, match)
-      end.should raise_error(ArgumentError)
+      end.to raise_error(ArgumentError)
     end
   end
 
   it "should allow setting everything" do
-    lambda do
+    expect do
       @opts.address_full_message_policy = :drop
       @opts.dead_letter_address = @queue
       @opts.expiry_address = @queue
@@ -54,7 +54,7 @@ describe 'AddressSettings' do
       @opts.redelivery_delay = 1
       @opts.redelivery_multiplier = 2.0
       @opts.redistribution_delay = 1
-    end.should_not raise_error
+    end.to_not raise_error
 
   end
 
@@ -64,17 +64,17 @@ describe 'AddressSettings' do
   end
 
   it "should take a destination or name for dlq" do
-    lambda do
+    expect do
       @opts.dead_letter_address = @queue
       @opts.dead_letter_address = "jms.queue.foo"
-    end.should_not raise_error
+    end.to_not raise_error
   end
 
   it "should take a destination or name for expiry" do
-    lambda do
+    expect do
       @opts.expiry_address = @queue
       @opts.expiry_address = "jms.queue.foo"
-    end.should_not raise_error
+    end.to_not raise_error
   end
 
   it "should actually apply the settings" do
