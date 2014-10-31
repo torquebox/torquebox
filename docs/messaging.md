@@ -129,9 +129,9 @@ some performance overhead. If you plan on calling any of those
 functions in a tight loop, you can gain some performance by creating
 the context yourself:
 
-    q = TorqueBox::Messaging.queue("foo")
+    q = TorqueBox::Messaging.queue("foo", :durable => false)
     TorqueBox::Messaging::Context.new do |context|
-      10000.times do |n|
+      5000.times do |n|
         q.publish(n, :context => context)
       end
     end

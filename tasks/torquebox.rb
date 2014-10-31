@@ -145,6 +145,7 @@ module TorqueBox
         Rake::Task[:clobber].clear_prerequisites
         task 'clean' => 'clobber' do
           FileUtils.rm_rf(File.join(Dir.pwd, 'pkg'))
+          FileUtils.rm_rf(File.join(Dir.pwd, 'hornetq-data'))
         end
       end
     end

@@ -2,13 +2,13 @@ task :default => 'spec'
 
 GEMS = %w(core messaging scheduling web caching)
 
+ENV['JAVA_OPTS'] = '-XX:+TieredCompilation -XX:TieredStopAtLevel=1'
 %W(build clean install release spec).each do |task_name|
   desc "Run #{task_name} for all gems"
   task task_name do
     errors = []
     GEMS.each do |gem|
       puts ">>> Running #{task_name} for #{gem} gem"
-      ENV['JAVA_OPTS'] = '-XX:+TieredCompilation -XX:TieredStopAtLevel=1'
       success = system(%(cd #{gem} && #{$PROGRAM_NAME} #{task_name}))
       unless success
         errors << gem
@@ -102,10 +102,15 @@ end
 
 # Run yard-doctest to test all our @example tags
 namespace 'doc' do
-  desc 'Run specs for all doc @example blocks'
+  desc 'Run specs for all doc @example blocks and guide code blocks'
   task 'spec' do
+    puts ">>> Running yard doctest for example blocks"
     jruby_command = File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
     success = system(%(#{jruby_command} -r 'bundler/setup' -S yard doctest '*/lib/**/*.rb'))
+    fail unless success
+
+    puts ">>> Running specs for code blocks in guides"
+    success = system(%(cd docs && #{$PROGRAM_NAME} spec))
     fail unless success
   end
 end
