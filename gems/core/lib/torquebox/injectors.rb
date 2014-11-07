@@ -24,7 +24,8 @@ module TorqueBox
   class InjectionError < StandardError
   end
 
-  def self.fetch(something)
+  def self.fetch(something,options={})
+    timeout = options[:timeout] || 45
     unless TorqueBox::Registry.has_key?(something.to_s)
       handler_registry = TorqueBox::ServiceRegistry['torquebox.core.injection.injectable-handler-registry']
       # handler_registry should only be nil when running outside of
@@ -38,7 +39,7 @@ module TorqueBox
                                                  TorqueBox::Registry['deployment-unit'])
       service = TorqueBox::ServiceRegistry.registry.getService(service_name)
       raise InjectionError.new("Service not found for injection - #{something}") if service.nil?
-      state = TorqueBox::MSC.wait_for_service_to_start(service, 45)
+      state = TorqueBox::MSC.wait_for_service_to_start(service, timeout)
       raise InjectionError.new("Injected service failed to start - #{service_name}") if state != 'UP'
       value = service.value
       raise InjectionError.new("Injected service had no value - #{service_name}") if value.nil?
@@ -55,8 +56,8 @@ module TorqueBox
 
   module Injectors
 
-    def fetch(something)
-      TorqueBox.fetch(something)
+    def fetch(something,options={})
+      TorqueBox.fetch(something,options)
     end
     alias_method :__inject__, :fetch
 
