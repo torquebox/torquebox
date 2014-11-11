@@ -18,7 +18,7 @@ feature "basic rack at non-root context" do
 
   torquebox('--dir' => "#{apps_dir}/rack/basic",
             '--context-path' => '/basic-rack',
-            '--port' => '8081', '-E' => 'production')
+            '--port' => '8081', '-e' => 'production')
 
   it "should work for basic requests" do
     visit "/basic-rack"
@@ -110,7 +110,7 @@ end
 
 feature "basic rack at root context" do
   torquebox('--dir' => "#{apps_dir}/rack/basic", '--context-path' => '/',
-            '-E' => 'production')
+            '-e' => 'production')
 
   it "should have correct path information" do
     visit "/plaintext"
@@ -124,7 +124,7 @@ end
 feature "basic rack with Rack::Deflater" do
   torquebox('--dir' => "#{apps_dir}/rack/basic",
             '--context-path' => '/basic-rack',
-            '-E' => 'production',
+            '-e' => 'production',
             'deflate_config.ru' => nil)
 
   it "should work" do

@@ -18,7 +18,7 @@ feature "feature demo app" do
 
   torquebox('--dir' => "#{apps_dir}/rack/feature-demo",
             '--context-path' => '/',
-            '-E' => 'production')
+            '-e' => 'production')
 
   it 'should work for sinatra demo' do
     visit "/?it=worked"

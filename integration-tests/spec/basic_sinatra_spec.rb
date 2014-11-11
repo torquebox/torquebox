@@ -18,7 +18,7 @@ feature "basic sinatra test" do
 
   torquebox('--dir' => "#{apps_dir}/sinatra/basic",
             '--context-path' => '/basic-sinatra',
-            '-E' => 'production')
+            '-e' => 'production')
 
   it "should work" do
     visit "/basic-sinatra"

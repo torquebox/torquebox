@@ -17,7 +17,7 @@ require 'spec_helper'
 feature 'rack environment' do
 
   torquebox('--dir' => "#{apps_dir}/rack/env",
-            '-E' => 'production')
+            '-e' => 'production')
 
   it 'should find headers with underscores' do
     get_env('HTTP_USER_AGENT').should == 'Ruby'
