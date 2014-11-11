@@ -76,14 +76,17 @@ task 'doc' do
   require version_path
 
   files_to_clean = []
+  guides = YAML.load_file('docs/guides.yml')
 
   FileUtils.mkdir_p('pkg')
   readme = File.read('README.md')
   readme.sub!(/^# TorqueBox/, "# TorqueBox #{TorqueBox::VERSION}")
+  guides.each do |guide|
+    readme.gsub!("(docs/#{guide}.md)", "(file.#{guide}.html)")
+  end
   File.open('pkg/README.md', 'w') { |f| f.write(readme) }
   files_to_clean << 'pkg/README.md'
 
-  guides = YAML.load_file('docs/guides.yml')
   final_guides = guides.map do |f|
     content = File.read("docs/#{f}.md")
     guides.each do |guide|

@@ -19,15 +19,12 @@ should work on earlier versions.
 
 ### Installation
 
-Until we have the first TorqueBox 4 release, you'll only be able to
-install incremental builds of TorqueBox 4 built by our CI server. Head
-to our [TorqueBox 4 Incremental Builds][4x_builds] page for a list of
-incremental builds and installation instructions.
+Read the [Installation Guide](docs/installation.md) for installation
+details.
 
 ### Running directly
 
 From inside your Rack application's root directory:
-
     
     torquebox run
 
@@ -63,47 +60,25 @@ The web portion of WunderBoss uses [JBoss Undertow][undertow], which
 is also the same web server used in [WildFly][wildfly] (the successor
 to JBoss Application Server).
 
-We aim to reuse the same underlying components as WildFly where it
-makes sense, and bring our own where it doesn't. Eventually, we hope
-that TorqueBox can run on top of WildFly in addition to running
-without it, to give users an option between a full-blown Java
-application server and a very lightweight, minimal server. The
-lightweight, minimal server is what we'll focus on at first, since
-TorqueBox 3 already provides the full application server experience.
+We aim to reuse the same underlying components as WildFly so that
+TorqueBox applications can run on top of WildFly in addition to
+running without it, to give users an option between a full-blown Java
+application server and a very lightweight, minimal server.
 
 
 ## Current Status
 
-Right now TorqueBox 4 just provides a basic, high-performance Rack
-implementation. It should outperform anything else out there, but if
-you find any cases where this is not true please [let us
-know][community]. It is substantially faster than TorqueBox 3, which
-is already one of the fastest servers. We'll work on publishing
-benchmarks as time permits, and we encourage community users to do
-their own performance tests.
+Right now TorqueBox 4 provides a high-performance Rack implementation
+for web applications and basic APIs for messaging, caching, and
+scheduled jobs. The Rack support is considered production-ready, but
+the messaging, caching, and scheduling implementations are still in a
+bit more flux.
 
 ## Roadmap
 
 We're developing TorqueBox 4 while also maintaining TorqueBox 3, and
 we expect it to take some time before TorqueBox 4 comes out of alpha
 and betas and into a final release.
-
-Our first goal is for TorqueBox to become the best JRuby web server
-option. To us this means high performance, support for newer web
-technologies (WebSockets, Server Sent Events, SPDY, etc), lightweight,
-and simple to use. It may mean something else to you, and if it does
-please [let us know][community]. The basic Rack spec is implemented
-right now, with the rack.hijack API coming soon.
-
-What features from TorqueBox (or elsewhere) we tackle after web is up
-to you. It could be messaging, caching, scheduled jobs, daemons, or
-something completely different. Please [let us know][community] what
-you'd like to see.
-
-Long-term we do expect TorqueBox to run on top of WildFly for users
-that still want the full Java application server (or are trying to
-sneak Ruby into a Java shop). But this will just be an option, not the
-default.
 
 ## Building TorqueBox
 
@@ -159,4 +134,3 @@ takes quite a bit longer, but is what CI runs.
 [wunderboss]: https://github.com/projectodd/wunderboss
 [undertow]: http://undertow.io/
 [wildfly]: http://wildfly.org/
-[4x_builds]: http://torquebox.org/4x/builds/
