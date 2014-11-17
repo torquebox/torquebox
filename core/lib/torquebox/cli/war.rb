@@ -47,7 +47,7 @@ module TorqueBox
  (default: none)")
           .push(:name => :env,
                 :switch => '--env ENVIRONMENT',
-                :short => '-E',
+                :short => '-e',
                 :description => "Environment to run under (default: development)")
       end
 
