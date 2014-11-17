@@ -298,7 +298,7 @@ end;"
 
       def app_properties(env, init)
         env_str = env.map do |key, value|
-          "ENV['#{key}']='#{value}';"
+          "ENV['#{key}']||='#{value}';"
         end.join(' ')
         <<-EOS
 language=ruby
