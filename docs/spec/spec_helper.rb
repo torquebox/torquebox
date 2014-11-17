@@ -15,9 +15,11 @@
 CORE_DIR = "#{File.dirname(__FILE__)}/../../core"
 WEB_DIR = "#{File.dirname(__FILE__)}/../../web"
 MESSAGING_DIR = "#{File.dirname(__FILE__)}/../../messaging"
+SCHEDULING_DIR = "#{File.dirname(__FILE__)}/../../scheduling"
 $LOAD_PATH << "#{CORE_DIR}/lib"
 $LOAD_PATH << "#{WEB_DIR}/lib"
 $LOAD_PATH << "#{MESSAGING_DIR}/lib"
+$LOAD_PATH << "#{SCHEDULING_DIR}/lib"
 require "#{CORE_DIR}/spec/spec_helper"
 
 require 'yaml'
