@@ -1,6 +1,6 @@
 # TorqueBox
 
-This is TorqueBox 4.0 and represents a substantial change in direction
+This is TorqueBox 4 and represents a substantial change in direction
 from previous TorqueBox releases. We're moving to a lightweight,
 embedded model that runs without any Java application server, at the
 expense of a few of the more enterprisy features. For users that want
@@ -8,8 +8,22 @@ to run in a Java application server or need those enterprisy features,
 we'll provide a way to take your TorqueBox application and run it
 unmodified on a stock [WildFly][wildfly] installation.
 
+## Documentation
 
-## Running TorqueBox
+We have various guides available to help with installation, migration,
+usage, and deployment of TorqueBox 4.
+
+- [Installation Guide](docs/installation.md)
+- [Migration Guide](docs/migration.md)
+- [Web Guide](docs/web.md)
+- [Messaging Guide](docs/messaging.md)
+- [Scheduling Guide](docs/scheduling.md)
+- [Caching Guide](docs/caching.md)
+- [Executable Jar Guide](docs/jar.md)
+- [Wildfly Guide](docs/wildfly.md)
+
+
+## Quickstart for running TorqueBox
 
 ### Requirements
 
