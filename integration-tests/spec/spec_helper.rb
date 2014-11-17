@@ -35,6 +35,7 @@ require 'torquespec/server'
 Capybara.app_host = "http://localhost:8080"
 Capybara.run_server = false
 Capybara.default_driver = :poltergeist
+Capybara.default_wait_time = 10
 
 RSpec.configure do |config|
 
