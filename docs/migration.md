@@ -2,6 +2,12 @@
 
 # Migrating from TorqueBox 3 to TorqueBox 4
 
+**NOTE**: This guide is still largely a work-in-progress and missing
+quite a bit of content. Until TorqueBox 4 gets out of alpha, only
+attempt migrating TorqueBox 3 applications if they are relatively
+simple (mostly web) or you're prepared to dig into the API docs and
+source to see what's changed.
+
 TorqueBox 4 is quite different from TorqueBox 3 in several ways, the
 largest being:
 
@@ -25,12 +31,21 @@ largest being:
   resources can be set up dynamically, at runtime (more on this
   below).
 
-## Application Initialization
+## Application initialization
 
 In TorqueBox 3, most of your resources had to be set up statically at
 deploy time, either through `torquebox.yml` or `torquebox.rb`. In
 TorqueBox 4, neither of those files are supported, and you instead set
 up resources at runtime from within your application code.
+
+## Features removed since TorqueBox 3
+
+- TorqueBox::Messaging::Backgroundable and related APIs
+- stomp and stomplets
+- distributed transactions (XA)
+- services / long-running daemons
+- pooled JRuby runtimes - all Ruby code is expected to be thread-safe and run
+  in a single runtime
 
 ## Web
 
@@ -40,15 +55,12 @@ up resources at runtime from within your application code.
 
 Message Processors -> [listen](TorqueBox/Messaging/Destination.html#listen-instance_method)
 
-Synchronous Message Processors -> [response](TorqueBox/Messaging/Queue.html#respond-instance_method)
+Synchronous Message Processors -> [respond](TorqueBox/Messaging/Queue.html#respond-instance_method)
 
 not supported:
 
 - queue enumeration
 - xa
-
-No Stomp.
-=======
 
 ## Scheduling
 
@@ -59,5 +71,3 @@ Changes:
 - no passing configuration to jobs
 
 ## Caching
-
-## XA?
