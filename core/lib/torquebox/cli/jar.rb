@@ -36,6 +36,7 @@ end;"
 
       def initialize
         @logger = org.projectodd.wunderboss.WunderBoss.logger('TorqueBox')
+        @classpath = []
       end
 
       def usage_parameters
@@ -119,9 +120,9 @@ end;"
 
         jar_builder = org.torquebox.core.JarBuilder.new
         jar_builder.add_manifest_attribute("Main-Class", "org.torquebox.core.TorqueBoxMain")
-        app_properties = app_properties(options[:envvar] || {}, init)
-        jar_builder.add_string("META-INF/app.properties", app_properties)
         jar_builder.add_string(TorqueBox::JAR_MARKER, "")
+
+        add_torquebox_files(jar_builder)
 
         if options[:include_jruby]
           add_jruby_files(jar_builder)
@@ -134,7 +135,8 @@ end;"
           add_bundler_files(jar_builder, tmpdir, options[:bundle_without])
         end
 
-        add_torquebox_files(jar_builder)
+        jar_builder.add_string("META-INF/app.properties",
+                               app_properties(options[:envvar] || {}, init))
 
         if File.exist?(jar_path)
           @logger.info("Removing {}", jar_path)
@@ -163,7 +165,7 @@ end;"
                   :file_prefix => rb_config["bindir"],
                   :pattern => "/*",
                   :jar_prefix => "jruby/bin")
-        jar_builder.shade_jar("#{rb_config['libdir']}/jruby.jar")
+        add_jar(jar_builder, "#{rb_config['libdir']}/jruby.jar")
       end
 
       def add_app_files(jar_builder)
@@ -261,10 +263,21 @@ end;"
         end
       end
 
+      def add_jar(jar_builder, jar)
+        @logger.debug("Adding jar {}", jar)
+        jar_name = "jars/#{File.basename(jar)}"
+        @classpath << "${extract_root}/#{jar_name}"
+        jar_builder.add_file(jar_name, jar)
+      end
+
       def add_torquebox_files(jar_builder)
         TorqueBox::Jars.list.each do |jar|
-          @logger.debug("Shading jar {}", jar)
-          jar_builder.shade_jar(jar)
+          if File.basename(jar) =~ /^wunderboss-(rack|ruby).*?\.jar$/
+            add_jar(jar_builder, jar)
+          else
+            @logger.debug("Shading jar {}", jar)
+            jar_builder.shade_jar(jar)
+          end
         end
       end
 
@@ -300,10 +313,13 @@ end;"
         env_str = env.map do |key, value|
           "ENV['#{key}']||='#{value}';"
         end.join(' ')
+        classpath_str = @classpath.join(':')
+
         <<-EOS
 language=ruby
-extract_paths=app/:jruby/
+extract_paths=app/:jruby/:jars/
 root=${extract_root}/app
+classpath=#{classpath_str}
 init=ENV['BUNDLE_GEMFILE'] = nil; \
 #{env_str} \
 require "bundler/setup"; \
