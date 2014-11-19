@@ -33,7 +33,7 @@ module TorqueBox
       # will be returned, and any options passed to this function will
       # be ignored. To force reconfiguration of an existing cache,
       # call {stop} before calling this function.
-      # 
+      #
       # *Durability:* Entries can persist to disk via the :persist
       # option. If set to `true`, cache entries will persist in the
       # current directory. Override this by setting `:persist` to a
@@ -86,7 +86,8 @@ module TorqueBox
       # @option options :locking [Symbol] (:optimistic) transactional
       #   locking scheme
       # @option options :configuration [Configuration] a
-      #   {https://docs.jboss.org/infinispan/6.0/apidocs/org/infinispan/configuration/cache/Configuration.html Configuration} instance"
+      #   {https://docs.jboss.org/infinispan/6.0/apidocs/org/infinispan/configuration/cache/Configuration.html
+      #   Configuration} instance
       # @return [Cache] The cache reference
       def cache(name, options = {})
         validate_options(options, VALID_OPTIONS)
@@ -96,7 +97,7 @@ module TorqueBox
       end
 
       # Stop cache by name
-      # 
+      #
       # @param name [String] the name of the cache to stop
       # @return [true, false] true if successfully stopped
       def stop(name)
@@ -104,7 +105,7 @@ module TorqueBox
       end
 
       # Determine whether cache is currently running
-      # 
+      #
       # @param name [String] the name of the cache
       # @return [true, false] true if running
       def exists?(name)
@@ -112,7 +113,8 @@ module TorqueBox
       end
 
       # For advanced use, call this function to obtain a "fluent"
-      # {https://docs.jboss.org/infinispan/6.0/apidocs/org/infinispan/configuration/cache/ConfigurationBuilder.html ConfigurationBuilder}.
+      # {https://docs.jboss.org/infinispan/6.0/apidocs/org/infinispan/configuration/cache/ConfigurationBuilder.html
+      # ConfigurationBuilder}.
       # Set the desired options, and invoke its build method, the
       # result from which can be passed via the :configuration option
       # of the {cache} function.
