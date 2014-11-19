@@ -8,7 +8,7 @@ dependencies (if you are using bundler). This gives you an artifact
 that can be launched anywhere java (version 7 or higher) is
 available - no JRuby install is required. You run the jar with:
 
-    java -jar myapp.jar
+    $ java -jar myapp.jar
 
 ## Building the jar
 
@@ -46,7 +46,7 @@ Lastly, we'll need a standard `config.ru` to start the application:
 Now we can generate the jar. This will vendor our gems inside the jar,
 along with JRuby itself:
 
-    bundle exec torquebox jar
+    $ bundle exec torquebox jar
 
 You should see output like:
 
@@ -68,7 +68,7 @@ smaller artifact (we cover that in more detail below).
 
 Run the jar with (remember, your jar name may vary):
 
-    java -jar jar-example.jar
+    $ java -jar jar-example.jar
 
 You should see output like:
 
@@ -86,15 +86,15 @@ environment variables.
 When running the jar file, you can provide environment variables as
 you normally would, either exported or on the command-line:
 
-    FOO=foo BAR=bar java -jar jar-example.jar
+    $ FOO=foo BAR=bar java -jar jar-example.jar
 
 Or, you can include them in the jar itself. Try:
 
-    bundle exec torquebox jar --envvar FOO=foo --envvar BAR=bar
+    $ bundle exec torquebox jar --envvar FOO=foo --envvar BAR=bar
 
 and run it again with:
 
-    java -jar jar-example.jar
+    $ java -jar jar-example.jar
 
 Then visit <http://localhost:8080> to see the request complete with
 the environment variable values. Note that the two options above
@@ -109,21 +109,21 @@ in the jar (or override the one that is included), you can do so by
 specifying a JRuby home dir. But first, let's build a jar that doesn't
 include JRuby:
 
-    bundle exec torquebox jar --no-include-jruby
+    $ bundle exec torquebox jar --no-include-jruby
 
 This generates *much* smaller jar file - 13Mb for this example. Now,
 we can run it, either with:
 
-    JRUBY_HOME=/path/to/jruby java -jar jar-example.jar
+    $ JRUBY_HOME=/path/to/jruby java -jar jar-example.jar
 
 or:
 
-    java -Djruby.home=/path/to/jruby -jar jar-example.jar
+    $ java -Djruby.home=/path/to/jruby -jar jar-example.jar
 
 You can also create a jar without bundled gems, if they are available
 in the local JRuby install:
 
-    bundle exec torquebox jar --no-include-jruby --no-bundle-gems
+    $ bundle exec torquebox jar --no-include-jruby --no-bundle-gems
 
 This results in an even smaller jar (3.7Mb).
 
@@ -133,7 +133,7 @@ So far, we've been looking at a web application. But what if you have
 a non-web application? How do you start it? The jar command provides a
 `--main` option for this case:
 
-    bundle exec torquebox jar --main app/init
+    $ bundle exec torquebox jar --main app/init
 
 This results in a jar that, when started, will call `require
 "app/init"` after initializing JRuby, which can be used to bootstrap
