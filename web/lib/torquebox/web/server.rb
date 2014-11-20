@@ -17,8 +17,18 @@ require 'torquebox/spec_helpers'
 
 module TorqueBox
 
-  # Example usage of an embedded TorqueBox web server, including SockJS:
-  # {include:file:integration-tests/apps/embedded/sockjs_echo/main.rb}
+  # @example Example usage of an embedded TorqueBox web server, including SockJS:
+  #  require 'torquebox-web'
+  #  # Serve the Rack app in the current directory
+  #  server = TorqueBox::Web.run(:port => 8080, :auto_start => false)
+  #  # Add a SockJS server endpoint that echoes back every message
+  #  # sent by a client
+  #  server.sockjs(:path => '/echo').on_connection do |conn|
+  #    conn.on_data do |message|
+  #      conn.write(message)
+  #    end
+  #  end
+  #  server.start
   module Web
 
     # @!macro server_options
