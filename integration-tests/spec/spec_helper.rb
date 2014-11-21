@@ -366,6 +366,7 @@ def install_wildfly
   require 'jbundler/aether'
   config = JBundler::Config.new
   aether = JBundler::AetherRuby.new(config)
+  aether.add_repository('jboss', 'http://repository.jboss.org/nexus/content/groups/public/')
   aether.add_artifact("org.wildfly:wildfly-dist:zip:#{TorqueBox::WILDFLY_VERSION}")
   aether.resolve
   zip_path = aether.classpath_array.find { |dep| dep.include?('wildfly/wildfly-dist/') }
