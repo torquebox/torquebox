@@ -6,7 +6,8 @@
 quite a bit of content. Until TorqueBox 4 gets out of alpha, only
 attempt migrating TorqueBox 3 applications if they are relatively
 simple (mostly web) or you're prepared to dig into the API docs and
-source to see what's changed.
+source to see what's changed. If you do attempt to migrate your
+application, please provide us feedback so we can update the guide.
 
 TorqueBox 4 is quite different from TorqueBox 3 in several ways, the
 largest being:
@@ -38,7 +39,7 @@ deploy time, either through `torquebox.yml` or `torquebox.rb`. In
 TorqueBox 4, neither of those files are supported, and you instead set
 up resources at runtime from within your application code.
 
-## Features removed since TorqueBox 3
+## Features missing or removed since TorqueBox 3
 
 - TorqueBox::Messaging::Backgroundable and related APIs
 - stomp and stomplets
@@ -47,9 +48,11 @@ up resources at runtime from within your application code.
 - pooled JRuby runtimes - all Ruby code is expected to be thread-safe and run
   in a single runtime
 
-## Web
+Some of these may come back in some form or other, depending on our
+user's wants and needs. TorqueBox 4 is still in the early stages and
+under heavy development.
 
-### SockJS
+## Web
 
 ## Messaging
 

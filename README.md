@@ -80,7 +80,7 @@ running without it, to give users an option between a full-blown Java
 application server and a very lightweight, minimal server.
 
 
-## Current Status
+## Current status
 
 Right now TorqueBox 4 provides a high-performance Rack implementation
 for web applications and basic APIs for messaging, caching, and
