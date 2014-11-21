@@ -5,7 +5,6 @@ rvm:
 
 jdk:
   - openjdk7
-  - oraclejdk7
 
 env: DEBUG=true
 
