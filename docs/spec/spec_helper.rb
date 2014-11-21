@@ -33,6 +33,7 @@ RSpec.configure do |config|
       contents = File.readlines("#{File.dirname(__FILE__)}/../#{guide}.md")
       code = contents.select { |line| line.start_with?("    ") }
       code = code.map { |line| line.sub(/^    /, '') }
+      code = code.reject { |line| line.start_with?("$ ") }
       File.open("#{pkg_dir}/#{guide}_guide.rb", "w") do |file|
         file.write(code.join)
       end
@@ -45,3 +46,11 @@ RSpec.configure do |config|
     FileUtils.rm_rf("#{File.dirname(__FILE__)}/../hornetq-data")
   end
 end
+
+TorqueBox::Logger.log_level = 'ERROR'
+
+require 'torquebox/web'
+# Don't try to actually start servers by default
+TorqueBox::Web::DEFAULT_SERVER_OPTIONS[:auto_start] = false
+# Fake out a default rack app so config.ru files aren't looked for
+TorqueBox::Web::DEFAULT_MOUNT_OPTIONS[:rack_app] = lambda { |env| [200, {}, []] }

@@ -15,16 +15,16 @@ independently of other TorqueBox services.
 
 From inside your Rack application's root directory:
     
-    torquebox run
+    $ torquebox run
 
 If you're using Rails, ensure `torquebox` is in your `Gemfile` and
 then you can alternatively run:
 
-    rails s torquebox
+    $ rails s torquebox
 
 Of course `rackup` works as well if you prefer for your Rack apps:
 
-    rackup -s torquebox
+    $ rackup -s torquebox
 
 
 ## Running a Rack application via the API
