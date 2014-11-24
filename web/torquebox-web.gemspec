@@ -26,5 +26,5 @@ Gem::Specification.new do |s|
 
   s.requirements << "jar org.projectodd.wunderboss:wunderboss-ruby, #{TorqueBox::WUNDERBOSS_VERSION}"
   s.requirements << "jar org.projectodd.wunderboss:wunderboss-web, #{TorqueBox::WUNDERBOSS_VERSION}"
-  s.requirements << "jar org.projectodd.sockjs:sockjs-servlet, 0.1.1"
+  s.requirements << "jar org.projectodd.sockjs:sockjs-servlet, 0.1.2"
 end
