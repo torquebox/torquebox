@@ -54,7 +54,7 @@ module TorqueBox
       # Put a map of entries into the cache. Expiration options
       # override any passed to the constructor.
       #
-      # @param map [Hash] 
+      # @param map [Hash]
       # @param options [Hash] Options for entry expiration
       # @option options :ttl [Number] (-1) milliseconds the entry will
       #   live before expiry
