@@ -31,25 +31,25 @@ write them ourselves. :)
 
 Thankfully, installing WildFly is trivial:
 
-    $ wget http://download.jboss.org/wildfly/8.1.0.Final/wildfly-8.1.0.Final.zip
-    $ unzip wildfly-8.1.0.Final.zip
+    $ wget http://download.jboss.org/wildfly/8.2.0.Final/wildfly-8.2.0.Final.zip
+    $ unzip wildfly-8.2.0.Final.zip
 
 Downloading and unpacking it somewhere are all there is to it. Running
 it is easy, too:
 
-    $ wildfly-8.1.0.Final/bin/standalone.sh
+    $ wildfly-8.2.0.Final/bin/standalone.sh
 
 Pass it `-h` to see what options it supports. The main one you'll use
 is `-c` which refers to one of its config files beneath
 `standalone/configuration`. The default config doesn't include
-HornetQ, for example, so to use `immutant.messaging`, you'll need to
+HornetQ, for example, so to use TorqueBox messaging, you'll need to
 start WildFly as follows:
 
-    $ wildfly-8.1.0.Final/bin/standalone.sh -c standalone-full.xml
+    $ wildfly-8.2.0.Final/bin/standalone.sh -c standalone-full.xml
 
 And if you want clustering...
 
-    $ wildfly-8.1.0.Final/bin/standalone.sh -c standalone-full-ha.xml
+    $ wildfly-8.2.0.Final/bin/standalone.sh -c standalone-full-ha.xml
 
 You can create your own, of course, too.
 
@@ -65,7 +65,7 @@ configuration) in to a war file:
 
     $ bundle exec torquebox war
 
-The `torque war` command provides a number of configuration options,
+The `torquebox war` command provides a number of configuration options,
 all of which can be specified as command line arguments, many of which
 are the same as the ones available for the [jar] task.
 
@@ -86,7 +86,7 @@ Assuming you installed WildFly in `/srv/wildfly`, that path is
 
 Alternatively,
 
-    $ bundle exec torquebox war --destination /srv/wildfly
+    $ bundle exec torquebox war --destination /srv/wildfly/standalone/deployments
 
 If not already running, fire up WildFly to see your deployed app:
 
@@ -98,11 +98,11 @@ The URL for your handler will include a context path corresponding to
 the base name of your deployed war file. To override this and set your
 context path to "/" instead, provide a context-path when building the war:
 
-    $ bundle exec torquebox war --destination /srv/wildfly --context-path /
+    $ bundle exec torquebox war --destination /srv/wildfly/standalone/deployments --context-path /
 
 or name your war file `ROOT.war`:
 
-    $ bundle exec torquebox war --destination /srv/wildfly --name ROOT.war
+    $ bundle exec torquebox war --destination /srv/wildfly/standalone/deployments --name ROOT.war
 
 
 [WildFly]: http://wildfly.org
