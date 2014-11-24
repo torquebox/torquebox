@@ -8,7 +8,7 @@ jdk:
 
 env: DEBUG=true
 
-install: bundle install
+install: travis_retry bundle install
 
 before_script: bundle exec rake build
 
