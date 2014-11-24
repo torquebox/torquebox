@@ -27,7 +27,7 @@ feature "feature demo app" do
 
   it 'should work for sockjs demo' do
     visit "/sockjs.html"
-    page.should have_content('message "Welcome!"')
+    page.should have_content('[*] open')
     page.execute_script("inp.val('foobarbaz');form.submit();")
     page.should have_content('message "foobarbaz"')
   end
