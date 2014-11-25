@@ -3,7 +3,7 @@ task :default => 'spec'
 GEMS = %w(core messaging scheduling web caching)
 
 ENV['JAVA_OPTS'] = '-XX:+TieredCompilation -XX:TieredStopAtLevel=1'
-%W(build clean install release spec).each do |task_name|
+%W(build clean install spec).each do |task_name|
   desc "Run #{task_name} for all gems"
   task task_name do
     errors = []
@@ -23,6 +23,9 @@ end
 require "#{File.dirname(__FILE__)}/tasks/torquebox"
 TorqueBox::RakeHelper.install_bundler_tasks
 TorqueBox::RakeHelper.install_clean_tasks
+
+# Hide the release task from -T
+Rake::Task[:release].clear_comments
 
 task 'build' do
   all_jars = GEMS.map do |gem|
@@ -139,7 +142,6 @@ task 'update_version' do
   contents.sub!(current_version, new_version)
   File.open(version_path, 'w') { |f| f.write(contents) }
 end
-
 
 require "#{File.dirname(__FILE__)}/tasks/incremental"
 TorqueBox::IncrementalTasks.install

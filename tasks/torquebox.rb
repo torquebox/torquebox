@@ -114,6 +114,7 @@ module TorqueBox
       end
 
       def install_bundler_tasks
+        ENV['gem_push'] = 'false'
         helper = Bundler::GemHelper.new
 
         # this get's prepended to blunder's install task

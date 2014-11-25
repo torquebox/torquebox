@@ -139,8 +139,71 @@ takes quite a bit longer, but is what CI runs.
 
 ## Releasing
 
-    rake clean
-    rake release
+### Preparation
+
+TorqueBox 4 is released from the `torqbox` branch of
+[torquebox/torquebox-release][release_repo].
+
+Set up this repository as an additional remote for your workspace:
+
+    git remote add release git@github.com:torquebox/torquebox-release.git
+
+Ensure that the `torqbox` branch has the contents you wish to release.  Using the `-f`
+flag to force is allowed in this case, since the **torquebox-release** repository is not
+a public-facing human-cloneable repository.
+
+    git push release torqbox:torqbox -f
+
+
+### Perform the build
+
+Using the [build system](http://projectodd.ci.cloudbees.com/), select
+the **torquebox4-release** job, entering in the branch to release from
+(usually 'torqbox'), the version to release, and the next version
+after release.
+
+If something goes wrong in the release job and it needs to run again,
+be sure to reset the torquebox-release repository with the correct code first:
+
+    git push release torqbox:torqbox -f
+
+### Deploy RubyGems
+
+After the job complete successfully, the generated RubyGems will need
+to be manually deployed. Download them from the job and push each
+using:
+
+    gem push <gem_name>.gem
+
+You'll have to be an owner of the gems to do this. Bug bbrowning,
+bobmcw, or tcrawley if you are not.
+
+### Build the release API documentation
+
+Under the **Release** tab on CI, there is a
+**torquebox4-release-docs** job which builds against a tag in the
+release git repository, and publishes the API documentation to
+torquebox.org. No preparation or modification of the release
+repository is needed.  In fact, the exact tag pushed by the primary
+**torquebox-release** job is required to build the docs.
+
+### Push changes from the release repository to the official repository
+
+    git fetch release
+    git merge release/torqbox
+    git push origin torqbox
+
+### Release the project in JIRA
+
+### Announce it
+
+#### Post it on `torquebox.org`
+
+#### Notify the `torquebox-users@` list
+
+#### Tweet it.
+
+#### Set the /topic in #torquebox IRC channel using ChanServ (if you can).
 
 
 [tb_future_thread]: http://markmail.org/thread/4ffelg3qklycwhfo
@@ -148,3 +211,4 @@ takes quite a bit longer, but is what CI runs.
 [wunderboss]: https://github.com/projectodd/wunderboss
 [undertow]: http://undertow.io/
 [wildfly]: http://wildfly.org/
+[release_repo]: http://github.com/torquebox/torquebox-release
