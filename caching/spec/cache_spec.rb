@@ -64,7 +64,8 @@ describe TorqueBox::Caching do
     @cache.put_all(:a => 1, :b => 2)
     @cache[:a].should == 1
     @cache[:b].should == 2
-    @cache.put_all({:aa => 11, :bb => 22})
+    x = { :aa => 11, :bb => 22 }
+    @cache.put_all(x)
     @cache[:aa].should == 11
     @cache[:bb].should == 22
   end
