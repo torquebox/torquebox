@@ -248,7 +248,7 @@ module TorqueBox
       end
 
       def putall_m
-        @putall_m ||= @cache.java_method(:putAll, [java.util.Map,
+        @putall_m ||= @cache.java_method(:putAll, [java.util.Map.java_class,
                                                    Java::long,
                                                    java.util.concurrent.TimeUnit,
                                                    Java::long,

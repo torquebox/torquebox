@@ -60,6 +60,15 @@ describe TorqueBox::Caching do
     rheffalump.id.should == heffalump.id
   end
 
+  it "should accept a map" do
+    @cache.put_all(:a => 1, :b => 2)
+    @cache[:a].should == 1
+    @cache[:b].should == 2
+    @cache.put_all({:aa => 11, :bb => 22})
+    @cache[:aa].should == 11
+    @cache[:bb].should == 22
+  end
+
   it "should return all keys" do
     @cache.put('one', 1)
     @cache.put('two', 2)
