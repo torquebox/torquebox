@@ -74,7 +74,7 @@ You'll notice that we're publishing a hash there - we can publish
 pretty much any data structure as a message. By default, that message
 will be encoded using Ruby's built-in Marshal format. We also support
 other encodings, namely: `:edn`, `:json`, `:marshal_base64` and
-`:test`. We can choose a different encoding by passing an :encoding
+`:text`. We can choose a different encoding by passing an :encoding
 option to `publish`:
 
     q.publish({:hi => :there}, :encoding => :json)
