@@ -39,7 +39,7 @@ module TorqueBox
       # current directory. Override this by setting `:persist` to a
       # string naming the desired directory.
       #
-      # *Eviction:* Turned off by default, `:max-entries` may be set to
+      # *Eviction:* Turned off by default, `:max_entries` may be set to
       # mitigate the risk of memory exhaustion. When `:persist` is
       # enabled, evicted entries are written to disk, so that the
       # entries in memory are a subset of those in the file store,
@@ -49,7 +49,7 @@ module TorqueBox
       # *Expiration:* Both time-to-live and max idle limits are
       # supported. Units are milliseconds.
       #
-      # *Replication:* The replication mode defaults to `:dist-sync` when
+      # *Replication:* The replication mode defaults to `:dist_sync` when
       # clustered. When not clustered, the value of `:mode` is ignored,
       # and the cache will be `:local`. Asynchronous replication may
       # yield a slight performance increase at the risk of potential
@@ -69,22 +69,25 @@ module TorqueBox
       # @option options :persist [String, true, false] (nil) if non-nil,
       #   data persists across server restarts in a file store; a
       #   string value names the directory
-      # @option options :max-entries [Number] (-1) the max number of
+      # @option options :max_entries [Number] (-1) the max number of
       #   entries allowed in the cache
       # @option options :eviction [Symbol] (:none) how entries are
-      #   evicted when :max-entries is exceeded
+      #   evicted when :max_entries is exceeded
       # @option options :ttl [Number] (-1) the max time the entry will
       #   live before expiry
       # @option options :idle [Number] (-1) the time after which an
       #   entry will expire if not accessed
-      # @option options :mode [Symbol] (:dist-sync or :local)
-      #   replication mode, one of :local, :repl-sync, :repl-async,
-      #   :invalidation-sync, :invalidation-async, :dist-sync,
-      #   :dist-async
+      # @option options :mode [Symbol] (:dist_sync or :local)
+      #   replication mode, one of :local, :repl_sync, :repl_async,
+      #   :invalidation_sync, :invalidation_async, :dist_sync,
+      #   :dist_async
       # @option options :transactional [true, false] (false) whether
       #   the cache is transactional
       # @option options :locking [Symbol] (:optimistic) transactional
       #   locking scheme
+      # @option options :encoding [Symbol] (:marshal_smart) other
+      #   supported encodings include :edn, :json, :marshal,
+      #   :marshal_base64 and :text
       # @option options :configuration [Configuration] a
       #   {https://docs.jboss.org/infinispan/6.0/apidocs/org/infinispan/configuration/cache/Configuration.html
       #   Configuration} instance
