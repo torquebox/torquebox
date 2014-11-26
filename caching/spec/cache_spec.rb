@@ -368,6 +368,16 @@ describe TorqueBox::Caching do
       cache.get("akey").should == "avalue"
     end
 
+    it "should automatically evict entries over max" do
+      cache = TorqueBox::Caching.cache("max-entries", :max_entries => 3)
+      cache.put_all(:a => 1, :b => 2, :c => 3)
+      cache[:a].should == 1
+      cache[:b].should == 2
+      cache[:c].should == 3
+      cache.put(:d, 4)
+      cache[:a].should be_nil
+    end
+
     it "should expire entries based on provided expiry durations" do
       cache = TorqueBox::Caching.cache('expiring-cache', :persist => true, :ttl => 100)
       cache.put("foo", "bar")
