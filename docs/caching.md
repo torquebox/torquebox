@@ -111,18 +111,18 @@ specified, the entry is deleted after the time elapses, but the
 specified, whichever elapses first "wins" and triggers expiration.
 
     # We can set the defaults for a cache
-    e = TorqueBox::Caching.cache("baz", :ttl => 30*1000, :idle => 15*1000)
+    e = TorqueBox::Caching.cache("bar", :ttl => 30*1000, :idle => 15*1000)
 
     # All of the cache manipulation methods take the same options
     e.put(:a, 42, :ttl => -1)
-    e.put_all(m, :idle => 60*1000)
+    e.put_all({:x => 42, :y => 99}, :idle => 60*1000)
     e.put_if_absent(:a, 42, :ttl => 100000)
     e.replace(:k, 99, :ttl => 500, :idle => 500)
     e.compare_and_set(:k, 99, 100, :ttl => 1000)
     
 #### Eviction
 
-To avoid memory exhaustion, you can include the `:max-entries` option
+To avoid memory exhaustion, you can include the `:max_entries` option
 as well as the `:eviction` policy to determine which entries to evict.
 And if the `:persist` option is set, evicted entries are not deleted
 but rather flushed to disk so that the entries in memory are always a
@@ -131,7 +131,7 @@ finite subset of those on disk.
 The default eviction policy is [:lirs], which is an optimized version
 of `:lru` (Least Recently Used).
 
-    baz = TorqueBox::Caching.cache "baz", :max-entries => 3
+    baz = TorqueBox::Caching.cache "baz", :max_entries => 3
     baz[:a] = 1
     baz[:b] = 2
     baz[:c] = 3

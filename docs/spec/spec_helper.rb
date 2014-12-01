@@ -13,13 +13,15 @@
 # limitations under the License.
 
 CORE_DIR = "#{File.dirname(__FILE__)}/../../core"
-WEB_DIR = "#{File.dirname(__FILE__)}/../../web"
+CACHING_DIR = "#{File.dirname(__FILE__)}/../../caching"
 MESSAGING_DIR = "#{File.dirname(__FILE__)}/../../messaging"
 SCHEDULING_DIR = "#{File.dirname(__FILE__)}/../../scheduling"
+WEB_DIR = "#{File.dirname(__FILE__)}/../../web"
 $LOAD_PATH << "#{CORE_DIR}/lib"
-$LOAD_PATH << "#{WEB_DIR}/lib"
+$LOAD_PATH << "#{CACHING_DIR}/lib"
 $LOAD_PATH << "#{MESSAGING_DIR}/lib"
 $LOAD_PATH << "#{SCHEDULING_DIR}/lib"
+$LOAD_PATH << "#{WEB_DIR}/lib"
 require "#{CORE_DIR}/spec/spec_helper"
 
 require 'yaml'
@@ -34,6 +36,10 @@ RSpec.configure do |config|
       code = contents.select { |line| line.start_with?("    ") }
       code = code.map { |line| line.sub(/^    /, '') }
       code = code.reject { |line| line.start_with?("$ ") }
+      # transform IRB-style expression results into test assertions
+      code = code.map do |line|
+        line.sub(/(.+?)\s+\#=> (.+)/, "_ = \\1\n_.inspect.should == '\\2'")
+      end
       File.open("#{pkg_dir}/#{guide}_guide.rb", "w") do |file|
         file.write(code.join)
       end
