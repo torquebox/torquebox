@@ -116,9 +116,7 @@ public class UndertowRackAdapter implements RackAdapter {
 
     @Override
     public void populateRackHeaderFromBytes(final RubyHash rackEnv, byte[] httpBytes, int from, int to, byte[] rubyBytes) {
-        // this HttpString ctor has misleading variable names -
-        // it's a copy from/to, not offset/length
-        HttpString httpString = new HttpString(httpBytes, from, to);
+        HttpString httpString = new HttpString(httpBytes, from, to - from);
         fillHeaderKey(rackEnv, httpString, rubyBytes);
     }
 
