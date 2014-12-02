@@ -3,35 +3,38 @@
 # Caching
 
 TorqueBox caching is provided by the [Infinispan] data grid, the
-distributed features of which are available when deployed to a WildFly
-or EAP cluster. But even in "local mode", i.e. not in a cluster but
-locally embedded within your app, Infinispan caches offer features
-such as eviction, expiration, persistence, and transactions that
-aren't available in typical [ConcurrentMap] implementations.
+distributed features of which are available when deployed to a
+[WildFly] or EAP cluster. But even in "local mode", i.e. not in a
+cluster but locally embedded within your app, Infinispan caches offer
+features such as eviction, expiration, persistence, and transactions
+that aren't available in typical [ConcurrentMap] implementations.
 
-This guide will explore the [TorqueBox::Caching] module, which
-provides access to Infinispan, whether your app is deployed to a
-WildFly/EAP cluster or not.
+This guide will explore the
+[TorqueBox::Caching](TorqueBox/Caching.html) module, which provides
+access to Infinispan, whether your app is deployed to a WildFly/EAP
+cluster or not.
 
 ## Creation and Configuration
 
 Caches are created, started, and referenced using the
-[TorqueBox::Caching.cache] method. It accepts a number of optional
-configuration arguments, but the only required one is a name, since
-every cache must be uniquely named. If you pass the name of a cache
-that already exists, a reference to the existing cache will be
-returned, effectively ignoring any additional config options you might
-pass. So two cache instances with the same name will be backed by the
-same Infinispan cache.
+[TorqueBox::Caching.cache](TorqueBox/Caching.html#cache-class_method)
+method. It accepts a number of optional configuration arguments, but
+the only required one is a name, since every cache must be uniquely
+named. If you pass the name of a cache that already exists, a
+reference to the existing cache will be returned, effectively ignoring
+any additional config options you might pass. So two cache instances
+with the same name will be backed by the same Infinispan cache.
 
 If you wish to reconfigure an existing cache, you must stop it first
-by calling [TorqueBox::Caching::stop].
+by calling
+[TorqueBox::Caching.stop](TorqueBox/Caching.html#stop-class_method).
 
 Infinispan is a veritable morass of enterprisey configuration.
 TorqueBox tries to strike a convention/configuration balance by
 representing the more common options as kwargs passed to the `cache`
 method, while still supporting the more esoteric config via
-[TorqueBox::Caching::builder] and Java interop.
+[TorqueBox::Caching.builder](TorqueBox/Caching.html#builder-class_method)
+and Java interop.
 
 ## Example Usage
 
@@ -142,14 +145,14 @@ of `:lru` (Least Recently Used).
 ### Event Notification
 
 Infinispan provides an API for registering callback functions to be
-notified when specific events occur during the lifecycle of a cache.
+invoked when specific events occur during a cache's lifecycle.
 Unfortunately, this API relies exclusively on Java annotations, which
 are awkward in JRuby (as well as Java, if we're being honest).
 
 Therefore, TorqueBox provides the ability to use standard Ruby symbols
-and blocks to register interest in various types of events that may
-occur during the lifecycle of a cache. For example, to print an event
-whenever an entry is either visited or modified in the baz cache:
+and blocks to register interest in various types of cache lifecycle
+events. For example, to print an event whenever an entry is either
+visited or modified in the baz cache:
 
     result = baz.add_listener(:cache_entry_visited, :cache_entry_modified) {|e| puts e}
 
@@ -202,4 +205,7 @@ collaboration occurs asynchronous to the write.
 The simplest way to take advantage of Infinispan's clustering
 capabilities is to deploy your app to a [WildFly] cluster.
 
+[Infinispan]: http://infinispan.org
+[ConcurrentMap]: http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ConcurrentMap.html
 [WildFly]: file.wildfly.html
+[:lirs]: http://en.wikipedia.org/wiki/LIRS_caching_algorithm
