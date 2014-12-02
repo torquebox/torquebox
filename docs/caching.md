@@ -147,12 +147,18 @@ of `:lru` (Least Recently Used).
 Infinispan provides an API for registering callback functions to be
 invoked when specific events occur during a cache's lifecycle.
 Unfortunately, this API relies exclusively on Java annotations, which
-are awkward in JRuby (as well as Java, if we're being honest).
+are awkward in JRuby (not to mention Java, if we're being honest).
 
-Therefore, TorqueBox provides the ability to use standard Ruby symbols
-and blocks to register interest in various types of cache lifecycle
-events. For example, to print an event whenever an entry is either
-visited or modified in the baz cache:
+Therefore, TorqueBox caches provide the
+[add-listener](TorqueBox/Caching/Cache.html#add_listener-instance_method)
+method, which takes one or more Ruby symbols and a block. Each symbol
+corresponds to one of the Infinispan annotations, and the block will
+be passed the appropriate Event object. Technically, the block will be
+called twice for each event: once right before it occurs, and once
+immediately after.
+
+For example, to print an event whenever an entry is either visited or
+modified in the baz cache:
 
     result = baz.add_listener(:cache_entry_visited, :cache_entry_modified) {|e| puts e}
 

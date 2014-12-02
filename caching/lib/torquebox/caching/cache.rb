@@ -134,19 +134,19 @@ module TorqueBox
       # {http://docs.jboss.org/infinispan/6.0/apidocs/org/infinispan/notifications/cachelistener/annotation/package-summary.html
       # Infinispan annotations}:
       #
-      #    :cache_entries_evicted
-      #    :cache_entry_activated
-      #    :cache_entry_created
-      #    :cache_entry_invalidated
-      #    :cache_entry_loaded
-      #    :cache_entry_modified
-      #    :cache_entry_passivated
-      #    :cache_entry_removed
-      #    :cache_entry_visited
-      #    :data_rehashed
-      #    :topology_changed
-      #    :transaction_completed
-      #    :transaction_registered
+      #  - :cache_entries_evicted
+      #  - :cache_entry_activated
+      #  - :cache_entry_created
+      #  - :cache_entry_invalidated
+      #  - :cache_entry_loaded
+      #  - :cache_entry_modified
+      #  - :cache_entry_passivated
+      #  - :cache_entry_removed
+      #  - :cache_entry_visited
+      #  - :data_rehashed
+      #  - :topology_changed
+      #  - :transaction_completed
+      #  - :transaction_registered
       #
       # The callbacks are synchronous, i.e. invoked on the thread acting on
       # the cache. For longer running callbacks, use a queue or some sort of
