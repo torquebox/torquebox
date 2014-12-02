@@ -420,6 +420,25 @@ describe TorqueBox::Caching do
     # end
   end
 
+  describe "event notifications" do
+    it "should add and remove cache listeners" do
+      l1 = @cache.add_listener(:cache_entry_loaded)
+      l2 = @cache.add_listener(:cache_entry_visited, :cache_entry_removed)
+      l1.size.should == 1
+      l2.size.should == 2
+      @cache.get_listeners.size.should == 3
+      @cache.remove_listener(l1.first)
+      @cache.get_listeners.size.should == 2
+      @cache.get_listeners.each { |x| @cache.remove_listener(x) }
+      @cache.get_listeners.size.should == 0
+    end
+
+    it "should reject bad event types" do
+      @cache.get_listeners.should be_empty
+      expect { @cache.add_listener(:cache_entry_visited, :this_should_barf) }.to raise_error(Java::JavaLang::IllegalArgumentException)
+      @cache.get_listeners.should be_empty
+    end
+  end
 end
 
 class Snuffleuffagus

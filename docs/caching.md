@@ -141,7 +141,26 @@ of `:lru` (Least Recently Used).
 
 ### Event Notification
 
-Coming Soon!
+Infinispan provides an API for registering callback functions to be
+notified when specific events occur during the lifecycle of a cache.
+Unfortunately, this API relies exclusively on Java annotations, which
+are awkward in JRuby (as well as Java, if we're being honest).
+
+Therefore, TorqueBox provides the ability to use standard Ruby symbols
+and blocks to register interest in various types of events that may
+occur during the lifecycle of a cache. For example, to print an event
+whenever an entry is either visited or modified in the baz cache:
+
+    result = baz.add_listener(:cache_entry_visited, :cache_entry_modified) {|e| puts e}
+
+    baz.get_listeners.size                        #=> 2
+
+    # This should show two messages for each event (before/after)
+    baz[:b] = baz[:b] + 1
+
+    # This should turn the notifications off
+    result.each {|v| baz.remove_listener(v)}
+    baz.get_listeners.empty?                      #=> true
 
 ### Encoding
 

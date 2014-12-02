@@ -15,6 +15,7 @@
 require 'forwardable'
 
 java_import java.util.concurrent::TimeUnit
+java_import org.projectodd.wunderboss.caching.notifications::Listener
 
 module TorqueBox
   module Caching
@@ -120,6 +121,47 @@ module TorqueBox
         self
       end
 
+      # Infinispan's cache notifications API is based on Java
+      # annotations, which can be awkward in JRuby (and Java, for that
+      # matter).
+      #
+      # This function provides the ability to map one or more symbols
+      # to a block that will be passed an
+      # {https://docs.jboss.org/infinispan/6.0/apidocs/org/infinispan/notifications/cachelistener/event/package-summary.html
+      # Infinispan Event} instance.
+      #
+      # Each symbol corresponds to an event type, i.e. one of the
+      # {http://docs.jboss.org/infinispan/6.0/apidocs/org/infinispan/notifications/cachelistener/annotation/package-summary.html
+      # Infinispan annotations}:
+      #
+      #    :cache_entries_evicted
+      #    :cache_entry_activated
+      #    :cache_entry_created
+      #    :cache_entry_invalidated
+      #    :cache_entry_loaded
+      #    :cache_entry_modified
+      #    :cache_entry_passivated
+      #    :cache_entry_removed
+      #    :cache_entry_visited
+      #    :data_rehashed
+      #    :topology_changed
+      #    :transaction_completed
+      #    :transaction_registered
+      #
+      # The callbacks are synchronous, i.e. invoked on the thread acting on
+      # the cache. For longer running callbacks, use a queue or some sort of
+      # asynchronous channel.
+      #
+      # The return value is an array of listener objects corresponding
+      # to the requested event types, which will be a subset of those
+      # returned from the {get_listeners} method. These may be passed
+      # to the {remove_listener} method to turn off notifications.
+      def add_listener(*types, &block)
+        handler = Handler.new(block)
+        listeners = types.map { |type| Listener::listen(handler, type.to_s) }
+        listeners.each { |listener| @cache.add_listener(listener) }
+      end
+
       # @!method get(key)
       #
       # Get the value associated with the key
@@ -191,6 +233,20 @@ module TorqueBox
       # @return [String]
       def_delegators :@cache, :name
 
+      # @!method get_listeners()
+      #
+      # Get the cache's active event listener instances
+      #
+      # @return [Array]
+      def_delegators :@cache, :get_listeners
+
+      # @!method remove_listener(listener)
+      #
+      # Turn off a particular event listener
+      #
+      # @return [void]
+      def_delegators :@cache, :remove_listener
+
       # @!method configuration()
       #
       # Get the cache's configuration instance
@@ -217,6 +273,17 @@ module TorqueBox
       def expiry(options)
         m = defaults(options)
         [m[:ttl], TimeUnit::MILLISECONDS, m[:idle], TimeUnit::MILLISECONDS]
+      end
+
+      class Handler
+        include Java::OrgProjectoddWunderbossCachingNotifications::Handler
+        def initialize(block)
+          @block = block
+        end
+
+        def handle(event)
+          @block.call(event)
+        end
       end
 
       def replace_m
