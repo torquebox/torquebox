@@ -47,10 +47,12 @@ module TorqueBox
         parser.on '--io-threads N', Integer, 'Number of IO threads (default: # CPUs)' do |arg|
           options[:io_threads] = arg
         end
-        parser.on '--worker-threads N', Integer, 'Number of HTTP worker threads (default: # CPUs * 8)' do |arg|
+        parser.on('--worker-threads N', Integer,
+                  'Number of HTTP worker threads (default: # CPUs * 8)') do |arg|
           options[:worker_threads] = arg
         end
-        parser.on '--[no-]dispatch', 'Enable dispatching of requests to worker threads (default: enabled)' do |arg|
+        parser.on('--[no-]dispatch',
+                  'Enable dispatching of requests to worker threads (default: enabled)') do |arg|
           options[:dispatch] = arg
         end
       end
