@@ -25,6 +25,7 @@ import org.jruby.RubyString;
 import org.jruby.runtime.Block;
 import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.jruby.util.ByteList;
 import org.projectodd.wunderboss.ruby.RubyHelper;
 
 import java.util.Map;
@@ -49,11 +50,11 @@ public class RackEnvironmentHash extends RubyHash {
     private synchronized void fillKey(final IRubyObject rubyKey) {
         if (!filledEntireHash) {
             if (rubyKey instanceof RubyString && !containsKey(rubyKey)) {
-                byte[] rubyKeyBytes = ((RubyString) rubyKey).getBytes();
-                if (rubyKeyBytes.length > 5 && rubyKeyBytes[0] == 'H'
-                        && rubyKeyBytes[1] == 'T' && rubyKeyBytes[2] == 'T'
-                        && rubyKeyBytes[3] == 'P' && rubyKeyBytes[4] == '_') {
-                    byte[] httpKeyBytes = rubyKeyBytes.clone();
+                ByteList rubyKeyBytes = ((RubyString) rubyKey).getByteList();
+                if (rubyKeyBytes.getRealSize() > 5 && rubyKeyBytes.charAt(0) == 'H'
+                        && rubyKeyBytes.charAt(1) == 'T' && rubyKeyBytes.charAt(2) == 'T'
+                        && rubyKeyBytes.charAt(3) == 'P' && rubyKeyBytes.charAt(4) == '_') {
+                    byte[] httpKeyBytes = rubyKeyBytes.bytes();
                     // Rack uses underscores in headers, HTTP uses dashes
                     for (int i = 5; i < httpKeyBytes.length; i++) {
                         if (httpKeyBytes[i] == '_') {
@@ -61,7 +62,7 @@ public class RackEnvironmentHash extends RubyHash {
                         }
                     }
                     rackAdapter.populateRackHeaderFromBytes(this, httpKeyBytes, 5,
-                            httpKeyBytes.length, rubyKeyBytes);
+                            httpKeyBytes.length, rubyKeyBytes.bytes());
                 } else {
                     fillRackKey((RubyString) rubyKey);
                 }

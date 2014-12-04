@@ -24,6 +24,7 @@ import org.jruby.RubyString;
 import org.jruby.anno.JRubyMethod;
 import org.jruby.runtime.ObjectAllocator;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.jruby.util.ByteList;
 
 import java.io.IOException;
 
@@ -65,20 +66,21 @@ public class RackResponder extends RubyObject {
     public IRubyObject addHeader(final RubyString rubyKey, final RubyString rubyValues) {
         // HTTP headers are always US_ASCII so we take a couple of shortcuts
         // for converting them from RubyStrings to Java Strings
-        final byte[] byteValues = rubyValues.getBytes();
-        final char[] charValues = new char[byteValues.length];
+        final ByteList byteKey = rubyKey.getByteList();
+        final ByteList byteValues = rubyValues.getByteList();
+        final char[] charValues = new char[byteValues.getRealSize()];
         int i;
         int offset = 0;
         // split header values on newlines while converting from bytes to chars
         for (i = 0; i < charValues.length; i++) {
-            charValues[i] = (char) byteValues[i];
+            charValues[i] = byteValues.charAt(i);
             if (charValues[i] == '\n') {
                 String value = new String(charValues, offset, i - offset);
                 offset = i + 1;
-                rackAdapter.addResponseHeader(rubyKey.getBytes(), value);
+                rackAdapter.addResponseHeader(byteKey.unsafeBytes(), byteKey.begin(), byteKey.getRealSize(), value);
             } else if (i == charValues.length - 1) {
                 String value = new String(charValues, offset, charValues.length - offset);
-                rackAdapter.addResponseHeader(rubyKey.getBytes(), value);
+                rackAdapter.addResponseHeader(byteKey.unsafeBytes(), byteKey.begin(), byteKey.getRealSize(), value);
             }
         }
         return getRuntime().getNil();
@@ -86,7 +88,8 @@ public class RackResponder extends RubyObject {
 
     @JRubyMethod(name = "write")
     public IRubyObject write(final RubyString string) throws IOException {
-        rackAdapter.write(string.getBytes());
+        final ByteList byteList = string.getByteList();
+        rackAdapter.write(byteList.unsafeBytes(), byteList.begin(), byteList.getRealSize());
         return getRuntime().getNil();
     }
 

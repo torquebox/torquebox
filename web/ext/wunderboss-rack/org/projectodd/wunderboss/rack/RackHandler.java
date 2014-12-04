@@ -30,17 +30,12 @@ public class RackHandler implements HttpHandler {
 
     @Override
     public void handleRequest(final HttpServerExchange exchange) throws Exception {
-        if (exchange.isInIoThread()) {
-            exchange.dispatch(this);
-            return;
-        }
-
         exchange.startBlocking();
         RackChannel inputChannel = null;
         try {
             inputChannel = rackApplication.getInputChannel(exchange.getInputStream());
             RackAdapter adapter = new UndertowRackAdapter(exchange);
-            rackApplication.call(adapter, inputChannel, "undertow.exchange", exchange);
+            rackApplication.call(adapter, inputChannel, RackEnvironment.RACK_KEY.UNDERTOW_EXCHANGE, exchange);
         } catch (Exception ex) {
             if (!exchange.isResponseStarted()) {
                 exchange.setResponseCode(500);

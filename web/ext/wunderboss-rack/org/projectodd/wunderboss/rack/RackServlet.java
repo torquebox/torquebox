@@ -44,7 +44,7 @@ public class RackServlet extends GenericServlet {
         try {
             inputChannel = rackApplication.getInputChannel(request.getInputStream());
             RackAdapter adapter = new ServletRackAdapter(request, response);
-            rackApplication.call(adapter, inputChannel, "java.servlet_request", request);
+            rackApplication.call(adapter, inputChannel, RackEnvironment.RACK_KEY.SERVLET_REQUEST, request);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ServletException(e);

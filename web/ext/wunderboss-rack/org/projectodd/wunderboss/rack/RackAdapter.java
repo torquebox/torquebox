@@ -48,9 +48,9 @@ public interface RackAdapter {
 
     public void setResponseCode(int responseCode);
 
-    public void addResponseHeader(byte[] keyBytes, String value);
+    public void addResponseHeader(byte[] keyBytes, int keyOffset, int keyLength, String value);
 
-    public void write(byte[] bytes) throws IOException;
+    public void write(byte[] bytes, int offset, int length) throws IOException;
 
     public void flush() throws IOException;
 }

@@ -43,9 +43,9 @@ public class RackApplication {
         return new RackChannel(runtime, rackChannelClass, inputStream);
     }
 
-    public void call(RackAdapter rackAdapter, RackChannel inputChannel, String sessionKey, Object session) throws Exception {
-        RubyHash rackEnvHash = rackEnvironment.getEnv(rackAdapter, inputChannel);
-        rackEnvHash.put(sessionKey, session);
+    public void call(RackAdapter rackAdapter, RackChannel inputChannel, RackEnvironment.RACK_KEY sessionKey, Object session) throws Exception {
+        RackEnvironmentHash rackEnvHash = rackEnvironment.getEnv(rackAdapter, inputChannel);
+        rackEnvHash.lazyPut(sessionKey, session, false);
         ThreadContext threadContext = runtime.getCurrentContext();
         IRubyObject rackResponse = rubyRackApp.callMethod(threadContext, "call", rackEnvHash);
         RackResponder rackResponder = new RackResponder(runtime, rackResponderClass, rackAdapter);

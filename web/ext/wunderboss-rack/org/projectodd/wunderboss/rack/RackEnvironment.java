@@ -39,7 +39,7 @@ public class RackEnvironment {
         PATH_INFO, QUERY_STRING, SERVER_NAME, SERVER_PORT,
         CONTENT_TYPE, REQUEST_URI, REMOTE_ADDR, URL_SCHEME,
         VERSION, MULTITHREAD, MULTIPROCESS, RUN_ONCE, CONTENT_LENGTH,
-        HTTPS
+        HTTPS, UNDERTOW_EXCHANGE, SERVLET_REQUEST
     }
     static final int NUM_RACK_KEYS = RACK_KEY.values().length;
 
@@ -73,13 +73,15 @@ public class RackEnvironment {
         putRack("rack.run_once", RACK_KEY.RUN_ONCE);
         putRack("CONTENT_LENGTH", RACK_KEY.CONTENT_LENGTH);
         putRack("HTTPS", RACK_KEY.HTTPS);
+        putRack("undertow.exchange", RACK_KEY.UNDERTOW_EXCHANGE);
+        putRack("java.servlet_request", RACK_KEY.SERVLET_REQUEST);
     }
 
     private void putRack(String key, RACK_KEY value) {
         rackKeyMap.put(RubyHelper.toUsAsciiRubyString(runtime, key), value);
     }
 
-    public RubyHash getEnv(final RackAdapter rackAdapter,
+    public RackEnvironmentHash getEnv(final RackAdapter rackAdapter,
                            final RackChannel inputChannel) throws IOException {
         // TODO: Should we only use this faster RackEnvironmentHash if we detect
         // specific JRuby versions that we know are compatible?

@@ -126,8 +126,8 @@ public class UndertowRackAdapter implements RackAdapter {
     }
 
     @Override
-    public void addResponseHeader(byte[] keyBytes, String value) {
-        final HttpString key = new HttpString(keyBytes);
+    public void addResponseHeader(byte[] keyBytes, int keyOffset, int keyLength, String value) {
+        final HttpString key = new HttpString(keyBytes, keyOffset, keyLength);
         // Leave out the transfer-encoding header since the container takes
         // care of chunking responses and adding that header
         if (!Headers.TRANSFER_ENCODING.equals(key) && !"chunked".equals(value)) {
@@ -136,8 +136,8 @@ public class UndertowRackAdapter implements RackAdapter {
     }
 
     @Override
-    public void write(byte[] bytes) throws IOException {
-        exchange.getOutputStream().write(bytes);
+    public void write(byte[] bytes, int offset, int length) throws IOException {
+        exchange.getOutputStream().write(bytes, offset, length);
     }
 
     @Override

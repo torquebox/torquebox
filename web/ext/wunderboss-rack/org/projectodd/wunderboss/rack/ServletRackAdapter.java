@@ -115,16 +115,16 @@ public class ServletRackAdapter implements RackAdapter {
     }
 
     @Override
-    public void addResponseHeader(byte[] keyBytes, String value) {
-        String key = new String(keyBytes);
+    public void addResponseHeader(byte[] keyBytes, int keyOffset, int keyLength, String value) {
+        String key = new String(keyBytes, keyOffset, keyLength);
         if (!"transfer-encoding".equals(key.toLowerCase()) && !"chunked".equals(value)) {
             response.addHeader(key, value);
         }
     }
 
     @Override
-    public void write(byte[] bytes) throws IOException {
-        response.getOutputStream().write(bytes);
+    public void write(byte[] bytes, int offset, int length) throws IOException {
+        response.getOutputStream().write(bytes, offset, length);
     }
 
     @Override
