@@ -44,6 +44,15 @@ module TorqueBox
         parser.on '-p', '--port PORT', Integer, 'HTTP port to listen on' do |arg|
           options[:port] = arg
         end
+        parser.on '--io-threads N', Integer, 'Number of IO threads (default: # CPUs)' do |arg|
+          options[:io_threads] = arg
+        end
+        parser.on '--worker-threads N', Integer, 'Number of HTTP worker threads (default: # CPUs * 8)' do |arg|
+          options[:worker_threads] = arg
+        end
+        parser.on '--[no-]dispatch', 'Enable dispatching of requests to worker threads (default: enabled)' do |arg|
+          options[:dispatch] = arg
+        end
       end
 
       def run(argv, options)

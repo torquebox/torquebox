@@ -63,6 +63,8 @@ module TorqueBox
     #   @option options [Object] :rack_app the Rack application to run. This
     #     is useful if the application is created somewhere else before handing
     #     the Rack application object off to TorqueBox to run.
+    #   @option options[Boolean] :dispatch (true) Whether to dispatch requests
+    #     to HTTP worker threads or run them directly on the IO threads
 
 
     DEFAULT_MOUNT_OPTIONS = {
@@ -70,7 +72,8 @@ module TorqueBox
       :path => '/',
       :static_dir => 'public',
       :rackup => 'config.ru',
-      :rack_app => nil
+      :rack_app => nil,
+      :dispatch => true
     }
 
     # Runs a Rack application specified by the given options.
@@ -101,7 +104,7 @@ module TorqueBox
       server_name = options.delete(:server) { 'default' }
       server_options = options.reject { |k, v| DEFAULT_MOUNT_OPTIONS.key?(k) }
       server = server(server_name, server_options)
-      mount_options = options.reject { |k, v| DEFAULT_SERVER_OPTIONS.key?(k) }
+      mount_options = options.reject { |k, v| server_options.key?(k) }
       server.mount(mount_options)
       server
     end
