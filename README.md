@@ -178,14 +178,11 @@ using:
 You'll have to be an owner of the gems to do this. Bug bbrowning,
 bobmcw, or tcrawley if you are not.
 
-### Build the release API documentation
+### Publish the release API documentation
 
-Under the **Release** tab on CI, there is a
-**torquebox4-release-docs** job which builds against a tag in the
-release git repository, and publishes the API documentation to
-torquebox.org. No preparation or modification of the release
-repository is needed.  In fact, the exact tag pushed by the primary
-**torquebox-release** job is required to build the docs.
+The release API docs are built by the release job on CI. Download
+those and put them a _4x_docs/<version>/yardoc folder in the
+torquebox.org git repo.
 
 ### Push changes from the release repository to the official repository
 
