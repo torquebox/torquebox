@@ -17,6 +17,8 @@ Gem::Specification.new do |s|
                         'bin/**/*', 'lib/**/*']
 
   s.add_dependency 'torquebox-core', TorqueBox::VERSION
+  s.add_dependency 'torquebox-caching', TorqueBox::VERSION
+  s.add_dependency 'torquebox-messaging', TorqueBox::VERSION
   s.add_dependency 'torquebox-scheduling', TorqueBox::VERSION
   s.add_dependency 'torquebox-web', TorqueBox::VERSION
 
