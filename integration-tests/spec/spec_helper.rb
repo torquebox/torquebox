@@ -286,13 +286,46 @@ def server_start(options)
       @old_pwd = Dir.pwd
       Dir.chdir(chdir)
     end
-    pid, stdin, stdout, stderr = IO.popen4(options[:command])
+    pid, stdin, stdout, stderr = popen4(options[:command])
     ENV['BUNDLE_GEMFILE'] = ENV['RUBYLIB'] = nil
     @server_pid = pid
     @stdout_thread, @stderr_thread = pump_server_streams(stdin, stdout,
                                                          stderr, error_seen)
   end
   wait_for_boot(app_dir, 180, error_seen)
+end
+
+def popen4(*cmd, &block)
+  # Use IO.popen4 for JRuby < 9.0.0.0
+  return IO.popen4(*cmd) if JRUBY_VERSION.split(".").first.to_i < 9
+
+  opts = {}
+  in_r, in_w = IO.pipe
+  opts[:in] = in_r
+  in_w.sync = true
+
+  out_r, out_w = IO.pipe
+  opts[:out] = out_w
+
+  err_r, err_w = IO.pipe
+  opts[:err] = err_w
+
+  child_io = [in_r, out_w, err_w]
+  parent_io = [in_w, out_r, err_r]
+
+  pid = spawn(*cmd, opts)
+  wait_thr = Process.detach(pid)
+  child_io.each { |io| io.close }
+  result = [pid, *parent_io]
+  if defined? yield
+    begin
+      return yield(*result)
+    ensure
+      parent_io.each { |io| io.close unless io.closed? }
+      wait_thr.join
+    end
+  end
+  result
 end
 
 def pump_server_streams(stdin, stdout, stderr, error_seen)
