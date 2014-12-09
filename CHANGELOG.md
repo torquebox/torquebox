@@ -3,6 +3,12 @@
 * The 'torquebox' gem was missing gem dependencies on
   'torquebox-caching' and 'torquebox-messaging'. This has been fixed.
 
+* Streaming of responses when not using chunked transfer-encoding is
+  fixed. Previously, the response wouldn't be streamed and only get
+  sent when the response was finished. This impacts Rail's
+  response.stream, SSE, etc. Anything using chunked transfer-encoding
+  worked fine and will continue to work fine.
+
 ## 4.0.0.alpha1 - Big Changes
 
 * The gem previous known as 'torqbox' is now 'torquebox-web'

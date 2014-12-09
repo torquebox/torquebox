@@ -142,7 +142,9 @@ public class UndertowRackAdapter implements RackAdapter {
 
     @Override
     public void flush() throws IOException {
-        exchange.getOutputStream().flush();
+        if (!exchange.isResponseComplete()) {
+            exchange.getOutputStream().flush();
+        }
     }
 
     private void fillHeaderKey(final RubyHash rackEnv, final HttpString key, byte[] rubyKeyBytes) {

@@ -36,7 +36,7 @@ module WunderBoss
             output = chunked ? strip_term_markers(chunk) : chunk
             unless output.nil?
               rack_responder.write(output)
-              rack_responder.flush if chunked
+              rack_responder.flush
             end
           end
         rescue NativeException => e

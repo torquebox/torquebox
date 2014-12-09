@@ -54,6 +54,22 @@ feature 'basic rails4 test' do
     end
   end
 
+  context "server sent events" do
+    it "should work" do
+      uri = URI.parse("#{Capybara.app_host}/basic-rails4/live/sse")
+      Net::HTTP.get_response(uri) do |response|
+        chunk_count, body = 0, ""
+        response.read_body do |chunk|
+          chunk_count += 1
+          body += chunk
+        end
+        expect(body).to include('test1')
+        expect(body).to include('test4')
+        expect(chunk_count).to be > 3
+      end
+    end
+  end
+
   it 'should return a static page beneath default public dir' do
     visit "/basic-rails4/some_page.html"
     element = page.find('#success')
