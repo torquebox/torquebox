@@ -295,7 +295,7 @@ def server_start(options)
   wait_for_boot(app_dir, 180, error_seen)
 end
 
-def popen4(*cmd, &block)
+def popen4(*cmd)
   # Use IO.popen4 for JRuby < 9.0.0.0
   return IO.popen4(*cmd) if JRUBY_VERSION.split(".").first.to_i < 9
 
