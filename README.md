@@ -186,9 +186,10 @@ torquebox.org git repo.
 
 ### Push changes from the release repository to the official repository
 
-    git fetch release
+    git fetch release --tags
     git merge release/torqbox
     git push origin torqbox
+    git push origin <release_tag>
 
 ### Release the project in JIRA
 
