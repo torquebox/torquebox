@@ -9,6 +9,11 @@
   response.stream, SSE, etc. Anything using chunked transfer-encoding
   worked fine and will continue to work fine.
 
+* Bundler wasn't being packaged inside executable jars created with
+  'torquebox jar' if Bundler was installed in a non-standard
+  $GEM_HOME. The logic now looks at Gem.path instead of
+  Gem.default_path, and thus should respect $GEM_HOME.
+
 ## 4.0.0.alpha1 - Big Changes
 
 * The gem previous known as 'torqbox' is now 'torquebox-web'
