@@ -130,7 +130,7 @@ feature "basic rack with Rack::Deflater" do
   it "should work" do
     uri = URI.parse("#{Capybara.app_host}/basic-rack")
     Net::HTTP.start(uri.host, uri.port) do |http|
-      request = Net::HTTP::Get.new(uri.request_uri)
+      request = Net::HTTP::Head.new(uri.request_uri)
       request.add_field('Accept-Encoding', 'gzip,deflate')
       response = http.request(request)
       response.code.should == "200"
