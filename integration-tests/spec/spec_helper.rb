@@ -288,6 +288,7 @@ def server_start(options)
     end
     pid, stdin, stdout, stderr = popen4(options[:command])
     ENV['BUNDLE_GEMFILE'] = ENV['RUBYLIB'] = nil
+    @server_ios = [stdin, stdout, stderr]
     @server_pid = pid
     @stdout_thread, @stderr_thread = pump_server_streams(stdin, stdout,
                                                          stderr, error_seen)
@@ -295,9 +296,13 @@ def server_start(options)
   wait_for_boot(app_dir, 180, error_seen)
 end
 
+def jruby9k?
+  JRUBY_VERSION.split(".").first.to_i >= 9
+end
+
 def popen4(*cmd)
   # Use IO.popen4 for JRuby < 9.0.0.0
-  return IO.popen4(*cmd) if JRUBY_VERSION.split(".").first.to_i < 9
+  return IO.popen4(*cmd) unless jruby9k?
 
   opts = {}
   in_r, in_w = IO.pipe
@@ -337,7 +342,7 @@ def pump_server_streams(stdin, stdout, stderr, error_seen)
       loop do
         STDOUT.write(stdout_io.readpartial(1024))
       end
-    rescue EOFError
+    rescue EOFError, IOError
     end
   end
   stderr_thread = Thread.new(stderr) do |stderr_io|
@@ -346,7 +351,7 @@ def pump_server_streams(stdin, stdout, stderr, error_seen)
         STDERR.write(stderr_io.readpartial(1024))
         error_seen.set(true)
       end
-    rescue EOFError
+    rescue EOFError, IOError
     end
   end
   [stdout_thread, stderr_thread]
@@ -375,6 +380,10 @@ def server_stop
   if @old_pwd
     Dir.chdir(@old_pwd)
     @old_pwd = nil
+  end
+  if @server_ios
+    @server_ios.each { |io| io.close unless io.closed? } if jruby9k?
+    @server_ios = nil
   end
   if @server_pid
     begin
