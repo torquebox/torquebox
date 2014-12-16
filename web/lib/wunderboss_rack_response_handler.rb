@@ -25,7 +25,7 @@ module WunderBoss
 
           transfer_encoding_value = nil
           headers.each do |key, value|
-            rack_responder.add_header(key, value)
+            rack_responder.add_header(key, value.to_s)
             transfer_encoding_value = value if key == 'Transfer-Encoding'
           end
 
