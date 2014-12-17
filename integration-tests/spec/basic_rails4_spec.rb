@@ -39,8 +39,8 @@ feature 'basic rails4 test' do
       uri = URI.parse("#{Capybara.app_host}#{url}")
       http = Net::HTTP.new(uri.hostname, uri.port)
       http.open_timeout = 10
-      http.start do |http|
-        http.request_get(uri.request_uri) do |response|
+      http.start do |request|
+        request.request_get(uri.request_uri) do |response|
           expect(response).to be_chunked
           expect(response.header['transfer-encoding']).to eq('chunked')
           chunk_count, body = 0, ""
@@ -63,8 +63,8 @@ feature 'basic rails4 test' do
       uri = URI.parse("#{Capybara.app_host}/basic-rails4/live/sse")
       http = Net::HTTP.new(uri.hostname, uri.port)
       http.open_timeout = 10
-      http.start do |http|
-        http.request_get(uri.request_uri) do |response|
+      http.start do |request|
+        request.request_get(uri.request_uri) do |response|
           chunk_count, body = 0, ""
           response.read_body do |chunk|
             chunk_count += 1
