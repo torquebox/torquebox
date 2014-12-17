@@ -37,19 +37,23 @@ feature 'basic rails4 test' do
 
     def verify_streaming(url)
       uri = URI.parse("#{Capybara.app_host}#{url}")
-      Net::HTTP.get_response(uri) do |response|
-        expect(response).to be_chunked
-        expect(response.header['transfer-encoding']).to eq('chunked')
-        chunk_count, body = 0, ""
-        response.read_body do |chunk|
-          chunk_count += 1
-          body += chunk
+      http = Net::HTTP.new(uri.hostname, uri.port)
+      http.open_timeout = 10
+      http.start do |http|
+        http.request_get(uri.request_uri) do |response|
+          expect(response).to be_chunked
+          expect(response.header['transfer-encoding']).to eq('chunked')
+          chunk_count, body = 0, ""
+          response.read_body do |chunk|
+            chunk_count += 1
+            body += chunk
+          end
+          expect(body).to include('It works')
+          body.each_line do |line|
+            expect(line).not_to match(/^\d+\s*$/)
+          end
+          expect(chunk_count).to be > 1
         end
-        expect(body).to include('It works')
-        body.each_line do |line|
-          expect(line).not_to match(/^\d+\s*$/)
-        end
-        expect(chunk_count).to be > 1
       end
     end
   end
@@ -57,15 +61,19 @@ feature 'basic rails4 test' do
   context "server sent events" do
     it "should work" do
       uri = URI.parse("#{Capybara.app_host}/basic-rails4/live/sse")
-      Net::HTTP.get_response(uri) do |response|
-        chunk_count, body = 0, ""
-        response.read_body do |chunk|
-          chunk_count += 1
-          body += chunk
+      http = Net::HTTP.new(uri.hostname, uri.port)
+      http.open_timeout = 10
+      http.start do |http|
+        http.request_get(uri.request_uri) do |response|
+          chunk_count, body = 0, ""
+          response.read_body do |chunk|
+            chunk_count += 1
+            body += chunk
+          end
+          expect(body).to include('test1')
+          expect(body).to include('test4')
+          expect(chunk_count).to be > 3
         end
-        expect(body).to include('test1')
-        expect(body).to include('test4')
-        expect(chunk_count).to be > 3
       end
     end
   end
