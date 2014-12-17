@@ -392,9 +392,9 @@ def server_stop
       # ignore no such process errors - it died already
     end
     @server_pid = nil
-    @stdout_thread.join
+    @stdout_thread.join(30)
     @stdout_thread = nil
-    @stderr_thread.join
+    @stderr_thread.join(30)
     @stderr_thread = nil
   end
   if @server_after
