@@ -15,6 +15,10 @@ env: DEBUG=true
 
 sudo: false
 
+cache:
+  directories:
+    - $HOME/.m2
+
 install: travis_retry bundle install
 
 before_script: bundle exec rake build
