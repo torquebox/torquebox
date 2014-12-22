@@ -14,6 +14,9 @@
   $GEM_HOME. The logic now looks at Gem.path instead of
   Gem.default_path, and thus should respect $GEM_HOME.
 
+* Recent versions of Nokogiri will once again work when an app is
+  packaged as a .war and deployed to WildFly.
+
 ## 4.0.0.alpha1 - Big Changes
 
 * The gem previous known as 'torqbox' is now 'torquebox-web'
