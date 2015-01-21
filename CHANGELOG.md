@@ -17,6 +17,12 @@
 * Recent versions of Nokogiri will once again work when an app is
   packaged as a .war and deployed to WildFly.
 
+* Passing "--env foo" to the "torquebox war" command no longer results
+  in "NoMethodError: undefined method `[]=' for
+  nil:Nilclass". Previously, this error would happen anytime you used
+  the "--env" flag unless you also used the "--envvar FOO=BAR" flag to
+  set some environment variable earlier in the command.
+
 ## 4.0.0.alpha1 - Big Changes
 
 * The gem previous known as 'torqbox' is now 'torquebox-web'

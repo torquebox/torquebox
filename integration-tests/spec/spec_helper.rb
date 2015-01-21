@@ -136,18 +136,6 @@ def wildfly_server
   Thread.current[:wildfly]
 end
 
-def unzip(path)
-  if windows?
-    `jar.exe xf #{path}`
-  else
-    `jar xf #{path}`
-  end
-end
-
-def windows?
-  RbConfig::CONFIG['host_os'] =~ /mswin/
-end
-
 def eval_in_new_ruby(script)
   ruby = org.jruby.Ruby.new_instance
   unless ENV['DEBUG']

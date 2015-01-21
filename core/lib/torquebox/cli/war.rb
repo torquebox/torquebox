@@ -56,15 +56,12 @@ module TorqueBox
           options[:rackup] = argv.shift
         end
         options = option_defaults.merge(options)
-        if options[:env]
-          options[:envvar]['RACK_ENV'] = options[:env]
-          options[:envvar]['RAILS_ENV'] = options[:env]
-        end
+        process_env(options)
         jar_options = options.dup
         jar_options.delete(:destination)
         jar_path = super(argv, jar_options)
         begin
-          war_path = File.join(options[:destination], options[:war_name])
+          war_path = File.expand_path(File.join(options[:destination], options[:war_name]))
           war_builder = org.torquebox.core.JarBuilder.new
 
           (options[:resource_paths] || []).each do |path|
@@ -93,6 +90,14 @@ module TorqueBox
       end
 
       protected
+
+      def process_env(options)
+        if options[:env]
+          options[:envvar] ||= {}
+          options[:envvar]['RACK_ENV'] = options[:env]
+          options[:envvar]['RAILS_ENV'] = options[:env]
+        end
+      end
 
       def add_web_xml(war_builder)
         unless war_builder.has_entry('WEB-INF/web.xml')

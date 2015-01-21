@@ -109,7 +109,7 @@ end;"
 
       def run(_argv, options)
         options = option_defaults.merge(options)
-        jar_path = File.join(options[:destination], options[:jar_name])
+        jar_path = File.expand_path(File.join(options[:destination], options[:jar_name]))
         @logger.debug("Creating jar with options {}", options.inspect)
 
         if options[:main]
@@ -311,7 +311,7 @@ end;"
 
       def app_properties(env, init)
         env_str = env.map do |key, value|
-          "ENV['#{key}']||='#{value}';"
+          "ENV['#{key}'] ||= '#{value}';"
         end.join(' ')
         classpath_str = @classpath.join(':')
 

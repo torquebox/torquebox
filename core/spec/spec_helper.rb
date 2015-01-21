@@ -36,3 +36,15 @@ end
 def uuid
   SecureRandom.uuid
 end
+
+def unzip(path)
+  if windows?
+    `jar.exe xf #{path}`
+  else
+    `jar xf #{path}`
+  end
+end
+
+def windows?
+  RbConfig::CONFIG['host_os'] =~ /mswin/
+end
