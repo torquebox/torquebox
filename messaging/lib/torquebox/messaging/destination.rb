@@ -151,6 +151,7 @@ module TorqueBox
         options = coerce_context(options)
         handler = MessageHandler.new do |message|
           block.call(options.fetch(:decode, true) ? message.body : message)
+          nil
         end
         @internal_destination.listen(handler,
                                      Codecs.java_codecs,

@@ -101,6 +101,7 @@ describe "Destination" do
       latch = CountDownLatch.new(1)
       listener = queue.listen do |m|
         latch.count_down
+        :non_nil_return_val_should_not_cause_coerce_error
       end
       queue.publish('hi')
       latch.await(1, TimeUnit::SECONDS).should be true
