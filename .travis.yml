@@ -30,4 +30,4 @@ script:
 
 branches:
   only:
-    - torqbox
+    - master

@@ -23,6 +23,8 @@
   the "--env" flag unless you also used the "--envvar FOO=BAR" flag to
   set some environment variable earlier in the command.
 
+* Development moved to the 'master' branch instead of 'torqbox'
+
 ## 4.0.0.alpha1 - Big Changes
 
 * The gem previous known as 'torqbox' is now 'torquebox-web'

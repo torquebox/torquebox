@@ -141,31 +141,31 @@ takes quite a bit longer, but is what CI runs.
 
 ### Preparation
 
-TorqueBox 4 is released from the `torqbox` branch of
+TorqueBox 4 is released from the `master` branch of
 [torquebox/torquebox-release][release_repo].
 
 Set up this repository as an additional remote for your workspace:
 
     git remote add release git@github.com:torquebox/torquebox-release.git
 
-Ensure that the `torqbox` branch has the contents you wish to release.  Using the `-f`
+Ensure that the `master` branch has the contents you wish to release.  Using the `-f`
 flag to force is allowed in this case, since the **torquebox-release** repository is not
 a public-facing human-cloneable repository.
 
-    git push release torqbox:torqbox -f
+    git push release master:master -f
 
 
 ### Perform the build
 
 Using the [build system](http://projectodd.ci.cloudbees.com/), select
 the **torquebox4-release** job, entering in the branch to release from
-(usually 'torqbox'), the version to release, and the next version
+(usually 'master'), the version to release, and the next version
 after release.
 
 If something goes wrong in the release job and it needs to run again,
 be sure to reset the torquebox-release repository with the correct code first:
 
-    git push release torqbox:torqbox -f
+    git push release master:master -f
 
 ### Deploy RubyGems
 
@@ -187,8 +187,8 @@ torquebox.org git repo.
 ### Push changes from the release repository to the official repository
 
     git fetch release --tags
-    git merge release/torqbox
-    git push origin torqbox
+    git merge release/master
+    git push origin master
     git push origin <release_tag>
 
 ### Release the project in JIRA
