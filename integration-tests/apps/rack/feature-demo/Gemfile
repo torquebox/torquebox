@@ -1,0 +1,17 @@
+source 'https://rubygems.org'
+
+gem 'torquebox-feature-demo', '0.1.0', :github => 'torquebox/feature-demo'
+
+# These gems need to be kept in-sync with the versions in the
+# feature-demo repo
+gem 'sinatra', '~> 1.4.5'
+gem 'activesupport', '~> 4.1.4'
+
+# TODO: I can't just put 'torquebox' here because bundler blindly
+# packages up the entire filesystem tree under the given path, which
+# includes all the integration tests and their cached copies of torquebox
+gem 'torquebox-core', :path => '../../../../core'
+gem 'torquebox-caching', :path => '../../../../caching'
+gem 'torquebox-messaging', :path => '../../../../messaging'
+gem 'torquebox-scheduling', :path => '../../../../scheduling'
+gem 'torquebox-web', :path => '../../../../web'

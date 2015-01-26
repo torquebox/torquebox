@@ -1,7 +1,0 @@
-web:
-  context: /basic-rails
-
-environment: 
-  foo: bar
-  DB_USER: foobar
-

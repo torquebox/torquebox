@@ -19,6 +19,8 @@ package-cache
 release.properties
 TAGS
 Gemfile.lock
+!integration-tests/apps/**/Gemfile.lock
+**/vendor/**/Gemfile.lock
 .rakeTasks
 .repository
 .DS_Store
@@ -30,3 +32,8 @@ rubyObj.*
 schema.rb
 *.cache
 integration-tests/jboss-eap-*.zip
+pkg/
+**/lib/**/*.jar
+**/lib/*.jar
+Guardfile
+hornetq-data

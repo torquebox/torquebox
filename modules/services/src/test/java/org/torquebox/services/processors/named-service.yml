@@ -1,3 +1,0 @@
-services:
-  foo_service:
-    service: FooService

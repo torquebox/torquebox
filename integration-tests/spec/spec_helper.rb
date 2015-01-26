@@ -1,218 +1,426 @@
-require 'torquespec'
-require 'fileutils'
-require 'rbconfig'
-require 'torquebox-rake-support'
+# Copyright 2014 Red Hat, Inc, and individual contributors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-$: << File.dirname( __FILE__ )
+CORE_DIR = "#{File.dirname(__FILE__)}/../../core"
+WEB_DIR = "#{File.dirname(__FILE__)}/../../web"
+MESSAGING_DIR = "#{File.dirname(__FILE__)}/../../messaging"
+$LOAD_PATH << "#{CORE_DIR}/lib"
+$LOAD_PATH << "#{WEB_DIR}/lib"
+$LOAD_PATH << "#{MESSAGING_DIR}/lib"
+require "#{CORE_DIR}/spec/spec_helper"
 
-MUTABLE_APP_BASE_PATH  = File.join( File.dirname( __FILE__ ), '..', 'target', 'apps' )
-TESTING_ON_WINDOWS = ( java.lang::System.getProperty( "os.name" ) =~ /windows/i )
-SLIM_DISTRO = java.lang::System.getProperty( "org.torquebox.slim_distro" ) == "true"
+require 'net/http'
+require 'rexml/document'
+require 'tmpdir'
+require 'uri'
 
-def jboss_home
-  if SLIM_DISTRO
-    File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss' ) )
-  else
-    Dir.glob( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss-eap-6*' ) ).first
+require 'torquebox-web'
+
+require 'capybara/poltergeist'
+require 'capybara/rspec'
+require 'torquespec/torquespec'
+require 'torquespec/server'
+
+Capybara.app_host = "http://localhost:8080"
+Capybara.run_server = false
+Capybara.default_driver = :poltergeist
+Capybara.default_wait_time = 15
+
+RSpec.configure do |config|
+
+  config.before(:suite) do
+    begin
+      Capybara.visit "/"
+    rescue Exception => ex
+      if ex.message.include?('phantomjs')
+        $stderr.puts <<-EOF
+
+
+
+========================================================================
+
+It looks like phantomjs was not found. Ensure it is installed and
+available in your $PATH. See http://phantomjs.org/download.html for
+details.
+
+========================================================================
+
+
+
+EOF
+        $stderr.puts ex.message
+        exit 1
+      else
+        raise ex
+      end
+    end
+    if wildfly?
+      wildfly_home = install_wildfly
+      TorqueSpec.configure do |torquespec_config|
+        torquespec_config.jboss_home = wildfly_home
+      end
+      Thread.current[:wildfly] = TorqueSpec::Server.new
+      wildfly_server.start(:wait => 120)
+    end
   end
-end
 
-def jruby_home
-  if SLIM_DISTRO
-    File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jruby' ) )
-  else
-    File.join( Dir.glob( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss-eap-6*' ) ).first, 'jruby' )
+  config.after(:suite) do
+    wildfly_server.stop if wildfly_server
   end
-end
-java.lang::System.setProperty( 'jruby.home', jruby_home )
 
-def jboss_log_dir
-  File.join( jboss_home, 'standalone', 'log' )
-end
+  config.before(:all) do
+    if self.class.respond_to?(:server_options)
+      server_start(self.class.server_options)
+    end
 
-TorqueSpec.local {
-  require 'spec_helper_integ'
-}
-
-TorqueSpec.configure do |config|
-  config.jboss_home = jboss_home
-  config.jvm_args = "-Xms256m -Xmx1024m -XX:MaxPermSize=384m -XX:NewRatio=8 -XX:+UseParallelGC -XX:+UseParallelOldGC -XX:SoftRefLRUPolicyMSPerMB=100 -Djruby.home=#{config.jruby_home} -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:#{File.join( jboss_log_dir, 'gc.log' )} -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=$JBOSS_MODULES_SYSTEM_PKGS -Djava.awt.headless=true"
-  config.max_heap = java.lang::System.getProperty( 'max.heap' )
-  config.lazy = java.lang::System.getProperty( 'jboss.lazy' ) == "true"
-  config.jvm_args += " -Dgem.path=default"
-  #config.jvm_args += " -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y"
-  config.knob_root = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'knobs' ) )
-  config.spec_dir = File.dirname( __FILE__ )
-
-  if java.lang::System.getProperty( "integ.debug" ) == "true"
-    config.jvm_args += " -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y"
+    org.projectodd.wunderboss.WunderBoss.log_level = 'ERROR'
   end
+
+  config.after(:all) do
+    if self.class.respond_to?(:server_options)
+      server_stop
+    end
+  end
+
 end
-FileUtils.mkdir_p(TorqueSpec.knob_root) unless File.exist?(TorqueSpec.knob_root)
-FileUtils.mkdir_p( jboss_log_dir ) unless File.exist?( jboss_log_dir )
 
 module TorqueSpec
   module AS7
+    alias_method :old_start_command, :start_command
     def start_command
-      ENV['JAVA_OPTS'] = "#{TorqueSpec.jvm_args} -Djboss.home.dir=\"#{TorqueSpec.jboss_home}\""
-      script_suffix = TESTING_ON_WINDOWS ? "bat" : "sh"
-      boot_script = "standalone.#{script_suffix}"
-      server_config = SLIM_DISTRO ? "standalone.xml" : "torquebox-full.xml"
-      "\"#{TorqueSpec.jboss_home}/bin/#{boot_script}\" --server-config=#{server_config}"
-    end
-  end
-
-  module Domain
-    def start_command
-      ENV['JAVA_OPTS'] = "#{TorqueSpec.jvm_args} -Djboss.home.dir=\"#{TorqueSpec.jboss_home}\""
-      script_suffix = TESTING_ON_WINDOWS ? "bat" : "sh"
-      boot_script = "domain.#{script_suffix}"
-      server_config = SLIM_DISTRO ? "domain.xml" : "torquebox-full.xml"
-      "\"#{TorqueSpec.jboss_home}/bin/#{boot_script}\" --domain-config=#{server_config}"
-    end
-
-    def ready?
-      host = host_controller[1]
-      host["server"].size > 1
-    rescue
-      false
+      old_start_command << " --server-config=standalone-full.xml"
     end
   end
 end
 
-def mutable_app(path)
-  full_path = File.join( MUTABLE_APP_BASE_PATH, path )
-  dest_path = File.dirname( full_path )
-  FileUtils.rm_rf( full_path )
-  FileUtils.mkdir_p( dest_path )
-  FileUtils.cp_r( File.join( File.dirname( __FILE__ ), '..', 'apps', path ), dest_path )
+def bin_dir
+  File.join(CORE_DIR, 'bin')
 end
 
-def jruby_binary
-  bin = File.expand_path( File.join( jruby_home, 'bin', 'jruby' ) )
-  bin << ".exe" if TESTING_ON_WINDOWS
-  bin
+def apps_dir
+  File.join(File.dirname(__FILE__), '..', 'apps')
 end
 
-def integ_jruby_launcher
-  File.expand_path( File.join( File.dirname( __FILE__ ), 'integ_jruby_launcher.rb' ) )
+def jruby_jvm_opts
+  "-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1"
 end
 
-def integ_jruby(command)
-  ENV['JAVA_OPTS'] = '-XX:+TieredCompilation -XX:TieredStopAtLevel=1'
-  jruby_version = case RUBY_VERSION
-                  when /^1\.8\./ then ' --1.8'
-                  when /^1\.9\./ then ' --1.9'
-                  when /^2\.0\./ then ' --2.0'
-                  end
-  `#{jruby_binary} #{jruby_version} #{integ_jruby_launcher} "#{command}"`
+def uberjar?
+  ENV['PACKAGING'] == 'jar'
 end
 
-def normalize_path(path)
-    path = path.slice(0..0).downcase + path.slice(1..-1) if TESTING_ON_WINDOWS
-    File.expand_path(path.strip)
+def wildfly?
+  ENV['WILDFLY'] == 'true'
 end
 
-def assert_paths_are_equal(actual, expected) 
-  normalize_path(actual).should eql(normalize_path(expected))
+def embedded?
+  !wildfly?
 end
 
-def wait_for_condition(timeout, interval, condition)
-  start_time = Time.now
-  while (Time.now - start_time < timeout) do
-    value = yield
-    return value if condition.call(value)
-    sleep(interval)
+def embedded_from_disk?
+  embedded? && !uberjar?
+end
+
+def wildfly_server
+  Thread.current[:wildfly]
+end
+
+def eval_in_new_ruby(script)
+  ruby = org.jruby.Ruby.new_instance
+  unless ENV['DEBUG']
+    dev_null = PLATFORM =~ /mswin/ ? 'NUL' : '/dev/null'
+    ruby.evalScriptlet("$stdout = File.open('#{dev_null}', 'w')")
   end
-  nil
+  ruby.evalScriptlet(script)
+  ruby.tearDown(false)
 end
 
-# JRuby 1.7.0 has a bug where two threads can deadlock if the thread
-# finishing normally and the thread being killed happened to get
-# interleaved. This impacts the DRb implemention in 1.8 mode so
-# workaround that by waiting a bit before killing any alive threads.
-#
-# See https://gist.github.com/02c60ec8a42d445acffa
-if RUBY_VERSION < '1.9' && JRUBY_VERSION > '1.7'
-  require 'drb'
-  require 'thread'
-  module DRb
-    class DRbServer
-      def kill_sub_thread
-        Thread.new do
-          grp = ThreadGroup.new
-          grp.add(Thread.current)
-          list = @grp.list
-          while list.size > 0
-            list.each do |th|
-              wait_count = 0
-              while wait_count < 5
-                sleep 0.1 if th.alive?
-                wait_count += 1
-              end
-              th.kill if th.alive?
-            end
-            list = @grp.list
-          end
-        end
-      end
+ALREADY_BUNDLED = []
+def bundle_install(app_dir)
+  if !ALREADY_BUNDLED.include?(app_dir) && File.exist?("#{app_dir}/Gemfile")
+    eval_in_new_ruby <<-EOS
+      ENV['BUNDLE_GEMFILE'] = nil
+      Dir.chdir('#{app_dir}')
+      require 'bundler/cli'
+      Bundler::CLI.start(['install'])
+    EOS
+    ALREADY_BUNDLED << app_dir
+  end
+end
+
+def torquebox(options)
+  path = options['--context-path'] || '/'
+  app_dir = options['--dir']
+  config_ru = options.keys.find { |k| k.end_with?('.ru') }
+  bundle_install(app_dir)
+  if uberjar?
+    before, after, command_prefix = uberjar(app_dir, path, nil, config_ru)
+  else
+    before = nil
+    after = nil
+    command_prefix = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' "\
+      "#{File.join(bin_dir, 'torquebox')} run"
+  end
+  args = options.to_a.flatten.join(' ')
+  command = "#{command_prefix} #{ENV['DEBUG'] ? '-v' : '-q'} #{args}"
+  metaclass = class << self; self; end
+  metaclass.send(:define_method, :server_options) do
+    return {
+      :app_dir => app_dir,
+      :port => options['--port'] || '8080',
+      :before => before,
+      :after => after,
+      :command => command
+    }
+  end
+end
+
+def uberjar(app_dir, path, main, config_ru)
+  jarfile = "#{app_dir}/#{File.basename(app_dir)}.jar"
+  before = lambda do
+    command = "cd #{app_dir} && #{jruby_command} #{jruby_jvm_opts} "\
+    "-r 'bundler/setup' #{File.join(bin_dir, 'torquebox')}"
+    if wildfly?
+      jarfile, command = uberwar(command, app_dir, path, config_ru)
+    else
+      command << " jar -v"
+    end
+    command << " --main #{main}" if main
+    jar_output = `#{command} 2>&1`
+    puts jar_output if ENV['DEBUG']
+    wildfly_server.deploy(jarfile) if wildfly?
+  end
+  after = lambda do
+    wildfly_server.undeploy(jarfile) if wildfly?
+    FileUtils.rm_f(jarfile)
+    FileUtils.rm_f("#{app_dir}/#{File.basename(app_dir)}.jar")
+  end
+  command_prefix = "java -jar #{jarfile}"
+  [before, after, command_prefix]
+end
+
+def uberwar(command, app_dir, path, config_ru)
+  name = path == '/' ? 'ROOT.war' : "#{path.sub('/', '')}.war"
+  command << " war -v --name #{name}"
+  marker_key = TorqueBox::SpecHelpers.boot_marker_env_key
+  command << " --envvar #{marker_key}=#{ENV[marker_key]}"
+  command << " #{config_ru}" if config_ru
+  jarfile = "#{app_dir}/#{name}"
+  [jarfile, command]
+end
+
+def rackup(options)
+  metaclass = class << self; self; end
+  metaclass.send(:define_method, :server_options) do
+    app_dir = options.delete(:dir)
+    args = options.to_a.flatten.join(' ')
+    command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' "\
+      "-S rackup -s torquebox #{args} -O Quiet #{app_dir}/config.ru"
+    return {
+      :app_dir => app_dir,
+      :port => options['--port'] || '9292',
+      :command => command
+    }
+  end
+end
+
+def embedded(main, options)
+  app_dir = options[:dir]
+  path = '/'
+  if uberjar?
+    before, after, command = uberjar(app_dir, path, main, nil)
+  else
+    before = nil
+    after = nil
+    command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{main}"
+  end
+  metaclass = class << self; self; end
+  metaclass.send(:define_method, :server_options) do
+    return {
+      :app_dir => app_dir,
+      :chdir => app_dir,
+      :port => options[:port] || '8080',
+      :before => before,
+      :after => after,
+      :command => command
+    }
+  end
+end
+
+def server_start(options)
+  app_dir = options[:app_dir]
+  chdir = options[:chdir]
+  port = wildfly? ? '8080' : options[:port]
+  Capybara.app_host = "http://localhost:#{port}"
+  ENV['BUNDLE_GEMFILE'] = "#{app_dir}/Gemfile"
+  TorqueBox::SpecHelpers.set_boot_marker
+  options[:before].call if options[:before]
+  @server_after = options[:after]
+  ENV['RUBYLIB'] = app_dir
+  error_seen = Java::JavaUtilConcurrentAtomic::AtomicBoolean.new
+  unless wildfly?
+    if chdir
+      @old_pwd = Dir.pwd
+      Dir.chdir(chdir)
+    end
+    pid, stdin, stdout, stderr = popen4(options[:command])
+    ENV['BUNDLE_GEMFILE'] = ENV['RUBYLIB'] = nil
+    @server_ios = [stdin, stdout, stderr]
+    @server_pid = pid
+    @stdout_thread, @stderr_thread = pump_server_streams(stdin, stdout,
+                                                         stderr, error_seen)
+  end
+  wait_for_boot(app_dir, 180, error_seen)
+end
+
+def jruby9k?
+  JRUBY_VERSION.split(".").first.to_i >= 9
+end
+
+def popen4(*cmd)
+  # Use IO.popen4 for JRuby < 9.0.0.0
+  return IO.popen4(*cmd) unless jruby9k?
+
+  opts = {}
+  in_r, in_w = IO.pipe
+  opts[:in] = in_r
+  in_w.sync = true
+
+  out_r, out_w = IO.pipe
+  opts[:out] = out_w
+
+  err_r, err_w = IO.pipe
+  opts[:err] = err_w
+
+  child_io = [in_r, out_w, err_w]
+  parent_io = [in_w, out_r, err_r]
+
+  pid = spawn(*cmd, opts)
+  wait_thr = Process.detach(pid)
+  child_io.each { |io| io.close }
+  result = [pid, *parent_io]
+  if defined? yield
+    begin
+      return yield(*result)
+    ensure
+      parent_io.each { |io| io.close unless io.closed? }
+      wait_thr.join
     end
   end
+  result
 end
 
-# JRuby 1.6.7.2 in 1.9 mode has a bug where it needs ObjectSpace for
-# DRb to work. So, we swipe JRuby master's implementation and patch
-# things up.
-if RUBY_VERSION > '1.9' && JRUBY_VERSION < '1.7'
-  require 'drb'
-  require 'weakref'
-  module DRb
-    class DRbIdConv
-      # Convert an object reference id to an object.
-      #
-      # This implementation looks up the reference id in the local object
-      # space and returns the object it refers to.
-      def to_obj(ref)
-        _get(ref)
+def pump_server_streams(stdin, stdout, stderr, error_seen)
+  stdin.close
+  stdout.sync = true
+  stderr.sync = true
+  stdout_thread = Thread.new(stdout) do |stdout_io|
+    begin
+      loop do
+        STDOUT.write(stdout_io.readpartial(1024))
       end
-
-      # Convert an object into a reference id.
-      #
-      # This implementation returns the object's __id__ in the local
-      # object space.
-      def to_id(obj)
-        obj.nil? ? nil : _put(obj)
-      end
-
-      def _clean
-        dead = []
-        id2ref.each {|id,weakref| dead << id unless weakref.weakref_alive?}
-        dead.each {|id| id2ref.delete(id)}
-      end
-
-      def _put(obj)
-        _clean
-        id2ref[obj.__id__] = WeakRef.new(obj)
-        obj.__id__
-      end
-
-      def _get(id)
-        weakref = id2ref[id]
-        if weakref
-          result = weakref.__getobj__ rescue nil
-          if result
-            return result
-          else
-            id2ref.delete id
-          end
-        end
-        nil
-      end
-
-      def id2ref
-        @id2ref ||= {}
-      end
-      private :_clean, :_put, :_get, :id2ref
+    rescue EOFError, IOError
     end
   end
+  stderr_thread = Thread.new(stderr) do |stderr_io|
+    begin
+      loop do
+        STDERR.write(stderr_io.readpartial(1024))
+        error_seen.set(true)
+      end
+    rescue EOFError, IOError
+    end
+  end
+  [stdout_thread, stderr_thread]
+end
+
+def wait_for_boot(app_dir, timeout, error_seen)
+  start = Time.now
+  while (Time.now - start) < timeout
+    booted = TorqueBox::SpecHelpers.booted?
+    break if booted
+    break if error_seen.get
+    sleep 0.2 # sleep and retry
+  end
+  handle_boot_failure(app_dir, timeout, error_seen) unless booted
+end
+
+def handle_boot_failure(app_dir, timeout, error_seen)
+  raise "Application failed to boot" if error_seen.get
+  if ENV['DEBUG'] && @server_pid
+    puts `jstack #{@server_pid}`
+  end
+  raise "Application #{app_dir} failed to start within #{timeout} seconds"
+end
+
+def server_stop
+  if @old_pwd
+    Dir.chdir(@old_pwd)
+    @old_pwd = nil
+  end
+  if @server_ios
+    @server_ios.each { |io| io.close unless io.closed? } if jruby9k?
+    @server_ios = nil
+  end
+  if @server_pid
+    begin
+      Process.kill 'INT', @server_pid
+    rescue Errno::ESRCH
+      # ignore no such process errors - it died already
+    end
+    @server_pid = nil
+    @stdout_thread.join(30)
+    @stdout_thread = nil
+    @stderr_thread.join(30)
+    @stderr_thread = nil
+  end
+  if @server_after
+    @server_after.call
+    @server_after = nil
+  end
+  TorqueBox::SpecHelpers.clear_boot_marker
+end
+
+def install_wildfly
+  require 'jbundler/aether'
+  config = JBundler::Config.new
+  aether = JBundler::AetherRuby.new(config)
+  aether.add_repository('jboss', 'http://repository.jboss.org/nexus/content/groups/public/')
+  aether.add_artifact("org.wildfly:wildfly-dist:zip:#{TorqueBox::WILDFLY_VERSION}")
+  aether.resolve
+  zip_path = aether.classpath_array.find { |dep| dep.include?('wildfly/wildfly-dist/') }
+  unzip_path = File.expand_path('../pkg', File.dirname(__FILE__))
+  wildfly_home = File.join(unzip_path, 'wildfly')
+  unless File.exist?(wildfly_home)
+    FileUtils.mkdir_p(unzip_path)
+    Dir.chdir(unzip_path) do
+      unzip(zip_path)
+      original_dir = File.expand_path(Dir['wildfly-*'].first)
+      FileUtils.mv(original_dir, wildfly_home)
+    end
+    standalone_xml = "#{wildfly_home}/standalone/configuration/standalone-full.xml"
+    doc = REXML::Document.new(File.read(standalone_xml))
+    interfaces = doc.root.get_elements("//management-interfaces/*")
+    interfaces.each { |i| i.attributes.delete('security-realm') }
+    hornetq = doc.root.get_elements("//hornetq-server").first
+    hornetq.add_element('journal-type').text = 'NIO'
+    hornetq.add_element('security-enabled').text = 'false'
+    open(standalone_xml, 'w') do |file|
+      doc.write(file, 4)
+    end
+  end
+  FileUtils.rm_rf(Dir["#{wildfly_home}/standalone/log/*"])
+  FileUtils.rm_rf(Dir["#{wildfly_home}/standalone/deployments/*"])
+  wildfly_home
 end

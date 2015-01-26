@@ -1,5 +1,0 @@
-services:
-  FooService:
-  
-  another_foo:
-    service: FooService

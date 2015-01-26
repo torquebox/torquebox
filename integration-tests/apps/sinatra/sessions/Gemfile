@@ -1,4 +1,0 @@
-source "file://#{File.dirname(__FILE__)}/../../../../build/assembly/target/stage/gem-repo"
-gem "sinatra"
-gem "i18n"
-gem "torquebox"

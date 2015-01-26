@@ -1,8 +1,0 @@
-source "file://#{File.dirname(__FILE__)}/../../../../build/assembly/target/stage/gem-repo"
-
-gem 'rails', '~>3.0.0'
-
-gem 'activerecord-jdbc-adapter'
-gem 'jdbc-sqlite3'
-gem 'torquebox'
-gem 'torquebox-rake-support'

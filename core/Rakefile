@@ -1,0 +1,8 @@
+require "#{File.dirname(__FILE__)}/../tasks/torquebox"
+TorqueBox::RakeHelper.install_standard_tasks
+TorqueBox::RakeHelper.install_java_tasks(:source => 'torquebox-core',
+                                         :gemspec => 'torquebox-core.gemspec',
+                                         :copy_deps => 'lib/wunderboss-jars',
+                                         :excluded_deps => ['jruby-complete'])
+
+task :default => :spec

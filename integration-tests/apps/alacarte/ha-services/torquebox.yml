@@ -1,7 +1,0 @@
-services:
-  NodeNameService:
-    config:
-      queue: /queues/node_name
-queues:
-  /queues/node_name:
-    durable: false

@@ -1,5 +1,0 @@
-messaging:
-  /topics/foo:
-    MyClass:
-      stopped: true
-

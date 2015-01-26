@@ -1,0 +1,9 @@
+source 'https://rubygems.org'
+
+gem 'rack'
+
+# TODO: I can't just put 'torquebox' here because bundler blindly
+# packages up the entire filesystem tree under the given path, which
+# includes all the integration tests and their cached copies of torquebox
+gem 'torquebox-core', :path => '../../../../core'
+gem 'torquebox-web', :path => '../../../../web'

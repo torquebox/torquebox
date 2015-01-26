@@ -1,8 +1,0 @@
---- 
-:orm: activerecord
-:test: none
-:mock: none
-:script: none
-:renderer: haml
-:stylesheet: none
-:admin_renderer: haml

@@ -1,0 +1,50 @@
+require "#{File.dirname(__FILE__)}/../tasks/torquebox"
+TorqueBox::RakeHelper.install_clean_tasks
+
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:real_spec) do |config|
+  config.pattern = './spec/*_spec.rb'
+end
+task(:real_spec).clear_comments
+
+namespace :spec do
+  desc 'Run all integration test variants'
+  task :all => ['disk', 'jar', 'wildfly:jar']
+
+  desc 'Run integration tests using applications on disk'
+  task :disk do
+    puts '>>> Running integration tests from disk'
+    ENV['PACKAGING'] = nil
+    task(:real_spec).execute
+  end
+
+  desc 'Run integration tests using applications inside jars'
+  task :jar do
+    puts '>>> Running integration tests with jar packaging'
+    ENV['PACKAGING'] = 'jar'
+    task(:real_spec).execute
+  end
+
+  namespace :wildfly do
+    desc 'Run integration tests in WildFly using applications inside jars'
+    task :jar do
+      puts '>>> Running integration tests in WildFly with jar packaging'
+      ENV['WILDFLY'] = 'true'
+      ENV['PACKAGING'] = 'jar'
+      task(:real_spec).execute
+    end
+  end
+end
+
+desc 'Alias for spec:disk'
+task :spec do
+  if ENV['PACKAGING'].nil?
+    task('spec:disk').invoke
+  else
+    task(:real_spec).invoke
+  end
+end
+
+task :clean do
+  Dir.glob("**/target") { |dir| FileUtils.rm_rf(dir) }
+end

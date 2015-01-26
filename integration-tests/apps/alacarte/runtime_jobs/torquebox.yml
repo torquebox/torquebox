@@ -1,3 +1,0 @@
-queues:
-  /queue/runtime_response:
-    durable: false

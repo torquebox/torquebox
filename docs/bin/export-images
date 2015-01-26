@@ -1,3 +1,0 @@
-#!/bin/sh
-
-osascript bin/export-images.scrpt ./en-US/src/main/graffle ./en-US/src/main/docbook/images

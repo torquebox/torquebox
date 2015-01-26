@@ -1,88 +1,108 @@
+# Copyright 2014 Red Hat, Inc, and individual contributors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 require 'spec_helper'
 
-describe 'basic rails4 test' do
+feature 'basic rails4 test' do
 
-  # Rails 4 is 1.9+
-  if RUBY_VERSION >= '1.9'
-    mutable_app 'rails4/basic'
-    deploy <<-END.gsub(/^ {6}/,'')
-      ---
-      application:
-        RAILS_ROOT: #{File.dirname(__FILE__)}/../target/apps/rails4/basic
-        RAILS_ENV: development
-      web:
-        context: /basic-rails4
-      ruby:
-        version: #{RUBY_VERSION[0,3]}
-    END
+  torquebox('--dir' => "#{apps_dir}/rails4/basic",
+            '--context-path' => '/basic-rails4',
+            '-e' => 'production')
 
-    it 'should do a basic get' do
-      visit '/basic-rails4'
-      page.should have_content('It works')
-      page.find('#success')[:class].should == 'basic-rails4'
+  it 'should do a basic get' do
+    visit '/basic-rails4'
+    expect(page).to have_content('It works')
+    expect(page.find('#success')[:class]).to eq('basic-rails4')
+  end
+
+  context 'streaming' do
+    it "should work for small responses" do
+      verify_streaming("/basic-rails4/root/streaming?count=0")
     end
 
-    context 'streaming' do
-      it "should work for small responses" do
-        verify_streaming("/basic-rails4/root/streaming?count=0")
-      end
+    it "should work for large responses" do
+      verify_streaming("/basic-rails4/root/streaming?count=500")
+    end
 
-      it "should work for large responses" do
-        verify_streaming("/basic-rails4/root/streaming?count=500")
-      end
-
-      def verify_streaming(url)
-        uri = URI.parse(page.driver.send(:url, url))
-        Net::HTTP.get_response(uri) do |response|
-          response.should be_chunked
-          response.header['transfer-encoding'].should == 'chunked'
+    def verify_streaming(url)
+      uri = URI.parse("#{Capybara.app_host}#{url}")
+      http = Net::HTTP.new(uri.hostname, uri.port)
+      http.open_timeout = 10
+      http.start do |request|
+        request.request_get(uri.request_uri) do |response|
+          expect(response).to be_chunked
+          expect(response.header['transfer-encoding']).to eq('chunked')
           chunk_count, body = 0, ""
           response.read_body do |chunk|
             chunk_count += 1
             body += chunk
           end
-          body.should include('It works')
+          expect(body).to include('It works')
           body.each_line do |line|
-            line.should_not match(/^\d+\s*$/)
+            expect(line).not_to match(/^\d+\s*$/)
           end
-          chunk_count.should be > 1
+          expect(chunk_count).to be > 1
         end
       end
     end
-
-    it 'should support class reloading' do
-      visit '/basic-rails4/reloader/0'
-      element = page.find_by_id('success')
-      element.should_not be_nil
-      element.text.should == 'INITIAL'
-
-      seen_values = Set.new
-      seen_values << element.text
-      counter = 1
-      while seen_values.size <= 3 && counter < 60 do
-        visit "/basic-rails4/reloader/#{counter}"
-        element = page.find_by_id('success')
-        element.should_not be_nil
-        seen_values << element.text
-        counter += 1
-      end
-
-      seen_values.size.should > 3
-    end
-
-    it 'should return a static page beneath default public dir' do
-      visit "/basic-rails4/some_page.html"
-      element = page.find('#success')
-      element.should_not be_nil
-      element.text.should == 'static page'
-    end
-
-    it "should support setting multiple cookies" do
-      visit "/basic-rails4/root/multiple_cookies"
-      page.driver.cookies['foo1'].value.should == 'bar1'
-      page.driver.cookies['foo2'].value.should == 'bar2'
-      page.driver.cookies['foo3'].value.should == 'bar3'
-    end
-
   end
+
+  context "server sent events" do
+    it "should work" do
+      uri = URI.parse("#{Capybara.app_host}/basic-rails4/live/sse")
+      http = Net::HTTP.new(uri.hostname, uri.port)
+      http.open_timeout = 10
+      http.start do |request|
+        request.request_get(uri.request_uri) do |response|
+          chunk_count, body = 0, ""
+          response.read_body do |chunk|
+            chunk_count += 1
+            body += chunk
+          end
+          expect(body).to include('test1')
+          expect(body).to include('test4')
+          expect(chunk_count).to be > 3
+        end
+      end
+    end
+  end
+
+  it 'should return a static page beneath default public dir' do
+    visit "/basic-rails4/some_page.html"
+    element = page.find('#success')
+    expect(element).not_to be_nil
+    expect(element.text).to eq('static page')
+  end
+
+  it "should support setting multiple cookies" do
+    visit "/basic-rails4/root/multiple_cookies"
+    expect(page.driver.cookies['foo1'].value).to eq('bar1')
+    expect(page.driver.cookies['foo2'].value).to eq('bar2')
+    expect(page.driver.cookies['foo3'].value).to eq('bar3')
+  end
+
+  it "should serve assets from app/assets" do
+    visit "/basic-rails4/assets/test.js?body=1"
+    page.source.should =~ %r{// taco}
+  end
+
+  it "should generate correct asset and link paths" do
+    visit "/basic-rails4"
+    image = page.find('img')
+    image['src'].should match(%r{/basic-rails4/assets/rails\.png})
+    link = page.find('a')
+    link['href'].should eql('/basic-rails4/')
+  end
+
 end

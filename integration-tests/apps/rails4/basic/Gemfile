@@ -1,7 +1,7 @@
-source "file://#{File.dirname(__FILE__)}/../../../../build/assembly/target/stage/gem-repo"
+source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.0'
+gem 'rails', '4.2.0'
 
 # Use jdbcsqlite3 as the database for Active Record
 gem 'activerecord-jdbc-adapter'
@@ -28,11 +28,6 @@ gem 'turbolinks'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
 
-group :doc do
-  # bundle exec rake doc:rails generates the API under doc/api.
-  gem 'sdoc', require: false
-end
-
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
@@ -42,4 +37,8 @@ end
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development
 
-gem 'torquebox'
+# TODO: I can't just put 'torquebox' here because bundler blindly
+# packages up the entire filesystem tree under the given path, which
+# includes all the integration tests and their cached copies of torquebox
+gem 'torquebox-core', :path => '../../../../core'
+gem 'torquebox-web', :path => '../../../../web'

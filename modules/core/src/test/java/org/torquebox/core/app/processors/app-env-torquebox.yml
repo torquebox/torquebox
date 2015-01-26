@@ -1,4 +1,0 @@
----
-application:
-  root: /path/to/my/app
-  env: biscuit

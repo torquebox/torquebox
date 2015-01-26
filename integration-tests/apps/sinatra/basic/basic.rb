@@ -2,7 +2,7 @@
 require 'rubygems'
 require 'sinatra'
 
-settings.static = false
+disable :static, :logging
 
 options '/' do
   response.headers['Access-Control-Allow-Origin'] = '*'
@@ -26,10 +26,7 @@ post '/poster' do
   haml :posted
 end
 
-get '/log-marker' do
-  erb :index
-end
-
-get '/torque-984' do
-  ENV['TORQUE-984']
+get '/long_body' do
+  body = 'foobarbaz' * 50000
+  body << "<div id='long_body'>complete</div>"
 end

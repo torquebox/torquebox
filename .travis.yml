@@ -1,3 +1,33 @@
+language: ruby
+
+rvm:
+  - jruby-19mode
+  - jruby-head
+
+matrix:
+  allow_failures:
+    - rvm: jruby-head
+
+jdk:
+  - openjdk7
+
+env: DEBUG=true
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.m2/repository
+
+install: travis_retry bundle install
+
+before_script: bundle exec rake build
+
+script:
+  - bundle exec rake rubocop
+  - bundle exec rake spec
+  - cd integration-tests && bundle exec rake spec:all
+
 branches:
   only:
     - torqbox

@@ -1,7 +1,0 @@
-messaging:
-  /topics/foo:
-    MyClass:
-      selector: mySelector
-      config:
-        a: "toast"
-      concurrency: 2

@@ -1,8 +1,0 @@
-services:
-  ArgService:
-    singleton: true
-    config:
-      ham: biscuit
-  
-  FooService:
-    biscuit: gravy
