@@ -291,11 +291,7 @@ public class RackEnvironmentHash extends RubyHash {
         fillEntireHash();
         return super.key(context, expected);
     }
-    @Override
-    public RubyArray indices(ThreadContext context, IRubyObject[] indices) {
-        fillEntireHash();
-        return super.indices(context, indices);
-    }
+
     @Override
     public RubyArray keys() {
         fillEntireHash();
