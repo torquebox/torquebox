@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.summary  = 'TorqueBox Next Generation'
   s.author   = 'The TorqueBox Team'
   s.email    = 'torquebox-dev@torquebox.org'
-  s.homepage = 'http://torquebox.org/torqbox'
+  s.homepage = 'http://torquebox.org/4x'
 
   s.required_ruby_version = '>= 1.9.3'
   s.license = 'Apache-2.0'
