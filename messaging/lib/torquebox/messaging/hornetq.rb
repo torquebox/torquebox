@@ -34,7 +34,7 @@ module TorqueBox
       # available operations.
       # @param destination [Destination] Should be a {Queue} or
       #   {Topic}.
-      # @param type [:core, :jms]"
+      # @param type [:core, :jms]
       def self.destination_controller(destination, type = :jms)
         if destination.instance_of?(Queue) && type == :core
           prefix = "core.queue."
