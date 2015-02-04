@@ -43,7 +43,7 @@ describe "basic rails3 asset test" do
     end
 
     # The specific version of Rails we use has a bug here under Ruby 2.0
-    if RUBY_VERSION[0] < '2'
+    if RUBY_VERSION[0,1] < '2'
       it "should generate correct asset and link paths" do
         visit "/"
         puts page.source
