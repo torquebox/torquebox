@@ -22,6 +22,63 @@ module TorqueBox
         @log_level = level
         org.projectodd.wunderboss.WunderBoss.log_level = level
       end
+
+      def logger
+        @logger ||= new
+      end
     end
+
+    def initialize(name = nil)
+      @logger = org.projectodd.wunderboss.WunderBoss.logger(name || 'TorqueBox')
+    end
+
+    def trace?
+      @logger.trace_enabled?
+    end
+
+    def debug?
+      @logger.debug_enabled?
+    end
+
+    def info?
+      @logger.info_enabled?
+    end
+
+    def warn?
+      @logger.warn_enabled?
+    end
+
+    def error?
+      @logger.error_enabled?
+    end
+    alias_method :fatal?, :error?
+
+    [:trace, :debug, :info, :warn, :error].each do |severity|
+      define_method(severity) do |*params, &block|
+        add(severity, *params, &block)
+      end
+    end
+    alias_method :fatal, :error
+
+    # Allow our logger to be used for env['rack.errors']
+    def puts(message)
+      info message.to_s
+    end
+
+    def write(message)
+      info message.strip
+    end
+
+    def flush
+    end
+
+    private
+
+    def add(severity, *params)
+      message = block_given? ? yield : params.shift
+
+      @logger.send(severity, message, *params)
+    end
+
   end
 end
