@@ -57,10 +57,24 @@ module TorqueBox
     end
     alias_method :fatal?, :error?
 
-    [:trace, :debug, :info, :warn, :error].each do |severity|
-      define_method(severity) do |*params, &block|
-        add(severity, *params, &block)
-      end
+    def trace(*params, &block)
+      add(:trace, *params, &block)
+    end
+
+    def debug(*params, &block)
+      add(:debug, *params, &block)
+    end
+
+    def info(*params, &block)
+      add(:info, *params, &block)
+    end
+
+    def warn(*params, &block)
+      add(:warn, *params, &block)
+    end
+
+    def error(*params, &block)
+      add(:error, *params, &block)
     end
     alias_method :fatal, :error
 
