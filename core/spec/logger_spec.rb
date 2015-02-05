@@ -14,6 +14,11 @@
 
 require 'spec_helper'
 
+module Foo
+  class Bar
+  end
+end
+
 describe TorqueBox::Logger do
 
   let(:logger) { TorqueBox::Logger.new }
@@ -55,11 +60,10 @@ describe TorqueBox::Logger do
   end
 
   context "torquebox 3 specs" do
-    # it "should look nice for class objects" do
-    #   require 'torquebox/service_registry'
-    #   logger = TorqueBox::Logger.new(TorqueBox::ServiceRegistry)
-    #   logger.error("JC: log for cache store")
-    # end
+    it "should look nice for class objects" do
+      logger = TorqueBox::Logger.new(Foo::Bar)
+      logger.error("JC: log for cache store")
+    end
 
     it "should support the various boolean methods" do
       logger.should respond_to(:trace?)
@@ -70,10 +74,11 @@ describe TorqueBox::Logger do
       logger.should respond_to(:fatal?)
     end
 
-    # it "should not barf on meaningless level setting" do
-    #   logger.level = Logger::WARN
-    #   logger.level.should == Logger::WARN
-    # end
+    it "should not barf on meaningless level setting" do
+      skip
+      logger.level = Logger::WARN
+      logger.level.should == Logger::WARN
+    end
 
     it "should deal with blocks correctly" do
       logger.error "JC: message zero"
@@ -91,9 +96,10 @@ describe TorqueBox::Logger do
       logger.should respond_to(:flush)
     end
 
-    # it "should have a formatter" do
-    #   logger.should respond_to(:formatter)
-    #   logger.formatter.should_not be_nil
-    # end
+    it "should have a formatter" do
+      skip
+      logger.should respond_to(:formatter)
+      logger.formatter.should_not be_nil
+    end
   end
 end

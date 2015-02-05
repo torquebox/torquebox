@@ -15,6 +15,9 @@
 
 module TorqueBox
   class Logger
+
+    DEFAULT_CATEGORY = 'TorqueBox'.freeze
+
     class << self
       attr_reader :log_level
 
@@ -29,7 +32,8 @@ module TorqueBox
     end
 
     def initialize(name = nil)
-      @logger = org.projectodd.wunderboss.WunderBoss.logger(name || 'TorqueBox')
+      category = name || DEFAULT_CATEGORY
+      @logger = org.projectodd.wunderboss.WunderBoss.logger(category.to_s.gsub('::', '.'))
     end
 
     def trace?
@@ -76,7 +80,6 @@ module TorqueBox
 
     def add(severity, *params)
       message = block_given? ? yield : params.shift
-
       @logger.send(severity, message, *params)
     end
 
