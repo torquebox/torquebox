@@ -90,6 +90,10 @@ module TorqueBox
     def flush
     end
 
+    def level
+      (@logger.level || @logger.effective_level).to_s
+    end
+
     private
 
     def add(severity, *params)
