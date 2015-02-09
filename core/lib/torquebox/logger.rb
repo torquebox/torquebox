@@ -12,11 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'logger'
 
 module TorqueBox
   class Logger
 
+    java_import org.projectodd.wunderboss::LogbackUtil
+
     DEFAULT_CATEGORY = 'TorqueBox'.freeze
+
+    STD_LOGGER_LEVELS = {
+      ::Logger::DEBUG => 'DEBUG',
+      ::Logger::INFO  => 'INFO',
+      ::Logger::WARN  => 'WARN',
+      ::Logger::ERROR => 'ERROR',
+      ::Logger::FATAL => 'FATAL'
+    }
 
     class << self
       attr_reader :log_level
@@ -25,15 +36,13 @@ module TorqueBox
         @log_level = level
         org.projectodd.wunderboss.WunderBoss.log_level = level
       end
-
-      def logger
-        @logger ||= new
-      end
     end
 
-    def initialize(name = nil)
-      category = name || DEFAULT_CATEGORY
-      @logger = org.projectodd.wunderboss.WunderBoss.logger(category.to_s.gsub('::', '.'))
+    attr_accessor :formatter
+
+    def initialize(name = DEFAULT_CATEGORY)
+      @logger = org.projectodd.wunderboss.WunderBoss.logger(name.to_s.gsub('::', '.'))
+      @formatter = ::Logger::Formatter.new # <- Make logback formatter
     end
 
     def trace?
@@ -92,6 +101,14 @@ module TorqueBox
 
     def level
       (@logger.level || @logger.effective_level).to_s
+    end
+
+    def level=(new_level)
+      if new_level.respond_to?(:to_int)
+        new_level = STD_LOGGER_LEVELS[new_level]
+      end
+
+      LogbackUtil.set_log_level(@logger, new_level)
     end
 
     private

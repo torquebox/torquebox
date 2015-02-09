@@ -67,6 +67,16 @@ describe TorqueBox::Logger do
       logger.info?.should be_falsey
       logger.warn?.should be_truthy
     end
+
+    it "should set levels with a string" do
+      logger.level = 'WARN'
+      logger.level.should == 'WARN'
+    end
+
+    it "should set levels with a ruby log level" do
+      logger.level = ::Logger::WARN
+      logger.level.should == 'WARN'
+    end
   end
 
   context "torquebox 3 specs" do
@@ -84,12 +94,6 @@ describe TorqueBox::Logger do
       logger.should respond_to(:fatal?)
     end
 
-    # it "should not barf on meaningless level setting" do
-    #   skip
-    #   logger.level = Logger::WARN
-    #   logger.level.should == Logger::WARN
-    # end
-
     it "should deal with blocks correctly" do
       logger.error "JC: message zero"
       logger.error { "JC: message" }
@@ -106,10 +110,9 @@ describe TorqueBox::Logger do
       logger.should respond_to(:flush)
     end
 
-    # it "should have a formatter" do
-    #   skip
-    #   logger.should respond_to(:formatter)
-    #   logger.formatter.should_not be_nil
-    # end
+    it "should have a formatter" do
+      logger.should respond_to(:formatter)
+      logger.formatter.should_not be_nil
+    end
   end
 end
