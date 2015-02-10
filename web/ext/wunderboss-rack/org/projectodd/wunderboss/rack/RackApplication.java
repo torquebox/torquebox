@@ -16,10 +16,13 @@
 
 package org.projectodd.wunderboss.rack;
 
+import org.jruby.NativeException;
 import org.jruby.Ruby;
 import org.jruby.RubyClass;
+import org.jruby.RubyException;
 import org.jruby.RubyHash;
 import org.jruby.RubyModule;
+import org.jruby.exceptions.RaiseException;
 import org.jruby.runtime.Helpers;
 import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.builtin.IRubyObject;
@@ -36,20 +39,32 @@ public class RackApplication {
         responseModule = RubyHelper.getClass(runtime, RESPONSE_HANDLER_CLASS_NAME);
         rackChannelClass = RackChannel.createRackChannelClass(runtime);
         rackResponderClass = RackResponder.createRackResponderClass(runtime);
-        rackEnvironment = new RackEnvironment(runtime);
+        rackHijackClass = RackHijack.createRackHijackClass(runtime);
+        rackEnvironment = new RackEnvironment(runtime, rackHijackClass);
     }
 
-    public RackChannel getInputChannel(InputStream inputStream) {
-        return new RackChannel(runtime, rackChannelClass, inputStream);
-    }
-
-    public void call(RackAdapter rackAdapter, RackChannel inputChannel, RackEnvironment.RACK_KEY sessionKey, Object session) throws Exception {
-        RackEnvironmentHash rackEnvHash = rackEnvironment.getEnv(rackAdapter, inputChannel);
-        rackEnvHash.lazyPut(sessionKey, session, false);
-        ThreadContext threadContext = runtime.getCurrentContext();
-        IRubyObject rackResponse = rubyRackApp.callMethod(threadContext, "call", rackEnvHash);
-        RackResponder rackResponder = new RackResponder(runtime, rackResponderClass, rackAdapter);
-        Helpers.invoke(threadContext, responseModule, RESPONSE_HANDLER_METHOD_NAME, rackResponse, rackResponder);
+    public void call(RackAdapter rackAdapter, RackEnvironment.RACK_KEY sessionKey, Object session) throws Exception {
+        RackChannel inputChannel = new RackChannel(runtime, rackChannelClass, rackAdapter.getInputStream());
+        boolean hijacked = false;
+        try {
+            RackEnvironmentHash rackEnvHash = rackEnvironment.getEnv(rackAdapter, inputChannel);
+            rackEnvHash.lazyPut(sessionKey, session, false);
+            ThreadContext threadContext = runtime.getCurrentContext();
+            IRubyObject rackResponse = rubyRackApp.callMethod(threadContext, "call", rackEnvHash);
+            RackResponder rackResponder = new RackResponder(runtime, rackResponderClass, rackAdapter);
+            Helpers.invoke(threadContext, responseModule, RESPONSE_HANDLER_METHOD_NAME,
+                    rackResponse, rackResponder, rackEnvHash);
+        } catch (RackHijackException ex) {
+            hijacked = true;
+            rackAdapter.async();
+        } finally {
+            // Closing the RackChannel cleans up the temp file resources
+            inputChannel.close();
+            if (!hijacked) {
+                // But only close the InputStream itself if we're not hijacked
+                rackAdapter.getInputStream().close();
+            }
+        }
     }
 
     private IRubyObject rubyRackApp;
@@ -57,6 +72,7 @@ public class RackApplication {
     private RubyModule responseModule;
     private RubyClass rackChannelClass;
     private RubyClass rackResponderClass;
+    private RubyClass rackHijackClass;
     private RackEnvironment rackEnvironment;
 
     public static final String RESPONSE_HANDLER_CLASS_NAME = "WunderBoss::Rack::ResponseHandler";

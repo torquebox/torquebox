@@ -21,9 +21,14 @@ import org.jruby.RubyHash;
 import org.jruby.RubyString;
 import org.projectodd.wunderboss.ruby.RubyHelper;
 
+import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.Enumeration;
 
 public class ServletRackAdapter implements RackAdapter {
@@ -95,6 +100,29 @@ public class ServletRackAdapter implements RackAdapter {
     }
 
     @Override
+    public InputStream getInputStream() {
+        try {
+            return request.getInputStream();
+        } catch (IOException ex) {
+            throw new RuntimeException("Error getting servlet input stream", ex);
+        }
+    }
+
+    @Override
+    public ReadableByteChannel getInputChannel() {
+        return Channels.newChannel(getInputStream());
+    }
+
+    @Override
+    public WritableByteChannel getOutputChannel() {
+        try {
+            return Channels.newChannel(response.getOutputStream());
+        } catch (IOException ex) {
+            throw new RuntimeException("Error getting servlet output stream", ex);
+        }
+    }
+
+    @Override
     public void populateRackHeaders(final RubyHash rackEnv) {
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
@@ -130,6 +158,12 @@ public class ServletRackAdapter implements RackAdapter {
     @Override
     public void flush() throws IOException {
         response.flushBuffer();
+    }
+
+    @Override
+    public void async() {
+        AsyncContext asyncContext = request.startAsync();
+        asyncContext.setTimeout(0); // no timeout
     }
 
     private void fillHeaderKey(final RubyHash rackEnv, final String key, byte[] rubyKeyBytes) {

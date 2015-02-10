@@ -69,6 +69,7 @@ EOF
       wildfly_home = install_wildfly
       TorqueSpec.configure do |torquespec_config|
         torquespec_config.jboss_home = wildfly_home
+        # torquespec_config.jvm_args += " -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y"
       end
       Thread.current[:wildfly] = TorqueSpec::Server.new
       wildfly_server.start(:wait => 120)

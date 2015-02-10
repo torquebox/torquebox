@@ -17,6 +17,8 @@
 package org.projectodd.wunderboss.rack;
 
 import io.undertow.server.HttpServerExchange;
+import io.undertow.server.ServerConnection;
+import io.undertow.server.protocol.http.HttpServerConnection;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.HeaderValues;
 import io.undertow.util.Headers;
@@ -27,8 +29,12 @@ import org.jruby.RubyString;
 import org.projectodd.wunderboss.ruby.RubyHelper;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 
 public class UndertowRackAdapter implements RackAdapter {
 
@@ -108,6 +114,29 @@ public class UndertowRackAdapter implements RackAdapter {
     }
 
     @Override
+    public InputStream getInputStream() {
+        return exchange.getInputStream();
+    }
+
+    @Override
+    public ReadableByteChannel getInputChannel() {
+        ServerConnection serverConnection = exchange.getConnection();
+        if (serverConnection instanceof HttpServerConnection) {
+            return ((HttpServerConnection) serverConnection).getChannel().getSourceChannel();
+        }
+        return Channels.newChannel(exchange.getInputStream());
+    }
+
+    @Override
+    public WritableByteChannel getOutputChannel() {
+        ServerConnection serverConnection = exchange.getConnection();
+        if (serverConnection instanceof HttpServerConnection) {
+            return ((HttpServerConnection) serverConnection).getChannel().getSinkChannel();
+        }
+        return Channels.newChannel(exchange.getOutputStream());
+    }
+
+    @Override
     public void populateRackHeaders(final RubyHash rackEnv) {
         for (HttpString headerName : getHeaders().getHeaderNames()) {
             fillHeaderKey(rackEnv, headerName, rackHeaderNameToBytes(headerName));
@@ -145,6 +174,11 @@ public class UndertowRackAdapter implements RackAdapter {
         if (!exchange.isResponseComplete()) {
             exchange.getOutputStream().flush();
         }
+    }
+
+    @Override
+    public void async() {
+        exchange.dispatch();
     }
 
     private void fillHeaderKey(final RubyHash rackEnv, final HttpString key, byte[] rubyKeyBytes) {

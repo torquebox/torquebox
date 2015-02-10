@@ -20,6 +20,7 @@ import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyArray;
 import org.jruby.RubyBoolean;
+import org.jruby.RubyClass;
 import org.jruby.RubyFixnum;
 import org.jruby.RubyHash;
 import org.jruby.RubyIO;
@@ -39,12 +40,14 @@ public class RackEnvironment {
         PATH_INFO, QUERY_STRING, SERVER_NAME, SERVER_PORT,
         CONTENT_TYPE, REQUEST_URI, REMOTE_ADDR, URL_SCHEME,
         VERSION, MULTITHREAD, MULTIPROCESS, RUN_ONCE, CONTENT_LENGTH,
-        HTTPS, UNDERTOW_EXCHANGE, SERVLET_REQUEST
+        HTTPS, UNDERTOW_EXCHANGE, SERVLET_REQUEST, RACK_HIJACK_P,
+        RACK_HIJACK, RACK_HIJACK_IO
     }
     static final int NUM_RACK_KEYS = RACK_KEY.values().length;
 
-    public RackEnvironment(final Ruby runtime) throws IOException {
+    public RackEnvironment(final Ruby runtime, final RubyClass rackHijackClass) throws IOException {
         this.runtime = runtime;
+        this.rackHijackClass = rackHijackClass;
         rackVersion = RubyArray.newArray(runtime);
         rackVersion.add(RubyFixnum.one(runtime));
         rackVersion.add(RubyFixnum.one(runtime));
@@ -75,6 +78,9 @@ public class RackEnvironment {
         putRack("HTTPS", RACK_KEY.HTTPS);
         putRack("undertow.exchange", RACK_KEY.UNDERTOW_EXCHANGE);
         putRack("java.servlet_request", RACK_KEY.SERVLET_REQUEST);
+        putRack("rack.hijack?", RACK_KEY.RACK_HIJACK_P);
+        putRack("rack.hijack", RACK_KEY.RACK_HIJACK);
+        putRack("rack.hijack_io", RACK_KEY.RACK_HIJACK_IO);
     }
 
     private void putRack(String key, RACK_KEY value) {
@@ -85,7 +91,7 @@ public class RackEnvironment {
                            final RackChannel inputChannel) throws IOException {
         // TODO: Should we only use this faster RackEnvironmentHash if we detect
         // specific JRuby versions that we know are compatible?
-        final RackEnvironmentHash env = new RackEnvironmentHash(runtime, rackAdapter, rackKeyMap);
+        final RackEnvironmentHash env = new RackEnvironmentHash(runtime, rackAdapter, rackKeyMap, rackHijackClass);
         env.lazyPut(RACK_KEY.RACK_INPUT, inputChannel, false);
         env.lazyPut(RACK_KEY.RACK_ERRORS, errors, false);
 
@@ -112,6 +118,7 @@ public class RackEnvironment {
         env.lazyPut(RACK_KEY.MULTITHREAD, RubyBoolean.newBoolean(runtime, true), false);
         env.lazyPut(RACK_KEY.MULTIPROCESS, RubyBoolean.newBoolean(runtime, true), false);
         env.lazyPut(RACK_KEY.RUN_ONCE, RubyBoolean.newBoolean(runtime, false), false);
+        env.lazyPut(RACK_KEY.RACK_HIJACK_P, RubyBoolean.newBoolean(runtime, true), false);
 
         if ("https".equals(rackAdapter.getScheme())) {
             env.lazyPut(RACK_KEY.HTTPS, "on", true);
@@ -124,6 +131,7 @@ public class RackEnvironment {
     private final RubyArray rackVersion;
     private final RubyIO errors;
     private final Map<RubyString, RACK_KEY> rackKeyMap = new HashMap<>();
+    private final RubyClass rackHijackClass;
 
     private static final Logger log = Logger.getLogger(RackEnvironment.class);
 
