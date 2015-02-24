@@ -25,6 +25,9 @@
 
 * Development moved to the 'master' branch instead of 'torqbox'
 
+* The Rack Hijack API has been partially implemented. The only tested
+  use of this is with the `tubesock` gem for WebSocket support.
+
 ## 4.0.0.alpha1 - Big Changes
 
 * The gem previous known as 'torqbox' is now 'torquebox-web'

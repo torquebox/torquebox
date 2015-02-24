@@ -21,29 +21,26 @@ feature "basic rack websockets" do
             "--context-path" => "/websockets",
             "-e" => "production")
 
-  # TODO: Get raw WebSockets working from inside WildFly
-  if embedded_from_disk?
-    it "should work for basic requests" do
-      uri = URI.parse(Capybara.app_host)
-      ws = WebSocket::Client::Simple.connect("ws://#{uri.host}:#{uri.port}/websockets/ws")
-      latch = java.util.concurrent.CountDownLatch.new(1)
-      message = ""
-      ws.on :open do
-        ws.send("foobarbaz")
-      end
-      ws.on :message do |msg|
-        message = msg.data
-        latch.count_down
-      end
-      ws.on :error do |e|
-        puts "ERROR: #{e}"
-      end
-      latch.await(10, java.util.concurrent.TimeUnit::SECONDS)
-      ws.close
-      if message.empty?
-        puts ws.inspect
-      end
-      message.should == "foobarbaz"
+  it "should work for basic requests" do
+    uri = URI.parse(Capybara.app_host)
+    ws = WebSocket::Client::Simple.connect("ws://#{uri.host}:#{uri.port}/websockets/ws")
+    latch = java.util.concurrent.CountDownLatch.new(1)
+    message = ""
+    ws.on :open do
+      ws.send("foobarbaz")
     end
+    ws.on :message do |msg|
+      message = msg.data
+      latch.count_down
+    end
+    ws.on :error do |e|
+      puts "ERROR: #{e}"
+    end
+    latch.await(10, java.util.concurrent.TimeUnit::SECONDS)
+    ws.close
+    if message.empty?
+      puts ws.inspect
+    end
+    message.should == "foobarbaz"
   end
 end

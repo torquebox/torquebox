@@ -56,7 +56,6 @@ public class RackApplication {
                     rackResponse, rackResponder, rackEnvHash);
         } catch (RackHijackException ex) {
             hijacked = true;
-            rackAdapter.async();
         } finally {
             // Closing the RackChannel cleans up the temp file resources
             inputChannel.close();

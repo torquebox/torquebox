@@ -16,12 +16,15 @@
 
 package org.projectodd.wunderboss.rack;
 
+import io.undertow.server.HttpServerExchange;
+import io.undertow.server.ServerConnection;
+import io.undertow.server.protocol.http.HttpServerConnection;
+import io.undertow.servlet.spec.HttpServletRequestImpl;
 import org.jruby.Ruby;
 import org.jruby.RubyHash;
 import org.jruby.RubyString;
 import org.projectodd.wunderboss.ruby.RubyHelper;
 
-import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -110,15 +113,25 @@ public class ServletRackAdapter implements RackAdapter {
 
     @Override
     public ReadableByteChannel getInputChannel() {
-        return Channels.newChannel(getInputStream());
+        ServerConnection serverConnection = getExchange().getConnection();
+        if (serverConnection instanceof HttpServerConnection) {
+            return ((HttpServerConnection) serverConnection).getChannel().getSourceChannel();
+        } else {
+            return Channels.newChannel(getInputStream());
+        }
     }
 
     @Override
     public WritableByteChannel getOutputChannel() {
-        try {
-            return Channels.newChannel(response.getOutputStream());
-        } catch (IOException ex) {
-            throw new RuntimeException("Error getting servlet output stream", ex);
+        ServerConnection serverConnection = getExchange().getConnection();
+        if (serverConnection instanceof HttpServerConnection) {
+            return ((HttpServerConnection) serverConnection).getChannel().getSinkChannel();
+        } else {
+            try {
+                return Channels.newChannel(response.getOutputStream());
+            } catch (IOException ex) {
+                throw new RuntimeException("Error getting servlet output stream", ex);
+            }
         }
     }
 
@@ -162,8 +175,7 @@ public class ServletRackAdapter implements RackAdapter {
 
     @Override
     public void async() {
-        AsyncContext asyncContext = request.startAsync();
-        asyncContext.setTimeout(0); // no timeout
+        getExchange().dispatch();
     }
 
     private void fillHeaderKey(final RubyHash rackEnv, final String key, byte[] rubyKeyBytes) {
@@ -181,6 +193,13 @@ public class ServletRackAdapter implements RackAdapter {
                 rackEnv.put(rubyKey, RubyHelper.toUnicodeRubyString(runtime, headerValue));
             }
         }
+    }
+
+    private HttpServerExchange getExchange() {
+        if (request instanceof HttpServletRequestImpl) {
+            return ((HttpServletRequestImpl) request).getExchange();
+        }
+        throw new RuntimeException("Unsupported web server - please open a bug if you hit this on WildFly");
     }
 
     private static byte[] rackHeaderNameToBytes(final String headerName) {

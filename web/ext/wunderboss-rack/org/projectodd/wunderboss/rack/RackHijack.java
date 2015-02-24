@@ -36,22 +36,21 @@ public class RackHijack extends RubyObject {
         super(runtime, metaClass);
     }
 
-    public RackHijack(Ruby runtime, RubyClass metaClass, ReadableByteChannel inputChannel,
-                      WritableByteChannel outputChannel, RackEnvironmentHash rackEnvHash) {
+    public RackHijack(Ruby runtime, RubyClass metaClass, RackAdapter rackAdapter, RackEnvironmentHash rackEnvHash) {
         super(runtime, metaClass);
-        this.inputChannel = inputChannel;
-        this.outputChannel = outputChannel;
+        this.rackAdapter = rackAdapter;
         this.rackEnvHash = rackEnvHash;
     }
 
     @JRubyMethod
     public IRubyObject call() {
-        IRubyObject rackHijackIO = new RackHijackIO(getRuntime(), inputChannel, outputChannel);
+        rackAdapter.async();
+        IRubyObject rackHijackIO = new RackHijackIO(getRuntime(), rackAdapter.getInputChannel(),
+                rackAdapter.getOutputChannel());
         rackEnvHash.lazyPut(RackEnvironment.RACK_KEY.RACK_HIJACK_IO, rackHijackIO, false);
         return rackHijackIO;
     }
 
-    private ReadableByteChannel inputChannel;
-    private WritableByteChannel outputChannel;
+    private RackAdapter rackAdapter;
     private RackEnvironmentHash rackEnvHash;
 }

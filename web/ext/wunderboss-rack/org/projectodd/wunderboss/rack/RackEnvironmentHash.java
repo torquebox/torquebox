@@ -110,9 +110,7 @@ public class RackEnvironmentHash extends RubyHash {
                             rackAdapter.getRemoteAddr());
                     break;
                 case RACK_HIJACK:
-                    value = new RackHijack(getRuntime(), rackHijackClass,
-                            rackAdapter.getInputChannel(),
-                            rackAdapter.getOutputChannel(), this);
+                    value = new RackHijack(getRuntime(), rackHijackClass, rackAdapter, this);
                     break;
             }
             if (value == null) {
