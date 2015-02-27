@@ -79,6 +79,26 @@ describe TorqueBox::Logger do
     end
   end
 
+  context "configuration" do
+    it "should have a context" do
+      TorqueBox::Logger.context.should be_a(Java::ChQosLogbackClassic::LoggerContext)
+    end
+
+    it "should allow configuration by an XML File" do
+      TorqueBox::Logger.configure_with_xml(File.join(File.dirname(__FILE__), '..', 'lib', 'resources', 'logback-cli.xml'))
+    end
+
+    it "should allow configuration by an XML String" do
+      TorqueBox::Logger.configure_with_xml(<<-XML
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <root level="OFF"/>
+</configuration>
+        XML
+      )
+    end
+  end
+
   context "torquebox 3 specs" do
     it "should look nice for class objects" do
       logger = TorqueBox::Logger.new(Foo::Bar)
@@ -108,11 +128,6 @@ describe TorqueBox::Logger do
       logger.should respond_to(:puts)
       logger.should respond_to(:write)
       logger.should respond_to(:flush)
-    end
-
-    it "should have a formatter" do
-      logger.should respond_to(:formatter)
-      logger.formatter.should_not be_nil
     end
   end
 end

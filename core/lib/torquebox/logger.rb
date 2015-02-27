@@ -13,11 +13,15 @@
 # limitations under the License.
 
 require 'logger'
+require 'stringio'
 
 module TorqueBox
   class Logger
 
+    java_import org.projectodd.wunderboss::WunderBoss
     java_import org.projectodd.wunderboss::LogbackUtil
+    java_import Java::ch.qos.logback.classic.joran.JoranConfigurator
+    java_import Java::ch.qos.logback.core.joran.spi::JoranException
 
     DEFAULT_CATEGORY = 'TorqueBox'.freeze
 
@@ -34,15 +38,27 @@ module TorqueBox
 
       def log_level=(level)
         @log_level = level
-        org.projectodd.wunderboss.WunderBoss.log_level = level
+        WunderBoss.log_level = level
+      end
+
+      def context
+        @context ||= org.slf4j.LoggerFactory.getILoggerFactory
+      end
+
+      def configure_with_xml(xml)
+        context.reset
+        configurator = JoranConfigurator.new
+        configurator.context = context
+        configurator.do_configure(xml)
+      rescue JoranException
+        configurator.do_configure(StringIO.new(xml).to_inputstream)
       end
     end
 
     attr_accessor :formatter
 
     def initialize(name = DEFAULT_CATEGORY)
-      @logger = org.projectodd.wunderboss.WunderBoss.logger(name.to_s.gsub('::', '.'))
-      @formatter = ::Logger::Formatter.new # <- Make logback formatter
+      @logger = WunderBoss.logger(name.to_s.gsub('::', '.'))
     end
 
     def trace?
