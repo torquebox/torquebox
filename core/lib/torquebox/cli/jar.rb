@@ -178,7 +178,7 @@ end;"
         @logger.trace("Adding application files to jar...")
         exclude = [%r{^/[^/]*\.(jar|war)}]
         if options[:exclude]
-          exclude = exclude + options[:exclude].map { |e| Regexp.new("^#{e}") }
+          exclude += options[:exclude].map { |e| Regexp.new("^#{e}") }
         end
         add_files(jar_builder,
                   :file_prefix => Dir.pwd,
