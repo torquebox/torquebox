@@ -86,6 +86,12 @@ end;"
            :name => :main,
            :switch => '--main MAIN',
            :description => 'File to require to bootstrap the application (if not given, assumes a web app)'
+         },
+         {
+           :name => :exclude,
+           :switch => '--exclude EXCLUDES',
+           :description => 'File paths to exclude from bundled jar',
+           :type => Array
          }]
       end
 
@@ -128,7 +134,7 @@ end;"
           add_jruby_files(jar_builder)
         end
 
-        add_app_files(jar_builder)
+        add_app_files(jar_builder, options)
 
         if options[:bundle_gems]
           tmpdir = Dir.mktmpdir("tmptorqueboxjar", ".")
@@ -168,13 +174,17 @@ end;"
         add_jar(jar_builder, "#{rb_config['libdir']}/jruby.jar")
       end
 
-      def add_app_files(jar_builder)
+      def add_app_files(jar_builder, options)
         @logger.trace("Adding application files to jar...")
+        exclude = [%r{^/[^/]*\.(jar|war)}]
+        if options[:exclude]
+          exclude += options[:exclude].map { |e| Regexp.new("^#{e}") }
+        end
         add_files(jar_builder,
                   :file_prefix => Dir.pwd,
                   :pattern => "/**/*",
                   :jar_prefix => "app",
-                  :exclude => [%r{^/[^/]*\.(jar|war)}])
+                  :exclude => exclude)
       end
 
       def add_bundler_files(jar_builder, tmpdir, bundle_without)
