@@ -85,7 +85,9 @@ describe TorqueBox::Logger do
     end
 
     it "should allow configuration by an XML File" do
-      TorqueBox::Logger.configure_with_xml(File.join(File.dirname(__FILE__), '..', 'lib', 'resources', 'logback-cli.xml'))
+      TorqueBox::Logger.configure_with_xml(File.join(
+        File.dirname(__FILE__), '..', 'lib', 'resources', 'logback-cli.xml')
+      )
     end
 
     it "should allow configuration by an XML String" do
