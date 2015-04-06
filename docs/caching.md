@@ -77,8 +77,8 @@ Querying a cache is straightforward:
     c.empty?                                      #=> false
     c.contains_key?(:b)                           #=> true
     c.cache                                       #=> {:y=>99, :x=>42, :a=>2, :d=>4, :b=>0}
-    c.keys                                        #=> [:y, :x, :a, :d, :b]
-    c.values                                      #=> [99, 42, 2, 4, 0]
+    c.keys.sort                                   #=> [:a, :b, :d, :x, :y]
+    c.values.sort                                 #=> [0, 2, 4, 42, 99]
     c.name                                        #=> "foo"
 
 ### Removing

@@ -38,7 +38,7 @@ RSpec.configure do |config|
       code = code.reject { |line| line.start_with?("$ ") }
       # transform IRB-style expression results into test assertions
       code = code.map do |line|
-        line.sub(/(.+?)\s+\#=> (.+)/, "_ = \\1\n_.inspect.should == '\\2'")
+        line.sub(/(.+?)\s+\#=> (.+)/, "_ = \\1\neval(_.inspect).should == eval('\\2')")
       end
       File.open("#{pkg_dir}/#{guide}_guide.rb", "w") do |file|
         file.write(code.join)
