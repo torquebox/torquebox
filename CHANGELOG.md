@@ -28,6 +28,9 @@
 * The Rack Hijack API has been partially implemented. The only tested
   use of this is with the `tubesock` gem for WebSocket support.
 
+* Print out the host and port that web is listening on when
+  programmatically started with :auto_start set to true.
+
 ## 4.0.0.alpha1 - Big Changes
 
 * The gem previous known as 'torqbox' is now 'torquebox-web'
