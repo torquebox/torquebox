@@ -18,6 +18,7 @@ require 'spec_helper'
 describe "Scheduler" do
   before(:all) do
     @scheduler = TorqueBox::Scheduling::Scheduler
+    @spec = { :every => 100 }
   end
 
   describe "schedule" do
@@ -28,15 +29,15 @@ describe "Scheduler" do
     end
 
     it "should take a string or symbol for the id" do
-      @scheduler.schedule(:foo, {}) {}
-      job = @scheduler.schedule(:foo, {}) {}
+      @scheduler.schedule(:foo, @spec) {}
+      job = @scheduler.schedule(:foo, @spec) {}
       job.should be_replacement
-      job = @scheduler.schedule("foo", {}) {}
+      job = @scheduler.schedule("foo", @spec) {}
       job.should be_replacement
     end
 
     it "should return a job object that can unschedule" do
-      job = @scheduler.schedule(:jobbie, {}) {}
+      job = @scheduler.schedule(:jobbie, @spec) {}
       job.should respond_to(:unschedule)
       @scheduler.send(:default_scheduler).should_receive(:unschedule).with(:jobbie)
       job.unschedule

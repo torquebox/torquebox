@@ -15,6 +15,6 @@
 
 module TorqueBox
   VERSION = '4.0.0.alpha2.dev'
-  WUNDERBOSS_VERSION = '1.x.incremental.175'
+  WUNDERBOSS_VERSION = '0.6.0'
   WILDFLY_VERSION = '8.2.0.Final'
 end
