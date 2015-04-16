@@ -26,8 +26,9 @@ before_script: bundle exec rake build
 script:
   - bundle exec rake rubocop
   - bundle exec rake spec
-  - travis_wait cd integration-tests && bundle exec rake spec:wildfly:setup
-  - cd integration-tests && bundle exec rake spec:all
+  - cd integration-tests
+  - travis_wait bundle exec rake spec:wildfly:setup
+  - bundle exec rake spec:all
 
 branches:
   only:
