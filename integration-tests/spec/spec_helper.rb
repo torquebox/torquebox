@@ -322,7 +322,7 @@ def popen4(*cmd)
   result
 end
 
-def pump_server_streams(stdin, stdout, stderr, error_seen)
+def pump_server_streams(stdin, stdout, stderr, _error_seen)
   stdin.close
   stdout.sync = true
   stderr.sync = true
