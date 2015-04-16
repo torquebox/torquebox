@@ -339,7 +339,7 @@ def pump_server_streams(stdin, stdout, stderr, error_seen)
       loop do
         err_text = stderr_io.readpartial(1024)
         STDERR.write(err_text)
-        error_seen.set(true) unless err_text =~ /jruby.cext.enabled/
+        # error_seen.set(true) unless err_text =~ /jruby.cext.enabled/
       end
     rescue EOFError, IOError
     end
