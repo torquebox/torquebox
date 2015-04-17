@@ -244,12 +244,13 @@ def embedded(main, options)
   else
     before = nil
     after = nil
-    command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{app_dir}/#{main}"
+    command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{main}"
   end
   metaclass = class << self; self; end
   metaclass.send(:define_method, :server_options) do
     return {
       :app_dir => app_dir,
+      :chdir => app_dir,
       :port => options[:port] || '8080',
       :before => before,
       :after => after,
@@ -275,8 +276,6 @@ def server_start(options)
       Dir.chdir(chdir)
     end
     pid, stdin, stdout, stderr = popen4(options[:command])
-    puts "!!! Started pid #{pid}"
-    puts `ps aux | grep -i jruby`
     ENV['BUNDLE_GEMFILE'] = ENV['RUBYLIB'] = nil
     @server_ios = [stdin, stdout, stderr]
     @server_pid = pid
@@ -380,13 +379,13 @@ def server_stop
     @server_ios = nil
   end
   if @server_pid
-    puts "Killing pid #{@server_pid}"
-    puts `ps aux | grep -i jruby`
-    begin
-      Process.kill 'INT', @server_pid
-    rescue Errno::ESRCH
-      puts "Got Errno:ESRCH"
-      # ignore no such process errors - it died already
+    kill_process(@server_pid)
+    if !windows?
+      processes = `ps -o pid --ppid #{@server_pid}`.split("\n")
+      processes.each do |pid|
+        pid = pid.to_i
+        kill_process(pid) if pid > 0
+      end
     end
     @server_pid = nil
     @stdout_thread.join(30)
@@ -399,6 +398,14 @@ def server_stop
     @server_after = nil
   end
   TorqueBox::SpecHelpers.clear_boot_marker
+end
+
+def kill_process(pid)
+  begin
+    Process.kill('INT', pid)
+  rescue Errno::ESRCH
+    # ignore no such process errors - it died already
+  end
 end
 
 def install_wildfly
