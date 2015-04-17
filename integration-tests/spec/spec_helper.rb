@@ -275,6 +275,8 @@ def server_start(options)
       Dir.chdir(chdir)
     end
     pid, stdin, stdout, stderr = popen4(options[:command])
+    puts "!!! Started pid #{pid}"
+    puts `ps aux | grep -i jruby`
     ENV['BUNDLE_GEMFILE'] = ENV['RUBYLIB'] = nil
     @server_ios = [stdin, stdout, stderr]
     @server_pid = pid
@@ -378,9 +380,12 @@ def server_stop
     @server_ios = nil
   end
   if @server_pid
+    puts "Killing pid #{@server_pid}"
+    puts `ps aux | grep -i jruby`
     begin
       Process.kill 'INT', @server_pid
     rescue Errno::ESRCH
+      puts "Got Errno:ESRCH"
       # ignore no such process errors - it died already
     end
     @server_pid = nil
