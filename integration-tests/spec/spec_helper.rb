@@ -380,7 +380,7 @@ def server_stop
   end
   if @server_pid
     kill_process(@server_pid)
-    if !windows?
+    unless windows?
       processes = `ps -o pid --ppid #{@server_pid}`.split("\n")
       processes.each do |pid|
         pid = pid.to_i
@@ -401,11 +401,9 @@ def server_stop
 end
 
 def kill_process(pid)
-  begin
-    Process.kill('INT', pid)
-  rescue Errno::ESRCH
-    # ignore no such process errors - it died already
-  end
+  Process.kill('INT', pid)
+rescue Errno::ESRCH
+  # ignore no such process errors - it died already
 end
 
 def install_wildfly
