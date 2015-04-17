@@ -244,13 +244,12 @@ def embedded(main, options)
   else
     before = nil
     after = nil
-    command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{main}"
+    command = "#{jruby_command} #{jruby_jvm_opts} -r 'bundler/setup' #{app_dir}/#{main}"
   end
   metaclass = class << self; self; end
   metaclass.send(:define_method, :server_options) do
     return {
       :app_dir => app_dir,
-      :chdir => app_dir,
       :port => options[:port] || '8080',
       :before => before,
       :after => after,
@@ -339,7 +338,10 @@ def pump_server_streams(stdin, stdout, stderr, _error_seen)
       loop do
         err_text = stderr_io.readpartial(1024)
         STDERR.write(err_text)
-        # error_seen.set(true) unless err_text =~ /jruby.cext.enabled/
+        # don't use STDERR as a means of detecting errors on JRuby9k
+        # until we figure out why it seems to falsely detect errors
+        # when there are none
+        error_seen.set(true) unless jruby9k?
       end
     rescue EOFError, IOError
     end
