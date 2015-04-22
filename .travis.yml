@@ -15,9 +15,9 @@ env: DEBUG=true
 
 sudo: false
 
-cache:
-  directories:
-    - $HOME/.m2/repository
+# cache:
+#   directories:
+#     - $HOME/.m2/repository
 
 install: travis_retry bundle install
 
