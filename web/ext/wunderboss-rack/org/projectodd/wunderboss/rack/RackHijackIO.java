@@ -41,7 +41,12 @@ public class RackHijackIO extends RubyIO {
 
         @Override
         public int read(ByteBuffer dst) throws IOException {
-            return inputChannel.read(dst);
+            int read = inputChannel.read(dst);
+            // JRuby expects us to do blocking reads here, so block
+            while (read == 0) {
+                read = inputChannel.read(dst);
+            }
+            return read;
         }
 
         @Override
