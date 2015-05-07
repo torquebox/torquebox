@@ -1,4 +1,4 @@
-## 4.0.0.alpha2
+## 4.0.0.beta1
 
 * The 'torquebox' gem was missing gem dependencies on
   'torquebox-caching' and 'torquebox-messaging'. This has been fixed.
