@@ -45,20 +45,17 @@ class AssemblyTool
   end
 
   def require_rubygems_indexer
+    puts "Installing builder gem"
+    require 'rubygems/commands/install_command'
+    installer = Gem::Commands::InstallCommand.new
+    installer.options[:args] = [ 'builder' ]
+    installer.options[:version] = '3.0.0'
+    installer.options[:document] = []
     begin
-      gem 'builder', '3.0.0'
-    rescue Gem::LoadError=> e
-      puts "Installing builder gem"
-      require 'rubygems/commands/install_command'
-      installer = Gem::Commands::InstallCommand.new
-      installer.options[:args] = [ 'builder' ]
-      installer.options[:version] = '3.0.0'
-      installer.options[:document] = []
-      begin
-        installer.execute
-      rescue Gem::SystemExitException=>e2
-      end
+      installer.execute
+    rescue Gem::SystemExitException=>e2
     end
+    gem 'builder', '3.0.0'
     require 'rubygems/indexer'
   end
 

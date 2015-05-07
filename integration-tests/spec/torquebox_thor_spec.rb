@@ -161,8 +161,19 @@ describe "torquebox thor utility tests" do
   end
 
   describe "torquebox rails" do
+    before(:all) do
+      ruby = org.jruby.Ruby.new_instance
+      @rails_3_version = ruby.evalScriptlet <<-EOS
+        ENV.delete('GEM_HOME')
+        ENV.delete('GEM_PATH')
+        gem('rails', '~> 3.2')
+        require 'rails'
+        Rails::VERSION::STRING
+      EOS
+    end
+
     before(:each) do
-      ENV['RAILS_VERSION'] = '~>3.2'
+      ENV['RAILS_VERSION'] = @rails_3_version
       @app_dir = File.join( File.dirname( __FILE__ ), '..', 'target', 'apps', 'torquebox_thor_spec_app' )
     end
 
