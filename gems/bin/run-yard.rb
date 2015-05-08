@@ -1,32 +1,27 @@
 def force_require(gem_name, version)
+  puts "Installing #{gem_name} gem v#{version}"
+  require 'rubygems/commands/install_command'
+  installer = Gem::Commands::InstallCommand.new
+  installer.options[:args] = [ gem_name ]
+  installer.options[:version] = version
+  installer.options[:generate_rdoc] = false
+  installer.options[:generate_ri] = false
+  retry_count = 0
   begin
-    gem gem_name, version
-  rescue Gem::LoadError=> e
-    puts "Installing #{gem_name} gem v#{version}"
-    require 'rubygems/commands/install_command'
-    installer = Gem::Commands::InstallCommand.new
-    installer.options[:args] = [ gem_name ]
-    installer.options[:version] = version
-    installer.options[:generate_rdoc] = false
-    installer.options[:generate_ri] = false
-
-    retry_count = 0
-    begin
-      installer.execute
-    rescue Gem::SystemExitException=>e2
-    rescue Gem::Exception => e3
-      retry_count += 1
-      if retry_count > 8
-        raise e3
-      else
-        puts "Error fetching remote gem - sleeping and retrying"
-        sleep 1
-        retry
-      end
+    installer.execute
+  rescue Gem::SystemExitException=>e2
+  rescue Gem::Exception => e3
+    retry_count += 1
+    if retry_count > 8
+      raise e3
+    else
+      puts "Error fetching remote gem - sleeping and retrying"
+      sleep 1
+      retry
     end
-    Gem.clear_paths
   end
 
+  gem gem_name, version
   require gem_name
 end
 
