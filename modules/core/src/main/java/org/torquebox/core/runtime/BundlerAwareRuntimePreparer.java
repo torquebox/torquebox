@@ -41,7 +41,7 @@ public class BundlerAwareRuntimePreparer extends BaseRuntimePreparer {
         RuntimeHelper.require( ruby, "rubygems" );
         String tbCorePath = null;
         try {
-            tbCorePath = RuntimeHelper.evalScriptlet( ruby, "Gem::Specification.find_by_name('torquebox-core').full_gem_path", false ).asJavaString();
+            tbCorePath = RuntimeHelper.evalScriptlet( ruby, "Gem::Specification.find_by_name('torquebox-core', '>= 0.0.a').full_gem_path", false ).asJavaString();
             tbCorePath += "/lib";
         } catch (Exception e) {
             // It's possible RubyGems can't see torquebox-core but Bundler
