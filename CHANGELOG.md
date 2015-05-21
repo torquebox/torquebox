@@ -31,6 +31,9 @@
 * Print out the host and port that web is listening on when
   programmatically started with :auto_start set to true.
 
+* Wars generated with 'torquebox war' can now be run directly with
+  `java -jar foo.war`, just like jars.
+
 ## 4.0.0.alpha1 - Big Changes
 
 * The gem previous known as 'torqbox' is now 'torquebox-web'

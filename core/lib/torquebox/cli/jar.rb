@@ -24,12 +24,7 @@ module TorqueBox
 
       DEFAULT_INIT = "require 'torquebox-web'; \
 if org.projectodd.wunderboss.WunderBoss.options.get('wildfly-service').nil?; \
-  begin; \
     TorqueBox::CLI.new(ARGV.unshift('run')); \
-  rescue SystemExit => e; \
-    status = e.respond_to?(:status) ? e.status : 0; \
-    java.lang.System.exit(status); \
-  end; \
 else; \
   TorqueBox::Web.run(:rackup => '$$rackup$$'); \
 end;"

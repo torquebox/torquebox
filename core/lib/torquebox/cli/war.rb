@@ -71,11 +71,12 @@ module TorqueBox
                       :pattern => "**/*")
           end
 
+          add_main(war_builder)
           add_web_xml(war_builder)
           add_jboss_deployment_structure_xml(war_builder)
           add_jboss_web_xml(war_builder, options)
 
-          war_builder.add_file("WEB-INF/lib/#{File.basename(jar_path)}", jar_path)
+          war_builder.add_file("WEB-INF/lib/app.jar", jar_path)
 
           if File.exist?(war_path)
             @logger.info("Removing {}", war_path)
@@ -97,6 +98,13 @@ module TorqueBox
           options[:envvar]['RACK_ENV'] = options[:env]
           options[:envvar]['RAILS_ENV'] = options[:env]
         end
+      end
+
+      def add_main(war_builder)
+        war_builder.add_manifest_attribute("Main-Class", "org.torquebox.core.TorqueBoxWarMain")
+        main_class = org.torquebox.core.TorqueBoxWarMain.java_class
+        main_path = main_class.name.gsub(".", "/") + ".class"
+        war_builder.add_resource(main_path, main_path)
       end
 
       def add_web_xml(war_builder)

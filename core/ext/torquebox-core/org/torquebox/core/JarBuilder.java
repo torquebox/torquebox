@@ -57,6 +57,13 @@ public class JarBuilder {
         return this;
     }
 
+    public JarBuilder addResource(String name, String resource) {
+        InputStream value = Thread.currentThread().getContextClassLoader().
+                getResourceAsStream(resource);
+        addEntry(name, value);
+        return this;
+    }
+
     public JarBuilder shadeJar(String jar, String... exclusions) throws Exception {
         List<String> exclusionList = Arrays.asList(exclusions);
         JarInputStream jarInput = new JarInputStream(new FileInputStream(jar));
