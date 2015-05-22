@@ -14,6 +14,11 @@
 
 require "pathname"
 
+# Set the Thread context classloader since many Java libs we
+# bring in use it to locate their classes
+java.lang.Thread.current_thread.
+  set_context_class_loader(JRuby.runtime.jruby_class_loader)
+
 module TorqueBox
 
   # @api private
