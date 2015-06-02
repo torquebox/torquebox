@@ -31,7 +31,16 @@ public class TorqueBoxMain {
     }
 
     public void run(String[] args) throws Exception {
+        System.setProperty("torquebox.app_jar", jarPath());
         new ApplicationRunner("application").start(args);
+    }
+
+    private String jarPath() {
+        String mainPath = ApplicationRunner.class.getName().replace(".", "/") + ".class";
+        String mainUrl = ApplicationRunner.class.getClassLoader().getResource(mainPath).toString();
+        int from = "jar:file:".length();
+        int to = mainUrl.indexOf("!/");
+        return mainUrl.substring(from, to);
     }
 
     /*

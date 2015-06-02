@@ -43,6 +43,12 @@ module TorqueBox
       end
     end
   end
+
+  class << self
+    def in_wildfly?
+      !org.projectodd.wunderboss.WunderBoss.options.get('wildfly-service').nil?
+    end
+  end
 end
 
 Dir.glob("#{File.dirname(__FILE__)}/wunderboss-jars/*.jar") do |jar|
@@ -51,6 +57,7 @@ end
 
 TorqueBox::Jars.register_and_require("#{File.dirname(__FILE__)}/torquebox-core.jar")
 require 'torquebox/cli'
+require 'torquebox/cli/archive'
 require 'torquebox/cli/jar'
 require 'torquebox/cli/war'
 require 'torquebox/logger'

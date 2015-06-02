@@ -17,4 +17,4 @@ java.lang.System.set_property('logback.configurationFile',
 
 require 'torquebox-core'
 
-cli = TorqueBox::CLI.new(ARGV)
+cli = TorqueBox::CLI.new(ARGV).run

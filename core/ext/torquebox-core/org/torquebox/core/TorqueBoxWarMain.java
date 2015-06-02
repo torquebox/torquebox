@@ -42,6 +42,7 @@ public class TorqueBoxWarMain {
         try {
             extractRoot = Files.createTempDirectory("wunderboss").toFile().getAbsolutePath();
             File jarFile = extractJar(extractRoot);
+            System.setProperty("torquebox.app_jar", jarFile.getPath());
             URLClassLoader classLoader = new URLClassLoader(new URL[] {jarFile.toURI().toURL()});
             Class<?> clazz = classLoader.loadClass("org.projectodd.wunderboss.ApplicationRunner");
             Object runner = clazz.getConstructor(String.class).newInstance("application");

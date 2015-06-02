@@ -34,6 +34,9 @@
 * Wars generated with 'torquebox war' can now be run directly with
   `java -jar foo.war`, just like jars.
 
+* Scripts can now be run from inside packaged jar and war files using
+  "-S".  Ex: `java -jar my_rails_app.jar -S rake db:migrate`
+
 ## 4.0.0.alpha1 - Big Changes
 
 * The gem previous known as 'torqbox' is now 'torquebox-web'

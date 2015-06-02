@@ -22,12 +22,8 @@ module TorqueBox
   class CLI
     class Jar
 
-      DEFAULT_INIT = "require 'torquebox-web'; \
-if org.projectodd.wunderboss.WunderBoss.options.get('wildfly-service').nil?; \
-    TorqueBox::CLI.new(ARGV.unshift('run')); \
-else; \
-  TorqueBox::Web.run(:rackup => '$$rackup$$'); \
-end;"
+      DEFAULT_INIT = "require 'torquebox-core'; \
+        TorqueBox::CLI::Archive.new(ARGV).run;"
 
       def initialize
         @logger = org.projectodd.wunderboss.WunderBoss.logger('TorqueBox')
@@ -113,11 +109,11 @@ end;"
         jar_path = File.expand_path(File.join(options[:destination], options[:jar_name]))
         @logger.debug("Creating jar with options {}", options.inspect)
 
+        init = DEFAULT_INIT
         if options[:main]
-          init = "require '#{options[:main]}'"
-        else
-          init = DEFAULT_INIT.sub('$$rackup$$', options[:rackup])
+          init = "ENV['TORQUEBOX_MAIN'] = '#{options[:main]}'; #{init}"
         end
+        init = "ENV['TORQUEBOX_RACKUP'] = '#{options[:rackup]}'; #{init}"
 
         jar_builder = org.torquebox.core.JarBuilder.new
         jar_builder.add_manifest_attribute("Main-Class", "org.torquebox.core.TorqueBoxMain")
@@ -311,6 +307,7 @@ end;"
           dev_null = PLATFORM =~ /mswin/ ? 'NUL' : '/dev/null'
           ruby.evalScriptlet("$stdout = File.open('#{dev_null}', 'w')")
         end
+        ruby.evalScriptlet("Dir.chdir('#{Dir.pwd}')")
         ruby.evalScriptlet(script)
       end
 

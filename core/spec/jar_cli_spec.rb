@@ -49,7 +49,8 @@ describe TorqueBox::CLI::Jar do
       File.new("excludeme", "w")
       Dir.mkdir("includeme")
       File.new("includeme/excludeme", "w")
-      TorqueBox::CLI.new(%W(jar --exclude /excludeme -q --no-include-jruby --no-bundle-gems --name test.jar))
+      TorqueBox::CLI.new(%W(jar --exclude /excludeme -q --no-include-jruby
+                            --no-bundle-gems --name test.jar)).run
       File.exist?("test.jar").should == true
       unzip("test.jar")
       File.exist?("app/excludeme").should == false

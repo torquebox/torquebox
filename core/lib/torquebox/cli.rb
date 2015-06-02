@@ -17,6 +17,8 @@ require 'optparse'
 module TorqueBox
   class CLI
 
+    attr_reader :parser
+
     class << self
       def extensions
         @extensions ||= {}
@@ -33,38 +35,42 @@ module TorqueBox
     end
 
     def initialize(argv)
+      @argv = argv
       require_torquebox_gems
       options = {}
-      extension = TorqueBox::CLI.extensions[argv.first]
-      parser = OptionParser.new
-      if extension
-        setup_extension_parser(extension, argv.shift, parser, options)
+      @extension = TorqueBox::CLI.extensions[argv.first]
+      @parser = OptionParser.new
+      if @extension
+        setup_extension_parser(@extension, argv.shift, @parser, options)
       else
-        setup_usage_parser(parser)
+        setup_usage_parser(@parser)
       end
 
-      setup_common_parser(parser, options)
+      setup_common_parser(@parser, options)
+      @options = options
+    end
+
+    def run
       begin
-        parser.parse!(argv)
+        @parser.parse!(@argv)
       rescue OptionParser::InvalidOption => e
         puts e.message
         puts
-        puts parser
+        puts @parser
         exit 1
       end
 
-
-      if extension
-        log_level = case options.delete(:verbosity)
+      if @extension
+        log_level = case @options.delete(:verbosity)
                     when :quiet then 'ERROR'
                     when :verbose then 'DEBUG'
                     when :really_verbose then 'TRACE'
                     else 'INFO'
                     end
         TorqueBox::Logger.log_level = log_level
-        extension.run(argv, options)
+        @extension.run(@argv, @options)
       else
-        puts parser
+        puts @parser
         exit 1
       end
     end
@@ -104,11 +110,11 @@ module TorqueBox
           options[:verbosity] = :verbose
         end
       end
-      parser.on_tail('-h', '--help', 'Show this message') do
+      parser.on('-h', '--help', 'Show this message') do
         puts parser
         exit 1
       end
-      parser.on_tail('--version', 'Show version') do
+      parser.on('--version', 'Show version') do
         puts "TorqueBox #{TorqueBox::VERSION}"
         exit 1
       end
