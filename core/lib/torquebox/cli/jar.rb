@@ -302,12 +302,15 @@ module TorqueBox
       end
 
       def eval_in_new_ruby(script)
-        ruby = org.jruby.Ruby.new_instance
+        # Copy our environment to the new Ruby runtime
+        config = org.jruby.RubyInstanceConfig.new
+        config.environment = ENV
+        config.current_directory = Dir.pwd
+        ruby = org.jruby.Ruby.new_instance(config)
         unless %W(DEBUG TRACE).include?(TorqueBox::Logger.log_level)
           dev_null = PLATFORM =~ /mswin/ ? 'NUL' : '/dev/null'
           ruby.evalScriptlet("$stdout = File.open('#{dev_null}', 'w')")
         end
-        ruby.evalScriptlet("Dir.chdir('#{Dir.pwd}')")
         ruby.evalScriptlet(script)
       end
 

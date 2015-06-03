@@ -20,10 +20,12 @@ if embedded_from_disk?
 
     before(:each) do
       @tmpdir = Dir.mktmpdir("tmptorqueboxjar", ".")
+      @old_gemfile = ENV.delete('BUNDLE_GEMFILE')
     end
 
     after(:each) do
       FileUtils.rm_rf(@tmpdir)
+      ENV['BUNDLE_GEMFILE'] = @old_gemfile if @old_gemfile
     end
 
     it "can execute scripts inside a basic jar" do
