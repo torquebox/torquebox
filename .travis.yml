@@ -11,8 +11,6 @@ matrix:
 jdk:
   - openjdk7
 
-env: DEBUG=false
-
 sudo: false
 
 # cache:
