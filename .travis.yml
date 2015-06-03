@@ -11,7 +11,7 @@ matrix:
 jdk:
   - openjdk7
 
-env: DEBUG=true
+env: DEBUG=false
 
 sudo: false
 
