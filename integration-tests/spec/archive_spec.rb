@@ -41,7 +41,11 @@ if embedded_from_disk?
         output = `java -Djava.io.tmpdir=#{@tmpdir}/tmp -jar #{archive} \
                   -S torquebox --version`.split('\n')
         output.first.should include(TorqueBox::VERSION)
-        Dir.glob('tmp/*').should be_empty
+        glob = Dir.glob('tmp/*')
+        unless glob.empty?
+          $stderr.puts "Did not clean up temp dirs #{glob.inspect}"
+        end
+        glob.should be_empty
       end
     end
 
