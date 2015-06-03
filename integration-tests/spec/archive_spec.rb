@@ -37,8 +37,11 @@ if embedded_from_disk?
 
     it "can execute scripts inside a basic war" do
       with_archive("#{apps_dir}/rack/basic", :war) do |archive|
-        output = `java -jar #{archive} -S torquebox --version`.split('\n')
+        FileUtils.mkdir('tmp')
+        output = `java -Djava.io.tmpdir=#{@tmpdir}/tmp -jar #{archive} \
+                  -S torquebox --version`.split('\n')
         output.first.should include(TorqueBox::VERSION)
+        Dir.glob('tmp/*').should be_empty
       end
     end
 

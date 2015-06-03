@@ -44,8 +44,11 @@ module TorqueBox
           load_path = $LOAD_PATH.map { |entry| "-I#{entry}" }.join(' ')
           jars = Dir.glob("../jars/*.jar").map { |j| "-r#{j}" }.join(' ')
           # PWD is $tmpdir/app and jruby.jar is $tmpdir/jars/jruby.jar
-          Kernel.exec("java -jar ../jars/jruby.jar #{load_path} -r#{app_jar} \
-                      #{jars} -rbundler/setup -S #{arg}")
+          Kernel.exec("java -Dtorquebox.app_jar=#{app_jar} \
+                      -Djava.io.tmpdir=#{java.lang.System.get_property('java.io.tmpdir')} \
+                      -jar ../jars/jruby.jar #{load_path} -r#{app_jar} \
+                      #{jars} -rbundler/setup -rtorquebox/cli/archive_cleaner \
+                      -S #{arg}")
         end
       end
 
