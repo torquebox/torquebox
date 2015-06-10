@@ -14,6 +14,11 @@
 
 require "pathname"
 
+# Set the Thread context classloader since many Java libs we
+# bring in use it to locate their classes
+java.lang.Thread.current_thread
+  .set_context_class_loader(JRuby.runtime.jruby_class_loader)
+
 module TorqueBox
 
   # @api private
@@ -38,6 +43,12 @@ module TorqueBox
       end
     end
   end
+
+  class << self
+    def in_wildfly?
+      !org.projectodd.wunderboss.WunderBoss.options.get('wildfly-service').nil?
+    end
+  end
 end
 
 Dir.glob("#{File.dirname(__FILE__)}/wunderboss-jars/*.jar") do |jar|
@@ -46,6 +57,7 @@ end
 
 TorqueBox::Jars.register_and_require("#{File.dirname(__FILE__)}/torquebox-core.jar")
 require 'torquebox/cli'
+require 'torquebox/cli/archive'
 require 'torquebox/cli/jar'
 require 'torquebox/cli/war'
 require 'torquebox/logger'

@@ -15,11 +15,12 @@
 module WunderBoss
   module Rack
     class ResponseHandler
-      def self.handle(rack_response, rack_responder)
+      def self.handle(rack_response, rack_responder, env)
         status  = rack_response[0]
         headers = rack_response[1]
         body    = rack_response[2]
 
+        raise_if_hijacked(status, env)
         begin
           rack_responder.response_code = status.to_i
 
@@ -45,6 +46,11 @@ module WunderBoss
         ensure
           body.close if body && body.respond_to?(:close)
         end
+      end
+
+      def self.raise_if_hijacked(status, env)
+        hijacked = status.to_i < 0 || env["rack.hijack_io"]
+        raise org.projectodd.wunderboss.rack.RackHijackException.new if hijacked
       end
 
       # TODO: remove this once we upgrade to Undertow 1.0.2.Final

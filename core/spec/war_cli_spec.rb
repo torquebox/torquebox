@@ -28,10 +28,10 @@ describe TorqueBox::CLI::War do
 
   it "sets RACK_ENV and RAILS_ENV to --env value" do
     Dir.chdir(@tmpdir) do
-      TorqueBox::CLI.new(%W(war -q --no-include-jruby --no-bundle-gems --name test.war --env foobarbaz))
+      TorqueBox::CLI.new(%W(war -q --no-include-jruby --no-bundle-gems --name test.war --env foobarbaz)).run
       File.exist?("test.war").should == true
       unzip("test.war")
-      jar = Dir.glob("WEB-INF/lib/tmptorqueboxwar*.jar").first
+      jar = Dir.glob("WEB-INF/lib/app.jar").first
       jar.should_not be_nil
       unzip(jar)
       File.exist?("META-INF/app.properties").should == true

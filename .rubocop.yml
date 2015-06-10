@@ -28,7 +28,7 @@ Metrics/LineLength:
   Max: 110
 
 Metrics/MethodLength:
-  Max: 35
+  Max: 40
 
 Metrics/PerceivedComplexity:
   Max: 10
@@ -79,6 +79,9 @@ Style/IndentHash:
   Enabled: false
 
 Style/Lambda:
+  Enabled: false
+
+Style/Next:
   Enabled: false
 
 Style/NumericLiterals:

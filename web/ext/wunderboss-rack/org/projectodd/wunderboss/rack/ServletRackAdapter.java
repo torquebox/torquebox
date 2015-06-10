@@ -16,6 +16,10 @@
 
 package org.projectodd.wunderboss.rack;
 
+import io.undertow.server.HttpServerExchange;
+import io.undertow.server.ServerConnection;
+import io.undertow.server.protocol.http.HttpServerConnection;
+import io.undertow.servlet.spec.HttpServletRequestImpl;
 import org.jruby.Ruby;
 import org.jruby.RubyHash;
 import org.jruby.RubyString;
@@ -24,6 +28,10 @@ import org.projectodd.wunderboss.ruby.RubyHelper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.Enumeration;
 
 public class ServletRackAdapter implements RackAdapter {
@@ -95,6 +103,39 @@ public class ServletRackAdapter implements RackAdapter {
     }
 
     @Override
+    public InputStream getInputStream() {
+        try {
+            return request.getInputStream();
+        } catch (IOException ex) {
+            throw new RuntimeException("Error getting servlet input stream", ex);
+        }
+    }
+
+    @Override
+    public ReadableByteChannel getInputChannel() {
+        ServerConnection serverConnection = getExchange().getConnection();
+        if (serverConnection instanceof HttpServerConnection) {
+            return ((HttpServerConnection) serverConnection).getChannel().getSourceChannel();
+        } else {
+            return Channels.newChannel(getInputStream());
+        }
+    }
+
+    @Override
+    public WritableByteChannel getOutputChannel() {
+        ServerConnection serverConnection = getExchange().getConnection();
+        if (serverConnection instanceof HttpServerConnection) {
+            return ((HttpServerConnection) serverConnection).getChannel().getSinkChannel();
+        } else {
+            try {
+                return Channels.newChannel(response.getOutputStream());
+            } catch (IOException ex) {
+                throw new RuntimeException("Error getting servlet output stream", ex);
+            }
+        }
+    }
+
+    @Override
     public void populateRackHeaders(final RubyHash rackEnv) {
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
@@ -132,6 +173,11 @@ public class ServletRackAdapter implements RackAdapter {
         response.flushBuffer();
     }
 
+    @Override
+    public void async() {
+        getExchange().dispatch();
+    }
+
     private void fillHeaderKey(final RubyHash rackEnv, final String key, byte[] rubyKeyBytes) {
         String lowercasedKey = key.toLowerCase();
         // RACK spec says not to create HTTP_CONTENT_TYPE or HTTP_CONTENT_LENGTH headers
@@ -147,6 +193,13 @@ public class ServletRackAdapter implements RackAdapter {
                 rackEnv.put(rubyKey, RubyHelper.toUnicodeRubyString(runtime, headerValue));
             }
         }
+    }
+
+    private HttpServerExchange getExchange() {
+        if (request instanceof HttpServletRequestImpl) {
+            return ((HttpServletRequestImpl) request).getExchange();
+        }
+        throw new RuntimeException("Unsupported web server - please open a bug if you hit this on WildFly");
     }
 
     private static byte[] rackHeaderNameToBytes(final String headerName) {

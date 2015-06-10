@@ -144,9 +144,6 @@ public class RewindableChannel extends FileChannel {
         if (tempFile != null) {
             tempFile.delete();
         }
-        if (inputStream != null) {
-            inputStream.close();
-        }
     }
 
     private InputStream inputStream;

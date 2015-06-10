@@ -22,17 +22,8 @@ module TorqueBox
   class CLI
     class Jar
 
-      DEFAULT_INIT = "require 'torquebox-web'; \
-if org.projectodd.wunderboss.WunderBoss.options.get('wildfly-service').nil?; \
-  begin; \
-    TorqueBox::CLI.new(ARGV.unshift('run')); \
-  rescue SystemExit => e; \
-    status = e.respond_to?(:status) ? e.status : 0; \
-    java.lang.System.exit(status); \
-  end; \
-else; \
-  TorqueBox::Web.run(:rackup => '$$rackup$$'); \
-end;"
+      DEFAULT_INIT = "require 'torquebox-core'; \
+        TorqueBox::CLI::Archive.new(ARGV).run;"
 
       def initialize
         @logger = org.projectodd.wunderboss.WunderBoss.logger('TorqueBox')
@@ -86,6 +77,12 @@ end;"
            :name => :main,
            :switch => '--main MAIN',
            :description => 'File to require to bootstrap the application (if not given, assumes a web app)'
+         },
+         {
+           :name => :exclude,
+           :switch => '--exclude EXCLUDES',
+           :description => 'File paths to exclude from bundled jar',
+           :type => Array
          }]
       end
 
@@ -112,11 +109,11 @@ end;"
         jar_path = File.expand_path(File.join(options[:destination], options[:jar_name]))
         @logger.debug("Creating jar with options {}", options.inspect)
 
+        init = DEFAULT_INIT
         if options[:main]
-          init = "require '#{options[:main]}'"
-        else
-          init = DEFAULT_INIT.sub('$$rackup$$', options[:rackup])
+          init = "ENV['TORQUEBOX_MAIN'] = '#{options[:main]}'; #{init}"
         end
+        init = "ENV['TORQUEBOX_RACKUP'] = '#{options[:rackup]}'; #{init}"
 
         jar_builder = org.torquebox.core.JarBuilder.new
         jar_builder.add_manifest_attribute("Main-Class", "org.torquebox.core.TorqueBoxMain")
@@ -128,7 +125,7 @@ end;"
           add_jruby_files(jar_builder)
         end
 
-        add_app_files(jar_builder)
+        add_app_files(jar_builder, options)
 
         if options[:bundle_gems]
           tmpdir = Dir.mktmpdir("tmptorqueboxjar", ".")
@@ -168,13 +165,17 @@ end;"
         add_jar(jar_builder, "#{rb_config['libdir']}/jruby.jar")
       end
 
-      def add_app_files(jar_builder)
+      def add_app_files(jar_builder, options)
         @logger.trace("Adding application files to jar...")
+        exclude = [%r{^/[^/]*\.(jar|war)}]
+        if options[:exclude]
+          exclude += options[:exclude].map { |e| Regexp.new("^#{e}") }
+        end
         add_files(jar_builder,
                   :file_prefix => Dir.pwd,
                   :pattern => "/**/*",
                   :jar_prefix => "app",
-                  :exclude => [%r{^/[^/]*\.(jar|war)}])
+                  :exclude => exclude)
       end
 
       def add_bundler_files(jar_builder, tmpdir, bundle_without)
@@ -301,7 +302,11 @@ end;"
       end
 
       def eval_in_new_ruby(script)
-        ruby = org.jruby.Ruby.new_instance
+        # Copy our environment to the new Ruby runtime
+        config = org.jruby.RubyInstanceConfig.new
+        config.environment = ENV
+        config.current_directory = Dir.pwd
+        ruby = org.jruby.Ruby.new_instance(config)
         unless %W(DEBUG TRACE).include?(TorqueBox::Logger.log_level)
           dev_null = PLATFORM =~ /mswin/ ? 'NUL' : '/dev/null'
           ruby.evalScriptlet("$stdout = File.open('#{dev_null}', 'w')")

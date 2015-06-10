@@ -1,4 +1,4 @@
-## 4.0.0.alpha2
+## 4.0.0.beta1
 
 * The 'torquebox' gem was missing gem dependencies on
   'torquebox-caching' and 'torquebox-messaging'. This has been fixed.
@@ -24,6 +24,18 @@
   set some environment variable earlier in the command.
 
 * Development moved to the 'master' branch instead of 'torqbox'
+
+* The Rack Hijack API has been partially implemented. The only tested
+  use of this is with the `tubesock` gem for WebSocket support.
+
+* Print out the host and port that web is listening on when
+  programmatically started with :auto_start set to true.
+
+* Wars generated with 'torquebox war' can now be run directly with
+  `java -jar foo.war`, just like jars.
+
+* Scripts can now be run from inside packaged jar and war files using
+  "-S".  Ex: `java -jar my_rails_app.jar -S rake db:migrate`
 
 ## 4.0.0.alpha1 - Big Changes
 

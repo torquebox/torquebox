@@ -33,6 +33,14 @@ namespace :spec do
       ENV['PACKAGING'] = 'jar'
       task(:real_spec).execute
     end
+
+    desc 'Download and extract WildFly distribution - used on Travis CI'
+    task :setup do
+      puts '>>> Downloading and extracting WildFly'
+      require "#{File.dirname(__FILE__)}/spec/spec_helper"
+      path = install_wildfly
+      puts ">>> WildFly extracted to #{path}"
+    end
   end
 end
 

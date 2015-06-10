@@ -139,5 +139,23 @@ This results in a jar that, when started, will call `require
 "app/init"` after initializing JRuby, which can be used to bootstrap
 your application.
 
+## Running rake or other scripts from inside the jar
+
+You can run rake or similar tasks from the code inside the jar by
+using the '-S' flag, which mimics the behavior of 'jruby -S' but in
+the context of your application inside the jar. For example, to run
+database migrations from a typical Rails application:
+
+    $ java -jar jar-example.jar -S rake db:migrate
+
+## Customizing the temporary directory jars get unpacked to
+
+When running TorqueBox applications from a jar, some items get
+unpacked from the jar into a temporary directory. We delegate to the
+JVM's logic for doing this which means you can control the location of
+this temporary directory by passing a JVM system property:
+
+    $ java -Djava.io.tmpdir=/path/to/tmp -jar jar-example.jar
+
 [Sinatra]: http://sinatrarb.com/
 [Web Guide]: ./file.web.html

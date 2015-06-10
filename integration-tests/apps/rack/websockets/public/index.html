@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <div id="first">
+      <div></div>
+      <span>Enter some text:</span><br/>
+      <form><input autocomplete="off" value=""></input></form>
+    </div>
+
+    <script>
+      var div  = $('#first div');
+      var inp  = $('#first input');
+      var form = $('#first form');
+
+      inp.focus();
+
+      var print = function(m, p) {
+        p = (p === undefined) ? '' : JSON.stringify(p);
+        div.append($("<code>").text(m + ' ' + p));
+        div.append($("<br>"));
+        div.scrollTop(div.scrollTop()+10000);
+      };
+
+      var uri = window.location.host + window.location.pathname + 'ws';
+      var socket = new WebSocket('ws://' + uri);
+      socket.onopen = function() {
+        print('[*] open');
+      };
+      socket.onmessage = function(evt) {
+        print('[.] message', evt.data);
+      };
+
+      form.submit(function() {
+        print('[ ] sending', inp.val());
+        socket.send(inp.val());
+        inp.val('');
+        return false;
+      });
+    </script>
+  </body>
+</html>

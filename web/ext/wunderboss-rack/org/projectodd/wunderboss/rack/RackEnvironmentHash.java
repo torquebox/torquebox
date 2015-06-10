@@ -19,6 +19,7 @@ package org.projectodd.wunderboss.rack;
 import org.jruby.Ruby;
 import org.jruby.RubyArray;
 import org.jruby.RubyBoolean;
+import org.jruby.RubyClass;
 import org.jruby.RubyFixnum;
 import org.jruby.RubyHash;
 import org.jruby.RubyString;
@@ -33,10 +34,12 @@ import java.util.Map;
 public class RackEnvironmentHash extends RubyHash {
 
     public RackEnvironmentHash(final Ruby runtime, final RackAdapter rackAdapter,
-                               final Map<RubyString, RackEnvironment.RACK_KEY> rackKeyMap) {
+                               final Map<RubyString, RackEnvironment.RACK_KEY> rackKeyMap,
+                               final RubyClass rackHijackClass) {
         super(runtime);
         this.rackAdapter = rackAdapter;
         this.rackKeyMap = rackKeyMap;
+        this.rackHijackClass = rackHijackClass;
     }
 
     public void lazyPut(RackEnvironment.RACK_KEY rackKey, final Object value, boolean usAscii) {
@@ -106,6 +109,9 @@ public class RackEnvironmentHash extends RubyHash {
                     value = RubyHelper.toUnicodeRubyString(getRuntime(),
                             rackAdapter.getRemoteAddr());
                     break;
+                case RACK_HIJACK:
+                    value = new RackHijack(getRuntime(), rackHijackClass, rackAdapter, this);
+                    break;
             }
             if (value == null) {
                 value = rackValues[rackKey.ordinal()];
@@ -128,6 +134,7 @@ public class RackEnvironmentHash extends RubyHash {
     private final boolean[] usAsciiValues = new boolean[RackEnvironment.NUM_RACK_KEYS];
     private final RackAdapter rackAdapter;
     private final Map<RubyString, RackEnvironment.RACK_KEY> rackKeyMap;
+    private final RubyClass rackHijackClass;
     private boolean filledEntireHash = false;
 
 

@@ -19,6 +19,9 @@ package org.projectodd.wunderboss.rack;
 import org.jruby.RubyHash;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 
 public interface RackAdapter {
 
@@ -42,6 +45,12 @@ public interface RackAdapter {
 
     public int getContentLength();
 
+    public InputStream getInputStream();
+
+    public ReadableByteChannel getInputChannel();
+
+    public WritableByteChannel getOutputChannel();
+
     public void populateRackHeaders(RubyHash rackEnv);
 
     public void populateRackHeaderFromBytes(RubyHash rackEnv, byte[] httpBytes, int from ,int to, byte[] rubyBytes);
@@ -53,4 +62,6 @@ public interface RackAdapter {
     public void write(byte[] bytes, int offset, int length) throws IOException;
 
     public void flush() throws IOException;
+
+    public void async();
 }

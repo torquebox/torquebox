@@ -31,21 +31,14 @@ public class RackHandler implements HttpHandler {
     @Override
     public void handleRequest(final HttpServerExchange exchange) throws Exception {
         exchange.startBlocking();
-        RackChannel inputChannel = null;
         try {
-            inputChannel = rackApplication.getInputChannel(exchange.getInputStream());
             RackAdapter adapter = new UndertowRackAdapter(exchange);
-            rackApplication.call(adapter, inputChannel, RackEnvironment.RACK_KEY.UNDERTOW_EXCHANGE, exchange);
+            rackApplication.call(adapter, RackEnvironment.RACK_KEY.UNDERTOW_EXCHANGE, exchange);
         } catch (Exception ex) {
             if (!exchange.isResponseStarted()) {
                 exchange.setResponseCode(500);
             }
             throw ex;
-        } finally {
-            if (inputChannel != null) {
-                inputChannel.close();
-            }
-            exchange.endExchange();
         }
     }
 

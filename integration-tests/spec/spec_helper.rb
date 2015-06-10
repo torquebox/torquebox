@@ -69,6 +69,7 @@ EOF
       wildfly_home = install_wildfly
       TorqueSpec.configure do |torquespec_config|
         torquespec_config.jboss_home = wildfly_home
+        # torquespec_config.jvm_args += " -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y"
       end
       Thread.current[:wildfly] = TorqueSpec::Server.new
       wildfly_server.start(:wait => 120)
@@ -336,8 +337,12 @@ def pump_server_streams(stdin, stdout, stderr, error_seen)
   stderr_thread = Thread.new(stderr) do |stderr_io|
     begin
       loop do
-        STDERR.write(stderr_io.readpartial(1024))
-        error_seen.set(true)
+        err_text = stderr_io.readpartial(1024)
+        STDERR.write(err_text)
+        # don't use STDERR as a means of detecting errors on JRuby9k
+        # until we figure out why it seems to falsely detect errors
+        # when there are none
+        error_seen.set(true) unless jruby9k?
       end
     rescue EOFError, IOError
     end
@@ -374,10 +379,13 @@ def server_stop
     @server_ios = nil
   end
   if @server_pid
-    begin
-      Process.kill 'INT', @server_pid
-    rescue Errno::ESRCH
-      # ignore no such process errors - it died already
+    kill_process(@server_pid)
+    unless windows?
+      processes = `ps -o pid --ppid #{@server_pid}`.split("\n")
+      processes.each do |pid|
+        pid = pid.to_i
+        kill_process(pid) if pid > 0
+      end
     end
     @server_pid = nil
     @stdout_thread.join(30)
@@ -390,6 +398,12 @@ def server_stop
     @server_after = nil
   end
   TorqueBox::SpecHelpers.clear_boot_marker
+end
+
+def kill_process(pid)
+  Process.kill('INT', pid)
+rescue Errno::ESRCH
+  # ignore no such process errors - it died already
 end
 
 def install_wildfly

@@ -13,7 +13,11 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    rack (1.5.2)
+    rack (1.6.0)
+    tubesock (0.2.5)
+      rack (>= 1.5.0)
+      websocket (>= 1.1.0)
+    websocket (1.2.1)
 
 PLATFORMS
   java
@@ -22,3 +26,4 @@ DEPENDENCIES
   rack
   torquebox-core!
   torquebox-web!
+  tubesock

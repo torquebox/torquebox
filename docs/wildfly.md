@@ -73,6 +73,20 @@ For a full list of options, try:
 
     $ torquebox war -h
 
+### Running the war file directly
+
+Even though the war file is designed to deploy into WildFly, it is
+possible to run it directly outside of WildFly as well. This is mainly
+to give the ability to run rake or other scripts from inside the war
+file, but you can also use it to run the application inside your war
+file outside of WildFly. Examples:
+
+    $ java -jar myapp.war
+    $ java -jar myapp.war -S rake db:migrate
+
+All of the examples in the [jar] documentation equally apply to war
+files.
+
 ## Deploying to WildFly
 
 Once you have a war file, it's a simple matter of making it known to

@@ -34,7 +34,7 @@ feature 'basic rails4 test' do
       verify_streaming("/basic-rails4/root/streaming?count=0")
     end
 
-    it "should work for large responses" do
+    xit "should work for large responses" do
       verify_streaming("/basic-rails4/root/streaming?count=500")
     end
 

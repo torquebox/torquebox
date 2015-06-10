@@ -168,6 +168,7 @@ module TorqueBox
           @logger.trace("Registering handler at context path {}", options[:path])
           @web_component.register_handler(handler, register_options)
         end
+        start if @options[:auto_start]
         handler
       end
 
@@ -275,12 +276,12 @@ module TorqueBox
 
       def initialize(name, options = {})
         @logger = WB.logger('TorqueBox::Web::Server')
-        options = DEFAULT_SERVER_OPTIONS.merge(options)
-        unless options[:configuration]
-          options = Undertow.builder(options)
+        @options = DEFAULT_SERVER_OPTIONS.merge(options)
+        unless @options[:configuration]
+          @options = Undertow.builder(options)
         end
-        validate_options(options, DEFAULT_SERVER_OPTIONS.keys)
-        create_options = extract_options(options, WBWeb::CreateOption)
+        validate_options(@options, DEFAULT_SERVER_OPTIONS.keys)
+        create_options = extract_options(@options, WBWeb::CreateOption)
         web = WB.find_or_create_component(WBWeb.java_class, name,
                                           create_options)
         @logger.debug("TorqueBox::Web::Server '{}' has component {}",
