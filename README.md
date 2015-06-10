@@ -27,9 +27,9 @@ usage, and deployment of TorqueBox 4.
 
 ### Requirements
 
-TorqueBox requires JRuby 1.7.x running on Java 7+ in Ruby 1.9 or 2.0
-mode. The code has only been tested on JRuby 1.7.6 and higher but
-should work on earlier versions.
+TorqueBox requires JRuby 1.7.x (in 1.9 or 2.0 mode) or JRuby 9.x.x
+running on Java 7+. The code has only been tested on JRuby 1.7.6 and
+higher but should work on earlier versions.
 
 ### Installation
 
