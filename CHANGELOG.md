@@ -1,3 +1,8 @@
+## 4.0.0.beta2
+
+* The `TorqueBox::Logger` class now provides methods to instantiate
+  new loggers and configure the underlying logging system.
+
 ## 4.0.0.beta1
 
 * The 'torquebox' gem was missing gem dependencies on
