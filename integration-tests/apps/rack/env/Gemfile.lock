@@ -1,14 +1,14 @@
 PATH
   remote: ../../../../core
   specs:
-    torquebox-core (4.0.0.beta1.dev-java)
+    torquebox-core (4.0.0.beta2.dev-java)
 
 PATH
   remote: ../../../../web
   specs:
-    torquebox-web (4.0.0.beta1.dev-java)
+    torquebox-web (4.0.0.beta2.dev-java)
       rack (>= 1.4.0, < 2.0)
-      torquebox-core (= 4.0.0.beta1.dev)
+      torquebox-core (= 4.0.0.beta2.dev)
 
 GEM
   remote: https://rubygems.org/

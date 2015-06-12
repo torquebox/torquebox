@@ -1,13 +1,13 @@
 PATH
   remote: ../../../../core
   specs:
-    torquebox-core (4.0.0.beta1.dev-java)
+    torquebox-core (4.0.0.beta2.dev-java)
 
 PATH
   remote: ../../../../messaging
   specs:
-    torquebox-messaging (4.0.0.beta1.dev-java)
-      torquebox-core (= 4.0.0.beta1.dev)
+    torquebox-messaging (4.0.0.beta2.dev-java)
+      torquebox-core (= 4.0.0.beta2.dev)
 
 GEM
   remote: https://rubygems.org/
