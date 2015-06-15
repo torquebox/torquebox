@@ -10,8 +10,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>torquebox-no-op</artifactId>
   <packaging>gem</packaging>
-  <name>TorqueBox No-Op Gem</name>
-  <description />
+  <name>Emulate TorqueBox APIs outside of TorqueBox</name>
+  <description>This gem allows you to run some TorqueBox applications outside of TorqueBox by emulating the APIs provided by TorqueBox. Its primary goal is to enable simple testing of applications that use TorqueBox APIs without having to test those applications inside TorqueBox itself.</description>
   <url>http://torquebox.org/</url>
 
   <dependencies>
