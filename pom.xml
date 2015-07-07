@@ -342,17 +342,6 @@
           </snapshots>
         </repository>
         <repository>
-          <id>codehaus</id>
-          <name>Codehaus repo</name>
-          <url>http://repository.codehaus.org/</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-        </repository>
-        <repository>
           <id>jboss-incremental</id>
           <name>JBoss AS Incremental Builds</name>
           <url>https://repository-projectodd.forge.cloudbees.com/upstream</url>
