@@ -28,7 +28,11 @@ public class TorqueBoxRubyInstanceConfig extends RubyInstanceConfig {
 
     @Override
     public String getJRubyHome() {
-        return this.jrubyHome;
+        if (this.jrubyHome == null) {
+            return super.getJRubyHome();
+        } else {
+            return this.jrubyHome;
+        }
     }
 
     @Override
