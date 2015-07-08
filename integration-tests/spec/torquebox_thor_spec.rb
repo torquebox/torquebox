@@ -245,7 +245,8 @@ describe "torquebox thor utility tests" do
         version = version.sub('>', '\>')
       end
       rails = File.join( gem_dir, 'bin', 'rails' )
-      integ_jruby( "#{rails} _#{version}_ #{cmd}" )
+      puts "!!! Running rails cmd #{rails} _#{version}_ #{cmd}"
+      puts integ_jruby( "#{rails} _#{version}_ #{cmd}" )
     end
   end
 
