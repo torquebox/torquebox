@@ -105,7 +105,9 @@ def integ_jruby(command)
                   when /^1\.9\./ then ' --1.9'
                   when /^2\.0\./ then ' --2.0'
                   end
-  `#{jruby_binary} #{jruby_version} #{integ_jruby_launcher} "#{command}"`
+  full_command = %Q{#{jruby_binary} #{jruby_version} #{integ_jruby_launcher} "#{command}"}
+  full_command << " 2>&1" unless TESTING_ON_WINDOWS
+  `#{full_command}`
 end
 
 def normalize_path(path)
