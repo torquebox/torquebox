@@ -247,7 +247,7 @@ describe "torquebox thor utility tests" do
       rails_cmd = "require 'rubygems';" +
         "gem 'railties', '#{version}';" +
         "load Gem.bin_path('railties', 'rails', '#{version}');"
-      puts integ_jruby("-e \\\"#{rails_cmd}\\\" #{cmd}")
+      integ_jruby("-e \\\"#{rails_cmd}\\\" #{cmd}")
     end
   end
 

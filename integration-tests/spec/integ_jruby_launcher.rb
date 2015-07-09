@@ -19,5 +19,4 @@ jruby_version = case RUBY_VERSION
                 end
 full_command = "#{jruby} #{jruby_version} #{command}"
 full_command << " 2>&1" unless TESTING_ON_WINDOWS
-puts "!!! integ_jruby_launcher.rb running command #{full_command}"
 puts `#{full_command}`
