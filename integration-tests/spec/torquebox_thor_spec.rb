@@ -244,11 +244,10 @@ describe "torquebox thor utility tests" do
       if JRUBY_VERSION >= '1.7'
         version = version.sub('>', '\>')
       end
-      rails = File.join( gem_dir, 'bin', 'rails' )
-      puts "!!! RAILS FILE CONTENTS:"
-      puts File.read(rails)
-      puts "!!! Running rails cmd #{rails} _#{version}_ #{cmd}"
-      puts integ_jruby( "#{rails} _#{version}_ #{cmd}" )
+      rails_cmd = "require 'rubygems';" +
+        "gem 'railties', '#{version}';" +
+        "load Gem.bin_path('railties', 'rails', '#{version}');"
+      puts integ_jruby("-e \\\"#{rails_cmd}\\\" #{cmd}")
     end
   end
 
