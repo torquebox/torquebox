@@ -108,7 +108,9 @@ def integ_jruby(command)
   full_command = %Q{#{jruby_binary} #{jruby_version} #{integ_jruby_launcher} "#{command}"}
   full_command << " 2>&1" unless TESTING_ON_WINDOWS
   puts "!!! integ_jruby running command #{full_command}"
-  `#{full_command}`
+  output = `#{full_command}`
+  puts output
+  output
 end
 
 def normalize_path(path)

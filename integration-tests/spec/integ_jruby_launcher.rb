@@ -5,6 +5,8 @@ require 'rbconfig'
 ENV.delete('GEM_HOME')
 ENV.delete('GEM_PATH')
 
+TESTING_ON_WINDOWS = ( java.lang::System.getProperty( "os.name" ) =~ /windows/i )
+
 def jruby
   File.join(RbConfig::CONFIG["bindir"], RbConfig::CONFIG["ruby_install_name"])
 end
@@ -15,5 +17,7 @@ jruby_version = case RUBY_VERSION
                 when /^1\.9\./ then ' --1.9'
                 when /^2\.0\./ then ' --2.0'
                 end
-puts "!!! integ_jruby_launcher.rb running command #{jruby} #{jruby_version} #{command}"
-puts `#{jruby} #{jruby_version} #{command}`
+full_command = "#{jruby} #{jruby_version} #{command}"
+full_command << " 2>&1" unless TESTING_ON_WINDOWS
+puts "!!! integ_jruby_launcher.rb running command #{full_command}"
+puts `#{full_command}`
