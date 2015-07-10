@@ -23,7 +23,8 @@ def mbean(name)
       raise ex
     end
   end
-  yield JMX::MBean.find_by_name(name)
+  bean = JMX::MBean.find_by_name(name)
+  yield bean if block_given?
 ensure
   JMX::MBean.remove_connection
 end
