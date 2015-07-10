@@ -441,6 +441,17 @@
             <enabled>true</enabled>
           </snapshots>
         </pluginRepository>
+        <pluginRepository>
+          <id>jboss-org</id>
+          <name>JBoss.org Releases</name>
+          <url>https://repository.jboss.org</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </pluginRepository>
       </pluginRepositories>
     </profile>
 
@@ -708,6 +719,8 @@
     <version.org.jboss.jboss-msc>1.0.2.GA</version.org.jboss.jboss-msc>
 
     <version.org.eclipse.core.runtime>3.3.100-v20070530</version.org.eclipse.core.runtime>
+
+    <version.site.plugin>3.4</version.site.plugin>
   </properties>
 
   <dependencies>
@@ -930,6 +943,12 @@
               </pluginExecutions>
             </lifecycleMappingMetadata>
           </configuration>
+        </plugin>
+        <!-- maven 3.1+ compatibility -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>${version.site.plugin}</version>
         </plugin>
       </plugins>
     </pluginManagement>
