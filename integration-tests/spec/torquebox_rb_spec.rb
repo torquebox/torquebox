@@ -32,7 +32,7 @@ describe "an app using a torquebox.rb" do
           pool.maximum_instances.should == 6
           pool.lazy.should == false
         end
-      }.should_not raise_error(javax.management.InstanceNotFoundException)
+      }.should_not raise_error()
     end
     
     it "should have a pool specified as a block" do
@@ -43,25 +43,25 @@ describe "an app using a torquebox.rb" do
           pool.maximum_instances.should == 6
           pool.lazy.should == true
         end
-      }.should_not raise_error(javax.management.InstanceNotFoundException)
+      }.should_not raise_error()
     end
 
     it "should have a queue we specify" do
       lambda { 
         mbean('org.hornetq:module=JMS,type=Queue,name="/queue/a-queue"')
-      }.should_not raise_error(javax.management.InstanceNotFoundException)
+      }.should_not raise_error()
     end
 
     it "should have a topic we specify" do
       lambda { 
         mbean('org.hornetq:module=JMS,type=Topic,name="/topic/a-topic"')
-      }.should_not raise_error(javax.management.InstanceNotFoundException)
+      }.should_not raise_error()
     end
     
     it "should not have a backgroundable queue (options_for w/a disable)" do
       lambda { 
         mbean('org.hornetq:module=JMS,type=Queue,name="/queues/torquebox/an_app_using_a_torquebox_rb/tasks/torquebox_backgroundable"')
-      }.should raise_error(javax.management.InstanceNotFoundException)
+      }.should raise_error()
     end
 
     it "should create a job" do
