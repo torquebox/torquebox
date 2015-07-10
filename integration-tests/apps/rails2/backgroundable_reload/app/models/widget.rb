@@ -1,4 +1,6 @@
-class Widget < ActiveRecord::Base
+class Widget
+
+  include TorqueBox::Messaging::Backgroundable
 
   def foo(call_count)
     @responseq = TorqueBox.fetch('/queues/response')
