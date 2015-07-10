@@ -182,51 +182,51 @@ describe "torquebox thor utility tests" do
       FileUtils.rm_rf( @app_dir )
     end
 
-    it "should create the app and its directory" do
-      tb( "rails #{@app_dir} --skip-bundle" )
-      check_app_dir
-    end
-
-    it "should create the app even if its directory already exists" do
-      FileUtils.mkdir_p( @app_dir )
-      Dir.chdir( @app_dir ) do
-        tb( 'rails --skip-bundle' )
-      end
-      check_app_dir
-    end
-
-    it "should modify the app if it already exists" do
-      rails( ENV['RAILS_VERSION'], "new #{@app_dir} --skip-bundle" )
-      File.exist?( File.join( @app_dir, 'Gemfile' ) ).should be_true
-      File.read( File.join( @app_dir, 'Gemfile' ) ).should_not include( 'torquebox' )
-      tb( "rails #{@app_dir} --skip-bundle" )
-      check_app_dir
-    end
-
-    it "should modify the app in the current directory if it already exists" do
-      rails( ENV['RAILS_VERSION'], "new #{@app_dir} --skip-bundle" )
-      File.exist?( File.join( @app_dir, 'Gemfile' ) ).should be_true
-      File.read( File.join( @app_dir, 'Gemfile' ) ).should_not include( 'torquebox' )
-      Dir.chdir( @app_dir ) do
-        tb( 'rails --skip-bundle' )
-      end
-      check_app_dir
-    end
-
-    it "should create a rails 2.3 app and its directory" do
-      # 2.3 will automatically get chosen if we don't specify, and
-      # this ensures things work without explicitly setting
-      # RAILS_VERSION
-      ENV['RAILS_VERSION'] = nil
-      output = tb( "rails #{@app_dir}" )
-      File.exist?( @app_dir ).should be_true
-      File.exist?( File.join( @app_dir, 'config', 'environment.rb' ) ).should be_true
-      contents = File.read( File.join( @app_dir, 'config', 'environment.rb' ) )
-      puts output unless contents.include?( 'torquebox' )
-      contents.should include( 'torquebox' )
-    end
-
     if RUBY_VERSION >= '1.9'
+      it "should create the app and its directory" do
+        puts tb( "rails #{@app_dir} --skip-bundle" )
+        check_app_dir
+      end
+
+      it "should create the app even if its directory already exists" do
+        FileUtils.mkdir_p( @app_dir )
+        Dir.chdir( @app_dir ) do
+          tb( 'rails --skip-bundle' )
+        end
+        check_app_dir
+      end
+
+      it "should modify the app if it already exists" do
+        rails( ENV['RAILS_VERSION'], "new #{@app_dir} --skip-bundle" )
+        File.exist?( File.join( @app_dir, 'Gemfile' ) ).should be_true
+        File.read( File.join( @app_dir, 'Gemfile' ) ).should_not include( 'torquebox' )
+        tb( "rails #{@app_dir} --skip-bundle" )
+        check_app_dir
+      end
+
+      it "should modify the app in the current directory if it already exists" do
+        rails( ENV['RAILS_VERSION'], "new #{@app_dir} --skip-bundle" )
+        File.exist?( File.join( @app_dir, 'Gemfile' ) ).should be_true
+        File.read( File.join( @app_dir, 'Gemfile' ) ).should_not include( 'torquebox' )
+        Dir.chdir( @app_dir ) do
+          tb( 'rails --skip-bundle' )
+        end
+        check_app_dir
+      end
+
+      it "should create a rails 2.3 app and its directory" do
+        # 2.3 will automatically get chosen if we don't specify, and
+        # this ensures things work without explicitly setting
+        # RAILS_VERSION
+        ENV['RAILS_VERSION'] = nil
+        output = tb( "rails #{@app_dir}" )
+        File.exist?( @app_dir ).should be_true
+        File.exist?( File.join( @app_dir, 'config', 'environment.rb' ) ).should be_true
+        contents = File.read( File.join( @app_dir, 'config', 'environment.rb' ) )
+        puts output unless contents.include?( 'torquebox' )
+        contents.should include( 'torquebox' )
+      end
+
       it "should create a rails 4 app and its directory" do
         ENV['RAILS_VERSION'] = '~>4.0'
         tb( "rails #{@app_dir} --skip-bundle" )
