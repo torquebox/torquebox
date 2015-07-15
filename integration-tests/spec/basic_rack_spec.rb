@@ -142,7 +142,8 @@ end
 
 if embedded_from_disk?
   feature "basic rack with rackup" do
-    rackup(:dir => "#{apps_dir}/rack/basic", '-E' => 'production')
+    rackup(:dir => "#{apps_dir}/rack/basic", '-E' => 'production',
+           '-p' => '8080')
 
     it "should work for basic requests" do
       visit "/"

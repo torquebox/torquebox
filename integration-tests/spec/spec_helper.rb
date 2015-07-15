@@ -230,7 +230,7 @@ def rackup(options)
       "-S rackup -s torquebox #{args} -O Quiet #{app_dir}/config.ru"
     return {
       :app_dir => app_dir,
-      :port => options['--port'] || '9292',
+      :port => options['-p'] || '9292',
       :command => command
     }
   end

@@ -3,6 +3,9 @@
 * The `TorqueBox::Logger` class now provides methods to instantiate
   new loggers and configure the underlying logging system.
 
+* Starting TorqueBox via rackup and specifying a port will no longer
+  throw an error about converting a RubyString to int.
+
 ## 4.0.0.beta1
 
 * The 'torquebox' gem was missing gem dependencies on

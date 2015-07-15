@@ -321,7 +321,7 @@ module TorqueBox
       def self.builder(options = {})
         builder = Java::io.undertow.Undertow.builder
         host = options[:host] || DEFAULT_SERVER_OPTIONS[:host]
-        port = options[:port] || DEFAULT_SERVER_OPTIONS[:port]
+        port = (options[:port] || DEFAULT_SERVER_OPTIONS[:port]).to_i
         builder.addHttpListener(port, host)
         builder.setIoThreads(options[:io_threads]) if options[:io_threads]
         builder.setWorkerThreads(options[:worker_threads]) if options[:worker_threads]
