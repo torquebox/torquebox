@@ -58,4 +58,35 @@ describe TorqueBox::CLI::Jar do
     end
   end
 
+  it "includes .sprockets-manifest.json file" do
+    Dir.chdir(@tmpdir) do
+      File.new(".sprockets-manifest.json", "w")
+      File.new(".sprockets-manifest-foobarbaz.json", "w")
+      File.new("baz", "w")
+      TorqueBox::CLI.new(%W(jar -q --no-include-jruby
+                            --no-bundle-gems --name test.jar)).run
+      File.exist?("test.jar").should == true
+      unzip("test.jar")
+      File.exist?("app/.sprockets-manifest.json").should == true
+      File.exist?("app/.sprockets-manifest-foobarbaz.json").should == true
+      File.exist?("app/baz").should == true
+    end
+  end
+
+  it "doesn't include most dotfiles" do
+    Dir.chdir(@tmpdir) do
+      Dir.mkdir(".git")
+      File.new(".git/foo", "w")
+      File.new(".bar", "w")
+      File.new("baz", "w")
+      TorqueBox::CLI.new(%W(jar -q --no-include-jruby
+                            --no-bundle-gems --name test.jar)).run
+      File.exist?("test.jar").should == true
+      unzip("test.jar")
+      File.exist?("app/.git/foo").should == false
+      File.exist?("app/.bar").should == false
+      File.exist?("app/baz").should == true
+    end
+  end
+
 end

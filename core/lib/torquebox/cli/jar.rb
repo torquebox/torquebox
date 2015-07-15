@@ -173,7 +173,7 @@ module TorqueBox
         end
         add_files(jar_builder,
                   :file_prefix => Dir.pwd,
-                  :pattern => "/**/*",
+                  :pattern => "/**/{*,\.*manifest*}",
                   :jar_prefix => "app",
                   :exclude => exclude)
       end
