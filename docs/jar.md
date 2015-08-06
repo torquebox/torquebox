@@ -24,7 +24,7 @@ in, along with `torquebox-web`:
     source "https://rubygems.org"
 
     gem "sinatra", "1.4.5"
-    gem "torquebox-web", "4.0.0.alpha1"
+    gem "torquebox-web", "${version}"
 
 Then, the application itself. Let's put it at `app.rb` at the root of
 our project:

@@ -94,6 +94,7 @@ task 'doc' do
     content = File.read("docs/#{f}.md")
     guides.each do |guide|
       content.gsub!("(#{guide}.md)", "(file.#{guide}.html)")
+      content.gsub!("${version}", "#{TorqueBox::VERSION}")
     end
     out_file = "pkg/#{f}.md"
     File.open(out_file, 'w') { |out| out.write(content) }

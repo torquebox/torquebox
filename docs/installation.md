@@ -11,7 +11,7 @@ Gemfile to pick up the prerelease gems.
 
 For example:
 
-    gem "torquebox", "4.0.0.alpha1"
+    gem "torquebox", "${version}"
 
 You can also pick and choose various TorqueBox components if you don't
 want the entire suite of services. To do that, remove the `torquebox`
@@ -19,8 +19,8 @@ gem from your Gemfile and add the appropriate individual gems.
 
 An example of using only the web and scheduling services:
 
-    gem "torquebox-web", "4.0.0.alpha1"
-    gem "torquebox-scheduling", "4.0.0.alpha1"
+    gem "torquebox-web", "${version}"
+    gem "torquebox-scheduling", "${version}"
 
 The list of official TorqueBox gems are:
 
