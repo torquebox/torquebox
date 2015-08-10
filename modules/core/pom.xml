@@ -21,6 +21,11 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>org.projectodd</groupId>
       <artifactId>yaml-schema</artifactId>
       <scope>compile</scope>

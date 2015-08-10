@@ -192,30 +192,6 @@ public class RackEnvironmentTest extends AbstractRubyTestCase {
         assertNull( envHash.get( "CONTENT_LENGTH" ) );
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testLeakingRubyFilenoMap() throws Exception {
-        final HttpServletRequest servletRequest = mock( HttpServletRequest.class );
-        final ServletInputStream inputStream = new MockServletInputStream( new ByteArrayInputStream( "".getBytes() ) );
-
-        when( servletRequest.getInputStream() ).thenReturn( inputStream );
-        when( servletRequest.getRequestURI() ).thenReturn( "/myapp/the_path" );
-        when( servletRequest.getContextPath() ).thenReturn( "/myapp" );
-        when( servletRequest.getServletPath() ).thenReturn( "/" );
-
-        // This is hacky to do via reflection but we've had a leak in this specific HashMap
-        // and need to ensure it's fixed
-        Field filenoMapField = ruby.getClass().getDeclaredField( "filenoIntExtMap" );
-        filenoMapField.setAccessible( true );
-        Map<Integer, Integer> filenoIntExtMap = (Map<Integer, Integer>) filenoMapField.get( ruby );
-
-        int startingSize = filenoIntExtMap.size();
-        new RackEnvironment( ruby, servletRequest );
-        int sizeAfterCreatingEnv = filenoIntExtMap.size();
-
-        assertEquals( startingSize, sizeAfterCreatingEnv );
-    }
-
     @SuppressWarnings({ "unchecked", "rawtypes" })
     protected Enumeration enumeration(Object... values) {
         Vector v = new Vector();

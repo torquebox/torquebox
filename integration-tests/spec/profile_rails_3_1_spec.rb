@@ -9,9 +9,6 @@ describe "jruby profile.api and rails3.1 test" do
       RAILS_ENV: development
     web:
       context: /profile
-    
-    ruby:
-      version: 1.9
   END
 
   it "should use the profile api successfully" do

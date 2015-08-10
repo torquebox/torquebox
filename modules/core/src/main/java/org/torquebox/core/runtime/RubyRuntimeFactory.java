@@ -42,7 +42,6 @@ import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyInstanceConfig.CompileMode;
 import org.jruby.ast.executable.Script;
-import org.jruby.util.ClassCache;
 import org.torquebox.bootstrap.JRubyHomeLocator;
 import org.torquebox.core.component.InjectionRegistry;
 import org.torquebox.core.pool.InstanceFactory;
@@ -275,7 +274,6 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         config.processArguments(argv.toArray(new String[argv.size()]));
 
         config.setLoader( getClassLoader() );
-        // config.setClassCache( getClassCache() );
         if (this.rubyVersion != null) {
             config.setCompatVersion( this.rubyVersion );
         }
@@ -571,7 +569,6 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     }
 
     public void create() {
-        this.classCache = new ClassCache<Script>( getClassLoader() );
     }
 
     public synchronized void destroy() {
@@ -590,10 +587,6 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
             }
         }
         this.mountedJRubyHomes.clear();
-    }
-
-    public ClassCache getClassCache() {
-        return this.classCache;
     }
 
     public void setServiceRegistry(ServiceRegistry serviceRegistry) {
@@ -618,9 +611,6 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
     /** ClassLoader for interpreter. */
     private ClassLoader classLoader;
-
-    /** Shared interpreter class cache. */
-    private ClassCache<Script> classCache;
 
     /** Application name. */
     private String applicationName;

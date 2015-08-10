@@ -104,7 +104,7 @@
   type: map
   -version:
     type: enum
-    values: [1.8, 1.9, 2.0]
+    values: [2.2]
   -compile_mode:
     type: enum
     values: [jit, force, off]

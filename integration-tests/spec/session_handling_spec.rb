@@ -98,20 +98,6 @@ shared_examples_for "session handling" do
 
 end
 
-describe "rails2 sessions" do
-  deploy <<-END.gsub(/^ {4}/,'')
-    ---
-    application:
-      RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails2/basic
-      RAILS_ENV: development
-    web:
-      context: /basic-rails
-
-    ruby:
-      version: #{RUBY_VERSION[0,3]}
-  END
-  it_should_behave_like "session handling"
-end
 describe "rails3 sessions" do
   deploy <<-END.gsub(/^ {4}/,'')
     ---
@@ -127,25 +113,23 @@ describe "rails3 sessions" do
   it_should_behave_like "session handling"
 end
 
-if RUBY_VERSION >= '1.9'
-  describe "rails4 sessions" do
-    deploy <<-END.gsub(/^ {6}/,'')
-      ---
-      application:
-        RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails4/basic
-        RAILS_ENV: development
-      web:
-        context: /basic-rails
+describe "rails4 sessions" do
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails4/basic
+      RAILS_ENV: development
+    web:
+      context: /basic-rails
 
-      ruby:
-        version: #{RUBY_VERSION[0,3]}
-    END
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
 
-    it_should_behave_like "session handling"
+  it_should_behave_like "session handling"
 
-    it "should not break with NullSessionHash" do
-      visit "/basic-rails/sessioning/null_session_hash"
-      find('#success')
-    end
+  it "should not break with NullSessionHash" do
+    visit "/basic-rails/sessioning/null_session_hash"
+    find('#success')
   end
 end

@@ -16,6 +16,18 @@
 
   <dependencies>
     <dependency>
+      <groupId>de.saumya.mojo</groupId>
+      <artifactId>gem-maven-plugin</artifactId>
+      <version>${version.jruby-maven-plugins}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>de.saumya.mojo</groupId>
+      <artifactId>rspec-maven-plugin</artifactId>
+      <version>${version.jruby-maven-plugins}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.msc</groupId>
       <artifactId>jboss-msc</artifactId>
       <version>${version.org.jboss.jboss-msc}</version>
@@ -58,7 +70,7 @@
       <groupId>rubygems</groupId>
       <artifactId>json</artifactId>
       <type>gem</type>
-      <version>1.4.6</version>
+      <version>1.8.1</version>
       <scope>test</scope>
     </dependency>
 

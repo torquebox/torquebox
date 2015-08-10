@@ -21,7 +21,7 @@
     <version.old_rack>1.1.0</version.old_rack>
     <version.dm_core>1.1.0</version.dm_core>
     <version.dm_serializer>1.1.0</version.dm_serializer>
-    <version.json>1.4.6</version.json>
+    <version.json>1.8.1</version.json>
     <version.eap>6.1.0</version.eap>
     <assembly.dir>${project.basedir}/../build/assembly/target/stage/torquebox</assembly.dir>
     <overlay.dir>${project.basedir}/../build/eap-overlay/target/torquebox-eap-overlay</overlay.dir>
@@ -124,7 +124,7 @@
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>selenium-webdriver</artifactId>
-      <version>2.34.0</version>
+      <version>2.44.0</version>
       <type>gem</type>
       <scope>test</scope>
     </dependency>

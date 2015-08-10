@@ -143,47 +143,15 @@ public class RubyRuntimeFactoryTest {
         assertNotNull( result );
     }
 
-    @Test
-    public void testRubyDefault() throws Exception {
-        factory = new RubyRuntimeFactory( null );
-        factory.setUseJRubyHomeEnvVar( false );
-        factory.create();
-        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
-        assertNotNull( ruby );
-        if (isJRuby17()) {
-            assertTrue( ruby.is1_9() );
-        } else {
-            assertFalse( ruby.is1_9() );
-        }
-    }
-
-    @Test
-    public void testRuby18() throws Exception {
-        factory = new RubyRuntimeFactory( null );
-        factory.setUseJRubyHomeEnvVar( false );
-        factory.setRubyVersion( CompatVersion.RUBY1_8 );
-        factory.create();
-        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
-        assertNotNull( ruby );
-        assertFalse( ruby.is1_9() );
-    }
-
-    @Test
-    public void testRuby19() throws Exception {
-        factory = new RubyRuntimeFactory( null );
-        factory.setUseJRubyHomeEnvVar( false );
-        factory.setRubyVersion( CompatVersion.RUBY1_9 );
-        factory.create();
-        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
-        assertNotNull( ruby );
-        assertTrue( ruby.is1_9() );
-        String rubyVersion = ((RubyString) ruby.evalScriptlet( "RUBY_VERSION" )).toString();
-        if (isJRuby17()) {
-            assertEquals( "1.9.3", rubyVersion );
-        } else {
-            assertEquals( "1.9.2", rubyVersion );
-        }
-    }
+   @Test
+   public void testRubyDefault() throws Exception {
+       factory = new RubyRuntimeFactory( null );
+       factory.setUseJRubyHomeEnvVar( false );
+       factory.create();
+       Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+       assertNotNull( ruby );
+       assertTrue( ruby.is2_0() );
+   }
 
     @Test
     public void testRuby20() throws Exception {
@@ -196,27 +164,15 @@ public class RubyRuntimeFactoryTest {
         assertTrue( ruby.is2_0() );
     }
 
-    @Test
-    public void testCompileModeDefault() throws Exception {
-        factory = new RubyRuntimeFactory( null );
-        factory.setUseJRubyHomeEnvVar( false );
-        factory.create();
-        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
-        assertNotNull( ruby );
-        assertEquals( CompileMode.JIT, ruby.getInstanceConfig().getCompileMode() );
-    }
-
-    @Test
-    public void testCompileModeDefault19() throws Exception {
-        factory = new RubyRuntimeFactory( null );
-        factory.setUseJRubyHomeEnvVar( false );
-        factory.setRubyVersion( CompatVersion.RUBY1_9 );
-        factory.create();
-        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
-        assertNotNull( ruby );
-        assertTrue( ruby.is1_9() );
-        assertEquals( CompileMode.JIT, ruby.getInstanceConfig().getCompileMode() );
-    }
+   @Test
+   public void testCompileModeDefault() throws Exception {
+       factory = new RubyRuntimeFactory( null );
+       factory.setUseJRubyHomeEnvVar( false );
+       factory.create();
+       Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+       assertNotNull( ruby );
+       assertEquals( CompileMode.JIT, ruby.getInstanceConfig().getCompileMode() );
+   }
 
     @Test
     public void testCompileModeJIT() throws Exception {
@@ -229,16 +185,16 @@ public class RubyRuntimeFactoryTest {
         assertEquals( CompileMode.JIT, ruby.getInstanceConfig().getCompileMode() );
     }
 
-    @Test
-    public void testCompileModeFORCE() throws Exception {
-        factory = new RubyRuntimeFactory( null );
-        factory.setUseJRubyHomeEnvVar( false );
-        factory.setCompileMode( CompileMode.FORCE );
-        factory.create();
-        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
-        assertNotNull( ruby );
-        assertEquals( CompileMode.FORCE, ruby.getInstanceConfig().getCompileMode() );
-    }
+   @Test
+   public void testCompileModeFORCE() throws Exception {
+       factory = new RubyRuntimeFactory( null );
+       factory.setUseJRubyHomeEnvVar( false );
+       factory.setCompileMode( CompileMode.FORCE );
+       factory.create();
+       Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+       assertNotNull( ruby );
+       assertEquals( CompileMode.FORCE, ruby.getInstanceConfig().getCompileMode() );
+   }
 
     @Test
     public void testCompileModeOFF() throws Exception {
@@ -375,32 +331,6 @@ public class RubyRuntimeFactoryTest {
     }
 
     @Test
-    public void testJRubyOpts18() throws Exception {
-        factory = new RubyRuntimeFactory( null );
-        factory.setUseJRubyHomeEnvVar( false );
-        Map<String, String> env = new HashMap<String, String>();
-        env.put( "JRUBY_OPTS", "--1.8" );
-        factory.setApplicationEnvironment( env );
-        factory.create();
-        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
-        assertNotNull( ruby );
-        assertFalse( ruby.is1_9() );
-    }
-
-    @Test
-    public void testJRubyOpts19() throws Exception {
-        factory = new RubyRuntimeFactory( null );
-        factory.setUseJRubyHomeEnvVar( false );
-        Map<String, String> env = new HashMap<String, String>();
-        env.put( "JRUBY_OPTS", "--1.9" );
-        factory.setApplicationEnvironment( env );
-        factory.create();
-        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
-        assertNotNull( ruby );
-        assertTrue( ruby.is1_9() );
-    }
-
-    @Test
     public void testJRubyOpts20() throws Exception {
         factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
@@ -413,18 +343,18 @@ public class RubyRuntimeFactoryTest {
         assertTrue( ruby.is2_0() );
     }
 
-    @Test
-    public void testJRubyOptsCompileModeFORCE() throws Exception {
-        factory = new RubyRuntimeFactory( null );
-        factory.setUseJRubyHomeEnvVar( false );
-        Map<String, String> env = new HashMap<String, String>();
-        env.put( "JRUBY_OPTS", "-X+C" );
-        factory.setApplicationEnvironment( env );
-        factory.create();
-        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
-        assertNotNull( ruby );
-        assertEquals( CompileMode.FORCE, ruby.getInstanceConfig().getCompileMode() );
-    }
+   @Test
+   public void testJRubyOptsCompileModeFORCE() throws Exception {
+       factory = new RubyRuntimeFactory( null );
+       factory.setUseJRubyHomeEnvVar( false );
+       Map<String, String> env = new HashMap<String, String>();
+       env.put( "JRUBY_OPTS", "-X+C" );
+       factory.setApplicationEnvironment( env );
+       factory.create();
+       Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+       assertNotNull( ruby );
+       assertEquals( CompileMode.FORCE, ruby.getInstanceConfig().getCompileMode() );
+   }
 
     @Test
     public void testJRubyOptsCompileModeOFF() throws Exception {
@@ -439,19 +369,19 @@ public class RubyRuntimeFactoryTest {
         assertEquals( CompileMode.OFF, ruby.getInstanceConfig().getCompileMode() );
     }
 
-    @Test
-    public void testMultipleJRubyOpts() throws Exception {
-        factory = new RubyRuntimeFactory( null );
-        factory.setUseJRubyHomeEnvVar( false );
-        Map<String, String> env = new HashMap<String, String>();
-        env.put( "JRUBY_OPTS", "--1.9 -X+C" );
-        factory.setApplicationEnvironment( env );
-        factory.create();
-        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
-        assertNotNull( ruby );
-        assertTrue( ruby.is1_9() );
-        assertEquals( CompileMode.FORCE, ruby.getInstanceConfig().getCompileMode() );
-    }
+   @Test
+   public void testMultipleJRubyOpts() throws Exception {
+       factory = new RubyRuntimeFactory( null );
+       factory.setUseJRubyHomeEnvVar( false );
+       Map<String, String> env = new HashMap<String, String>();
+       env.put( "JRUBY_OPTS", "--2.0 -X+C" );
+       factory.setApplicationEnvironment( env );
+       factory.create();
+       Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+       assertNotNull( ruby );
+       assertTrue( ruby.is1_9() );
+       assertEquals( CompileMode.FORCE, ruby.getInstanceConfig().getCompileMode() );
+   }
 
     @Test
     public void testJRubyOptsProperties() throws Exception {

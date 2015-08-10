@@ -62,7 +62,7 @@ describe "basic rack test with hash" do
 
 end
 
-describe "back rack with JRUBY_OPTS" do
+describe "basic rack with JRUBY_OPTS" do
 
   deploy <<-END.gsub(/^ {4}/,'')
 
@@ -72,7 +72,7 @@ describe "back rack with JRUBY_OPTS" do
     web:
       context: /basic-rack
     environment:
-      JRUBY_OPTS: --#{RUBY_VERSION[0,3]} --client
+      JRUBY_OPTS: --client
 
   END
 

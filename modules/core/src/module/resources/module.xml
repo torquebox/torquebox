@@ -26,6 +26,7 @@
 
     <resources>
         <resource-root path="${project.artifactId}.jar"/>
+        <resource-root path="snakeyaml.jar"/>
         <resource-root path="yaml-schema.jar"/>
     </resources>
 

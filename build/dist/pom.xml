@@ -15,7 +15,7 @@
   <description />
 
   <properties>
-    <version.json>1.4.6</version.json>
+    <version.json>1.8.1</version.json>
   </properties>
 
   <profiles>

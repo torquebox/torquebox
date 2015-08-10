@@ -18,7 +18,7 @@ versions = {
   :rspec          =>    java.lang::System.getProperty("version.rspec"),
   :jruby_openssl  =>    '0.9.0',
   :haml           =>    '3.1.6',
-  :json           =>    '1.7.4',
+  :json           =>    '1.8.1',
   :execjs         =>    '2.0.2',
   :rails2x        =>    '2.3.14',
   :rails30        =>    '3.0.15',
@@ -62,7 +62,6 @@ versions = {
   :rack13         =>    '1.3.6',
 
   :dm_core        =>    '1.1.0',
-  :json_for_dm    =>    '1.4.6',
 
   :padrino        =>    '0.10.5',
   :bcrypt_ruby    =>    '3.0.1',
@@ -117,8 +116,6 @@ GemInstaller.with( versions ) do |installer|
   installer.install( 'dm-sqlite-adapter', versions[:dm_core] )
   installer.install( 'dm-serializer', versions[:dm_core] )
 
-  installer.install( 'json', versions[:json_for_dm] )
-  
   installer.install( 'padrino', versions[:padrino] )
   installer.install( 'bcrypt-ruby' )
   installer.install( 'sinatra-flash', versions[:sinatra_flash] )

@@ -71,20 +71,6 @@ describe "exploded internal" do
   it_should_behave_like "internal overrides"
 end
 
-describe "archived internal" do
-  before(:each) do
-    @home = %r{^.*[/\\]override.knob.*$}
-  end
-  deploy <<-END.gsub(/^ {4}/,'')
-    application:
-      root: #{File.dirname(__FILE__)}/../apps/sinatra/override.knob
-    
-    ruby:
-      version: #{RUBY_VERSION[0,3]}
-  END
-  it_should_behave_like "internal overrides"
-end
-
 describe "exploded external" do
   before(:each) do
     @home = %r{^.*[/\\]override$}
@@ -92,28 +78,6 @@ describe "exploded external" do
   deploy <<-END.gsub(/^ {4}/,'')
     application:
       root: #{File.dirname(__FILE__)}/../apps/sinatra/override
-      env: development
-    web:
-      rackup: external.ru
-      static: external.static
-      context: /override-external
-    environment:
-      foot: stink
-      bar:  maid
-    
-    ruby:
-      version: #{RUBY_VERSION[0,3]}
-  END
-  it_should_behave_like "external overrides"
-end
-
-describe "archived external" do
-  before(:each) do
-    @home = %r{^.*[/\\]override.knob.*$}
-  end
-  deploy <<-END.gsub(/^ {4}/,'')
-    application:
-      root: #{File.dirname(__FILE__)}/../apps/sinatra/override.knob
       env: development
     web:
       rackup: external.ru
