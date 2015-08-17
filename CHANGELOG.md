@@ -6,6 +6,10 @@
 * Starting TorqueBox via rackup and specifying a port will no longer
   throw an error about converting a RubyString to int.
 
+* Executable wars and jars will default to the correct RACK_ENV /
+  RAILS_ENV when created with the "-e" or "--envvar" options instead
+  of always defaulting to development.
+
 ## 4.0.0.beta1
 
 * The 'torquebox' gem was missing gem dependencies on
