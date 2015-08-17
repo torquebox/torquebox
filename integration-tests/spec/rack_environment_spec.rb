@@ -24,6 +24,11 @@ feature 'rack environment' do
     get_env('HTTP_HOST').should_not be_empty
   end
 
+  it 'should set RACK_ENV and RAILS_ENV to production' do
+    get_env('RACK_ENV').should == 'production'
+    get_env('RAILS_ENV').should == 'production'
+  end
+
   def get_env(key)
     uri = URI.parse("#{Capybara.app_host}/#{key}")
     response = Net::HTTP.get_response(uri)

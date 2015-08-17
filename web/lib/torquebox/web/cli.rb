@@ -27,7 +27,6 @@ module TorqueBox
       end
 
       def setup_parser(parser, options)
-        ENV['RACK_ENV'] = ENV['RAILS_ENV'] = 'development'
         parser.on '-b', '--bind-address IP', 'IP or host to bind to' do |arg|
           options[:host] = arg
         end
