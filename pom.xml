@@ -684,7 +684,7 @@
 
     <version.jboss.reloaded>0.1.2</version.jboss.reloaded>
 
-    <version.jruby>1.7.21</version.jruby>
+    <version.jruby>1.7.22</version.jruby>
     <version.snakeyaml>1.13</version.snakeyaml>
     <version.rack>1.1.0</version.rack>
 
