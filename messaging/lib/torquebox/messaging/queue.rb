@@ -42,7 +42,7 @@ module TorqueBox
       # @param message [Object] The message to send.
       # @param options [Hash] Options for message publication.
       # @option options :encoding [Symbol] (:marshal) one of: :edn, :json,
-      #   :marshal, :marshal, :marshal_base64, :text
+      #   :marshal, :marshal_base64, :text
       # @option options :priority [Symbol, Number] (:normal) 0-9, or
       #   one of: :low, :normal, :high, :critical
       # @option options :ttl [Number] (0) time to live, in millis, 0
