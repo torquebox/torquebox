@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.files         = Dir['CHANGELOG.md', 'README.md', 'LICENSE',
                         'bin/**/*', 'lib/**/*']
 
-  s.add_dependency 'rack', '>= 1.4.0', '< 2.0'
+  s.add_dependency 'rack', '>= 1.4.0'
   s.add_dependency 'torquebox-core', TorqueBox::VERSION
 
   s.add_development_dependency('jbundler')
