@@ -31,13 +31,13 @@ write them ourselves. :)
 
 Thankfully, installing WildFly is trivial:
 
-    $ wget http://download.jboss.org/wildfly/8.2.0.Final/wildfly-8.2.0.Final.zip
-    $ unzip wildfly-8.2.0.Final.zip
+    $ wget http://download.jboss.org/wildfly/9.0.1.Final/wildfly-9.0.1.Final.zip
+    $ unzip wildfly-9.0.1.Final.zip
 
 Downloading and unpacking it somewhere are all there is to it. Running
 it is easy, too:
 
-    $ wildfly-8.2.0.Final/bin/standalone.sh
+    $ wildfly-9.0.1.Final/bin/standalone.sh
 
 Pass it `-h` to see what options it supports. The main one you'll use
 is `-c` which refers to one of its config files beneath
@@ -45,11 +45,11 @@ is `-c` which refers to one of its config files beneath
 HornetQ, for example, so to use TorqueBox messaging, you'll need to
 start WildFly as follows:
 
-    $ wildfly-8.2.0.Final/bin/standalone.sh -c standalone-full.xml
+    $ wildfly-9.0.1.Final/bin/standalone.sh -c standalone-full.xml
 
 And if you want clustering...
 
-    $ wildfly-8.2.0.Final/bin/standalone.sh -c standalone-full-ha.xml
+    $ wildfly-9.0.1.Final/bin/standalone.sh -c standalone-full-ha.xml
 
 You can create your own, of course, too.
 
