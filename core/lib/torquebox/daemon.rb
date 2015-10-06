@@ -42,7 +42,7 @@ module TorqueBox
     DAEMON_OPTIONS = optset(DaemonContext::CreateOption,
                             :on_error,
                             :on_stop)
-    
+
     # The name of this daemon.
     attr_reader :name
 

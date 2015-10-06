@@ -29,19 +29,19 @@ describe TorqueBox::Daemon do
     d.stop
   end
 
-   it "should start and run the action when extended" do
-     class MyDaemon < TorqueBox::Daemon
-       attr_reader :latch
-       def initialize
-         super(:extended_action)
-         @latch = CountDownLatch.new(1)
-       end
-       
-       def action
-         latch.count_down
-       end
-     end
-     
+  it "should start and run the action when extended" do
+    class MyDaemon < TorqueBox::Daemon
+      attr_reader :latch
+      def initialize
+        super(:extended_action)
+        @latch = CountDownLatch.new(1)
+      end
+
+      def action
+        latch.count_down
+      end
+    end
+
     d = MyDaemon.new.start
 
     d.latch.await(10, TimeUnit::SECONDS).should == true
@@ -79,21 +79,21 @@ describe TorqueBox::Daemon do
 
   it "should call an overridden on_error" do
     class MyDaemon < TorqueBox::Daemon
-       attr_reader :latch
-       def initialize
-         super(:overridden_on_error)
-         @latch = CountDownLatch.new(1)
-       end
-       
-       def action
-         raise Exception.new("BOOM")
-       end
+      attr_reader :latch
+      def initialize
+        super(:overridden_on_error)
+        @latch = CountDownLatch.new(1)
+      end
 
-       def on_error(e)
-         latch.count_down
-       end
+      def action
+        raise Exception.new("BOOM")
+      end
+
+      def on_error(_)
+        latch.count_down
+      end
     end
-    
+
     d = MyDaemon.new.start
 
     d.latch.await(10, TimeUnit::SECONDS).should == true
