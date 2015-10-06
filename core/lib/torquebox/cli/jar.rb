@@ -285,7 +285,7 @@ module TorqueBox
       def add_files(jar_builder, options)
         prefix = options[:file_prefix]
         prefix += '/' unless prefix.end_with?('/')
-        Dir.glob("#{prefix}#{options[:pattern]}").each do |file|
+        Dir.glob(File.join(prefix, options[:pattern])).each do |file|
           suffix = file.sub(prefix, '')
           excludes = [options[:exclude]].compact.flatten
           next if excludes.any? do |exclude|
