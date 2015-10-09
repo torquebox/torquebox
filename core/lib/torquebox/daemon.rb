@@ -149,7 +149,7 @@ module TorqueBox
       end
     end
 
-    # Called when {#stop} is called, but only if {#running?} is true.
+    # Called when {#stop} is called, but only if {#started?} is true.
     def on_stop
       @on_stop_lambda.call(self) if @on_stop_lambda
     end
