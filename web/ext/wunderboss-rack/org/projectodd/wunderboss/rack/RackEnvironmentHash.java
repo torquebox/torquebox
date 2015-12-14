@@ -259,6 +259,11 @@ public class RackEnvironmentHash extends RubyHash {
         return super.each19(context, block);
     }
     @Override
+    public IRubyObject each_pair(final ThreadContext context, final Block block) {
+        fillEntireHash();
+        return super.each_pair(context, block);
+    }
+    @Override
     public IRubyObject each_value(final ThreadContext context, final Block block) {
         fillEntireHash();
         return super.each_value(context, block);
