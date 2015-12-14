@@ -13,7 +13,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    rack (1.6.4)
+    rack (1.6.0)
 
 PLATFORMS
   java
@@ -21,3 +21,6 @@ PLATFORMS
 DEPENDENCIES
   torquebox-core!
   torquebox-web!
+
+BUNDLED WITH
+   1.11.0
