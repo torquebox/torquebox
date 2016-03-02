@@ -380,8 +380,9 @@ describe TorqueBox::DeployUtils do
                             "app/a-non-cached.gem"
                             "vendor/vendor.rb"
                             "puppet/puppet.rb"
-                            "simpleapp.box"}
-    
+                            "simpleapp.box"
+                            "public/assets/.sprockets-manifest-test.json"}
+
     def mock_run_command(expected_includes)
       @util.should_receive(:run_command) do |arg|
         included_files = arg =~ /@(.*)/ ? File.new($1).readlines.map(&:strip) : []
