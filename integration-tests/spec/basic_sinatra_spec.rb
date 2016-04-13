@@ -90,4 +90,16 @@ feature "basic sinatra test" do
     page.find('#long_body').text.strip.should == 'complete'
   end
 
+  it "should correctly work for contentless responses" do
+    uri = URI.parse("#{Capybara.app_host}/basic-sinatra/304_response")
+    Net::HTTP.start(uri.host, uri.port) do |http|
+      response = http.request(Net::HTTP::Get.new(uri.request_uri))
+      expect(response.code).to eq "304"
+      expect(response['Content-Length']).to be nil
+      expect(response['Content-Encoding']).to be nil
+      expect(response['Transfer-Encoding']).to be nil
+    end
+
+  end
+
 end

@@ -30,3 +30,7 @@ get '/long_body' do
   body = 'foobarbaz' * 50000
   body << "<div id='long_body'>complete</div>"
 end
+
+get '/304_response' do
+  [304, {}, []]
+end
