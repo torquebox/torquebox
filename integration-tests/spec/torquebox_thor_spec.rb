@@ -166,6 +166,7 @@ describe "torquebox thor utility tests" do
       @rails_3_version = ruby.evalScriptlet <<-EOS
         ENV.delete('GEM_HOME')
         ENV.delete('GEM_PATH')
+        Gem.clear_paths
         gem('rails', '~> 3.2')
         require 'rails'
         Rails::VERSION::STRING

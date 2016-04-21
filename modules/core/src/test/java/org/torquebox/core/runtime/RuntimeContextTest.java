@@ -22,6 +22,7 @@ package org.torquebox.core.runtime;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class RuntimeContextTest {
     private Ruby runtime1;
     private Ruby runtime2;
 
-    private Map<String, Ruby> results = new HashMap<String, Ruby>();
+    private Map<String, Ruby> results = Collections.synchronizedMap(new HashMap<String, Ruby>());
 
     @Before
     public void setUpRuntimes() {

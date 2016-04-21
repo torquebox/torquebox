@@ -72,7 +72,7 @@ environment:
   A_BOOLEAN_VALUE: true
 
 ruby:
-  version: 2.2
+  version: 2.3
   compile_mode: off
 
 

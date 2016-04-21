@@ -20,7 +20,6 @@
     <version.sinatra>1.2.3</version.sinatra>
     <version.old_rack>1.1.0</version.old_rack>
     <version.dm_core>1.1.0</version.dm_core>
-    <version.dm_serializer>1.1.0</version.dm_serializer>
     <version.json>1.8.1</version.json>
     <version.eap>6.1.0</version.eap>
     <assembly.dir>${project.basedir}/../build/assembly/target/stage/torquebox</assembly.dir>
@@ -370,13 +369,6 @@
       <artifactId>dm-core</artifactId>
       <type>gem</type>
       <version>${version.dm_core}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>dm-serializer</artifactId>
-      <type>gem</type>
-      <version>${version.dm_serializer}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
