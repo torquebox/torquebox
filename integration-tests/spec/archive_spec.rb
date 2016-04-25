@@ -29,14 +29,14 @@ if embedded_from_disk?
     end
 
     it "can execute scripts inside a basic jar" do
-      with_archive("#{apps_dir}/rack/basic", :jar) do |archive|
+      with_archive("#{apps_dir}/rack/basic", :jar, rack_options) do |archive|
         output = `java -jar #{archive} -S torquebox --version`.split('\n')
         output.first.should include(TorqueBox::VERSION)
       end
     end
 
     it "can execute scripts inside a basic war" do
-      with_archive("#{apps_dir}/rack/basic", :war) do |archive|
+      with_archive("#{apps_dir}/rack/basic", :war, rack_options) do |archive|
         FileUtils.mkdir('tmp')
         output = `java -Djava.io.tmpdir=#{@tmpdir}/tmp -jar #{archive} \
                   -S torquebox --version`.split('\n')
@@ -51,7 +51,7 @@ if embedded_from_disk?
 
     it "can execute scripts inside a basic jar with main specified" do
       app_dir = "#{apps_dir}/rack/basic"
-      with_archive(app_dir, :jar, %W(--main main.rb)) do |archive|
+      with_archive(app_dir, :jar, %W(--main main.rb) + rack_options) do |archive|
         output = `java -jar #{archive} -S torquebox --version`.split('\n')
         output.first.should include(TorqueBox::VERSION)
       end
@@ -73,6 +73,10 @@ if embedded_from_disk?
       Dir.chdir(@tmpdir) do
         yield "test.#{type}"
       end
+    end
+
+    def rack_options
+      %W(--no-precompile-assets)
     end
   end
 end
