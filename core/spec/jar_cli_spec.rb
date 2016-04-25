@@ -51,7 +51,7 @@ describe TorqueBox::CLI::Jar do
       File.new("includeme/excludeme", "w")
       File.new("alsoexcludefoo", "w")
       TorqueBox::CLI.new(%W(jar --exclude excludeme,alsoexclude.+ -q --no-include-jruby
-                            --no-bundle-gems --name test.jar)).run
+                            --no-precompile-assets --no-bundle-gems --name test.jar)).run
       File.exist?("test.jar").should == true
       unzip("test.jar")
       File.exist?("app/excludeme").should == false
@@ -66,7 +66,7 @@ describe TorqueBox::CLI::Jar do
       File.new(".sprockets-manifest-foobarbaz.json", "w")
       File.new("baz", "w")
       TorqueBox::CLI.new(%W(jar -q --no-include-jruby
-                            --no-bundle-gems --name test.jar)).run
+                            --no-precompile-assets --no-bundle-gems --name test.jar)).run
       File.exist?("test.jar").should == true
       unzip("test.jar")
       File.exist?("app/.sprockets-manifest.json").should == true
@@ -82,7 +82,7 @@ describe TorqueBox::CLI::Jar do
       File.new(".bar", "w")
       File.new("baz", "w")
       TorqueBox::CLI.new(%W(jar -q --no-include-jruby
-                            --no-bundle-gems --name test.jar)).run
+                            --no-precompile-assets --no-bundle-gems --name test.jar)).run
       File.exist?("test.jar").should == true
       unzip("test.jar")
       File.exist?("app/.git/foo").should == false
