@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'English'
+
 module TorqueBox
   class CLI
     class ShellCommand
@@ -58,7 +60,7 @@ module TorqueBox
         end
 
         def run_jruby(command, options = {})
-          run(command, options.merge(prefix: jruby_prefix))
+          run(command, options.merge(:prefix => jruby_prefix))
         end
 
         def jruby_prefix
@@ -100,8 +102,8 @@ module TorqueBox
       end
 
       def run_command
-        @output    = %x[ #{prefix} #{command} ]
-        @exit_code = $?.exitstatus
+        @output    = `#{prefix} #{command}`
+        @exit_code = $CHILD_STATUS.to_i
         puts @output
       end
 
