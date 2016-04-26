@@ -26,7 +26,7 @@ describe TorqueBox::CLI::ShellCommand do
     end
 
     it 'sets the exit code' do
-      expect { shell_command.run }.to change { shell_command.exit_code }.from(nil).to(0)
+      expect { shell_command.run }.to change { shell_command.exit_status }.from(nil).to(0)
     end
 
     it 'returns a reference to the shell command object' do

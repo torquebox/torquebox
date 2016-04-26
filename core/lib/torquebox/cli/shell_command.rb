@@ -18,16 +18,14 @@ module TorqueBox
   class CLI
     class ShellCommand
 
-      EXIT_SUCCESS = 0
-
-      attr_reader :command, :options, :prefix, :output, :exit_code
+      attr_reader :command, :options, :prefix, :output, :exit_status
 
       def initialize(command, options = {})
-        @command   = command
-        @options   = options
-        @prefix    = options[:prefix]
-        @output    = nil
-        @exit_code = nil
+        @command     = command
+        @options     = options
+        @prefix      = options[:prefix]
+        @output      = nil
+        @exit_status = nil
       end
 
       def run
@@ -42,8 +40,8 @@ module TorqueBox
       end
 
       def succeeded?
-        run if exit_code.nil?
-        exit_code == EXIT_SUCCESS
+        run if exit_status.nil?
+        exit_status.success?
       end
 
       def failed?
@@ -102,8 +100,8 @@ module TorqueBox
       end
 
       def run_command
-        @output    = `#{prefix} #{command}`
-        @exit_code = $CHILD_STATUS.to_i
+        @output      = `#{prefix} #{command}`
+        @exit_status = $CHILD_STATUS
         puts @output
       end
 
