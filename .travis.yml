@@ -18,6 +18,10 @@ sudo: false
 #   directories:
 #     - $HOME/.m2/repository
 
+env:
+  global:
+    - JAVA_OPTS="-Xmx512m"
+
 before_install:
   - gem install bundler
   - gem update bundler
