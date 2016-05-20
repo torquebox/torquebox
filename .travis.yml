@@ -17,6 +17,10 @@ sudo: false
 #   directories:
 #     - $HOME/.m2/repository
 
+before_install:
+  - gem install bundler
+  - gem update bundler
+
 install: travis_retry bundle install
 
 before_script:
