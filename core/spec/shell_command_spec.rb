@@ -75,13 +75,6 @@ describe TorqueBox::CLI::ShellCommand do
       end
     end
 
-    context 'when the command has not run yet' do
-      it 'runs the command' do
-        expect(shell_command).to receive(:run)
-        shell_command.succeeded?
-      end
-    end
-
     context 'when the command succeeds' do
       let(:command) { 'true' }
 
