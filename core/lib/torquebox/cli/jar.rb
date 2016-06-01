@@ -163,6 +163,22 @@ module TorqueBox
                   :pattern => "/*",
                   :jar_prefix => "jruby/bin")
         add_jar(jar_builder, "#{rb_config['libdir']}/jruby.jar")
+        add_default_gems(jar_builder, rb_config["libdir"])
+      end
+
+      def add_default_gems(jar_builder, libdir)
+        default_spec_suffix = "specifications/default"
+        default_spec_dir = "#{Gem.default_dir}/#{default_spec_suffix}"
+        jar_prefix = "jruby/lib/ruby/gems/shared"
+        Dir.glob("#{default_spec_dir}/*.gemspec").each do |file|
+          jar_builder.add_file(File.join(jar_prefix, default_spec_suffix,
+                                         File.basename(file)), file)
+          gem_full_name = File.basename(file, ".*")
+          add_files(jar_builder,
+                    :file_prefix => "#{Gem.default_dir}/gems/#{gem_full_name}",
+                    :pattern => "/**/*",
+                    :jar_prefix => "#{jar_prefix}/gems/#{gem_full_name}")
+        end
       end
 
       def add_app_files(jar_builder, options)

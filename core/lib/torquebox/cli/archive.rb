@@ -13,6 +13,7 @@
 # limitations under the License.
 
 require 'optparse'
+require 'rbconfig'
 
 module TorqueBox
   class CLI
@@ -41,11 +42,13 @@ module TorqueBox
           # "java -jar foo.jar -S torquebox help" work without quotes
           arg = ([arg] + @argv).join(' ')
           app_jar = java.lang.System.get_property("torquebox.app_jar")
+          lib_dir = RbConfig::CONFIG['libdir']
           load_path = $LOAD_PATH.map { |entry| "-I#{entry}" }.join(' ')
           jars = Dir.glob("../jars/*.jar").map { |j| "-r#{j}" }.join(' ')
           # PWD is $tmpdir/app and jruby.jar is $tmpdir/jars/jruby.jar
           Kernel.exec("java -Dtorquebox.app_jar=#{app_jar} \
                       -Djava.io.tmpdir=#{java.lang.System.get_property('java.io.tmpdir')} \
+                      -Djruby.lib=#{lib_dir} \
                       -jar ../jars/jruby.jar #{load_path} -r#{app_jar} \
                       #{jars} -rbundler/setup -rtorquebox/cli/archive_cleaner \
                       -S #{arg}")
