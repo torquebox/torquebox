@@ -163,10 +163,10 @@ module TorqueBox
                   :pattern => "/*",
                   :jar_prefix => "jruby/bin")
         add_jar(jar_builder, "#{rb_config['libdir']}/jruby.jar")
-        add_default_gems(jar_builder, rb_config["libdir"])
+        add_default_gems(jar_builder)
       end
 
-      def add_default_gems(jar_builder, libdir)
+      def add_default_gems(jar_builder)
         default_spec_suffix = "specifications/default"
         default_spec_dir = "#{Gem.default_dir}/#{default_spec_suffix}"
         jar_prefix = "jruby/lib/ruby/gems/shared"
