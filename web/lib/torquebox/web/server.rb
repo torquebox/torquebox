@@ -160,7 +160,7 @@ module TorqueBox
         end
         register_options = extract_options(options, WBWeb::RegisterOption)
         if WB.in_container
-          servlet = RackServlet.new(options[:rack_app])
+          servlet = RackServlet.new(options[:rack_app], options[:static_dir])
           @logger.trace("Registering servlet at context path {}", options[:path])
           @web_component.register_servlet(servlet, register_options)
         else

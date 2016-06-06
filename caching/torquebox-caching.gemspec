@@ -25,4 +25,5 @@ Gem::Specification.new do |s|
 
   s.requirements << "jar org.projectodd.wunderboss:wunderboss-ruby, #{TorqueBox::WUNDERBOSS_VERSION}"
   s.requirements << "jar org.projectodd.wunderboss:wunderboss-caching, #{TorqueBox::WUNDERBOSS_VERSION}"
+  s.requirements << "jar org.projectodd.wunderboss:wunderboss-wildfly-caching, #{TorqueBox::WUNDERBOSS_VERSION}"
 end

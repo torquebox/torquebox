@@ -430,12 +430,14 @@ def install_wildfly
     interfaces = doc.root.get_elements("//management-interfaces/*")
     interfaces.each { |i| i.attributes.delete('security-realm') }
     hornetq = doc.root.get_elements("//hornetq-server").first
-    hornetq.add_element('journal-type').text = 'NIO'
-    hornetq.add_element('security-enabled').text = 'false'
+    if hornetq
+      hornetq.add_element('journal-type').text = 'NIO'
+    end
     open(standalone_xml, 'w') do |file|
       doc.write(file, 4)
     end
   end
+  `sh #{wildfly_home}/bin/add-user.sh --silent -a -u 'testuser' -p 'testuser1!' -g 'guest' 2>&1`
   FileUtils.rm_rf(Dir["#{wildfly_home}/standalone/log/*"])
   FileUtils.rm_rf(Dir["#{wildfly_home}/standalone/deployments/*"])
   wildfly_home

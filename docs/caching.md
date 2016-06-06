@@ -131,8 +131,12 @@ And if the `:persist` option is set, evicted entries are not deleted
 but rather flushed to disk so that the entries in memory are always a
 finite subset of those on disk.
 
-The default eviction policy is [:lirs], which is an optimized version
-of `:lru` (Least Recently Used).
+The default eviction policy is `:none`. Other options are `:lru`
+(Least Recently Used) and `:lirs`, which is an optimized but less
+predictable version of `:lru`.
+
+Setting a `:max_entries` option without also specifying an `:eviction`
+policy will result in the `:lru` policy being set for you.
 
     baz = TorqueBox::Caching.cache "baz", :max_entries => 3
     baz[:a] = 1
@@ -162,14 +166,11 @@ modified in the baz cache:
 
     result = baz.add_listener(:cache_entry_visited, :cache_entry_modified) {|e| puts e}
 
-    baz.get_listeners.size                        #=> 2
-
     # This should show two messages for each event (before/after)
     baz[:b] = baz[:b] + 1
 
-    # This should turn the notifications off
+    # This removes the listeners and turns the messages off
     result.each {|v| baz.remove_listener(v)}
-    baz.get_listeners.empty?                      #=> true
 
 ### Encoding
 

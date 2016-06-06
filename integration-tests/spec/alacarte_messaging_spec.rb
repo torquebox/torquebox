@@ -39,9 +39,13 @@ describe "messaging alacarte rack test" do
   def with_context(&block)
     type = wildfly? ? :hornetq_wildfly : :hornetq_standalone
     port = wildfly? ? 8080 : 5445
+    username = wildfly? ? "testuser" : nil
+    password = wildfly? ? "testuser1!" : nil
     TorqueBox::Messaging::Context.new(:host => "localhost",
                                       :port => port,
                                       :remote_type => type,
+                                      :username => username,
+                                      :password => password,
                                       &block)
   end
 end

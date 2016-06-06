@@ -25,6 +25,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency('guard-rspec', '~> 4.2')
 
   s.requirements << "jar org.projectodd.wunderboss:wunderboss-ruby, #{TorqueBox::WUNDERBOSS_VERSION}"
-  s.requirements <<
-    "jar org.projectodd.wunderboss:wunderboss-messaging-hornetq, #{TorqueBox::WUNDERBOSS_VERSION}"
+  s.requirements << "jar org.projectodd.wunderboss:wunderboss-messaging-hornetq, #{TorqueBox::WUNDERBOSS_VERSION}"
+  s.requirements << "jar org.projectodd.wunderboss:wunderboss-wildfly-messaging, #{TorqueBox::WUNDERBOSS_VERSION}"
 end

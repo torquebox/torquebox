@@ -52,7 +52,7 @@ task 'build' do
     puts "  #{File.basename(gem)}: #{size_kb} KB"
   end
   puts "  Total: #{total_size_kb} KB"
-  max_size_kb = 10752
+  max_size_kb = 15360
   if total_size_kb > max_size_kb
     puts "ERROR: Maximum combined gem size of #{max_size_kb} KB exceeded"
     exit 1

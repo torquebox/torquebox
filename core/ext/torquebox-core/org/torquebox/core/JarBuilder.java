@@ -189,8 +189,9 @@ public class JarBuilder {
     protected void writeCurrentEntry(JarOutputStream jarOutput, String name, List value) throws IOException {
         for (Object part : value) {
             writeCurrentEntry(jarOutput, name, part);
-            if (name.endsWith(".properties")) {
-                // duplicate .properties entries are joined by concatenating them together
+            if (name.endsWith(".properties") || name.contains("META-INF/services/")) {
+                // duplicate .properties and META-INF/services entries are
+                // joined by concatenating them together
                 writeCurrentEntry(jarOutput, new ByteArrayInputStream("\n".getBytes("UTF-8")));
             } else {
                 // for everything else, first entry added wins

@@ -46,7 +46,7 @@ module TorqueBox
 
   class << self
     def in_wildfly?
-      !org.projectodd.wunderboss.WunderBoss.options.get('wildfly-service').nil?
+      org.projectodd.wunderboss.WunderBoss.inWildFly()
     end
   end
 end

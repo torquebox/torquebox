@@ -24,5 +24,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rspec', '~> 2.14')
 
   s.requirements << "jar org.projectodd.wunderboss:wunderboss-ruby, #{TorqueBox::WUNDERBOSS_VERSION}"
-  s.requirements << "jar org.projectodd.wunderboss:wunderboss-wildfly, #{TorqueBox::WUNDERBOSS_VERSION}"
+  s.requirements << "jar org.projectodd.wunderboss:wunderboss-wildfly-core, #{TorqueBox::WUNDERBOSS_VERSION}"
 end

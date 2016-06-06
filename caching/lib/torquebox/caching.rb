@@ -94,6 +94,9 @@ module TorqueBox
       # @return [Cache] The cache reference
       def cache(name, options = {})
         validate_options(options, VALID_OPTIONS)
+        if options[:max_entries].to_i > 0 && !options[:eviction]
+          options[:eviction] = :lru
+        end
         cache = component.find_or_create(name, extract_options(options, Caching::CreateOption))
         codec = Codecs[options.fetch(:encoding, :marshal_smart)]
         Cache.new(component.withCodec(cache, codec), options)
