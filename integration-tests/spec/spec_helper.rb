@@ -433,10 +433,11 @@ def install_wildfly
     if hornetq
       hornetq.add_element('journal-type').text = 'NIO'
     else
-      activemq = doc.root.get_elements("//subsystem[contains(@xmlns, 'urn:jboss:domain:messaging-activemq:')]").first.get_elements("server").first
+      xpath = "//subsystem[contains(@xmlns, 'urn:jboss:domain:messaging-activemq:')]"
+      activemq = doc.root.get_elements(xpath).first.get_elements("server").first
       journal = REXML::Element.new("journal")
       journal.add_attribute("type", "NIO")
-      activemq[0,0] = journal
+      activemq[0, 0] = journal
     end
     open(standalone_xml, 'w') do |file|
       doc.write(file, 4)
