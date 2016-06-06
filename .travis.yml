@@ -13,7 +13,7 @@ matrix:
     - rvm: jruby-head
 
 jdk:
-  - openjdk8
+  - oraclejdk8
 
 env:
   matrix:
