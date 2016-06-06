@@ -7,7 +7,8 @@ rvm:
 
 matrix:
   include:
-    - jdk: openjdk7
+    - rvm: jruby-19mode
+      jdk: openjdk7
       env: INTEG_SUITE="spec:disk spec:jar"
   allow_failures:
     - rvm: jruby-head
