@@ -6,21 +6,26 @@ rvm:
   - jruby-head
 
 matrix:
+  include:
+    - jdk: openjdk7
+    - env: INTEG_SUITE="spec:disk spec:jar"
   allow_failures:
     - rvm: jruby-head
 
 jdk:
-  - openjdk7
+  - openjdk8
+
+env:
+  matrix:
+    - INTEG_SUITE=spec:all
+  global:
+    - JAVA_OPTS="-Xmx512m"
 
 sudo: false
 
-# cache:
-#   directories:
-#     - $HOME/.m2/repository
-
-env:
-  global:
-    - JAVA_OPTS="-Xmx512m"
+cache:
+  directories:
+    - $HOME/.m2/repository
 
 before_install:
   - gem install bundler
@@ -37,7 +42,7 @@ script:
   - bundle exec rake spec
   - cd integration-tests
   - travis_wait bundle exec rake spec:wildfly:setup
-  - bundle exec rake spec:all
+  - bundle exec rake $INTEG_SUITE
 
 branches:
   only:
