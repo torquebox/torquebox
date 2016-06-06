@@ -20,7 +20,7 @@ env:
   matrix:
     - INTEG_SUITE=spec:all
   global:
-    - JAVA_OPTS="-Xmx512m"
+    - JAVA_OPTS="-Xmx1536m"
 
 sudo: false
 
