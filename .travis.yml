@@ -15,7 +15,7 @@ matrix:
       env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
     - rvm: jruby-9.0.5.0
       jdk: openjdk7
-      env: INTEG_SUIT="spec:all" WILDFLY_VERSION="9.0.1.Final"
+      env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
   allow_failures:
     - rvm: jruby-head
 
