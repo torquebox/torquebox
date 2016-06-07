@@ -408,22 +408,24 @@ rescue Errno::ESRCH
   # ignore no such process errors - it died already
 end
 
+def wildfly_version
+  ENV['WILDFLY_VERSION'] || TorqueBox::WILDFLY_VERSION
+end
+
 def install_wildfly
   require 'jbundler/aether'
   config = JBundler::Config.new
   aether = JBundler::AetherRuby.new(config)
   aether.add_repository('jboss', 'http://repository.jboss.org/nexus/content/groups/public/')
-  aether.add_artifact("org.wildfly:wildfly-dist:zip:#{TorqueBox::WILDFLY_VERSION}")
+  aether.add_artifact("org.wildfly:wildfly-dist:zip:#{wildfly_version}")
   aether.resolve
   zip_path = aether.classpath_array.find { |dep| dep.include?('wildfly/wildfly-dist/') }
   unzip_path = File.expand_path('../pkg', File.dirname(__FILE__))
-  wildfly_home = File.join(unzip_path, 'wildfly')
+  wildfly_home = File.join(unzip_path, "wildfly-#{wildfly_version}")
   unless File.exist?(wildfly_home)
     FileUtils.mkdir_p(unzip_path)
     Dir.chdir(unzip_path) do
       unzip(zip_path)
-      original_dir = File.expand_path(Dir['wildfly-*'].first)
-      FileUtils.mv(original_dir, wildfly_home)
     end
     standalone_xml = "#{wildfly_home}/standalone/configuration/standalone-full.xml"
     doc = REXML::Document.new(File.read(standalone_xml))
