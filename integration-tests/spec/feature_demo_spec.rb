@@ -29,7 +29,15 @@ feature "feature demo app" do
     visit "/sockjs.html"
     page.should have_content('[*] open')
     page.execute_script("inp.val('foobarbaz');form.submit();")
-    page.should have_content('message "foobarbaz"')
+    expected_content = 'message "foobarbaz"'
+    # Give some time for the submitted value to round-trip
+    timeout = 10
+    start = Time.now
+    while (Time.now - start) < timeout
+      break if page.source.include?(expected_content)
+      sleep 0.2 # sleep and retry
+    end
+    page.should have_content(expected_content)
   end
 
 end
