@@ -9,9 +9,6 @@ matrix:
   include:
     - rvm: jruby-19mode
       jdk: openjdk7
-      env: INTEG_SUITE="spec:disk spec:jar"
-    - rvm: jruby-19mode
-      jdk: openjdk7
       env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
     - rvm: jruby-9.0.5.0
       jdk: openjdk7
