@@ -28,6 +28,7 @@ feature "feature demo app" do
   it 'should work for sockjs demo' do
     visit "/sockjs.html"
     page.should have_content('[*] open')
+    page.should have_content('message "Welcome!"')
     page.execute_script("inp.val('foobarbaz');form.submit();")
     expected_content = 'message "foobarbaz"'
     # Give some time for the submitted value to round-trip
