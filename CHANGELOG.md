@@ -1,3 +1,43 @@
+## 4.0.0.beta3
+
+* The `rack` gem dependency of `torquebox-web` was loosened in
+  preparation for Rack 2.0.
+
+* The `--exclude` option to `torquebox jar` was fixed to match based
+  on a more natural `--exclude foo` instead of requiring a leading
+  slash as in `--exclude /foo`. The leading slash variant will
+  continue to work as well.
+
+* Long-running monitored daemon support was added. When running in a
+  WildFly cluster, the daemons can optionally be singletons (one
+  instance running per cluster). See the API docs for
+  `TorqueBox::Daemon` for more details.
+
+* Calling `env.each_pair` on the Rack environment hash would sometimes
+  only iterate over some of the hash. This is fixed so that it will
+  iterate over the entire hash as expected.
+
+* Our performance-optimized RackEnvironmentHash implemention had a
+  method override that was incompatible with JRuby 9.1.0.0. This has
+  been removed and JRuby versions >= 9.1.0.0 should work again.
+
+* When running `java -jar my_torquebox_app.jar -S ...` default gems
+  (json, rake, etc) may not have been found or even bundled inside the
+  jar file correctly. Now they are.
+
+* The WunderBoss version was bumped to 0.12.1, bringing in newer
+  versions of Infinispan, Undertow, and several other of the
+  underlying libraries. This also allows us to support running inside
+  WildFly 10.0.0.Final.
+
+* Integration tests are now run against WildFly 9.0.1.Final and
+  WildFly 10.0.0.Final.
+
+* Empty 304 responses sent from a Ruby application were ending up with
+  a `Transfer-Encoding: chunked` header added and could result in the
+  request hanging for some clients. This was fixed with the WunderBoss
+  upgrade that brought in a newer Undertow version.
+
 ## 4.0.0.beta2
 
 * The `TorqueBox::Logger` class now provides methods to instantiate
