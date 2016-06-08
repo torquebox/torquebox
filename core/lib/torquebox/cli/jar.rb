@@ -183,7 +183,7 @@ module TorqueBox
 
       def add_app_files(jar_builder, options)
         @logger.trace("Adding application files to jar...")
-        exclude = [%r{^/[^/]*\.(jar|war)}]
+        exclude = [Regexp.new("^[^/]*\.(jar|war)")]
         if options[:exclude]
           exclude += options[:exclude].map { |e| Regexp.new("^#{e}") }
         end

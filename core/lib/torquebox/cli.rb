@@ -35,7 +35,7 @@ module TorqueBox
     end
 
     def initialize(argv)
-      @argv = argv
+      @argv = argv = argv.dup
       require_torquebox_gems
       options = {}
       @extension = TorqueBox::CLI.extensions[argv.first]

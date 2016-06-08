@@ -18,7 +18,6 @@ require "fileutils"
 describe TorqueBox::CLI::War do
 
   before(:each) do
-    @war = TorqueBox::CLI::War.new
     @tmpdir = Dir.mktmpdir("tmptorqueboxwar", ".")
   end
 
@@ -37,6 +36,25 @@ describe TorqueBox::CLI::War do
       File.exist?("META-INF/app.properties").should == true
       app_properties = File.read("META-INF/app.properties")
       app_properties.should include("foobarbaz")
+    end
+  end
+
+  it "doesn't continually grow war size" do
+    Dir.chdir(@tmpdir) do
+      war = "test.war"
+      cli_cmd = %W(war -q --no-bundle-gems --name #{war})
+      TorqueBox::CLI.new(cli_cmd).run
+      File.exist?(war).should == true
+      original_size = File.size(war)
+      2.times do
+        TorqueBox::CLI.new(cli_cmd).run
+        new_size = File.size(war)
+        # We won't end up with identical war sizes every time but they
+        # should be very close in size.
+        diff = (new_size - original_size).abs
+        percent_diff = diff * 100.0 / original_size
+        percent_diff.should be < 1
+      end
     end
   end
 
