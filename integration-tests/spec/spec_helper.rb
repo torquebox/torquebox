@@ -138,13 +138,18 @@ def wildfly_server
 end
 
 def eval_in_new_ruby(script)
-  ruby = org.jruby.Ruby.new_instance
-  unless ENV['DEBUG']
-    dev_null = PLATFORM =~ /mswin/ ? 'NUL' : '/dev/null'
-    ruby.evalScriptlet("$stdout = File.open('#{dev_null}', 'w')")
+  tmpdir = Dir.mktmpdir("tmptorqueboxeval", ".")
+  script_path = "#{tmpdir}/script.rb"
+  begin
+    File.open(script_path, "w") { |f| f.write(script) }
+    command = %Q(#{jruby_command} #{jruby_jvm_opts} "#{script_path}" 2>&1)
+    output = `#{command}`
+    if ENV['DEBUG']
+      puts output
+    end
+  ensure
+    FileUtils.rm_rf(tmpdir)
   end
-  ruby.evalScriptlet(script)
-  ruby.tearDown(false)
 end
 
 ALREADY_BUNDLED = []
