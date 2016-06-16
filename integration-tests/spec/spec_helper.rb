@@ -142,7 +142,7 @@ def eval_in_new_ruby(script)
   script_path = "#{tmpdir}/script.rb"
   begin
     File.open(script_path, "w") { |f| f.write(script) }
-    command = %Q(#{jruby_command} #{jruby_jvm_opts} "#{script_path}" 2>&1)
+    command = %(#{jruby_command} #{jruby_jvm_opts} "#{script_path}" 2>&1)
     output = `#{command}`
     if ENV['DEBUG']
       puts output
