@@ -38,6 +38,11 @@
   request hanging for some clients. This was fixed with the WunderBoss
   upgrade that brought in a newer Undertow version.
 
+* Repeated executions of `torquebox jar` or `torquebox war` will no
+  longer cause the generated archive to continually grow in size. We
+  were accidentally including the existing archive inside the new
+  archive every time the command was run.
+
 ## 4.0.0.beta2
 
 * The `TorqueBox::Logger` class now provides methods to instantiate
