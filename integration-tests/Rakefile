@@ -4,6 +4,7 @@ TorqueBox::RakeHelper.install_clean_tasks
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:real_spec) do |config|
   config.pattern = './spec/*_spec.rb'
+  config.ruby_opts = '-J-Xmx1024m'
 end
 task(:real_spec).clear_comments
 
