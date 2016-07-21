@@ -330,6 +330,27 @@ module TorqueBox
         ruby.evalScriptlet(script)
       end
 
+      def jruby_command(cmd)
+        jruby = File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
+        jruby << case RUBY_VERSION
+                 when /^1\.8\./ then ' --1.8'
+                 when /^1\.9\./ then ' --1.9'
+                 when /^2\.0\./ then ' --2.0'
+                 else ''
+                 end
+        run_command("#{jruby} #{cmd}")
+      end
+
+      def run_command(cmd)
+        old_rubyopt = ENV['RUBYOPT']
+        begin
+          ENV['RUBYOPT'] = ''
+          puts `#{cmd} 2>&1`
+        ensure
+          ENV['RUBYOPT'] = old_rubyopt
+        end
+      end
+
       def app_properties(env, init)
         env_str = env.map do |key, value|
           "ENV['#{key}'] ||= '#{value}';"
