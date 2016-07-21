@@ -39,6 +39,7 @@ module TorqueBox
           :destination => '.',
           :jar_name => "#{File.basename(Dir.pwd)}.jar",
           :include_jruby => true,
+          :precompile_assets => false,
           :bundle_gems => true,
           :bundle_without => %W(development test assets),
           :rackup => 'config.ru'
@@ -61,6 +62,11 @@ module TorqueBox
            :name => :include_jruby,
            :switch => '--[no-]include-jruby',
            :description => "Include JRuby in the jar (default: #{defaults[:include_jruby]})"
+         },
+         {
+           :name => :precompile_assets,
+           :switch => '--precompile-assets',
+           :description => "Precompile Rails assets in the jar (default: #{defaults[:precompile_assets]})"
          },
          {
            :name => :bundle_gems,
@@ -125,6 +131,10 @@ module TorqueBox
           add_jruby_files(jar_builder)
         end
 
+        if options[:precompile_assets]
+          precompile_assets
+        end
+
         add_app_files(jar_builder, options)
 
         if options[:bundle_gems]
@@ -179,6 +189,12 @@ module TorqueBox
                     :pattern => "/**/*",
                     :jar_prefix => "#{jar_prefix}/gems/#{gem_full_name}")
         end
+      end
+
+      def precompile_assets
+        @logger.info("Precompiling assets")
+        jruby_command("-S rake assets:precompile")
+        raise 'Error precompiling assets' unless $CHILD_STATUS.to_i == 0
       end
 
       def add_app_files(jar_builder, options)
