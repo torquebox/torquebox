@@ -29,6 +29,14 @@
       <scope>test</scope>
       <version>2.9.0</version>
     </dependency>
+    <!-- pin net-ssh to a version compatible w ruby < 2.0 -->
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>net-ssh</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+      <version>2.9.2</version>
+    </dependency>
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>capistrano-spec</artifactId>

@@ -6,6 +6,7 @@ def force_require(gem_name, version)
   installer.options[:version] = version
   installer.options[:generate_rdoc] = false
   installer.options[:generate_ri] = false
+  installer.options[:document] = []
   retry_count = 0
   begin
     installer.execute

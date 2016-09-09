@@ -264,7 +264,7 @@ module TorqueBox
 
         Dir.chdir( app_dir ) do
           include_files = []
-          Dir[ "**/**", ".bundle/**/**" ].each do |entry|
+          Dir[ "**/**", ".bundle/**/**", "**/.*manifest*" ].each do |entry|
             unless File.directory?( entry ) || skip_files.any? { |regex| entry.match( regex ) }
               include_files << '"' + entry.to_s + '"'
             end
