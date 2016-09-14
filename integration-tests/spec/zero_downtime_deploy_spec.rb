@@ -170,7 +170,7 @@ shared_examples_for 'zero downtime deploy' do |runtime_type|
     }
     10.times do
       restart_runtime_with_jmx('web', "#{runtime_type}_runtime")
-      sleep 0.1
+      sleep 0.3
     end
     thread.join
     # We'll probably see 10 values but it depends on thread scheduling
