@@ -28,6 +28,7 @@ import org.jboss.logging.Logger;
 import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
+import org.torquebox.core.util.JRubyConstants;
 
 /**
  * <pre>
@@ -68,12 +69,17 @@ public class RubyYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
         Map<String, Object> config = (Map<String, Object>) dataObj;
 
         Object version = config.get( "version" );
-        if ("1.8".equals( "" + version )) {
-            runtimeMetaData.setVersion( RubyRuntimeMetaData.Version.V1_8 );
-        } else if ("1.9".equals( "" + version )) {
-            runtimeMetaData.setVersion( RubyRuntimeMetaData.Version.V1_9 );
-        } else if ("2.0".equals( "" + version )) {
-            runtimeMetaData.setVersion( RubyRuntimeMetaData.Version.V2_0 );
+        boolean jruby9 = JRubyConstants.getVersion().startsWith("9");
+        if (version != null && jruby9) {
+            log.warn("Ignoring Ruby version setting of " + version + " under JRuby 9");
+        } else {
+            if ("1.8".equals( "" + version )) {
+                runtimeMetaData.setVersion( RubyRuntimeMetaData.Version.V1_8 );
+            } else if ("1.9".equals( "" + version )) {
+                runtimeMetaData.setVersion( RubyRuntimeMetaData.Version.V1_9 );
+            } else if ("2.0".equals( "" + version )) {
+                runtimeMetaData.setVersion( RubyRuntimeMetaData.Version.V2_0 );
+            }
         }
 
         Object compileMode = config.get( "compile_mode" );

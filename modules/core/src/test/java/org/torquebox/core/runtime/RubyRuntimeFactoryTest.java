@@ -153,17 +153,6 @@ public class RubyRuntimeFactoryTest {
        assertTrue( ruby.is2_0() );
    }
 
-    @Test
-    public void testRuby20() throws Exception {
-        factory = new RubyRuntimeFactory( null );
-        factory.setUseJRubyHomeEnvVar( false );
-        factory.setRubyVersion( CompatVersion.RUBY2_0 );
-        factory.create();
-        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
-        assertNotNull( ruby );
-        assertTrue( ruby.is2_0() );
-    }
-
    @Test
    public void testCompileModeDefault() throws Exception {
        factory = new RubyRuntimeFactory( null );
@@ -251,18 +240,6 @@ public class RubyRuntimeFactoryTest {
     }
 
     @Test
-    public void testDebugModeDefault19() throws Exception {
-        factory = new RubyRuntimeFactory( null );
-        factory.setUseJRubyHomeEnvVar( false );
-        factory.setRubyVersion( CompatVersion.RUBY1_9 );
-        factory.create();
-        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
-        assertNotNull( ruby );
-        assertTrue( ruby.is1_9() );
-        assertFalse( ruby.getInstanceConfig().isDebug() );
-    }
-
-    @Test
     public void testDebugModeTrue() throws Exception {
         factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
@@ -296,18 +273,6 @@ public class RubyRuntimeFactoryTest {
     }
 
     @Test
-    public void testInteractiveDefault19() throws Exception {
-        factory = new RubyRuntimeFactory( null );
-        factory.setUseJRubyHomeEnvVar( false );
-        factory.setRubyVersion( CompatVersion.RUBY1_9 );
-        factory.create();
-        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
-        assertNotNull( ruby );
-        assertTrue( ruby.is1_9() );
-        assertFalse( ((TorqueBoxRubyInstanceConfig) ruby.getInstanceConfig()).isInteractive() );
-    }
-
-    @Test
     public void testInteractiveTrue() throws Exception {
         factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
@@ -328,19 +293,6 @@ public class RubyRuntimeFactoryTest {
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
         assertFalse( ((TorqueBoxRubyInstanceConfig) ruby.getInstanceConfig()).isInteractive() );
-    }
-
-    @Test
-    public void testJRubyOpts20() throws Exception {
-        factory = new RubyRuntimeFactory( null );
-        factory.setUseJRubyHomeEnvVar( false );
-        Map<String, String> env = new HashMap<String, String>();
-        env.put( "JRUBY_OPTS", "--2.0" );
-        factory.setApplicationEnvironment( env );
-        factory.create();
-        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
-        assertNotNull( ruby );
-        assertTrue( ruby.is2_0() );
     }
 
    @Test
@@ -369,20 +321,6 @@ public class RubyRuntimeFactoryTest {
         assertEquals( CompileMode.OFF, ruby.getInstanceConfig().getCompileMode() );
     }
 
-   @Test
-   public void testMultipleJRubyOpts() throws Exception {
-       factory = new RubyRuntimeFactory( null );
-       factory.setUseJRubyHomeEnvVar( false );
-       Map<String, String> env = new HashMap<String, String>();
-       env.put( "JRUBY_OPTS", "--2.0 -X+C" );
-       factory.setApplicationEnvironment( env );
-       factory.create();
-       Ruby ruby = factory.createInstance( getClass().getSimpleName() );
-       assertNotNull( ruby );
-       assertTrue( ruby.is1_9() );
-       assertEquals( CompileMode.FORCE, ruby.getInstanceConfig().getCompileMode() );
-   }
-
     @Test
     public void testJRubyOptsProperties() throws Exception {
         factory = new RubyRuntimeFactory( null );
@@ -401,13 +339,12 @@ public class RubyRuntimeFactoryTest {
         factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         Map<String, String> env = new HashMap<String, String>();
-        env.put( "JRUBY_OPTS", "-X-C --client --1.9 --sample --server --manage --headless" );
+        env.put( "JRUBY_OPTS", "-X-C --client --sample --server --manage --headless" );
         factory.setApplicationEnvironment( env );
         factory.create();
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
         assertEquals( CompileMode.OFF, ruby.getInstanceConfig().getCompileMode() );
-        assertTrue( ruby.is1_9() );
     }
 
     public boolean isJRuby17() {
