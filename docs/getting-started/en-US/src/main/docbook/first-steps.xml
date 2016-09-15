@@ -56,10 +56,10 @@
 
           <screen><prompt>$</prompt> <command>mkdir -p ~/torquebox_examples/rails_example</command>
 <prompt>$</prompt> <command>cd ~/torquebox_examples/rails_example</command>
-<prompt>$</prompt> <command>gem install rails</command>
+<prompt>$</prompt> <command>gem install rails -v "~>4.x"</command>
 ...
-Successfully installed rails-4.0.4
-26 gems installed
+Successfully installed rails-4.2.7.1
+13 gems installed
 <prompt>$</prompt> <command>rails new .</command>
 ...
 Your bundle is complete!
@@ -123,8 +123,8 @@ Deployed: rails_example-knob.yml
       <screen><prompt>$</prompt> <command>mkdir -p ~/torquebox_examples/rack_example</command>
 <prompt>$</prompt> <command>cd ~/torquebox_examples/rack_example</command>
 <prompt>$</prompt> <command>gem install rack</command>
-Fetching: rack-1.5.2.gem (100%)
-Successfully installed rack-1.5.2
+Fetching: rack-2.0.1.gem (100%)
+Successfully installed rack-2.0.1
 1 gem installed
 </screen>
 
@@ -214,10 +214,10 @@ Deployed: rack_example-knob.yml
 
           <screen><prompt>&gt;</prompt> <command>mkdir %HOME%\torquebox_examples\rails_example</command>
 <prompt>&gt;</prompt> <command>cd %HOME%\torquebox_examples\rails_example</command>
-<prompt>&gt;</prompt> <command>gem install rails</command>
+<prompt>&gt;</prompt> <command>gem install rails -v "~>4.x"</command>
 ...
-Successfully installed rails-4.0.4
-26 gems installed
+Successfully installed rails-4.2.7.1
+13 gems installed
 <prompt>&gt;</prompt> <command>rails new .</command>
 ...
 Your bundle is complete!
@@ -297,8 +297,8 @@ Deployed: rails_example-knob.yml
       <screen><prompt>&gt;</prompt> <command>mkdir %HOME%\torquebox_examples\rack_example</command>
 <prompt>&gt;</prompt> <command>cd %HOME%\torquebox_examples\rack_example</command>
 <prompt>&gt;</prompt> <command>gem install rack</command>
-Fetching: rack-1.5.2.gem (100%)
-Successfully installed rack-1.5.2
+Fetching: rack-2.0.1.gem (100%)
+Successfully installed rack-2.0.1
 1 gem installed
 </screen>
 
@@ -397,11 +397,11 @@ gemsets for jruby-${version.jruby} (found in /Users/someone/.rvm/gems/jruby-${ve
    global
 => tb_rails_example
 
-<prompt>$</prompt> <command>gem install rails</command>
+<prompt>$</prompt> <command>gem install rails -v "~>4.x"</command>
 ...
-Successfully installed rails-4.0.4
-26 gems installed
-...</screen>
+Successfully installed rails-4.2.7.1
+13 gems installed
+</screen>
         </para>
 
         <para>
@@ -523,8 +523,8 @@ gemsets for jruby-${version.jruby} (found in /Users/someone/.rvm/gems/jruby-${ve
    tb_rails_example
 
 <prompt>$</prompt> <command>gem install rack</command>
-Fetching: rack-1.5.2.gem (100%)
-Successfully installed rack-1.5.2
+Fetching: rack-2.0.1.gem (100%)
+Successfully installed rack-2.0.1
 1 gem installed
 </screen>
 
@@ -641,10 +641,10 @@ end</programlisting>
 
           <screen><prompt>$</prompt> <command>mkdir -p ~/torquebox_examples/rails_example</command>
 <prompt>$</prompt> <command>cd ~/torquebox_examples/rails_example</command>
-<prompt>$</prompt> <command>gem install rails</command>
+<prompt>$</prompt> <command>gem install rails -v "~>4.x"</command>
 ...
-Successfully installed rails-4.0.4
-26 gems installed
+Successfully installed rails-4.2.7.1
+13 gems installed
 <prompt>$</prompt> <command>rails new .</command>
 ...
 Your bundle is complete!
@@ -719,8 +719,8 @@ Deployed: rails_example-knob.yml
       <screen><prompt>$</prompt> <command>mkdir -p ~/torquebox_examples/rack_example</command>
 <prompt>$</prompt> <command>cd ~/torquebox_examples/rack_example</command>
 <prompt>$</prompt> <command>gem install rack</command>
-Fetching: rack-1.5.2.gem (100%)
-Successfully installed rack-1.5.2
+Fetching: rack-2.0.1.gem (100%)
+Successfully installed rack-2.0.1
 1 gem installed
 </screen>
 
