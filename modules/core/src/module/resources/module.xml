@@ -71,6 +71,15 @@
         <module name="org.jboss.stdio"/>
         <module name="org.jboss.vfs"/>
         <module name="org.projectodd.polyglot.core"/>
+
+        <system export="true">
+          <paths>
+            <path name="com/sun/org/apache/xpath/internal"/>
+            <path name="com/sun/org/apache/xpath/internal/jaxp"/>
+            <path name="com/sun/org/apache/xml/internal/utils"/>
+          </paths>
+        </system>
+        
 <!--
         <module name="org.jboss.threads"/>
         <module name="org.jboss.as.deployment-repository"/>

@@ -11,11 +11,15 @@ remote_describe 'jdk apis' do
 
   # Check on the client-side if we're using a Sun JDK
   # before running any of those tests server-side
-  sun_jdk = org.jruby.util.unsafe.UnsafeGetter.getUnsafe rescue nil
-  if sun_jdk
+  unless ENV['TORQUEBOX_INTEG_SUN_JDK']
+    ENV['TORQUEBOX_INTEG_SUN_JDK'] = "#{com.sun.org.apache.xpath.internal.VariableStack}" rescue nil
+  end
+  if ENV['TORQUEBOX_INTEG_SUN_JDK']
     it "should have sun.jdk modules available" do
       lambda {
-        org.jruby.util.unsafe.UnsafeGetter.getUnsafe
+        com.sun.org.apache.xpath.internal.VariableStack
+        com.sun.org.apache.xpath.internal.jaxp.JAXPExtensionsProvider
+        com.sun.org.apache.xml.internal.utils.PrefixResolver
       }.should_not raise_error
     end
   end
