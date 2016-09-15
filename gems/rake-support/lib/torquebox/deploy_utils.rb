@@ -123,7 +123,7 @@ module TorqueBox
       end
 
       def set_java_opts(options)
-        ENV['JAVA_OPTS'] ||= "-Xms64m -Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true"
+        ENV['JAVA_OPTS'] ||= "-Xms64m -Xmx768m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true"
         ENV['JAVA_OPTS'] = "#{ENV['JAVA_OPTS']} #{options}"
       end
 
