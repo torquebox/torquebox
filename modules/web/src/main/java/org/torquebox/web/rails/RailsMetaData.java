@@ -39,7 +39,7 @@ public class RailsMetaData {
     }
 
     public boolean isRails2() {
-        return getVersionSpec() != null && Pattern.matches( ".*2\\.[0-9]+\\.[0-9]+\\.*", getVersionSpec() );
+        return getVersionSpec() != null && Pattern.matches( "[^0-9.]*2\\.[0-9]+\\.[0-9]+\\.*", getVersionSpec() );
     }
 
     public boolean isRails3() {
