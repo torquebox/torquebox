@@ -150,7 +150,7 @@ set :jruby_home,        '/usr/local/jruby'</screen></para>
             <row>
               <entry>:app_ruby_version</entry>
 
-              <entry>Ruby compatibility version (defaults to 1.9)</entry>
+              <entry>Ruby compatibility version (defaults to 2.3)</entry>
             </row>
           </tbody>
         </tgroup>

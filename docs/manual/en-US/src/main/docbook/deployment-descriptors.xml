@@ -226,7 +226,9 @@ end</programlisting></para>
             <row>
               <entry><varname>version</varname></entry>
 
-              <entry>The ruby compatibility version for JRuby. Options are:
+              <entry>The ruby compatibility version for JRuby. Note that with
+              JRuby 9.x, this option is ignored and is always 2.3. For earlier
+              JRuby versions, 1.8, 1.9, and 2.0 are valid values. Options are:
               <itemizedlist>
                   <listitem>
                     <para>1.8 - provides 1.8.7 compatibility</para>
@@ -239,9 +241,13 @@ end</programlisting></para>
                   <listitem>
                     <para>2.0 - provides 2.0.0 compatibility</para>
                   </listitem>
+
+                  <listitem>
+                    <para>2.3 - provides 2.3.0 compatibility</para>
+                  </listitem>
                 </itemizedlist></entry>
 
-              <entry>1.9</entry>
+              <entry>2.3</entry>
             </row>
 
             <row>
