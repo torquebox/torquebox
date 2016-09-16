@@ -10,7 +10,7 @@
 
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-parent</artifactId>
-  <version>3.2.0-SNAPSHOT</version>
+  <version>3.2.0</version>
   <packaging>pom</packaging>
   <name>TorqueBox</name>
   <url>http://torquebox.org/</url>
@@ -23,6 +23,7 @@
     <connection>scm:git:git://github.com/torquebox/torquebox-release.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/torquebox/torquebox-release.git</developerConnection>
     <url>http://github.com/torquebox/torquebox-release</url>
+    <tag>3.2.0</tag>
   </scm>
 
   <developers>
