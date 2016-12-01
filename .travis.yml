@@ -19,6 +19,10 @@ matrix:
 jdk:
   - oraclejdk8
 
+os:
+  - linux
+  - osx
+
 env:
   matrix:
     - INTEG_SUITE=spec:all
