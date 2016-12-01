@@ -48,3 +48,7 @@ end
 def windows?
   RbConfig::CONFIG['host_os'] =~ /mswin/
 end
+
+def macos?
+  RbConfig::CONFIG['host_os'] =~ /darwin/
+end
