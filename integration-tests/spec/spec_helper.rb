@@ -382,21 +382,19 @@ def server_stop
   end
   if @server_pid
     kill_process(@server_pid)
-    processes = case
-      when windows?
-        `ps -o pid --ppid #{@server_pid}`.split("\n").map( &:to_i )
-      when macos?
-        # macOS doesn't support the --ppid flag, but it does support outputting the parent process id
-        `ps -o pid -o ppid`.split( "\n" ).
-            # convert each line into a pair of integers - the process id and the parent process id
-            map { | line | line.strip.split( /\s+/ ).map( &:to_i ) }.
-            # filter by parent process id
-            select { | _, ppid | ppid == @server_pid }.
-            # return only the process ids
-            map( &:first )
-      else
-        []
-    end
+    processes =
+        case
+        when windows?
+          `ps -o pid --ppid #{@server_pid}`.split("\n").map(&:to_i)
+        when macos?
+          # macOS doesn't support the --ppid flag, but it does support outputting the parent process id
+          `ps -o pid -o ppid`.split("\n")
+            .map { | line | line.strip.split(/\s+/).map(&:to_i) } # convert to the process id and the parent process id
+            .select { | _, ppid | ppid == @server_pid }           # filter by parent process id
+            .map(&:first)                                         # return only the process id
+        else
+          []
+        end
     processes.each do |pid|
       kill_process(pid) if pid > 0
     end
