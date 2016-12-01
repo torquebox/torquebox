@@ -37,4 +37,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency('kramdown', '~> 1.4.1')
   s.add_development_dependency('builder', '~> 3.2.2')
   s.add_development_dependency('rubocop', '~> 0.25.0')
+  s.add_development_dependency('addressable', '~> 2.4.0')
 end
