@@ -15,17 +15,13 @@ matrix:
       rvm: jruby-9.1.6.0
       jdk: openjdk7
       env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
-    - os: linux
-      rvm: jruby-19mode
-      jdk: oraclejdk8
-      env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
-    - os: linux
-      rvm: jruby-9.1.6.0
-      jdk: oraclejdk8
-      env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
     - os: osx
+      jdk:
   allow_failures:
     - rvm: jruby-head
+
+jdk:
+  - oraclejdk8
 
 env:
   matrix:
