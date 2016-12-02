@@ -389,7 +389,7 @@ def server_stop
         when macos?
           # macOS doesn't support the --ppid flag, but it does support outputting the parent process id
           `ps -o pid -o ppid`.split("\n")
-            .map { | line | line.strip.split(/\s+/).map(&:to_i) } # convert to the process id and the parent process id
+            .map { | line | line.strip.split(/\s+/).map(&:to_i) } # convert to process id and parent process id
             .select { | _, ppid | ppid == @server_pid }           # filter by parent process id
             .map(&:first)                                         # return only the process id
         else
