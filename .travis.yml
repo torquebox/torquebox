@@ -7,19 +7,25 @@ rvm:
 
 matrix:
   include:
-    - rvm: jruby-19mode
+    - os: linux
+      rvm: jruby-19mode
+      jdk: openjdk7
       env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
-    - rvm: jruby-9.1.6.0
+    - os: linux
+      rvm: jruby-9.1.6.0
+      jdk: openjdk7
       env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
+    - os: linux
+      rvm: jruby-19mode
+      jdk: oraclejdk8
+      env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
+    - os: linux
+      rvm: jruby-9.1.6.0
+      jdk: oraclejdk8
+      env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
+    - os: osx
   allow_failures:
     - rvm: jruby-head
-
-os:
-  - linux:
-    - jdk:
-      - oraclejdk8
-      - openjdk7
-  - osx
 
 env:
   matrix:
@@ -36,6 +42,9 @@ cache:
 before_install:
   - gem install bundler
   - gem update bundler
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl -O https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/phantomjs/phantomjs-1.8.1-macosx.zip ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then unzip phantomjs-1.8.1-macosx.zip ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=$PWD/phantomjs-1.8.1/bin:$PATH ; fi
 
 install: travis_retry bundle install
 
