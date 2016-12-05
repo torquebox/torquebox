@@ -60,6 +60,7 @@ details.
 
 EOF
         $stderr.puts ex.message
+        $stderr.puts ex.backtrace
         exit 1
       else
         raise ex
@@ -270,7 +271,8 @@ def server_start(options)
   TorqueBox::SpecHelpers.set_boot_marker
   options[:before].call if options[:before]
   @server_after = options[:after]
-  ENV['RUBYLIB'] = app_dir
+  @ruby_lib = ENV['RUBYLIB']
+  ENV['RUBYLIB'] = ( @ruby_lib.nil? or @ruby_lib == '' ) ? app_dir : "#{@ruby_lib}:#{app_dir}"
   error_seen = Java::JavaUtilConcurrentAtomic::AtomicBoolean.new
   unless wildfly?
     if chdir
@@ -284,6 +286,7 @@ def server_start(options)
     @stdout_thread, @stderr_thread = pump_server_streams(stdin, stdout,
                                                          stderr, error_seen)
   end
+  ENV['RUBYLIB'] = @ruby_lib
   wait_for_boot(app_dir, 180, error_seen)
 end
 
@@ -331,7 +334,7 @@ def pump_server_streams(stdin, stdout, stderr, error_seen)
   stdout_thread = Thread.new(stdout) do |stdout_io|
     begin
       loop do
-        STDOUT.write(stdout_io.readpartial(1024))
+        STDOUT.write("STDOUT From Sever: " + stdout_io.readpartial(1024) + "\n")
       end
     rescue EOFError, IOError
     end
@@ -340,11 +343,8 @@ def pump_server_streams(stdin, stdout, stderr, error_seen)
     begin
       loop do
         err_text = stderr_io.readpartial(1024)
-        STDERR.write(err_text)
-        # don't use STDERR as a means of detecting errors on JRuby9k
-        # until we figure out why it seems to falsely detect errors
-        # when there are none
-        error_seen.set(true) unless jruby9k?
+        STDERR.write("STDERR From Sever: " + err_text + "\n")
+        error_seen.set(true)
       end
     rescue EOFError, IOError
     end
