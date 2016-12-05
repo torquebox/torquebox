@@ -267,12 +267,12 @@ def server_start(options)
   chdir = options[:chdir]
   port = wildfly? ? '8080' : options[:port]
   Capybara.app_host = "http://localhost:#{port}"
-  ENV['BUNDLE_GEMFILE'] = "#{app_dir}/Gemfile"
+  @bundle_gemfile = "#{app_dir}/Gemfile"
   TorqueBox::SpecHelpers.set_boot_marker
   options[:before].call if options[:before]
   @server_after = options[:after]
   @ruby_lib = ENV['RUBYLIB']
-  ENV['RUBYLIB'] = ( @ruby_lib.nil? or @ruby_lib == '' ) ? app_dir : "#{@ruby_lib}:#{app_dir}"
+  @ruby_lib = (@ruby_lib.nil? || @ruby_lib == '') ? app_dir : "#{@ruby_lib.gsub(' ', '\\ ')}:#{app_dir}"
   error_seen = Java::JavaUtilConcurrentAtomic::AtomicBoolean.new
   unless wildfly?
     if chdir
@@ -280,13 +280,11 @@ def server_start(options)
       Dir.chdir(chdir)
     end
     pid, stdin, stdout, stderr = popen4(options[:command])
-    ENV['BUNDLE_GEMFILE'] = ENV['RUBYLIB'] = nil
     @server_ios = [stdin, stdout, stderr]
     @server_pid = pid
     @stdout_thread, @stderr_thread = pump_server_streams(stdin, stdout,
                                                          stderr, error_seen)
   end
-  ENV['RUBYLIB'] = @ruby_lib
   wait_for_boot(app_dir, 180, error_seen)
 end
 
@@ -295,8 +293,9 @@ def jruby9k?
 end
 
 def popen4(*cmd)
+  environment_variable_overrides = { 'RUBYLIB' => @ruby_lib, 'BUNDLE_GEMFILE' => @bundle_gemfile }
   # Use IO.popen4 for JRuby < 9.0.0.0
-  return IO.popen4(*cmd) unless jruby9k?
+  return IO.popen4(environment_variable_overrides,*cmd) unless jruby9k?
 
   opts = {}
   in_r, in_w = IO.pipe
@@ -312,7 +311,7 @@ def popen4(*cmd)
   child_io = [in_r, out_w, err_w]
   parent_io = [in_w, out_r, err_r]
 
-  pid = spawn(*cmd, opts)
+  pid = spawn(environment_variable_overrides, *cmd, opts)
   wait_thr = Process.detach(pid)
   child_io.each { |io| io.close }
   result = [pid, *parent_io]
