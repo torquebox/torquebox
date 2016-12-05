@@ -21,7 +21,7 @@ matrix:
     - os: osx
       rvm: jruby-9.1.6.0
       jdk:
-      env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
+      env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final" SSL_CERT_FILE=/Library/Java/Home/lib/security/cacerts
       osx_image: beta-xcode6.1
 #  allow_failures:
 #    - rvm: jruby-head
@@ -45,17 +45,9 @@ cache:
 before_install:
   - gem install bundler
   - gem update bundler
-  - export
-  - echo "TRAVIS_OS_NAME is $TRAVIS_OS_NAME"
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl -O https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/phantomjs/phantomjs-1.8.1-macosx.zip ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ls -l phantomjs-1.8.1-macosx.zip ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then unzip phantomjs-1.8.1-macosx.zip ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ls -l phantomjs-1.8.1-macosx ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ls -l phantomjs-1.8.1-macosx/bin ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ls -l $PWD/phantomjs-1.8.1-macosx/bin ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then echo "PATH is $PATH" ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH="$PWD/phantomjs-1.8.1/bin:$PATH" ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then echo PATH is now $PATH ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH="$PWD/phantomjs-1.8.1-macosx/bin:$PATH" ; fi
   - export
 
 install: travis_retry bundle install
