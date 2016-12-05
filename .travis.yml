@@ -18,7 +18,11 @@ matrix:
     - os: osx
       rvm: jruby-9.1.6.0
       jdk:
+    - os: osx
+      rvm: jruby-9.1.6.0
+      jdk:
       env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
+      osx_image: beta-xcode6.1
 #  allow_failures:
 #    - rvm: jruby-head
 
