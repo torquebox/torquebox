@@ -1,29 +1,29 @@
 language: ruby
 
 rvm:
-  - jruby-19mode
+#  - jruby-19mode
   - jruby-9.1.6.0
-  - jruby-head
+#  - jruby-head
 
 matrix:
   include:
-    - os: linux
-      rvm: jruby-19mode
-      jdk: openjdk7
-      env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
-    - os: linux
-      rvm: jruby-9.1.6.0
-      jdk: openjdk7
-      env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
+#    - os: linux
+#      rvm: jruby-19mode
+#      jdk: openjdk7
+#      env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
+#    - os: linux
+#      rvm: jruby-9.1.6.0
+#      jdk: openjdk7
+#      env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
     - os: osx
       rvm: jruby-9.1.6.0
       jdk:
       env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
-  allow_failures:
-    - rvm: jruby-head
+#  allow_failures:
+#    - rvm: jruby-head
 
-jdk:
-  - oraclejdk8
+#jdk:
+#  - oraclejdk8
 
 env:
   matrix:
@@ -40,9 +40,16 @@ cache:
 before_install:
   - gem install bundler
   - gem update bundler
+  - echo TRAVIS_OS_NAME is $TRAVIS_OS_NAME
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl -O https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/phantomjs/phantomjs-1.8.1-macosx.zip ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ls -l phantomjs-1.8.1-macosx.zip ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then unzip phantomjs-1.8.1-macosx.zip ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ls -l phantomjs-1.8.1-macosx ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ls -l phantomjs-1.8.1-macosx/bin ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ls -l $PWD/phantomjs-1.8.1-macosx/bin ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then echo PATH is $PATH ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=$PWD/phantomjs-1.8.1/bin:$PATH ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then echo PATH is now $PATH ; fi
 
 install: travis_retry bundle install
 
