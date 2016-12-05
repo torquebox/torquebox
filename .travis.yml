@@ -34,6 +34,7 @@ env:
     - INTEG_SUITE=spec:all
   global:
     - JAVA_OPTS="-Xmx1536m -XX:MaxPermSize=512M"
+    - JRUBY_OPTS="--client -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-Xss2m -Xcompile.invokedynamic=false"
 
 sudo: false
 
