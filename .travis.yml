@@ -33,7 +33,7 @@ env:
   matrix:
     - INTEG_SUITE=spec:all
   global:
-    - JAVA_OPTS="-Xmx1536m"
+    - JAVA_OPTS="-Xmx1536m -XX:MaxPermSize=512M"
 
 sudo: false
 
