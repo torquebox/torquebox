@@ -295,7 +295,7 @@ end
 def popen4(*cmd)
   environment_variable_overrides = { 'RUBYLIB' => @ruby_lib, 'BUNDLE_GEMFILE' => @bundle_gemfile }
   # Use IO.popen4 for JRuby < 9.0.0.0
-  return IO.popen4(environment_variable_overrides,*cmd) unless jruby9k?
+  return IO.popen4(environment_variable_overrides, *cmd) unless jruby9k?
 
   opts = {}
   in_r, in_w = IO.pipe
