@@ -21,7 +21,10 @@ matrix:
     - os: osx
       rvm: jruby-9.1.6.0
       jdk:
-      env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final" SSL_CERT_FILE=/Library/Java/Home/lib/security/cacerts
+      env:
+        - WILDFLY_VERSION="9.0.1.Final"
+        - SSL_CERT_FILE=/Library/Java/Home/lib/security/cacerts
+        - JAVA_OPTS="-Xmx1536m -XX:MaxPermSize=512M"
       osx_image: beta-xcode6.1
 #  allow_failures:
 #    - rvm: jruby-head
@@ -33,7 +36,7 @@ env:
   matrix:
     - INTEG_SUITE=spec:all
   global:
-    - JAVA_OPTS="-Xmx1536m -XX:MaxPermSize=512M"
+    - JAVA_OPTS="-Xmx1536m"
     - JRUBY_OPTS="--client -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-Xss2m -Xcompile.invokedynamic=false"
 
 sudo: false
