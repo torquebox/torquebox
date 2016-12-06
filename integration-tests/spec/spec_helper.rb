@@ -199,7 +199,7 @@ def uberjar(app_dir, path, main, options)
     end
     command << " --main #{main}" if main
     jar_output = `#{command} 2>&1`
-    raise jar_output unless $?.success?
+    raise "Execution of `#{command}` failed:\n#{jar_output}" unless $?.success?
     puts jar_output if ENV['DEBUG']
     wildfly_server.deploy(jarfile) if wildfly?
   end
