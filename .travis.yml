@@ -33,9 +33,8 @@ matrix:
 #  - oraclejdk8
 
 env:
-  matrix:
-    - INTEG_SUITE=spec:all
   global:
+    - INTEG_SUITE=spec:all
     - JAVA_OPTS="-Xmx1536m"
     - JRUBY_OPTS="--client -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-Xss2m -Xcompile.invokedynamic=false"
 
