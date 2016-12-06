@@ -199,6 +199,7 @@ def uberjar(app_dir, path, main, options)
     end
     command << " --main #{main}" if main
     jar_output = `#{command} 2>&1`
+    raise jar_output unless $?.success?
     puts jar_output if ENV['DEBUG']
     wildfly_server.deploy(jarfile) if wildfly?
   end
@@ -333,7 +334,9 @@ def pump_server_streams(stdin, stdout, stderr, error_seen)
   stdout_thread = Thread.new(stdout) do |stdout_io|
     begin
       loop do
-        STDOUT.write("STDOUT From Sever: " + stdout_io.readpartial(1024) + "\n")
+        out_text = stdout_io.readpartial(1024)
+        out_text += "\n" unless out_text.nil? || out_text[ -1 ] == "\n"
+        STDOUT.write("STDOUT From Server: #{out_text}")
       end
     rescue EOFError, IOError
     end
@@ -342,7 +345,8 @@ def pump_server_streams(stdin, stdout, stderr, error_seen)
     begin
       loop do
         err_text = stderr_io.readpartial(1024)
-        STDERR.write("STDERR From Sever: " + err_text + "\n")
+        err_text += "\n" unless err_text.nil? || err_text[ -1 ] == "\n"
+        STDERR.write("STDERR From Server: #{err_text}")
         error_seen.set(true)
       end
     rescue EOFError, IOError
