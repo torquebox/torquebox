@@ -1,16 +1,16 @@
 language: ruby
 
 rvm:
-#  - jruby-19mode
+  - jruby-19mode
   - jruby-9.1.6.0
-#  - jruby-head
+  - jruby-head
 
 matrix:
   include:
-#    - os: linux
-#      rvm: jruby-19mode
-#      jdk: openjdk7
-#      env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
+    - os: linux
+      rvm: jruby-19mode
+      jdk: openjdk7
+      env: WILDFLY_VERSION="9.0.1.Final"
     - os: linux
       rvm: jruby-9.1.6.0
       jdk: openjdk7
@@ -26,11 +26,11 @@ matrix:
         - SSL_CERT_FILE=/Library/Java/Home/lib/security/cacerts
         - JAVA_OPTS="-Xmx1536m -XX:MaxPermSize=512M"
       osx_image: beta-xcode6.1
-#  allow_failures:
-#    - rvm: jruby-head
+  allow_failures:
+    - rvm: jruby-head
 
-#jdk:
-#  - oraclejdk8
+jdk:
+  - oraclejdk8
 
 env:
   global:
