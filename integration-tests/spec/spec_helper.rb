@@ -198,9 +198,10 @@ def uberjar(app_dir, path, main, options)
       command << " jar -v"
     end
     command << " --main #{main}" if main
-    jar_output = `#{command} 2>&1`
-    raise "Execution of `#{command}` failed:\n#{jar_output}" unless $CHILD_STATUS.success?
-    puts jar_output if ENV['DEBUG']
+    r, io = IO.pipe
+    system(env_overrides, command, out: io) || raise( "Execution of `#{command}` failed" )
+    io.close
+    puts r.read if ENV['DEBUG']
     wildfly_server.deploy(jarfile) if wildfly?
   end
   after = lambda do
@@ -293,10 +294,13 @@ def jruby9k?
   JRUBY_VERSION.split(".").first.to_i >= 9
 end
 
+def env_overrides
+  {'RUBYLIB' => @ruby_lib, 'BUNDLE_GEMFILE' => @bundle_gemfile}
+end
+
 def popen4(*cmd)
-  environment_variable_overrides = { 'RUBYLIB' => @ruby_lib, 'BUNDLE_GEMFILE' => @bundle_gemfile }
   # Use IO.popen4 for JRuby < 9.0.0.0
-  return IO.popen4(environment_variable_overrides, *cmd) unless jruby9k?
+  return IO.popen4(env_overrides, *cmd) unless jruby9k?
 
   opts = {}
   in_r, in_w = IO.pipe
@@ -312,7 +316,7 @@ def popen4(*cmd)
   child_io = [in_r, out_w, err_w]
   parent_io = [in_w, out_r, err_r]
 
-  pid = spawn(environment_variable_overrides, *cmd, opts)
+  pid = spawn(env_overrides, *cmd, opts)
   wait_thr = Process.detach(pid)
   child_io.each { |io| io.close }
   result = [pid, *parent_io]
@@ -336,7 +340,7 @@ def pump_server_streams(stdin, stdout, stderr, error_seen)
       loop do
         out_text = stdout_io.readpartial(1024)
         out_text += "\n" unless out_text.nil? || out_text[-1] == "\n"
-        STDOUT.write("STDOUT From Server: #{out_text}")
+        STDOUT.write("STDOUT From Server: #{out_text}") if ENV['DEBUG']
       end
     rescue EOFError, IOError
     end
