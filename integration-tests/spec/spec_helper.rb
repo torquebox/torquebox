@@ -60,6 +60,7 @@ details.
 
 EOF
         $stderr.puts ex.message
+        $stderr.puts ex.backtrace
         exit 1
       else
         raise ex
@@ -197,8 +198,10 @@ def uberjar(app_dir, path, main, options)
       command << " jar -v"
     end
     command << " --main #{main}" if main
-    jar_output = `#{command} 2>&1`
-    puts jar_output if ENV['DEBUG']
+    r, io = IO.pipe
+    system(env_overrides, command, :out => io) || raise("Execution of `#{command}` failed")
+    io.close
+    puts r.read if ENV['DEBUG']
     wildfly_server.deploy(jarfile) if wildfly?
   end
   after = lambda do
@@ -266,11 +269,12 @@ def server_start(options)
   chdir = options[:chdir]
   port = wildfly? ? '8080' : options[:port]
   Capybara.app_host = "http://localhost:#{port}"
-  ENV['BUNDLE_GEMFILE'] = "#{app_dir}/Gemfile"
+  @bundle_gemfile = "#{app_dir}/Gemfile"
   TorqueBox::SpecHelpers.set_boot_marker
   options[:before].call if options[:before]
   @server_after = options[:after]
-  ENV['RUBYLIB'] = app_dir
+  @ruby_lib = ENV['RUBYLIB']
+  @ruby_lib = (@ruby_lib.nil? || @ruby_lib == '') ? app_dir : "#{@ruby_lib.gsub(' ', '\\ ')}:#{app_dir}"
   error_seen = Java::JavaUtilConcurrentAtomic::AtomicBoolean.new
   unless wildfly?
     if chdir
@@ -278,7 +282,6 @@ def server_start(options)
       Dir.chdir(chdir)
     end
     pid, stdin, stdout, stderr = popen4(options[:command])
-    ENV['BUNDLE_GEMFILE'] = ENV['RUBYLIB'] = nil
     @server_ios = [stdin, stdout, stderr]
     @server_pid = pid
     @stdout_thread, @stderr_thread = pump_server_streams(stdin, stdout,
@@ -291,9 +294,13 @@ def jruby9k?
   JRUBY_VERSION.split(".").first.to_i >= 9
 end
 
+def env_overrides
+  { 'RUBYLIB' => @ruby_lib, 'BUNDLE_GEMFILE' => @bundle_gemfile }
+end
+
 def popen4(*cmd)
   # Use IO.popen4 for JRuby < 9.0.0.0
-  return IO.popen4(*cmd) unless jruby9k?
+  return IO.popen4(env_overrides, *cmd) unless jruby9k?
 
   opts = {}
   in_r, in_w = IO.pipe
@@ -309,7 +316,7 @@ def popen4(*cmd)
   child_io = [in_r, out_w, err_w]
   parent_io = [in_w, out_r, err_r]
 
-  pid = spawn(*cmd, opts)
+  pid = spawn(env_overrides, *cmd, opts)
   wait_thr = Process.detach(pid)
   child_io.each { |io| io.close }
   result = [pid, *parent_io]
@@ -331,7 +338,9 @@ def pump_server_streams(stdin, stdout, stderr, error_seen)
   stdout_thread = Thread.new(stdout) do |stdout_io|
     begin
       loop do
-        STDOUT.write(stdout_io.readpartial(1024))
+        out_text = stdout_io.readpartial(1024)
+        out_text += "\n" unless out_text.nil? || out_text[-1] == "\n"
+        STDOUT.write("STDOUT From Server: #{out_text}") if ENV['DEBUG']
       end
     rescue EOFError, IOError
     end
@@ -340,11 +349,9 @@ def pump_server_streams(stdin, stdout, stderr, error_seen)
     begin
       loop do
         err_text = stderr_io.readpartial(1024)
-        STDERR.write(err_text)
-        # don't use STDERR as a means of detecting errors on JRuby9k
-        # until we figure out why it seems to falsely detect errors
-        # when there are none
-        error_seen.set(true) unless jruby9k?
+        err_text += "\n" unless err_text.nil? || err_text[-1] == "\n"
+        STDERR.write("STDERR From Server: #{err_text}")
+        error_seen.set(true)
       end
     rescue EOFError, IOError
     end
@@ -382,12 +389,21 @@ def server_stop
   end
   if @server_pid
     kill_process(@server_pid)
-    unless windows?
-      processes = `ps -o pid --ppid #{@server_pid}`.split("\n")
-      processes.each do |pid|
-        pid = pid.to_i
-        kill_process(pid) if pid > 0
-      end
+    processes =
+        case
+        when windows?
+          []
+        when macos?
+          # macOS doesn't support the --ppid flag, but it does support outputting the parent process id
+          `ps -o pid -o ppid`.split("\n")
+            .map { | line | line.strip.split(/\s+/).map(&:to_i) } # convert to process id and parent process id
+            .select { | _, ppid | ppid == @server_pid }           # filter by parent process id
+            .map(&:first)                                         # return only the process id
+        else
+          `ps -o pid --ppid #{@server_pid}`.split("\n").map(&:to_i)
+        end
+    processes.each do |pid|
+      kill_process(pid) if pid > 0
     end
     @server_pid = nil
     @stdout_thread.join(30)

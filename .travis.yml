@@ -2,17 +2,30 @@ language: ruby
 
 rvm:
   - jruby-19mode
-  - jruby-9.0.5.0
+  - jruby-9.1.6.0
   - jruby-head
 
 matrix:
   include:
-    - rvm: jruby-19mode
+    - os: linux
+      rvm: jruby-19mode
       jdk: openjdk7
-      env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
-    - rvm: jruby-9.0.5.0
+      env: WILDFLY_VERSION="9.0.1.Final"
+    - os: linux
+      rvm: jruby-9.1.6.0
       jdk: openjdk7
-      env: INTEG_SUITE="spec:all" WILDFLY_VERSION="9.0.1.Final"
+      env: WILDFLY_VERSION="9.0.1.Final"
+    - os: osx
+      rvm: jruby-9.1.6.0
+      jdk:
+    - os: osx
+      rvm: jruby-9.1.6.0
+      jdk:
+      env:
+        - WILDFLY_VERSION="9.0.1.Final"
+        - SSL_CERT_FILE=/Library/Java/Home/lib/security/cacerts
+        - JAVA_OPTS="-Xmx1536m -XX:MaxPermSize=512M"
+      osx_image: beta-xcode6.1
   allow_failures:
     - rvm: jruby-head
 
@@ -20,10 +33,10 @@ jdk:
   - oraclejdk8
 
 env:
-  matrix:
-    - INTEG_SUITE=spec:all
   global:
+    - INTEG_SUITE=spec:all
     - JAVA_OPTS="-Xmx1536m"
+    - JRUBY_OPTS="--client -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-Xss2m -Xcompile.invokedynamic=false"
 
 sudo: false
 
@@ -34,6 +47,9 @@ cache:
 before_install:
   - gem install bundler
   - gem update bundler
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl -O https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/phantomjs/phantomjs-1.8.1-macosx.zip ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then unzip phantomjs-1.8.1-macosx.zip ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH="$PWD/phantomjs-1.8.1-macosx/bin:$PATH" ; fi
 
 install: travis_retry bundle install
 

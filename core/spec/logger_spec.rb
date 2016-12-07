@@ -126,6 +126,10 @@ describe TorqueBox::Logger do
       logger.info(nil)
     end
 
+    it "should handle FixNum parameters" do
+      logger.info(200)
+    end
+
     it "should support the rack.errors interface" do
       logger.should respond_to(:puts)
       logger.should respond_to(:write)

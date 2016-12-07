@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'torquebox-web', TorqueBox::VERSION
 
   s.add_development_dependency('jbundler', '~> 0.5.4')
-  s.add_development_dependency('rake')
+  s.add_development_dependency('rake', '< 12')
   s.add_development_dependency('rake-compiler')
   s.add_development_dependency('rspec', '~> 2.99.0')
   s.add_development_dependency('torquespec', '~> 0.6')
@@ -37,4 +37,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency('kramdown', '~> 1.4.1')
   s.add_development_dependency('builder', '~> 3.2.2')
   s.add_development_dependency('rubocop', '~> 0.25.0')
+  s.add_development_dependency('addressable', '~> 2.4.0')
+  s.add_development_dependency('rack', '~> 1.6.5')
 end
