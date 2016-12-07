@@ -199,7 +199,7 @@ def uberjar(app_dir, path, main, options)
     end
     command << " --main #{main}" if main
     r, io = IO.pipe
-    system(env_overrides, command, out: io) || raise( "Execution of `#{command}` failed" )
+    system(env_overrides, command, :out => io) || raise("Execution of `#{command}` failed")
     io.close
     puts r.read if ENV['DEBUG']
     wildfly_server.deploy(jarfile) if wildfly?
@@ -295,7 +295,7 @@ def jruby9k?
 end
 
 def env_overrides
-  {'RUBYLIB' => @ruby_lib, 'BUNDLE_GEMFILE' => @bundle_gemfile}
+  { 'RUBYLIB' => @ruby_lib, 'BUNDLE_GEMFILE' => @bundle_gemfile }
 end
 
 def popen4(*cmd)
