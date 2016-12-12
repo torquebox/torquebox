@@ -1,13 +1,13 @@
 PATH
   remote: ../../../../core
   specs:
-    torquebox-core (4.0.0.beta3.dev-java)
+    torquebox-core (4.0.0.beta4.dev-java)
 
 PATH
   remote: ../../../../messaging
   specs:
-    torquebox-messaging (4.0.0.beta3.dev-java)
-      torquebox-core (= 4.0.0.beta3.dev)
+    torquebox-messaging (4.0.0.beta4.dev-java)
+      torquebox-core (= 4.0.0.beta4.dev)
 
 GEM
   remote: https://rubygems.org/
@@ -19,3 +19,6 @@ PLATFORMS
 DEPENDENCIES
   torquebox-core!
   torquebox-messaging!
+
+BUNDLED WITH
+   1.12.5
