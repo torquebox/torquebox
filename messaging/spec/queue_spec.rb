@@ -52,7 +52,7 @@ describe "Queue" do
 
       it 'should take a timeout & timeout_val' do
         queue = TorqueBox::Messaging.queue("req-resp-timeout", :durable => false)
-        listener = queue.respond { |_|  sleep(0.5) }
+        listener = queue.respond { |_| sleep(0.5) }
         queue.request("ham", :timeout => 1, :timeout_val => :timeout).should == :timeout
         listener.close
       end

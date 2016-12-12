@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('jbundler', '~> 0.5.4')
   s.add_development_dependency('rake')
   s.add_development_dependency('rake-compiler')
-  s.add_development_dependency('rspec', '~> 2.99.0')
+  s.add_development_dependency('rspec', '~> 3.5.0')
   s.add_development_dependency('torquespec', '~> 0.6')
   s.add_development_dependency('mime-types', '~> 2.6.2')
   s.add_development_dependency('poltergeist', '~> 1.5.1')
@@ -36,5 +36,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency('yard-doctest', '~> 0.1.2')
   s.add_development_dependency('kramdown', '~> 1.4.1')
   s.add_development_dependency('builder', '~> 3.2.2')
-  s.add_development_dependency('rubocop', '~> 0.25.0')
+  s.add_development_dependency('rubocop', '~> 0.46.0')
 end

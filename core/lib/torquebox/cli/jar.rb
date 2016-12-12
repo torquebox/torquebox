@@ -223,7 +223,7 @@ module TorqueBox
                   :file_prefix => tmpdir,
                   :pattern => "/{**/*,.bundle/**/*}",
                   :jar_prefix => "app",
-                  :exclude => TorqueBox::Jars.list.map { |j| File.basename(j)  })
+                  :exclude => TorqueBox::Jars.list.map { |j| File.basename(j) })
         Gem.path.each do |prefix|
           add_files(jar_builder,
                     :file_prefix => prefix,

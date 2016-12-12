@@ -113,14 +113,14 @@ module TorqueBox
         default_scheduler.unschedule(id)
       end
 
+      def self.default_scheduler
+        @scheduler ||= find_or_create("default")
+      end
+
       protected
 
       WB = org.projectodd.wunderboss.WunderBoss
       WBScheduling = org.projectodd.wunderboss.scheduling.Scheduling
-
-      def self.default_scheduler
-        @scheduler ||= find_or_create("default")
-      end
 
       def initialize(name, options = {})
         @logger = WB.logger('TorqueBox::Scheduling::Scheduler')

@@ -12,10 +12,19 @@ Lint/HandleExceptions:
 Lint/RescueException:
   Enabled: false
 
+Lint/ShadowedException:
+  Enabled: false
+
 Lint/UnusedBlockArgument:
   Enabled: false
 
 Lint/Void:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 50
+
+Metrics/BlockLength:
   Enabled: false
 
 Metrics/ClassLength:
@@ -33,16 +42,34 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Max: 10
 
+Performance/RedundantBlockCall:
+  Enabled: false
+
+Performance/StringReplacement:
+  Enabled: false
+
+Style/Alias:
+  Enabled: false
+
+Style/AlignHash:
+  Enabled: false
+
 Style/CaseEquality:
   Enabled: false
 
 Style/ClassAndModuleChildren:
   Enabled: false
 
+Style/ClosingParenthesisIndentation:
+  Enabled: false
+
 Style/ColonMethodCall:
   Enabled: false
 
 Style/CommentAnnotation:
+  Enabled: false
+
+Style/ConditionalAssignment:
   Enabled: false
 
 Style/Documentation:
@@ -57,13 +84,28 @@ Style/EachWithObject:
 Style/EmptyLines:
   Enabled: false
 
-Style/EmptyLinesAroundBody:
+Style/EmptyLinesAroundAccessModifier:
+  Enabled: false
+
+Style/EmptyLinesAroundBlockBody:
+  Enabled: false
+
+Style/EmptyLinesAroundClassBody:
+  Enabled: false
+
+Style/EmptyLinesAroundMethodBody:
+  Enabled: false
+
+Style/EmptyLinesAroundModuleBody:
   Enabled: false
 
 Style/Encoding:
   EnforcedStyle: when_needed
 
 Style/FileName:
+  Enabled: false
+
+Style/FirstParameterIndentation:
   Enabled: false
 
 Style/GuardClause:
@@ -81,11 +123,32 @@ Style/IndentHash:
 Style/Lambda:
   Enabled: false
 
+Style/MultilineHashBraceLayout:
+  Enabled: false
+
+Style/MultilineMethodCallBraceLayout:
+  Enabled: false
+
+Style/MultilineMethodCallIndentation:
+  Enabled: false
+
+Style/MultilineOperationIndentation:
+  Enabled: false
+
+Style/MutableConstant:
+  Enabled: false
+
 Style/Next:
   Enabled: false
 
 Style/NumericLiterals:
   MinDigits: 6
+
+Style/NumericPredicate:
+  Enabled: false
+
+Style/ParallelAssignment:
+  Enabled: false
 
 Style/PercentQLiterals:
   EnforcedStyle: upper_case_q
@@ -99,15 +162,33 @@ Style/RaiseArgs:
 Style/RescueModifier:
   Enabled: false
 
+Style/RedundantException:
+  Enabled: false
+
+Style/RedundantParentheses:
+  Enabled: false
+
+Style/RegexpLiteral:
+  Enabled: false
+
 Style/SignalException:
+  Enabled: false
+
+Style/SpaceAroundOperators:
   Enabled: false
 
 Style/StringLiterals:
   Enabled: false
   EnforcedStyle: double_quotes
 
+Style/SymbolProc:
+  Enabled: false
+
 Style/TrivialAccessors:
   Enabled: false
 
 Style/UnneededCapitalW:
+  Enabled: false
+
+Style/UnneededInterpolation:
   Enabled: false

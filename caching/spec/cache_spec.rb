@@ -235,7 +235,8 @@ describe TorqueBox::Caching do
   describe "with JTA transactions" do
 
     it "should be non-transactional by default" do
-      @cache.configuration.transaction.transaction_mode.should == org.infinispan.transaction.TransactionMode::NON_TRANSACTIONAL
+      @cache.configuration.transaction.transaction_mode.should ==
+        org.infinispan.transaction.TransactionMode::NON_TRANSACTIONAL
       # begin
       #   cache.transaction do
       #     cache.put "key1", "G"
@@ -251,12 +252,14 @@ describe TorqueBox::Caching do
 
     it "should support transactional mode" do
       cache = TorqueBox::Caching.cache('transactional-cache', :transactional => true)
-      cache.configuration.transaction.transaction_mode.should == org.infinispan.transaction.TransactionMode::TRANSACTIONAL
+      cache.configuration.transaction.transaction_mode.should ==
+        org.infinispan.transaction.TransactionMode::TRANSACTIONAL
       TorqueBox::Caching.stop('transactional-cache')
     end
 
     it "should use optimisitic locking mode by default" do
-      @cache.configuration.transaction.locking_mode.should == org.infinispan.transaction.LockingMode::OPTIMISTIC
+      @cache.configuration.transaction.locking_mode.should ==
+        org.infinispan.transaction.LockingMode::OPTIMISTIC
     end
 
     it "should support pessimistic locking mode" do
@@ -436,7 +439,9 @@ describe TorqueBox::Caching do
 
     it "should reject bad event types" do
       num_orig_listeners = @cache.get_listeners.size
-      expect { @cache.add_listener(:cache_entry_visited, :this_should_barf) }.to raise_error(Java::JavaLang::IllegalArgumentException)
+      expect do
+        @cache.add_listener(:cache_entry_visited, :this_should_barf)
+      end.to raise_error(Java::JavaLang::IllegalArgumentException)
       (@cache.get_listeners.size - num_orig_listeners).should == 0
     end
   end

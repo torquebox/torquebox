@@ -47,8 +47,6 @@ module TorqueBox
           .getResource("#{prefix}#{jms_name(destination)}")
       end
 
-      protected
-
       def self.jms_name(dest)
         if dest.respond_to?(:internal_destination)
           dest.internal_destination.jms_name

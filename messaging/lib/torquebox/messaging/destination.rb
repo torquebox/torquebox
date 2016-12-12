@@ -194,7 +194,7 @@ module TorqueBox
           elsif (0..9) === options[:priority].to_i
             options[:priority] = options[:priority].to_i
           else
-            priorities = PRIORITY_MAP.keys.map { |k| ":#{k }" }.join(',')
+            priorities = PRIORITY_MAP.keys.map { |k| ":#{k}" }.join(',')
             fail ArgumentError.new(":priority must in the range 0..9, or one of #{priorities}")
           end
         end
