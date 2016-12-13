@@ -61,8 +61,6 @@ details.
 EOF
         $stderr.puts ex.message
         exit 1
-      else
-        raise ex
       end
     end
     if wildfly?

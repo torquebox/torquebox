@@ -105,7 +105,7 @@ feature 'basic rails4 test' do
     image = page.find('img')
     image['src'].should match(%r{/basic-rails4/assets/rails\.png})
     link = page.find('a')
-    link['href'].should eql('/basic-rails4/')
+    link['href'].should include('/basic-rails4/')
   end
 
 end
