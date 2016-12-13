@@ -1,6 +1,7 @@
 require "#{File.dirname(__FILE__)}/../tasks/torquebox"
 TorqueBox::RakeHelper.install_clean_tasks
 
+require 'rspec/core'
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:real_spec) do |config|
   config.pattern = './spec/*_spec.rb'
