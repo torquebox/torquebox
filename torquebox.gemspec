@@ -28,6 +28,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rspec', '~> 3.5.0')
   s.add_development_dependency('torquespec', '~> 0.6')
   s.add_development_dependency('mime-types', '~> 2.6.2')
+  # Pin a broken transitive dep of poltergeist
+  s.add_development_dependency('rainbow', '2.1.0')
   s.add_development_dependency('poltergeist', '~> 1.12.0')
   s.add_development_dependency('websocket-client-simple', '~> 0.2.2')
   s.add_development_dependency('activesupport', '~> 4.1')
