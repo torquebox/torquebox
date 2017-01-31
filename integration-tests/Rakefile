@@ -5,7 +5,7 @@ require 'rspec/core'
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:real_spec) do |config|
   config.pattern = './spec/*_spec.rb'
-  config.ruby_opts = '-J-Xmx1024m'
+  config.ruby_opts = '-J-Xmx1536m'
 end
 task(:real_spec).clear_comments
 
