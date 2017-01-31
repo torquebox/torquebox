@@ -37,7 +37,12 @@ feature "basic rack websockets" do
       puts "ERROR: #{e}"
     end
     latch.await(10, java.util.concurrent.TimeUnit::SECONDS)
-    ws.close
+    begin
+      ws.close
+    rescue Exception
+      # Ignore any errors closing the websocket during our specs -
+      # depending on timing the websocket client sometimes barfs here
+    end
     if message.empty?
       puts ws.inspect
     end
