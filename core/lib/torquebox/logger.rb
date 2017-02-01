@@ -188,6 +188,7 @@ module TorqueBox
 
     def add(severity, *params)
       message = block_given? ? yield : params.shift
+      message = message.to_s unless message.nil?
       @logger.send(severity, message, *params)
     end
   end
