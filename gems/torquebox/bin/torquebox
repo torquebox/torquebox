@@ -217,6 +217,7 @@ class TorqueBoxCommand < Thor
                  when /^1\.9\./ then '1.9'
                  when /^2\.0\./ then '1.9' # 2.0 gems get put under 1.9
                  when /^2\.3\./ then '2.3.0' # gems installed with JRuby 9k get put under 2.3.0
+                 else raise "Cannot figure out what rb_version should be. JRuby compatibility version has changed."
                  end
     ENV['PATH'] = "#{ENV['PATH']}:#{jruby_path}"
     Dir.mktmpdir do |tmpdir|
