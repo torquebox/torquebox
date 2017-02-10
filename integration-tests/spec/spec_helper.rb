@@ -283,7 +283,7 @@ def server_start(options)
     @stdout_thread, @stderr_thread = pump_server_streams(stdin, stdout,
                                                          stderr, error_seen)
   end
-  wait_for_boot(app_dir, 180, error_seen)
+  wait_for_boot(app_dir, 210, error_seen)
 end
 
 def jruby9k?
