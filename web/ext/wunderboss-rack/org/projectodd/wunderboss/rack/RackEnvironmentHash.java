@@ -410,16 +410,6 @@ public class RackEnvironmentHash extends RubyHash {
         return super.flatten(context, level);
     }
     @Override
-    public IRubyObject getCompareByIdentity(ThreadContext context) {
-        fillEntireHash();
-        return super.getCompareByIdentity(context);
-    }
-    @Override
-    public IRubyObject getCompareByIdentity_p(ThreadContext context) {
-        fillEntireHash();
-        return super.getCompareByIdentity_p(context);
-    }
-    @Override
     public IRubyObject dup(ThreadContext context) {
         fillEntireHash();
         return super.dup(context);
