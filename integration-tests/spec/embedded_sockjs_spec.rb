@@ -13,6 +13,7 @@
 # limitations under the License.
 
 require "spec_helper"
+require "http"
 
 feature "embedded sockjs example" do
   embedded("main.rb", :dir => "#{apps_dir}/embedded/sockjs_echo")
@@ -28,16 +29,12 @@ feature "embedded sockjs example" do
   end
 
   it "should attempt websocket upgrade" do
-    uri = URI.parse("#{Capybara.app_host}/echo/websocket")
-    Net::HTTP.start(uri.host, uri.port) do |http|
-      request = Net::HTTP::Get.new(uri.request_uri)
-      request.add_field("Upgrade", "websocket")
-      request.add_field("Connection", "Upgrade")
-      request.add_field("Sec-WebSocket-Key", "x3JJHMbDL1EzLkh9GBhXDw==")
-      request.add_field("Sec-WebSocket-Version", "13")
-      response = http.request(request)
-      response.code.should == "101"
-      response["Sec-WebSocket-Accept"].should_not be_nil
-    end
+    response = HTTP.headers("Upgrade" => "websocket")
+      .headers("Connection" => "Upgrade")
+      .headers("Sec-WebSocket-Key" => "x3JJHMbDL1EzLkh9GBhXDw==")
+      .headers("Sec-WebSocket-Version" => "13")
+      .get("#{Capybara.app_host}/echo/websocket")
+    response.code.should == 101
+    response.headers["Sec-WebSocket-Accept"].should_not be_nil
   end
 end

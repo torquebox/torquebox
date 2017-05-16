@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rainbow', '2.1.0')
   s.add_development_dependency('poltergeist', '~> 1.12.0')
   s.add_development_dependency('websocket-client-simple', '~> 0.2.2')
+  s.add_development_dependency('http', '~> 2.2.2')
   s.add_development_dependency('activesupport', '~> 4.1')
   s.add_development_dependency('edn', '1.0.3')
   s.add_development_dependency('yard', '~> 0.8.7.4')
