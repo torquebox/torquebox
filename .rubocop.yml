@@ -28,7 +28,7 @@ Metrics/BlockLength:
   Enabled: false
 
 Metrics/ClassLength:
-  Max: 300
+  Max: 330
 
 Metrics/CyclomaticComplexity:
   Max: 10
@@ -37,7 +37,7 @@ Metrics/LineLength:
   Max: 115
 
 Metrics/MethodLength:
-  Max: 40
+  Max: 45
 
 Metrics/PerceivedComplexity:
   Max: 10
