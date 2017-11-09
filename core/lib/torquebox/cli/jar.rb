@@ -209,7 +209,11 @@ module TorqueBox
         cache_dir_exists = File.exist?('vendor/cache')
         bundle_dir_exists = File.exist?('vendor/bundle')
         already_cached = Dir.glob('vendor/cache/*.gem').count > 0
-        already_bundled = Pathname.new(Bundler.settings.path).relative?
+        already_bundled = if Bundler.settings.path.is_a?(String)
+          Pathname.new(Bundler.settings.path).relative?
+        else
+          Pathname.new(Bundler.settings.path.path).relative?
+        end
 
         lockfile = Bundler.default_lockfile
         original_lockfile = File.exist?(lockfile) ? File.read(lockfile) : nil
