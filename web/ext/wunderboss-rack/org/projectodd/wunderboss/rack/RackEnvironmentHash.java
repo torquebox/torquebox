@@ -229,11 +229,6 @@ public class RackEnvironmentHash extends RubyHash {
         return super.hash();
     }
     @Override
-    public RubyFixnum hash19() {
-        fillEntireHash();
-        return super.hash19();
-    }
-    @Override
     public IRubyObject fetch(ThreadContext context, IRubyObject[] args, Block block) {
         fillEntireHash();
         return super.fetch(context, args, block);
@@ -298,16 +293,15 @@ public class RackEnvironmentHash extends RubyHash {
         fillEntireHash();
         return super.key(context, expected);
     }
-
     @Override
-    public RubyArray keys() {
+    public RubyArray keys(final ThreadContext context) {
         fillEntireHash();
-        return super.keys();
+        return super.keys(context);
     }
     @Override
-    public RubyArray rb_values() {
+    public RubyArray values(final ThreadContext context) {
         fillEntireHash();
-        return super.rb_values();
+        return super.values(context);
     }
     @Override
     public IRubyObject shift(ThreadContext context) {
