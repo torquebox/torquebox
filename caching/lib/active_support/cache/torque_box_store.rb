@@ -48,7 +48,12 @@ module ActiveSupport
         options = merged_options(options)
 
         # Get the current entry
-        key = namespaced_key(name, options)
+        key = if respond_to?(:normalize_key, true)
+          normalize_key(name, options)
+        elsif respond_to?(:namespaced_key, true)
+          namespaced_key(name, options)
+        end
+
         current = read_entry(key, options)
         value = current.value.to_i
 
