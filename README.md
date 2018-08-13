@@ -1,3 +1,7 @@
+## No Longer Maintained
+
+The TorqueBox project is no longer actively developed nor maintained. Do not use it for development or production usage unless you are willing and able to fix issues as they come up.
+
 # TorqueBox
 
 This is TorqueBox 4 and represents a substantial change in direction
