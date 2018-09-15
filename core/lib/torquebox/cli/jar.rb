@@ -194,6 +194,14 @@ module TorqueBox
                   :exclude => exclude)
       end
 
+      def already_bundled?
+        if Bundler.settings.path.is_a?(String)
+          Pathname.new(Bundler.settings.path).relative?
+        else
+          Pathname.new(Bundler.settings.path.path).relative?
+        end
+      end
+
       def add_bundler_files(jar_builder, tmpdir, bundle_without)
         @logger.trace("Adding bundler files to jar...")
         unless File.exist?(ENV['BUNDLE_GEMFILE'] || 'Gemfile')
@@ -209,13 +217,12 @@ module TorqueBox
         cache_dir_exists = File.exist?('vendor/cache')
         bundle_dir_exists = File.exist?('vendor/bundle')
         already_cached = Dir.glob('vendor/cache/*.gem').count > 0
-        already_bundled = Pathname.new(Bundler.settings.path).relative?
 
         lockfile = Bundler.default_lockfile
         original_lockfile = File.exist?(lockfile) ? File.read(lockfile) : nil
 
         cache_gems(tmpdir) unless already_cached
-        bundle_gems(tmpdir, bundle_without) unless already_bundled
+        bundle_gems(tmpdir, bundle_without) unless already_bundled?
         copy_cached_gems(tmpdir) unless already_cached
         copy_and_restore_lockfile(tmpdir, lockfile, original_lockfile)
 
